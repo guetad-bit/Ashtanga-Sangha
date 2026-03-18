@@ -7,9 +7,6 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '@/styles/tokens';
 import LogPracticeModal from '@/components/LogPracticeModal';
 
-// Reliable cross-platform way to hide a tab (works on both native and web)
-const HiddenTab = () => null;
-
 export default function TabLayout() {
   return (
     <>
@@ -62,14 +59,12 @@ export default function TabLayout() {
           name="gatherings"
           options={{
             href: null,
-            tabBarButton: HiddenTab,
           }}
         />
         <Tabs.Screen
           name="profile"
           options={{
             href: null,
-            tabBarButton: HiddenTab,
           }}
         />
       </Tabs>
