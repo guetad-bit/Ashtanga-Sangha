@@ -14,5 +14,20 @@
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
+  <script>
+    // Fix Expo metro web bundle: reload entry script as ES module
+    document.addEventListener('DOMContentLoaded', function() {
+      var scripts = document.querySelectorAll('script[src*="entry-"]');
+      scripts.forEach(function(s) {
+        if (!s.type || s.type !== 'module') {
+          var m = document.createElement('script');
+          m.type = 'module';
+          m.src = s.src;
+          s.parentNode.removeChild(s);
+          document.body.appendChild(m);
+        }
+      });
+    });
+  </script>
 </body>
 </html>
