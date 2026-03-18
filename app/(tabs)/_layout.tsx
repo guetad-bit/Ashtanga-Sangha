@@ -1,10 +1,14 @@
 // app/(tabs)/_layout.tsx
 import React from 'react';
+import { Platform } from 'react-native';
 import { Tabs } from 'expo-router';
 import { StyleSheet } from 'react-native';
-import { Ionicons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '@/styles/tokens';
 import LogPracticeModal from '@/components/LogPracticeModal';
+
+// Reliable cross-platform way to hide a tab (works on both native and web)
+const HiddenTab = () => null;
 
 export default function TabLayout() {
   return (
@@ -57,13 +61,15 @@ export default function TabLayout() {
         <Tabs.Screen
           name="gatherings"
           options={{
-            href: null, // hidden from tab bar for now
+            href: null,
+            tabBarButton: HiddenTab,
           }}
         />
         <Tabs.Screen
           name="profile"
           options={{
-            href: null, // hidden from tab bar
+            href: null,
+            tabBarButton: HiddenTab,
           }}
         />
       </Tabs>
@@ -78,7 +84,7 @@ const styles = StyleSheet.create({
     borderTopColor: colors.skyMid,
     borderTopWidth: 1,
     paddingTop: 6,
-    height: 85,
+    height: Platform.OS === 'web' ? 65 : 85,
   },
   tabLabel: {
     fontSize: 11,
