@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="warmGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8A87C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D4845A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <circle cx="100" cy="100" r="95" fill="#1A1A2E" />
+
+  <!-- Seated yoga figure - icon only, no text -->
+  <g transform="translate(100, 100)">
+    <!-- Head -->
+    <circle cx="0" cy="-42" r="12" fill="url(#warmGrad)" />
+    <!-- Spine -->
+    <line x1="0" y1="-30" x2="0" y2="18" stroke="url(#warmGrad)" stroke-width="4" stroke-linecap="round" />
+    <!-- Arms to prayer above -->
+    <path d="M 0,-18 C -12,-35 -9,-50 -3,-56" stroke="url(#warmGrad)" stroke-width="3.5" fill="none" stroke-linecap="round" />
+    <path d="M 0,-18 C 12,-35 9,-50 3,-56" stroke="url(#warmGrad)" stroke-width="3.5" fill="none" stroke-linecap="round" />
+    <!-- Legs -->
+    <path d="M 0,18 C -8,26 -28,30 -34,24" stroke="url(#warmGrad)" stroke-width="3.5" fill="none" stroke-linecap="round" />
+    <path d="M 0,18 C 8,26 28,30 34,24" stroke="url(#warmGrad)" stroke-width="3.5" fill="none" stroke-linecap="round" />
+    <!-- Crossed -->
+    <path d="M -34,24 C -30,30 -12,32 0,27" stroke="url(#warmGrad)" stroke-width="3" fill="none" stroke-linecap="round" />
+    <path d="M 34,24 C 30,30 12,32 0,27" stroke="url(#warmGrad)" stroke-width="3" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- Community dots -->
+  <circle cx="82" cy="48" r="2.8" fill="#E8A87C" opacity="0.6" />
+  <circle cx="100" cy="41" r="2.8" fill="#E8A87C" opacity="0.8" />
+  <circle cx="118" cy="48" r="2.8" fill="#E8A87C" opacity="0.6" />
+</svg>

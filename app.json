@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "Ashtanga Sangha",
+    "slug": "ashtanga-sangha",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./src/assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0D1922"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.ashtangasangha.app",
+      "buildNumber": "1"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "backgroundColor": "#0D1922"
+      },
+      "package": "com.ashtangasangha.app",
+      "versionCode": 1
+    },
+    "web": {
+      "favicon": "./src/assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./src/assets/notification-icon.png",
+          "color": "#4A90C4",
+          "sounds": []
+        }
+      ]
+    ],
+    "scheme": "ashtangasangha",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "supabaseUrl": "",
+      "supabaseAnonKey": "",
+      "eas": {
+        "projectId": "your-eas-project-id"
+      }
+    }
+  }
+}

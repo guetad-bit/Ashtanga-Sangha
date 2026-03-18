@@ -1,0 +1,3117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ashtanga Sangha</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --sky:#EEF4FB; --sky-mid:#DDEAF6; --sky-deep:#B8D4EE;
+  --blue:#4A90C4; --blue-l:#6AABD8; --blue-deep:#2C6A96;
+  --sand:#F7F0E6; --sand-mid:#EDE3D4; --sand-deep:#C8B49A;
+  --sage:#6B8F71; --sage-l:#9DB8A0; --sage-pale:#E8F0E9;
+  --orange:#E8834A; --orange-l:#F0A070; --orange-pale:#FDF0E8;
+  --ink:#1C2B3A; --ink-mid:#3A4F63;
+  --muted:#7A8E9E; --muted-l:#A8BBCA;
+  --white:#fff; --page:#F3F7FB;
+}
+
+body{
+  background:#B8CDE0;
+  min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Sans',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  padding:2rem;
+  background-image:
+    radial-gradient(ellipse at 25% 35%,rgba(106,171,216,.4) 0%,transparent 55%),
+    radial-gradient(ellipse at 78% 68%,rgba(107,143,113,.22) 0%,transparent 50%);
+}
+
+/* ─── PHONE SHELL ─── */
+.phone{
+  width:393px;
+  background:#161616;
+  border-radius:54px;
+  padding:12px;
+  box-shadow:0 0 0 1px rgba(255,255,255,.1),0 50px 120px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.04);
+  position:relative; flex-shrink:0;
+}
+.phone::before{content:'';position:absolute;left:-3px;top:110px;width:3px;height:32px;background:#0d0d0d;border-radius:2px 0 0 2px;box-shadow:0 48px 0 #0d0d0d,0 96px 0 #0d0d0d;}
+.phone::after{content:'';position:absolute;right:-3px;top:170px;width:3px;height:66px;background:#0d0d0d;border-radius:0 2px 2px 0;}
+
+.screen{
+  border-radius:44px;
+  overflow:hidden;
+  background:var(--page);
+  height:852px;
+  display:flex; flex-direction:column;
+  position:relative;
+}
+
+/* Dynamic Island */
+.island{position:absolute;top:13px;left:50%;transform:translateX(-50%);width:120px;height:34px;background:#000;border-radius:20px;z-index:50;}
+
+/* ─── STATUS BAR ─── */
+.statusbar{
+  height:54px; padding:16px 28px 0;
+  display:flex; justify-content:space-between; align-items:flex-end;
+  flex-shrink:0; background:var(--page); z-index:40; position:relative;
+}
+.status-time{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-.02em;}
+.status-icons{display:flex;align-items:center;gap:5px;}
+
+/* ─── SCREEN VIEWS ─── */
+.view{
+  flex:1; display:none; flex-direction:column;
+  overflow:hidden; position:relative;
+}
+.view.active{display:flex;}
+
+/* ─── SCROLL AREA ─── */
+.scroll{flex:1;overflow-y:auto;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* ─── TOPBAR ─── */
+.topbar{
+  padding:14px 22px 16px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--page); position:sticky; top:0; z-index:30;
+  border-bottom:1px solid transparent;
+  transition:border-color .2s, box-shadow .2s;
+}
+.topbar.scrolled{border-color:var(--sky-mid);box-shadow:0 2px 12px rgba(74,144,196,.08);}
+.topbar-left{display:flex;align-items:center;gap:10px;}
+.logo-mark{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--sky-mid),var(--sky-deep));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(74,144,196,.2);
+}
+.topbar-welcome{font-size:11px;color:var(--muted);font-weight:400;}
+.topbar-name{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:-.02em;line-height:1.1;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.notif-btn{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--white);border:1px solid var(--sky-mid);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 1px 4px rgba(74,144,196,.1);position:relative;
+  cursor:pointer; transition:transform .15s, box-shadow .15s;
+}
+.notif-btn:active{transform:scale(.93);}
+.notif-dot{position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--orange);border:1.5px solid var(--page);}
+.av-btn{
+  width:38px;height:38px;border-radius:50%;overflow:hidden;
+  border:2px solid var(--white);box-shadow:0 2px 8px rgba(0,0,0,.1);
+  cursor:pointer; transition:transform .15s;
+}
+.av-btn:active{transform:scale(.93);}
+.av-btn img{width:100%;height:100%;object-fit:cover;}
+
+/* ─── SECTION HEADER ─── */
+.sec-hd{display:flex;justify-content:space-between;align-items:center;padding:0 20px;margin-bottom:12px;}
+.sec-title{font-size:17px;font-weight:600;color:var(--ink);letter-spacing:-.02em;}
+.sec-link{font-size:13px;font-weight:500;color:var(--blue);cursor:pointer;}
+
+/* ─── PRACTICE CARD ─── */
+.practice-hero{
+  margin:0 16px 20px;border-radius:24px;overflow:hidden;
+  box-shadow:0 8px 32px rgba(74,144,196,.18),0 2px 8px rgba(0,0,0,.06);
+  position:relative;height:210px;cursor:pointer;
+}
+.practice-hero-photo{
+  position:absolute;inset:0;
+  background:url('https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800&q=80') center/cover no-repeat,
+    linear-gradient(135deg,#6AABD8,#4A90C4);
+  transition:transform .4s ease;
+}
+.practice-hero:hover .practice-hero-photo{transform:scale(1.03);}
+.practice-hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(160deg,rgba(28,43,58,.06) 0%,rgba(28,43,58,.52) 55%,rgba(28,43,58,.82) 100%);
+}
+.practice-hero-content{position:absolute;inset:0;padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between;}
+.practice-badge{
+  align-self:flex-start;
+  background:rgba(255,255,255,.18);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.28);border-radius:20px;
+  padding:4px 12px;font-size:10px;font-weight:500;color:#fff;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.practice-title{font-family:'DM Serif Display',serif;font-size:23px;color:#fff;line-height:1.1;margin-bottom:2px;}
+.practice-sub{font-size:12px;color:rgba(255,255,255,.65);margin-bottom:14px;}
+.log-btn{
+  align-self:flex-start;background:#fff;border-radius:14px;
+  padding:9px 18px;font-size:13px;font-weight:600;color:var(--blue-deep);
+  display:flex;align-items:center;gap:6px;
+  box-shadow:0 2px 12px rgba(0,0,0,.15);cursor:pointer;
+  transition:transform .15s,box-shadow .15s;
+}
+.log-btn:active{transform:scale(.96);box-shadow:0 1px 6px rgba(0,0,0,.12);}
+.log-btn-circle{width:18px;height:18px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;}
+
+/* ─── RHYTHM CARD ─── */
+.rhythm-card{
+  margin:0 16px 20px;background:var(--white);border-radius:22px;
+  padding:18px 18px 16px;
+  box-shadow:0 2px 12px rgba(74,144,196,.08),0 1px 4px rgba(0,0,0,.04);
+}
+.rhythm-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.rhythm-title{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-.01em;}
+.rhythm-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.moon-chip{display:flex;align-items:center;gap:4px;background:var(--sand);border-radius:20px;padding:4px 10px;font-size:10px;color:var(--ink-mid);font-weight:500;}
+.days-row{display:flex;gap:6px;margin-bottom:12px;}
+.day-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.day-lbl{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.pip{width:100%;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s;}
+.pip:active{transform:scale(.92);}
+.pip.done{background:linear-gradient(135deg,var(--blue-l),var(--blue));}
+.pip.done::after{content:'✓';color:#fff;font-size:13px;font-weight:600;}
+.pip.today{background:linear-gradient(135deg,var(--orange-l),var(--orange));box-shadow:0 3px 10px rgba(232,131,74,.35);}
+.pip.today::after{content:'●';color:#fff;font-size:10px;}
+.pip.rest{background:var(--sand);}
+.pip.rest::after{content:'🌙';font-size:13px;}
+.pip.empty{background:var(--sky);border:1.5px dashed var(--sky-deep);}
+.progress-row{background:var(--sky);border-radius:20px;padding:8px 12px;display:flex;align-items:center;gap:8px;}
+.progress-track{flex:1;height:5px;background:var(--sky-mid);border-radius:10px;overflow:hidden;}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue-l),var(--blue));border-radius:10px;transition:width 1s ease;}
+.progress-txt{font-size:11px;font-weight:500;color:var(--blue-deep);white-space:nowrap;}
+
+/* ─── FRIENDS ─── */
+.friends-sec{margin-bottom:20px;}
+.friends-row{display:flex;gap:14px;padding:2px 22px;overflow-x:auto;scrollbar-width:none;}
+.friends-row::-webkit-scrollbar{display:none;}
+.friend-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;cursor:pointer;}
+.friend-av-wrap{position:relative;}
+.friend-av{
+  width:56px;height:56px;border-radius:50%;overflow:hidden;
+  border:2.5px solid var(--white);
+  box-shadow:0 2px 10px rgba(74,144,196,.2);
+  background:var(--sky-mid);
+  transition:transform .2s, box-shadow .2s;
+}
+.friend-av:hover{transform:scale(1.06);box-shadow:0 4px 16px rgba(74,144,196,.3);}
+.friend-av img{width:100%;height:100%;object-fit:cover;}
+.friend-online{position:absolute;bottom:1px;right:1px;width:13px;height:13px;border-radius:50%;background:var(--sage);border:2px solid var(--page);}
+.friend-name{font-size:10px;color:var(--muted);font-weight:500;text-align:center;}
+
+/* ─── COMMUNITY POST (home card style — kept for home feed preview) ─── */
+.community-card{
+  margin:0 16px 20px;background:var(--white);border-radius:22px;overflow:hidden;
+  box-shadow:0 2px 12px rgba(74,144,196,.08),0 1px 4px rgba(0,0,0,.04);
+}
+.post-hd{padding:14px 16px 10px;display:flex;align-items:center;gap:10px;}
+.post-av{width:36px;height:36px;border-radius:50%;overflow:hidden;background:var(--sky-mid);flex-shrink:0;}
+.post-av img{width:100%;height:100%;object-fit:cover;}
+.post-uname{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:-.01em;}
+.post-loc{font-size:11px;color:var(--muted);}
+.post-time{font-size:11px;color:var(--muted-l);margin-left:auto;}
+.post-photo{
+  width:100%;height:186px;object-fit:cover;
+  background:url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80') center/cover no-repeat,
+    linear-gradient(135deg,var(--sage-pale),var(--sky-mid));
+}
+.post-body{padding:12px 16px 14px;}
+.post-txt{font-size:13px;color:var(--ink-mid);line-height:1.55;margin-bottom:12px;}
+.post-txt strong{color:var(--ink);font-weight:600;}
+.post-actions{display:flex;gap:10px;}
+.action-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;
+  border:1px solid var(--sky-mid);color:var(--ink-mid);background:var(--sky);
+  cursor:pointer;transition:all .2s; user-select:none;
+}
+.action-btn:active{transform:scale(.95);}
+.action-btn.liked{background:rgba(232,131,74,.1);border-color:rgba(232,131,74,.25);color:var(--orange);}
+.action-btn.animating{animation:heartBeat .35s ease;}
+@keyframes heartBeat{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+
+/* ══ INSTAGRAM-STYLE COMMUNITY SCREEN ══ */
+
+/* Top bar */
+.ig-topbar{
+  background:#fff;
+  padding:10px 16px 8px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(0,0,0,.06);
+  flex-shrink:0;
+}
+.ig-logo{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);letter-spacing:-.03em;}
+.ig-logo span{color:var(--blue);}
+.ig-top-icons{display:flex;gap:4px;}
+.ig-icon-btn{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .15s;
+}
+.ig-icon-btn:hover{background:var(--sky);}
+.ig-icon-btn:active{background:var(--sky-mid);}
+
+/* Stories row */
+.ig-stories-row{
+  background:#fff;
+  display:flex;gap:0;
+  overflow-x:auto;scrollbar-width:none;
+  padding:10px 12px 14px;
+  border-bottom:1px solid rgba(0,0,0,.06);
+  flex-shrink:0;
+}
+.ig-stories-row::-webkit-scrollbar{display:none;}
+.ig-story{
+  display:flex;flex-direction:column;align-items:center;
+  gap:5px;flex-shrink:0;width:68px;cursor:pointer;
+}
+.ig-story-ring{
+  width:58px;height:58px;border-radius:50%;
+  background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+  padding:2.5px;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .2s;
+}
+.ig-story-ring:active{transform:scale(.93);}
+.ig-story-ring.seen{background:var(--muted-l);}
+.ig-story-ring.mine{background:transparent;border:2px dashed var(--sky-deep);padding:0;}
+.ig-story-inner{
+  width:100%;height:100%;border-radius:50%;
+  border:2.5px solid #fff;
+  overflow:hidden;
+  background:var(--sky-mid);
+  position:relative;
+}
+.ig-story-inner img{width:100%;height:100%;object-fit:cover;}
+.ig-story-add{
+  position:absolute;bottom:0;right:0;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--blue);border:2px solid #fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:#fff;font-weight:700;line-height:1;
+}
+.ig-story-lbl{font-size:10px;color:var(--ink-mid);text-align:center;width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* Feed posts */
+.ig-feed{background:#fff;}
+
+.ig-post{
+  background:#fff;
+  border-bottom:1px solid rgba(0,0,0,.06);
+  margin-bottom:0;
+}
+
+/* Post header */
+.ig-post-hd{
+  padding:10px 14px;
+  display:flex;align-items:center;gap:10px;
+}
+.ig-post-av{
+  width:34px;height:34px;border-radius:50%;overflow:hidden;
+  background:linear-gradient(135deg,#f09433,#dc2743,#bc1888);
+  padding:2px;flex-shrink:0;cursor:pointer;
+}
+.ig-post-av-inner{
+  width:100%;height:100%;border-radius:50%;overflow:hidden;
+  border:2px solid #fff;background:var(--sky-mid);
+}
+.ig-post-av-inner img{width:100%;height:100%;object-fit:cover;}
+.ig-post-av.seen{background:var(--muted-l);}
+.ig-post-name{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.01em;line-height:1.2;}
+.ig-post-sub{font-size:11px;color:var(--muted);}
+.ig-post-more{margin-left:auto;color:var(--muted);cursor:pointer;font-size:18px;letter-spacing:1px;line-height:1;padding:4px;}
+
+/* Post image — square, edge to edge */
+.ig-post-img{
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  background:var(--sky-mid) center/cover no-repeat;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+}
+.ig-post-img.tall{aspect-ratio:4/5;}
+
+/* Heart overlay on double-tap */
+.ig-heart-pop{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+.ig-heart-pop svg{
+  width:90px;height:90px;
+  opacity:0;transform:scale(.3);
+  filter:drop-shadow(0 4px 16px rgba(0,0,0,.3));
+  transition:none;
+}
+.ig-heart-pop.pop svg{
+  animation:heartPop .65s cubic-bezier(.36,.07,.19,.97) forwards;
+}
+@keyframes heartPop{
+  0%{opacity:0;transform:scale(.3)}
+  15%{opacity:1;transform:scale(1.3)}
+  30%{transform:scale(1)}
+  70%{opacity:1;transform:scale(1)}
+  100%{opacity:0;transform:scale(1)}
+}
+
+/* Multi-image dots */
+.ig-img-dots{
+  display:flex;justify-content:center;gap:5px;padding:6px 0 2px;
+}
+.ig-dot{width:6px;height:6px;border-radius:50%;background:var(--sky-deep);}
+.ig-dot.active{background:var(--blue);}
+
+/* Action bar */
+.ig-actions{
+  padding:8px 14px 4px;
+  display:flex;align-items:center;gap:2px;
+}
+.ig-act{
+  width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;border-radius:50%;
+  transition:transform .15s,background .1s;
+  user-select:none;
+}
+.ig-act:active{transform:scale(.85);}
+.ig-act.heart-anim{animation:igHeartBeat .3s ease;}
+@keyframes igHeartBeat{0%{transform:scale(1)}40%{transform:scale(1.4)}100%{transform:scale(1)}}
+.ig-act-spacer{flex:1;}
+.ig-save{margin-left:0;}
+
+/* Like count & caption */
+.ig-meta{padding:2px 14px 10px;}
+.ig-likes{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.ig-caption{font-size:13px;color:var(--ink);line-height:1.5;}
+.ig-caption .ig-handle{font-weight:700;}
+.ig-caption .ig-hashtag{color:var(--blue);font-weight:500;}
+.ig-view-comments{font-size:12px;color:var(--muted);margin-top:4px;cursor:pointer;}
+.ig-post-time{font-size:10px;color:var(--muted-l);letter-spacing:.02em;text-transform:uppercase;margin-top:4px;}
+
+/* Tab bar under topbar */
+.ig-tabs{
+  display:flex;background:#fff;
+  border-bottom:1px solid rgba(0,0,0,.08);
+  flex-shrink:0;
+}
+.ig-tab{
+  flex:1;padding:10px 0;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;
+}
+.ig-tab.active::after{
+  content:'';position:absolute;bottom:0;left:10%;right:10%;
+  height:2px;background:var(--ink);border-radius:1px;
+}
+
+/* Explore grid */
+.ig-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5px;
+  background:#e8e8e8;
+}
+.ig-grid-cell{
+  aspect-ratio:1;background:var(--sky-mid) center/cover no-repeat;
+  cursor:pointer;overflow:hidden;position:relative;
+}
+.ig-grid-cell.big{grid-column:span 2;grid-row:span 2;}
+.ig-grid-cell img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s;}
+.ig-grid-cell:active img{transform:scale(.96);}
+
+/* ─── RETREAT ─── */
+.retreat-card{
+  margin:0 16px 20px;border-radius:24px;overflow:hidden;
+  box-shadow:0 8px 32px rgba(107,143,113,.18),0 2px 8px rgba(0,0,0,.06);
+  position:relative;height:185px;cursor:pointer;
+}
+.retreat-photo{
+  position:absolute;inset:0;
+  background:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80') center/cover no-repeat,
+    linear-gradient(135deg,#9DB8A0,#6B8F71);
+  transition:transform .4s;
+}
+.retreat-card:hover .retreat-photo{transform:scale(1.03);}
+.retreat-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(28,43,58,.78) 0%,rgba(28,43,58,.28) 65%,rgba(28,43,58,.08) 100%);}
+.retreat-content{position:absolute;inset:0;padding:20px;display:flex;flex-direction:column;justify-content:space-between;}
+.retreat-tag-pill{
+  align-self:flex-start;background:rgba(107,143,113,.55);backdrop-filter:blur(8px);
+  border:1px solid rgba(157,184,160,.4);border-radius:20px;
+  padding:4px 12px;font-size:10px;font-weight:500;color:#fff;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.retreat-name{font-family:'DM Serif Display',serif;font-size:21px;color:#fff;line-height:1.15;margin-bottom:2px;}
+.retreat-date{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:14px;}
+.view-btn{
+  align-self:flex-start;background:#fff;border-radius:14px;
+  padding:8px 16px;font-size:12px;font-weight:600;color:var(--sage);
+  display:flex;align-items:center;gap:5px;cursor:pointer;
+  transition:transform .15s;
+}
+.view-btn:active{transform:scale(.95);}
+
+/* ─── BOTTOM NAV ─── */
+.nav{
+  background:rgba(255,255,255,.96);backdrop-filter:blur(20px);
+  border-top:1px solid rgba(74,144,196,.1);
+  padding:10px 8px 28px;
+  display:flex; justify-content:space-around;
+  flex-shrink:0; z-index:40; position:relative;
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;
+  padding:4px 0;cursor:pointer;
+  transition:opacity .15s;
+}
+.nav-item:active{opacity:.7;}
+.nav-icon-bg{
+  width:44px;height:32px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+.nav-item.active .nav-icon-bg{background:var(--sky-mid);}
+.nav-lbl{font-size:10px;font-weight:500;color:var(--muted-l);letter-spacing:-.01em;transition:color .2s;}
+.nav-item.active .nav-lbl{color:var(--blue-deep);}
+
+.nav-fab-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;cursor:pointer;}
+.nav-fab{
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--orange-l),var(--orange));
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  margin-top:-24px;
+  box-shadow:0 4px 20px rgba(232,131,74,.42),0 0 0 4px rgba(232,131,74,.12),0 0 0 8px rgba(232,131,74,.06);
+  cursor:pointer; transition:transform .2s, box-shadow .2s;
+}
+.nav-fab:active{transform:scale(.93);box-shadow:0 2px 12px rgba(232,131,74,.35);}
+.nav-fab-lbl{font-size:10px;font-weight:600;color:var(--orange);margin-top:4px;}
+
+/* ─── MODAL ─── */
+.modal-backdrop{
+  position:absolute;inset:0;background:rgba(28,43,58,.5);
+  backdrop-filter:blur(4px);z-index:60;
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;
+}
+.modal-backdrop.open{opacity:1;pointer-events:all;}
+.modal{
+  background:#fff;border-radius:28px 28px 0 0;
+  width:100%;padding:28px 24px 40px;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.32,.72,0,1);
+}
+.modal-backdrop.open .modal{transform:translateY(0);}
+.modal-handle{width:36px;height:4px;background:var(--sky-deep);border-radius:2px;margin:0 auto 20px;}
+.modal-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.modal-options{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.modal-option{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;border-radius:16px;border:1.5px solid var(--sky-mid);
+  cursor:pointer;transition:all .2s;
+}
+.modal-option:hover,.modal-option.selected{background:var(--sky);border-color:var(--blue-l);}
+.modal-option-icon{font-size:22px;}
+.modal-option-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:1px;}
+.modal-option-sub{font-size:11px;color:var(--muted);}
+.modal-check{margin-left:auto;width:20px;height:20px;border-radius:50%;border:2px solid var(--sky-deep);display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.modal-option.selected .modal-check{background:var(--blue);border-color:var(--blue);color:#fff;font-size:10px;}
+.modal-cta{
+  width:100%;padding:16px;border-radius:16px;
+  background:linear-gradient(135deg,var(--blue-l),var(--blue));
+  color:#fff;font-size:15px;font-weight:600;letter-spacing:-.01em;
+  border:none;cursor:pointer;transition:transform .15s,box-shadow .15s;
+  box-shadow:0 4px 16px rgba(74,144,196,.35);
+}
+.modal-cta:active{transform:scale(.98);box-shadow:0 2px 8px rgba(74,144,196,.25);}
+
+/* ─── TOAST ─── */
+.toast{
+  position:absolute;bottom:110px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:#fff;
+  border-radius:20px;padding:10px 20px;
+  font-size:13px;font-weight:500;white-space:nowrap;
+  z-index:70;opacity:0;pointer-events:none;
+  transition:opacity .25s,transform .25s;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ─── PLACEHOLDER SCREENS ─── */
+.placeholder-screen{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:12px;padding:40px;
+  background:var(--page);
+}
+.placeholder-icon{font-size:52px;margin-bottom:4px;}
+.placeholder-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);text-align:center;}
+.placeholder-sub{font-size:14px;color:var(--muted);text-align:center;line-height:1.6;max-width:240px;}
+.placeholder-badge{
+  background:var(--sky-mid);color:var(--blue-deep);
+  font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:6px 16px;border-radius:20px;margin-top:8px;
+}
+
+/* ─── REVEAL ANIMATIONS ─── */
+.reveal{
+  opacity:0;transform:translateY(18px);
+  transition:opacity .5s ease, transform .5s ease;
+}
+.reveal.in{opacity:1;transform:translateY(0);}
+
+/* ══════════════════════════════════════
+   ONBOARDING OVERLAY — CLEAN REWRITE
+══════════════════════════════════════ */
+#onboarding{
+  position:absolute;
+  top:12px;left:12px;right:12px;
+  height:calc(100% - 24px);
+  z-index:9999;
+  background:transparent;
+  border-radius:44px;
+  overflow:hidden;
+  pointer-events:all;
+  transition:opacity .65s ease, transform .65s cubic-bezier(.4,0,.2,1);
+}
+#onboarding.exiting{opacity:0;transform:scale(1.05);pointer-events:none;}
+#onboarding.gone{display:none !important;}
+
+/* Hide and block all app elements while onboarding is visible */
+.ob-active .nav,
+.ob-active .view,
+.ob-active .statusbar,
+.ob-active .topbar,
+.ob-active .modal-backdrop,
+.ob-active .notif-panel,
+.ob-active .toast,
+.ob-active .island {
+  pointer-events:none !important;
+  user-select:none !important;
+  visibility:hidden !important;
+}
+
+/* Every slide stacks at position 0,0 filling the onboarding container */
+.ob-slide{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;visibility:hidden;
+  transition:opacity .4s ease, transform .4s cubic-bezier(.4,0,.2,1);
+  transform:translateX(28px);
+  background:var(--page);
+}
+.ob-slide.active{opacity:1;pointer-events:all;transform:translateX(0);visibility:visible;}
+.ob-slide.out{opacity:0;transform:translateX(-28px);visibility:hidden;}
+
+/* ── SPLASH ── */
+.ob-splash{background:#0D1922;}
+.ob-mandala-wrap{
+  position:absolute;top:0;left:0;right:0;bottom:200px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.ob-ring{
+  position:absolute;border-radius:50%;
+  border:1px solid rgba(74,144,196,.3);
+}
+.ob-ring-1{width:100px;height:100px;border-color:rgba(74,144,196,.5);animation:obSpin 18s linear infinite;}
+.ob-ring-2{width:160px;height:160px;border-color:rgba(107,143,113,.25);animation:obSpin 28s linear infinite reverse;}
+.ob-ring-3{width:220px;height:220px;border-color:rgba(74,144,196,.14);animation:obSpin 40s linear infinite;}
+.ob-ring-4{width:280px;height:280px;border-color:rgba(201,169,110,.09);animation:obSpin 52s linear infinite reverse;}
+.ob-ring-5{width:340px;height:340px;border-color:rgba(107,143,113,.05);}
+@keyframes obSpin{to{transform:rotate(360deg);}}
+.ob-lotus-svg{width:56px;height:56px;position:relative;z-index:2;}
+.ob-glow{
+  width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(74,144,196,.16) 0%,transparent 70%);
+  position:absolute;
+}
+
+.ob-splash-bottom{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:0 28px 52px;
+  display:flex;flex-direction:column;align-items:center;
+  background:linear-gradient(to top,rgba(13,25,34,1) 70%,transparent);
+}
+.ob-logo-pill{
+  width:52px;height:52px;border-radius:14px;margin-bottom:16px;
+  background:rgba(74,144,196,.18);border:1px solid rgba(74,144,196,.35);
+  backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;
+}
+.ob-splash-title{
+  font-family:'DM Serif Display',serif;
+  font-size:34px;color:#fff;text-align:center;
+  line-height:1.1;letter-spacing:-.02em;margin-bottom:8px;
+}
+.ob-splash-title em{font-style:italic;color:rgba(106,171,216,.9);}
+.ob-splash-slogan{
+  font-family:'DM Serif Display',serif;
+  font-size:17px;color:rgba(106,171,216,.85);
+  text-align:center;letter-spacing:-.01em;margin-bottom:6px;font-style:normal;
+}
+.ob-splash-slogan em{font-style:italic;color:rgba(184,212,238,.9);}
+.ob-splash-sub{
+  font-size:13px;color:rgba(255,255,255,.38);
+  text-align:center;line-height:1.6;margin-bottom:36px;
+}
+
+/* ── FEATURE SLIDES ── */
+.ob-feat{background:#fff;}
+.ob-feat-photo-wrap{
+  height:380px;position:relative;overflow:hidden;flex-shrink:0;
+}
+.ob-feat-photo{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+}
+.ob-feat-grad{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(28,43,58,.04) 0%,rgba(28,43,58,.18) 50%,rgba(28,43,58,.62) 100%);
+}
+.ob-feat-step{
+  position:absolute;top:58px;left:24px;
+  font-size:10px;font-weight:700;color:rgba(255,255,255,.65);letter-spacing:.12em;text-transform:uppercase;
+}
+.ob-float-card{
+  position:absolute;bottom:14px;left:14px;right:14px;
+  background:rgba(255,255,255,.93);backdrop-filter:blur(20px);
+  border-radius:16px;padding:11px 14px;
+  box-shadow:0 6px 28px rgba(0,0,0,.15);
+}
+.ob-feat-text{padding:20px 24px 0;flex:1;display:flex;flex-direction:column;}
+.ob-feat-tag{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;}
+.ob-feat-title{font-family:'DM Serif Display',serif;font-size:24px;color:var(--ink);line-height:1.18;letter-spacing:-.02em;margin-bottom:7px;}
+.ob-feat-title em{font-style:italic;color:var(--blue);}
+.ob-feat-body{font-size:13px;color:var(--muted);line-height:1.65;flex:1;}
+.ob-feat-nav{
+  padding:12px 24px 30px;
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.ob-dots{display:flex;gap:5px;align-items:center;}
+.ob-dot{width:6px;height:6px;border-radius:3px;background:var(--sky-deep);transition:all .3s;}
+.ob-dot.on{width:18px;background:var(--blue);}
+.ob-skip-btn{font-size:13px;color:var(--muted);cursor:pointer;padding:4px 0;user-select:none;}
+.ob-next-btn{
+  background:var(--ink);color:#fff;border:none;
+  padding:11px 22px;border-radius:13px;font-size:14px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;gap:6px;
+  transition:transform .15s;user-select:none;
+}
+.ob-next-btn:active{transform:scale(.95);}
+.ob-next-btn.blue{background:var(--blue);}
+
+/* ── PERSONALIZE ── */
+.ob-pers{background:var(--page);}
+.ob-pers-head{padding:58px 26px 16px;flex-shrink:0;}
+.ob-pers-kicker{font-size:10px;font-weight:700;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+.ob-pers-h1{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);line-height:1.15;letter-spacing:-.02em;margin-bottom:6px;}
+.ob-pers-sub{font-size:13px;color:var(--muted);}
+.ob-pers-body{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding:4px 20px 8px;}
+.ob-pers-body::-webkit-scrollbar{display:none;}
+.ob-pers-group{margin-bottom:16px;}
+.ob-group-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;padding:0 2px;}
+.ob-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.ob-chip{
+  padding:7px 13px;border-radius:20px;border:1.5px solid var(--sky-mid);background:#fff;
+  font-size:12px;font-weight:500;color:var(--ink-mid);
+  cursor:pointer;transition:all .18s;user-select:none;
+}
+.ob-chip.on{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(74,144,196,.3);}
+.ob-chip:active{transform:scale(.95);}
+.ob-pers-foot{padding:12px 24px 32px;flex-shrink:0;}
+
+/* ── LEVEL ── */
+.ob-level{background:var(--page);}
+.ob-level-head{padding:58px 26px 16px;flex-shrink:0;}
+.ob-level-kicker{font-size:10px;font-weight:700;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+.ob-level-h1{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);line-height:1.15;letter-spacing:-.02em;margin-bottom:6px;}
+.ob-level-sub{font-size:13px;color:var(--muted);}
+.ob-level-list{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;padding:4px 18px 8px;display:flex;flex-direction:column;gap:8px;}
+.ob-level-list::-webkit-scrollbar{display:none;}
+.ob-level-card{
+  background:#fff;border-radius:16px;border:2px solid var(--sky-mid);
+  padding:13px 14px;cursor:pointer;transition:all .18s;
+  display:flex;align-items:center;gap:11px;
+}
+.ob-level-card:active{transform:scale(.98);}
+.ob-level-card.on{border-color:var(--blue);background:rgba(74,144,196,.04);box-shadow:0 3px 12px rgba(74,144,196,.18);}
+.ob-level-icon{font-size:24px;flex-shrink:0;}
+.ob-level-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:1px;}
+.ob-level-desc{font-size:11px;color:var(--muted);line-height:1.4;}
+.ob-level-tick{
+  margin-left:auto;width:20px;height:20px;border-radius:50%;
+  border:2px solid var(--sky-deep);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:#fff;transition:all .18s;
+}
+.ob-level-card.on .ob-level-tick{background:var(--blue);border-color:var(--blue);}
+.ob-level-foot{padding:12px 24px 32px;flex-shrink:0;}
+
+/* ── NOTIFICATIONS ── */
+.ob-notif{background:linear-gradient(175deg,#0D1922 0%,#152435 100%);}
+.ob-notif-body{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:54px 28px 16px;
+}
+.ob-mini-phone-wrap{position:relative;margin-bottom:24px;}
+.ob-notif-glow-ring{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(74,144,196,.25) 0%,transparent 70%);
+}
+.ob-mini-phone{
+  width:170px;background:#1b2a3b;border-radius:26px;
+  border:1px solid rgba(255,255,255,.1);
+  padding:14px;box-shadow:0 16px 48px rgba(0,0,0,.5);
+  position:relative;z-index:1;
+}
+.ob-mini-island{width:54px;height:14px;background:#000;border-radius:7px;margin:0 auto 10px;}
+.ob-notif-banner{
+  background:rgba(255,255,255,.1);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.13);border-radius:11px;
+  padding:8px 10px;display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;
+  animation:obBannerIn .45s ease both;
+}
+.ob-notif-banner:nth-child(2){animation-delay:.25s;}
+.ob-notif-banner:nth-child(3){animation-delay:.48s;}
+@keyframes obBannerIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.ob-banner-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.ob-banner-text{font-size:8.5px;color:rgba(255,255,255,.72);line-height:1.45;}
+.ob-banner-text b{display:block;color:#fff;font-weight:700;}
+.ob-notif-title{font-family:'DM Serif Display',serif;font-size:26px;color:#fff;line-height:1.2;letter-spacing:-.02em;margin-bottom:8px;text-align:center;}
+.ob-notif-sub{font-size:13px;color:rgba(255,255,255,.42);line-height:1.65;text-align:center;}
+.ob-notif-foot{padding:16px 24px 40px;display:flex;flex-direction:column;gap:10px;flex-shrink:0;}
+
+/* ── DONE ── */
+.ob-done{background:linear-gradient(155deg,#0D1922 0%,#0F2234 55%,#0D1C2E 100%);}
+.ob-confetti-layer{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.ob-confetti-piece{position:absolute;border-radius:2px;animation:obFall linear forwards;}
+@keyframes obFall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
+  100%{transform:translateY(870px) rotate(720deg);opacity:0;}
+}
+.ob-done-inner{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:32px 28px;text-align:center;
+}
+.ob-done-badge{
+  width:72px;height:72px;border-radius:50%;
+  background:rgba(74,144,196,.22);border:2px solid rgba(74,144,196,.36);
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+  margin-bottom:20px;
+  box-shadow:0 0 0 12px rgba(74,144,196,.06),0 0 0 24px rgba(74,144,196,.03);
+  animation:obBadgePop .6s .1s cubic-bezier(.175,.885,.32,1.275) both;
+}
+@keyframes obBadgePop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+.ob-done-title{font-family:'DM Serif Display',serif;font-size:30px;color:#fff;line-height:1.1;letter-spacing:-.02em;margin-bottom:10px;}
+.ob-done-title em{font-style:italic;color:rgba(106,171,216,.9);}
+.ob-done-sub{font-size:13px;color:rgba(255,255,255,.4);line-height:1.7;max-width:260px;margin-bottom:28px;}
+.ob-done-stats{
+  display:flex;width:100%;margin-bottom:28px;
+  background:rgba(255,255,255,.06);border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);overflow:hidden;
+}
+.ob-stat{flex:1;padding:13px 8px;text-align:center;position:relative;}
+.ob-stat+.ob-stat::before{content:'';position:absolute;left:0;top:16%;bottom:16%;width:1px;background:rgba(255,255,255,.08);}
+.ob-stat-num{font-family:'DM Serif Display',serif;font-size:19px;color:#fff;margin-bottom:2px;}
+.ob-stat-lbl{font-size:9px;color:rgba(255,255,255,.36);letter-spacing:.07em;text-transform:uppercase;}
+
+/* Shared buttons */
+.ob-btn{
+  width:100%;padding:15px;border-radius:15px;
+  font-size:15px;font-weight:600;letter-spacing:-.01em;
+  border:none;cursor:pointer;transition:transform .14s;
+}
+.ob-btn:active{transform:scale(.97);}
+.ob-btn-solid{
+  background:linear-gradient(135deg,var(--blue-l),var(--blue));color:#fff;
+  box-shadow:0 5px 20px rgba(74,144,196,.42);margin-bottom:10px;
+}
+.ob-btn-ghost{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);
+  color:rgba(255,255,255,.62);
+}
+
+/* Status bar */
+#ob-statusbar{
+  position:absolute;top:0;left:0;right:0;height:54px;
+  padding:16px 28px 0;z-index:20;pointer-events:none;
+  display:flex;justify-content:space-between;align-items:flex-end;
+}
+#ob-clock{font-size:15px;font-weight:600;letter-spacing:-.02em;color:#fff;}
+
+/* ── JOURNEY SLIDE ── */
+.ob-journey{ background:var(--page); }
+.ob-j-photo{
+  position:absolute;top:0;left:0;right:0;height:200px;
+  background-size:cover;background-position:center;
+}
+.ob-j-veil{
+  position:absolute;top:0;left:0;right:0;height:240px;
+  background:linear-gradient(to bottom,rgba(13,25,34,.4) 0%,var(--page) 100%);
+}
+.ob-j-content{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  overflow-y:auto;scrollbar-width:none;
+  padding:54px 24px 32px;
+}
+.ob-j-content::-webkit-scrollbar{display:none;}
+.ob-j-badge{
+  display:inline-block;
+  background:rgba(255,255,255,.85);backdrop-filter:blur(8px);
+  border:1px solid rgba(74,144,196,.2);border-radius:20px;
+  padding:5px 14px;font-size:11px;font-weight:600;color:var(--blue-deep);
+  letter-spacing:.04em;margin-bottom:12px;
+}
+.ob-j-h1{
+  font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);
+  line-height:1.12;letter-spacing:-.03em;margin-bottom:14px;
+}
+.ob-j-h1 em{font-style:italic;color:var(--blue);}
+.ob-j-p{font-size:13px;color:var(--ink-mid);line-height:1.68;margin-bottom:12px;}
+.ob-j-p em{font-style:italic;color:var(--ink);}
+.ob-j-quote{
+  margin:12px 0 14px;padding:12px 14px 12px 18px;
+  background:var(--sky);border-left:3px solid var(--blue);border-radius:0 12px 12px 0;
+}
+.ob-j-qt{font-family:'DM Serif Display',serif;font-size:15px;font-style:italic;color:var(--ink);margin-bottom:4px;}
+.ob-j-qa{font-size:11px;color:var(--muted);font-weight:500;}
+.ob-j-pills{display:flex;flex-direction:column;gap:8px;margin:12px 0 20px;}
+.ob-j-pill{
+  display:flex;align-items:center;gap:10px;
+  background:var(--white);border-radius:12px;padding:10px 13px;
+  border:1px solid var(--sky-mid);font-size:12px;color:var(--ink-mid);
+}
+.ob-j-pill svg{flex-shrink:0;}
+.ob-j-pill strong{color:var(--ink);}
+.ob-j-btn-solid{
+  display:block;width:100%;padding:14px;border-radius:14px;
+  background:linear-gradient(135deg,var(--blue-l),var(--blue));color:#fff;
+  border:none;font-size:15px;font-weight:600;cursor:pointer;
+  margin-bottom:10px;font-family:'DM Sans',sans-serif;
+  box-shadow:0 4px 16px rgba(74,144,196,.4);
+}
+.ob-j-btn-solid:active{opacity:.9;transform:scale(.98);}
+.ob-j-btn-ghost{
+  display:block;width:100%;padding:14px;border-radius:14px;
+  background:transparent;color:var(--blue);
+  border:1.5px solid var(--blue);font-size:15px;font-weight:600;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+}
+.ob-j-btn-ghost:active{opacity:.8;}
+
+/* ── REGISTER SLIDE ── */
+.ob-register{background:var(--page);}
+.ob-reg-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 80% 10%,rgba(106,171,216,.18) 0%,transparent 50%),
+             radial-gradient(ellipse at 10% 90%,rgba(107,143,113,.12) 0%,transparent 50%);
+}
+.ob-reg-inner{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  overflow-y:auto;scrollbar-width:none;
+  padding:52px 24px 32px;position:relative;z-index:2;
+}
+.ob-reg-inner::-webkit-scrollbar{display:none;}
+.ob-reg-logo{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,var(--sky-mid),var(--sky-deep));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 12px rgba(74,144,196,.22);margin-bottom:12px;
+}
+.ob-reg-kicker{font-size:10px;font-weight:700;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.ob-reg-h1{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);line-height:1.12;letter-spacing:-.03em;margin-bottom:4px;}
+.ob-reg-h1 em{font-style:italic;color:var(--blue);}
+.ob-reg-sub{font-size:12px;color:var(--muted);margin-bottom:18px;}
+.ob-reg-fields{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.ob-reg-field{display:flex;flex-direction:column;gap:4px;}
+.ob-reg-lbl{font-size:11px;font-weight:700;color:var(--ink-mid);letter-spacing:.03em;}
+.ob-reg-input{
+  padding:12px 13px;border-radius:11px;border:1.5px solid var(--sky-mid);
+  background:var(--white);font-size:14px;color:var(--ink);
+  font-family:'DM Sans',sans-serif;outline:none;-webkit-appearance:none;
+}
+.ob-reg-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(74,144,196,.1);}
+.ob-reg-input::placeholder{color:var(--muted-l);}
+.ob-reg-divider{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:11px;color:var(--muted);}
+.ob-reg-divider::before,.ob-reg-divider::after{content:'';flex:1;height:1px;background:var(--sky-mid);}
+.ob-reg-socials{display:flex;gap:10px;margin-bottom:12px;}
+.ob-reg-soc{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:10px;border-radius:11px;border:1.5px solid var(--sky-mid);
+  background:var(--white);font-size:13px;font-weight:600;color:var(--ink);
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+}
+.ob-reg-soc:active{background:var(--sky);}
+.ob-reg-terms{font-size:10px;color:var(--muted);text-align:center;margin-bottom:14px;line-height:1.5;}
+.ob-reg-link{color:var(--blue);cursor:pointer;font-weight:500;}
+.ob-reg-submit{
+  display:block;width:100%;padding:14px;border-radius:14px;
+  background:linear-gradient(135deg,var(--blue-l),var(--blue));color:#fff;
+  border:none;font-size:15px;font-weight:600;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  box-shadow:0 4px 16px rgba(74,144,196,.4);margin-bottom:12px;
+}
+.ob-reg-submit:active{opacity:.9;}
+.ob-reg-signin{font-size:13px;color:var(--muted);text-align:center;padding-bottom:8px;}
+
+/* ══ RETREATS SCREEN ══ */
+.ret-filter{
+  padding:7px 16px;border-radius:22px;font-size:12px;font-weight:600;
+  white-space:nowrap;flex-shrink:0;cursor:pointer;
+  background:var(--sky-mid);color:var(--ink-mid);
+  transition:all .2s;user-select:none;
+}
+.ret-filter.active{background:var(--blue);color:#fff;box-shadow:0 3px 10px rgba(74,144,196,.35);}
+.ret-filter:active{transform:scale(.96);}
+
+/* Hero card */
+.ret-hero{
+  margin:0 16px 8px;border-radius:24px;overflow:hidden;
+  position:relative;height:240px;cursor:pointer;
+  box-shadow:0 10px 36px rgba(74,144,196,.2),0 2px 8px rgba(0,0,0,.08);
+}
+.ret-hero-img{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  transition:transform .4s ease;
+}
+.ret-hero:hover .ret-hero-img{transform:scale(1.03);}
+.ret-hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(160deg,rgba(28,43,58,.05) 0%,rgba(28,43,58,.25) 40%,rgba(28,43,58,.82) 100%);
+}
+.ret-hero-save{
+  position:absolute;top:14px;right:14px;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.15);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:all .2s;z-index:5;
+}
+.ret-hero-save:active{transform:scale(.9);}
+.ret-hero-save.saved{background:rgba(232,131,74,.8);border-color:var(--orange);}
+.ret-hero-content{
+  position:absolute;bottom:0;left:0;right:0;padding:18px 20px;
+}
+.ret-badge{
+  display:inline-flex;align-items:center;
+  background:rgba(255,255,255,.18);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.28);border-radius:20px;
+  padding:3px 10px;font-size:10px;font-weight:500;color:#fff;
+  letter-spacing:.05em;text-transform:uppercase;
+}
+.ret-badge.featured{background:rgba(232,131,74,.55);}
+.ret-badge.early{background:rgba(107,143,113,.6);}
+.ret-badge.fill{background:rgba(200,60,60,.6);}
+.ret-badge.new{background:rgba(74,144,196,.65);}
+.ret-hero-location{font-size:11px;color:rgba(255,255,255,.6);margin:8px 0 2px;}
+.ret-hero-name{font-family:'DM Serif Display',serif;font-size:24px;color:#fff;line-height:1.1;letter-spacing:-.02em;margin-bottom:4px;}
+.ret-hero-meta{font-size:11px;color:rgba(255,255,255,.55);margin-bottom:12px;}
+.ret-hero-footer{display:flex;align-items:center;justify-content:space-between;}
+.ret-hero-price{font-size:13px;color:rgba(255,255,255,.65);}
+.ret-hero-price span{font-family:'DM Serif Display',serif;font-size:20px;color:#fff;}
+.ret-spots{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;}
+.ret-spots.warn{background:rgba(232,131,74,.25);color:#F0A070;border:1px solid rgba(232,131,74,.3);}
+.ret-spots.ok{background:rgba(107,143,113,.2);color:var(--sage-l);border:1px solid rgba(107,143,113,.25);}
+
+/* Section label */
+.ret-section-lbl{
+  padding:12px 20px 8px;
+  font-size:13px;font-weight:600;color:var(--ink);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.ret-section-lbl span{font-size:12px;color:var(--muted);font-weight:400;}
+
+/* List cards */
+.ret-card{
+  margin:0 16px 12px;border-radius:20px;overflow:hidden;
+  background:#fff;
+  box-shadow:0 2px 14px rgba(74,144,196,.1),0 1px 4px rgba(0,0,0,.05);
+  cursor:pointer;display:flex;flex-direction:column;
+  transition:transform .15s,box-shadow .15s;
+}
+.ret-card:active{transform:scale(.99);box-shadow:0 1px 6px rgba(74,144,196,.08);}
+.ret-card-img{
+  height:148px;position:relative;
+  background-size:cover;background-position:center;
+  overflow:hidden;
+}
+.ret-card-save{
+  position:absolute;top:10px;right:10px;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(0,0,0,.28);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;z-index:2;
+}
+.ret-card-save:active{transform:scale(.9);}
+.ret-card-save.saved{background:rgba(232,131,74,.8);}
+.ret-card-body{padding:13px 15px 14px;}
+.ret-card-region{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;}
+.ret-card-region.india{color:var(--blue);}
+.ret-card-region.bali{color:var(--sage);}
+.ret-card-region.europe{color:#7B68C8;}
+.ret-card-region.japan{color:#C45E4A;}
+.ret-card-name{font-family:'DM Serif Display',serif;font-size:17px;color:var(--ink);margin-bottom:2px;letter-spacing:-.01em;}
+.ret-card-sub{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.ret-card-footer{display:flex;justify-content:space-between;align-items:center;}
+.ret-card-price{font-size:12px;color:var(--muted);}
+.ret-card-price strong{font-family:'DM Serif Display',serif;font-size:17px;color:var(--orange);}
+
+/* ── DETAIL SHEET ── */
+.ret-sheet-backdrop{
+  position:absolute;inset:0;z-index:80;
+  background:rgba(28,43,58,.45);backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;
+  transition:opacity .35s;
+}
+.ret-sheet-backdrop.open{opacity:1;pointer-events:all;}
+.ret-sheet{
+  position:absolute;bottom:0;left:0;right:0;
+  background:#fff;border-radius:28px 28px 0 0;
+  height:90%;display:flex;flex-direction:column;
+  transform:translateY(100%);
+  transition:transform .4s cubic-bezier(.32,.72,0,1);
+}
+.ret-sheet-backdrop.open .ret-sheet{transform:translateY(0);}
+.ret-sheet-handle{width:36px;height:4px;background:var(--sky-deep);border-radius:2px;margin:12px auto 0;flex-shrink:0;}
+.ret-sheet-scroll{flex:1;overflow-y:auto;scrollbar-width:none;}
+.ret-sheet-scroll::-webkit-scrollbar{display:none;}
+.ret-sheet-hero{
+  width:100%;height:220px;
+  background-size:cover;background-position:center;
+  position:relative;flex-shrink:0;
+}
+.ret-sheet-close{
+  position:absolute;top:16px;left:16px;
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(0,0,0,.35);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;cursor:pointer;z-index:5;
+  transition:transform .15s;
+}
+.ret-sheet-close:active{transform:scale(.9);}
+.ret-sheet-save-big{
+  position:absolute;top:16px;right:16px;
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(0,0,0,.35);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:5;transition:all .2s;
+}
+.ret-sheet-save-big:active{transform:scale(.9);}
+.ret-sheet-save-big.saved{background:rgba(232,131,74,.85);}
+.ret-sheet-body{padding:18px 20px 8px;}
+.ret-sheet-badges{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.ret-sheet-title{font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink);line-height:1.1;letter-spacing:-.02em;margin-bottom:4px;}
+.ret-sheet-location{font-size:13px;color:var(--muted);margin-bottom:14px;}
+.ret-sheet-divider{height:1px;background:var(--sky-mid);margin:14px 0;}
+.ret-info-row{display:flex;gap:0;}
+.ret-info-cell{flex:1;text-align:center;position:relative;}
+.ret-info-cell+.ret-info-cell::before{content:'';position:absolute;left:0;top:10%;bottom:10%;width:1px;background:var(--sky-mid);}
+.ret-info-val{font-family:'DM Serif Display',serif;font-size:17px;color:var(--ink);margin-bottom:2px;}
+.ret-info-lbl{font-size:10px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;}
+.ret-sheet-desc{font-size:13px;color:var(--ink-mid);line-height:1.7;margin-bottom:16px;}
+.ret-sheet-includes-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px;}
+.ret-sheet-includes{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.ret-include-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-mid);}
+.ret-include-icon{width:28px;height:28px;border-radius:8px;background:var(--sky);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.ret-sheet-teacher{
+  display:flex;align-items:center;gap:12px;
+  background:var(--sky);border-radius:16px;padding:14px;margin-bottom:8px;cursor:pointer;
+}
+.ret-teacher-av{width:44px;height:44px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--sky-mid);}
+.ret-teacher-av img{width:100%;height:100%;object-fit:cover;}
+.ret-teacher-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:1px;}
+.ret-teacher-role{font-size:11px;color:var(--muted);}
+.ret-teacher-arrow{margin-left:auto;color:var(--muted-l);font-size:16px;}
+
+/* CTA bar */
+.ret-sheet-cta-bar{
+  padding:14px 20px 28px;background:#fff;
+  border-top:1px solid var(--sky-mid);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.ret-sheet-cta-price{font-family:'DM Serif Display',serif;font-size:22px;color:var(--orange);}
+.ret-sheet-cta-btn{
+  background:linear-gradient(135deg,var(--blue-l),var(--blue));
+  color:#fff;border:none;border-radius:14px;
+  padding:13px 28px;font-size:15px;font-weight:600;cursor:pointer;
+  box-shadow:0 4px 16px rgba(74,144,196,.4);
+  transition:transform .15s;
+}
+.ret-sheet-cta-btn:active{transform:scale(.97);}
+
+/* ── RETREAT DETAIL TABS ── */
+.ret-tabs{
+  display:flex;gap:0;margin-bottom:18px;
+  background:var(--sky);border-radius:14px;padding:4px;
+}
+.ret-tab{
+  flex:1;padding:8px 4px;text-align:center;
+  font-size:12px;font-weight:600;color:var(--muted);
+  border-radius:10px;cursor:pointer;
+  transition:all .2s;user-select:none;
+}
+.ret-tab.active{background:#fff;color:var(--ink);box-shadow:0 2px 8px rgba(28,43,58,.1);}
+.ret-tab:active{transform:scale(.97);}
+
+/* ── ITINERARY ── */
+.itin-day{margin-bottom:20px;}
+.itin-day-header{
+  display:flex;align-items:center;gap:10px;margin-bottom:10px;
+}
+.itin-day-num{
+  width:32px;height:32px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue-l),var(--blue));
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#fff;
+}
+.itin-day-title{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.01em;}
+.itin-day-sub{font-size:11px;color:var(--muted);}
+.itin-timeline{padding-left:16px;border-left:2px solid var(--sky-mid);margin-left:16px;display:flex;flex-direction:column;gap:0;}
+.itin-slot{
+  position:relative;padding:0 0 14px 16px;
+}
+.itin-slot::before{
+  content:'';position:absolute;left:-5px;top:5px;
+  width:8px;height:8px;border-radius:50%;
+  background:#fff;border:2px solid var(--blue-l);
+}
+.itin-slot:last-child{padding-bottom:0;}
+.itin-time{font-size:10px;font-weight:600;color:var(--blue);letter-spacing:.04em;margin-bottom:2px;}
+.itin-activity{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.itin-detail{font-size:11px;color:var(--muted);line-height:1.5;}
+.itin-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--sky);border-radius:12px;padding:2px 8px;
+  font-size:10px;font-weight:500;color:var(--blue-deep);
+  margin-top:4px;
+}
+
+/* ── SOCIAL PANEL ── */
+.ret-social-going{
+  background:var(--sky);border-radius:16px;padding:14px 16px;margin-bottom:14px;
+}
+.ret-social-going-title{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:10px;}
+.ret-going-avatars{display:flex;align-items:center;margin-bottom:6px;}
+.ret-going-av{
+  width:34px;height:34px;border-radius:50%;
+  border:2.5px solid #fff;overflow:hidden;
+  margin-right:-10px;background:var(--sky-mid);
+  box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+.ret-going-av img{width:100%;height:100%;object-fit:cover;}
+.ret-going-count{
+  margin-left:18px;font-size:12px;color:var(--blue-deep);font-weight:600;
+}
+.ret-going-sub{font-size:11px;color:var(--muted);}
+
+/* Social post card — minimal IG-style within sheet */
+.ret-soc-post{
+  background:#fff;border-radius:18px;overflow:hidden;
+  border:1px solid var(--sky-mid);margin-bottom:12px;
+}
+.ret-soc-post:last-child{margin-bottom:8px;}
+.ret-soc-hd{padding:11px 13px 8px;display:flex;align-items:center;gap:8px;}
+.ret-soc-av{
+  width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;
+  background:linear-gradient(135deg,#f09433,#bc1888);padding:1.5px;
+}
+.ret-soc-av-inner{width:100%;height:100%;border-radius:50%;overflow:hidden;border:1.5px solid #fff;background:var(--sky-mid);}
+.ret-soc-av-inner img{width:100%;height:100%;object-fit:cover;}
+.ret-soc-name{font-size:12px;font-weight:700;color:var(--ink);}
+.ret-soc-meta{font-size:10px;color:var(--muted);}
+.ret-soc-time{margin-left:auto;font-size:10px;color:var(--muted-l);}
+.ret-soc-img{
+  width:100%;aspect-ratio:4/3;
+  background-size:cover;background-position:center;
+}
+.ret-soc-body{padding:10px 13px 12px;}
+.ret-soc-actions{display:flex;align-items:center;gap:14px;margin-bottom:7px;}
+.ret-soc-act{
+  display:flex;align-items:center;gap:4px;
+  font-size:11px;color:var(--muted);cursor:pointer;
+  transition:color .15s;user-select:none;
+}
+.ret-soc-act:active{transform:scale(.92);}
+.ret-soc-act.liked{color:var(--orange);}
+.ret-soc-likes{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.ret-soc-caption{font-size:12px;color:var(--ink);line-height:1.5;}
+.ret-soc-caption .soc-handle{font-weight:700;}
+.ret-soc-caption .soc-tag{color:var(--blue);font-weight:500;}
+
+/* ─── NOTIFICATION PANEL ─── */
+.notif-panel{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:var(--page);z-index:55;
+  transform:translateY(-100%);
+  transition:transform .35s cubic-bezier(.32,.72,0,1);
+}
+.notif-panel.open{transform:translateY(0);}
+.notif-header{
+  padding:56px 20px 16px;
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--page);border-bottom:1px solid var(--sky-mid);
+}
+.notif-header-title{font-size:20px;font-weight:600;color:var(--ink);letter-spacing:-.02em;}
+.notif-close{
+  width:32px;height:32px;border-radius:50%;background:var(--sky-mid);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;
+  color:var(--ink-mid);transition:transform .15s;
+}
+.notif-close:active{transform:scale(.9);}
+.notif-list{padding:16px 20px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1;}
+.notif-item{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:14px;background:var(--white);border-radius:16px;
+  border:1px solid var(--sky-mid);
+}
+.notif-dot-badge{width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0;margin-top:4px;}
+.notif-dot-badge.read{background:var(--sky-deep);}
+.notif-text{font-size:13px;color:var(--ink-mid);line-height:1.5;}
+.notif-text strong{color:var(--ink);}
+.notif-time{font-size:11px;color:var(--muted-l);margin-top:3px;}
+</style>
+</head>
+<body>
+<div class="phone ob-active">
+  <div class="screen">
+    <div class="island"></div>
+
+
+
+    <!-- STATUS -->
+    <div class="statusbar">
+      <div class="status-time" id="clock">9:41</div>
+      <div class="status-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12"><rect x="0" y="3" width="3" height="9" rx="1" fill="#1C2B3A" opacity=".35"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#1C2B3A" opacity=".55"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#1C2B3A" opacity=".8"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#1C2B3A"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 2.5C10.2 2.5 12.2 3.5 13.5 5.1L15 3.5C13.3 1.3 10.8 0 8 0C5.2 0 2.7 1.3 1 3.5L2.5 5.1C3.8 3.5 5.8 2.5 8 2.5Z" fill="#1C2B3A"/><path d="M8 5.5C9.4 5.5 10.6 6.1 11.5 7.1L13 5.5C11.7 4.1 9.9 3.2 8 3.2C6.1 3.2 4.3 4.1 3 5.5L4.5 7.1C5.4 6.1 6.6 5.5 8 5.5Z" fill="#1C2B3A"/><circle cx="8" cy="11" r="1.5" fill="#1C2B3A"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3.5" stroke="#1C2B3A" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#1C2B3A"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="#1C2B3A" opacity=".4"/></svg>
+      </div>
+    </div>
+
+    <!-- ══ HOME VIEW ══ -->
+    <div class="view active" id="view-home">
+      <div class="topbar" id="home-topbar">
+        <div class="topbar-left">
+          <div class="logo-mark">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 20C12 20 5 16 5 10C5 7 8 5 12 5C16 5 19 7 19 10C19 16 12 20 12 20Z" fill="#4A90C4" opacity=".3"/>
+              <path d="M12 20C12 20 5 16 5 10" stroke="#4A90C4" stroke-width="1.3" stroke-linecap="round"/>
+              <path d="M12 20C12 20 19 16 19 10" stroke="#4A90C4" stroke-width="1.3" stroke-linecap="round"/>
+              <path d="M12 5C12 5 9 8 9 12C9 15.3 10.5 18 12 20" stroke="#2C6A96" stroke-width="1.3" stroke-linecap="round"/>
+              <path d="M12 5C12 5 15 8 15 12C15 15.3 13.5 18 12 20" stroke="#2C6A96" stroke-width="1.3" stroke-linecap="round"/>
+              <circle cx="12" cy="20" r="1.2" fill="#4A90C4"/>
+            </svg>
+          </div>
+          <div>
+            <div class="topbar-welcome">Welcome back,</div>
+            <div class="topbar-name">Daniel</div>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="notif-btn" id="notifBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <div class="notif-dot" id="notifDot"></div>
+          </div>
+          <div class="av-btn">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face" alt="Daniel">
+          </div>
+        </div>
+      </div>
+
+      <div class="scroll" id="homeScroll">
+        <!-- Practice Card -->
+        <div style="padding:0 0 4px;">
+          <div class="sec-hd">
+            <div class="sec-title">Today's Practice</div>
+            <div class="sec-link">Schedule →</div>
+          </div>
+        </div>
+        <div class="practice-hero reveal" id="practiceHero">
+          <div class="practice-hero-photo"></div>
+          <div class="practice-hero-overlay"></div>
+          <div class="practice-hero-content">
+            <div class="practice-badge">🕔 Morning Session</div>
+            <div>
+              <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:2px;">Suggested for you</div>
+              <div class="practice-title">Primary Series<br>Mysore Practice</div>
+              <div class="practice-sub">Estimated 75–90 min · With your teacher</div>
+              <div class="log-btn" id="logPracticeBtn">
+                <div class="log-btn-circle">✓</div>
+                Log Practice
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rhythm -->
+        <div class="rhythm-card reveal" style="transition-delay:.08s">
+          <div class="rhythm-header">
+            <div>
+              <div class="rhythm-title">Practice Rhythm</div>
+              <div class="rhythm-sub">This week</div>
+            </div>
+            <div class="moon-chip">🌕 Moon Day Wed</div>
+          </div>
+          <div class="days-row">
+            <div class="day-col"><div class="day-lbl">Sun</div><div class="pip done"></div></div>
+            <div class="day-col"><div class="day-lbl">Mon</div><div class="pip done"></div></div>
+            <div class="day-col"><div class="day-lbl">Tue</div><div class="pip done"></div></div>
+            <div class="day-col"><div class="day-lbl">Wed</div><div class="pip rest"></div></div>
+            <div class="day-col"><div class="day-lbl">Thu</div><div class="pip done"></div></div>
+            <div class="day-col"><div class="day-lbl">Fri</div><div class="pip today"></div></div>
+            <div class="day-col"><div class="day-lbl">Sat</div><div class="pip empty"></div></div>
+          </div>
+          <div class="progress-row">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4A90C4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+            <div class="progress-txt">4 of 6 completed</div>
+          </div>
+        </div>
+
+        <!-- Friends -->
+        <div class="friends-sec reveal" style="transition-delay:.14s">
+          <div class="sec-hd" style="margin-bottom:14px;">
+            <div class="sec-title">Friends on the Mat</div>
+            <div class="sec-link">See all →</div>
+          </div>
+          <div class="friends-row">
+            <div class="friend-item" onclick="showToast('Sara is practicing in Mysore 🧘')">
+              <div class="friend-av-wrap">
+                <div class="friend-av"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&h=120&fit=crop&crop=face" alt="Sara"></div>
+                <div class="friend-online"></div>
+              </div>
+              <div class="friend-name">Sara</div>
+            </div>
+            <div class="friend-item" onclick="showToast('Priya is practicing in Mysore 🌿')">
+              <div class="friend-av-wrap">
+                <div class="friend-av"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=120&h=120&fit=crop&crop=face" alt="Priya"></div>
+                <div class="friend-online"></div>
+              </div>
+              <div class="friend-name">Priya</div>
+            </div>
+            <div class="friend-item" onclick="showToast('Marco is practicing in Rome 🏛️')">
+              <div class="friend-av-wrap">
+                <div class="friend-av"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&h=120&fit=crop&crop=face" alt="Marco"></div>
+                <div class="friend-online"></div>
+              </div>
+              <div class="friend-name">Marco</div>
+            </div>
+            <div class="friend-item" onclick="showToast('Leila is practicing in London ✨')">
+              <div class="friend-av-wrap">
+                <div class="friend-av"><img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=120&h=120&fit=crop&crop=face" alt="Leila"></div>
+                <div class="friend-online"></div>
+              </div>
+              <div class="friend-name">Leila</div>
+            </div>
+            <div class="friend-item" onclick="showToast('Tom practiced earlier today')">
+              <div class="friend-av-wrap">
+                <div class="friend-av"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=face" alt="Tom"></div>
+              </div>
+              <div class="friend-name">Tom</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Community -->
+        <div style="padding-bottom:4px;">
+          <div class="sec-hd">
+            <div class="sec-title">Community</div>
+            <div class="sec-link" onclick="switchNav('community')">Explore →</div>
+          </div>
+        </div>
+        <div class="community-card reveal" style="transition-delay:.2s">
+          <div class="post-hd">
+            <div class="post-av"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&h=80&fit=crop&crop=face" alt="Priya"></div>
+            <div>
+              <div class="post-uname">priya.ashtanga</div>
+              <div class="post-loc">📍 Mysore, India</div>
+            </div>
+            <div class="post-time">2h ago</div>
+          </div>
+          <div class="post-photo"></div>
+          <div class="post-body">
+            <div class="post-txt">Finally reached <strong>Marichyasana D</strong> today after months of practice. The bind came naturally this morning — I couldn't stop smiling. 🙏</div>
+            <div class="post-actions">
+              <div class="action-btn liked" id="likeBtn" onclick="toggleLike()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <span id="likeLabel">Like · 48</span>
+              </div>
+              <div class="action-btn" onclick="showToast('Comments coming soon 💬')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Comment · 12
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gathering -->
+        <div style="padding-bottom:4px;">
+          <div class="sec-hd">
+            <div class="sec-title">Recommended Gathering</div>
+            <div class="sec-link" onclick="switchNav('retreats')">Browse all →</div>
+          </div>
+        </div>
+        <div class="retreat-card reveal" style="transition-delay:.26s" onclick="showToast('Tuscany Gathering · July 10–17 · from $1,650 🌿')">
+          <div class="retreat-photo"></div>
+          <div class="retreat-overlay"></div>
+          <div class="retreat-content">
+            <div class="retreat-tag-pill">🌿 Curated for you</div>
+            <div>
+              <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:2px;">Yoga Gathering in</div>
+              <div class="retreat-name">Tuscany, Italy</div>
+              <div class="retreat-date">July 10–17 · 8 days · from $1,650</div>
+              <div class="view-btn" onclick="event.stopPropagation();switchNav('retreats')">
+                View Gathering
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:20px;"></div>
+      </div><!-- /homeScroll -->
+    </div><!-- /home view -->
+
+    <!-- ══ COMMUNITY VIEW (Instagram-style) ══ -->
+    <div class="view" id="view-community">
+
+      <!-- IG Top Bar -->
+      <div class="ig-topbar">
+        <div class="ig-logo">Saṅgha<span>.</span></div>
+        <div class="ig-top-icons">
+          <div class="ig-icon-btn" onclick="showToast('New post coming soon ✨')">
+            <!-- plus square -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="4"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          </div>
+          <div class="ig-icon-btn" id="igNotifBtn" onclick="document.getElementById('notifPanel').classList.add('open');document.getElementById('notifDot').style.display='none';">
+            <!-- heart -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <div class="ig-icon-btn" onclick="showToast('Messages coming soon 💬')">
+            <!-- messenger -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs: Feed | Explore -->
+      <div class="ig-tabs">
+        <div class="ig-tab active" id="igTabFeed" onclick="switchIgTab('feed')">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </div>
+        <div class="ig-tab" id="igTabExplore" onclick="switchIgTab('explore')">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+      </div>
+
+      <!-- FEED TAB -->
+      <div id="igFeedView" class="scroll" style="background:#fafafa;">
+
+        <!-- Stories -->
+        <div class="ig-stories-row">
+          <!-- Your story -->
+          <div class="ig-story" onclick="showToast('Add to your story ➕')">
+            <div class="ig-story-ring mine">
+              <div class="ig-story-inner" style="border:none;">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=face" alt="You">
+                <div class="ig-story-add">+</div>
+              </div>
+            </div>
+            <div class="ig-story-lbl">Your story</div>
+          </div>
+          <!-- Friends -->
+          <div class="ig-story" onclick="showToast('priya.ashtanga · Mysore 🌅')">
+            <div class="ig-story-ring">
+              <div class="ig-story-inner"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=120&h=120&fit=crop&crop=face" alt="Priya"></div>
+            </div>
+            <div class="ig-story-lbl">priya.a</div>
+          </div>
+          <div class="ig-story" onclick="showToast('sara.mysore · Shala morning 🕔')">
+            <div class="ig-story-ring">
+              <div class="ig-story-inner"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&h=120&fit=crop&crop=face" alt="Sara"></div>
+            </div>
+            <div class="ig-story-lbl">sara.mysore</div>
+          </div>
+          <div class="ig-story" onclick="showToast('marco.yoga · Primary Series ✨')">
+            <div class="ig-story-ring">
+              <div class="ig-story-inner"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&h=120&fit=crop&crop=face" alt="Marco"></div>
+            </div>
+            <div class="ig-story-lbl">marco.yoga</div>
+          </div>
+          <div class="ig-story" onclick="showToast('leila.practice · Backbend progress 🌿')">
+            <div class="ig-story-ring seen">
+              <div class="ig-story-inner"><img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=120&h=120&fit=crop&crop=face" alt="Leila"></div>
+            </div>
+            <div class="ig-story-lbl">leila</div>
+          </div>
+          <div class="ig-story" onclick="showToast('ashtanga.kpj · Official shala story')">
+            <div class="ig-story-ring seen">
+              <div class="ig-story-inner" style="background:linear-gradient(135deg,var(--sand-mid),var(--sand-deep));display:flex;align-items:center;justify-content:center;font-size:18px;">🏛️</div>
+            </div>
+            <div class="ig-story-lbl">KPJAYI</div>
+          </div>
+        </div>
+
+        <!-- ── POST 1 : Priya ── -->
+        <div class="ig-post">
+          <div class="ig-post-hd">
+            <div class="ig-post-av" onclick="showToast('priya.ashtanga 🌿')">
+              <div class="ig-post-av-inner"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&h=80&fit=crop&crop=face" alt="Priya"></div>
+            </div>
+            <div>
+              <div class="ig-post-name">priya.ashtanga</div>
+              <div class="ig-post-sub">📍 Mysore, India</div>
+            </div>
+            <div class="ig-post-more" onclick="showToast('Options…')">···</div>
+          </div>
+          <!-- Square image -->
+          <div class="ig-post-img" id="igImg1"
+            style="background:url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80') center/cover no-repeat;"
+            ondblclick="igDoubleTapLike('igImg1','igLike1','igLikeCount1',48)">
+            <div class="ig-heart-pop" id="igImg1-pop">
+              <svg viewBox="0 0 24 24" fill="white"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+          </div>
+          <!-- Actions -->
+          <div class="ig-actions">
+            <div class="ig-act" id="igLike1" onclick="igToggleLike('igLike1','igLikeCount1',48)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div class="ig-act" onclick="showToast('Comments 💬')">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="ig-act" onclick="showToast('Share post 📤')">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </div>
+            <div class="ig-act-spacer"></div>
+            <div class="ig-act ig-save" onclick="showToast('Saved ✨')">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </div>
+          </div>
+          <div class="ig-meta">
+            <div class="ig-likes"><span id="igLikeCount1">48</span> likes</div>
+            <div class="ig-caption"><span class="ig-handle">priya.ashtanga</span> Finally reached Marichyasana D after months! The bind came naturally this morning 🙏 <span class="ig-hashtag">#ashtanga</span> <span class="ig-hashtag">#mysore</span> <span class="ig-hashtag">#primaryseries</span></div>
+            <div class="ig-view-comments" onclick="showToast('View all 12 comments 💬')">View all 12 comments</div>
+            <div class="ig-post-time">2 hours ago</div>
+          </div>
+        </div>
+
+        <!-- ── POST 2 : Sara (multi-image) ── -->
+        <div class="ig-post">
+          <div class="ig-post-hd">
+            <div class="ig-post-av" onclick="showToast('sara.mysore 🌅')">
+              <div class="ig-post-av-inner"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face" alt="Sara"></div>
+            </div>
+            <div>
+              <div class="ig-post-name">sara.mysore</div>
+              <div class="ig-post-sub">📍 Mysore, Karnataka</div>
+            </div>
+            <div class="ig-post-more" onclick="showToast('Options…')">···</div>
+          </div>
+          <div class="ig-post-img" id="igImg2"
+            style="background:url('https://images.unsplash.com/photo-1545389336-cf090694435e?w=800&q=80') center/cover no-repeat;"
+            ondblclick="igDoubleTapLike('igImg2','igLike2','igLikeCount2',91)">
+            <div class="ig-heart-pop" id="igImg2-pop">
+              <svg viewBox="0 0 24 24" fill="white"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+          </div>
+          <!-- multi-dot indicator -->
+          <div class="ig-img-dots">
+            <div class="ig-dot active"></div>
+            <div class="ig-dot"></div>
+            <div class="ig-dot"></div>
+          </div>
+          <div class="ig-actions">
+            <div class="ig-act" id="igLike2" onclick="igToggleLike('igLike2','igLikeCount2',91)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div class="ig-act" onclick="showToast('Comments 💬')">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="ig-act" onclick="showToast('Share post 📤')">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </div>
+            <div class="ig-act-spacer"></div>
+            <div class="ig-act ig-save" onclick="showToast('Saved ✨')">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </div>
+          </div>
+          <div class="ig-meta">
+            <div class="ig-likes"><span id="igLikeCount2">91</span> likes</div>
+            <div class="ig-caption"><span class="ig-handle">sara.mysore</span> Week 3 at the shala. 5am wakeups are getting easier — the sunrise makes it worth it 🌅 <span class="ig-hashtag">#mysorelife</span> <span class="ig-hashtag">#ashtangayoga</span></div>
+            <div class="ig-view-comments" onclick="showToast('View all 24 comments 💬')">View all 24 comments</div>
+            <div class="ig-post-time">5 hours ago</div>
+          </div>
+        </div>
+
+        <!-- ── POST 3 : Marco (tall portrait) ── -->
+        <div class="ig-post">
+          <div class="ig-post-hd">
+            <div class="ig-post-av seen" onclick="showToast('marco.yoga 🏛️')">
+              <div class="ig-post-av-inner"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&h=80&fit=crop&crop=face" alt="Marco"></div>
+            </div>
+            <div>
+              <div class="ig-post-name">marco.yoga</div>
+              <div class="ig-post-sub">📍 Rome, Italy</div>
+            </div>
+            <div class="ig-post-more" onclick="showToast('Options…')">···</div>
+          </div>
+          <div class="ig-post-img tall" id="igImg3"
+            style="background:url('https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800&q=80') center/cover no-repeat;"
+            ondblclick="igDoubleTapLike('igImg3','igLike3','igLikeCount3',203)">
+            <div class="ig-heart-pop" id="igImg3-pop">
+              <svg viewBox="0 0 24 24" fill="white"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+          </div>
+          <div class="ig-actions">
+            <div class="ig-act" id="igLike3" onclick="igToggleLike('igLike3','igLikeCount3',203)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div class="ig-act" onclick="showToast('Comments 💬')">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="ig-act" onclick="showToast('Share post 📤')">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </div>
+            <div class="ig-act-spacer"></div>
+            <div class="ig-act ig-save" onclick="showToast('Saved ✨')">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </div>
+          </div>
+          <div class="ig-meta">
+            <div class="ig-likes"><span id="igLikeCount3">203</span> likes</div>
+            <div class="ig-caption"><span class="ig-handle">marco.yoga</span> Two years. 365 practices this year. Infinite gratitude 🙏✨ <span class="ig-hashtag">#2years</span> <span class="ig-hashtag">#ashtanga</span> <span class="ig-hashtag">#dailypractice</span></div>
+            <div class="ig-view-comments" onclick="showToast('View all 47 comments 💬')">View all 47 comments</div>
+            <div class="ig-post-time">1 day ago</div>
+          </div>
+        </div>
+
+        <!-- ── POST 4 : Leila ── -->
+        <div class="ig-post" style="margin-bottom:16px;">
+          <div class="ig-post-hd">
+            <div class="ig-post-av seen" onclick="showToast('leila.practice ✨')">
+              <div class="ig-post-av-inner"><img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=80&h=80&fit=crop&crop=face" alt="Leila"></div>
+            </div>
+            <div>
+              <div class="ig-post-name">leila.practice</div>
+              <div class="ig-post-sub">📍 London, UK</div>
+            </div>
+            <div class="ig-post-more" onclick="showToast('Options…')">···</div>
+          </div>
+          <div class="ig-post-img" id="igImg4"
+            style="background:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80') center/cover no-repeat;"
+            ondblclick="igDoubleTapLike('igImg4','igLike4','igLikeCount4',57)">
+            <div class="ig-heart-pop" id="igImg4-pop">
+              <svg viewBox="0 0 24 24" fill="white"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+          </div>
+          <div class="ig-actions">
+            <div class="ig-act" id="igLike4" onclick="igToggleLike('igLike4','igLikeCount4',57)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div class="ig-act" onclick="showToast('Comments 💬')">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="ig-act" onclick="showToast('Share post 📤')">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </div>
+            <div class="ig-act-spacer"></div>
+            <div class="ig-act ig-save" onclick="showToast('Saved ✨')">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </div>
+          </div>
+          <div class="ig-meta">
+            <div class="ig-likes"><span id="igLikeCount4">57</span> likes</div>
+            <div class="ig-caption"><span class="ig-handle">leila.practice</span> Booked my Tuscany gathering — can't wait to practice with the sangha in the hills 🌿🏔️ <span class="ig-hashtag">#gathering</span> <span class="ig-hashtag">#ashtangasangha</span></div>
+            <div class="ig-view-comments" onclick="showToast('View all 9 comments 💬')">View all 9 comments</div>
+            <div class="ig-post-time">2 days ago</div>
+          </div>
+        </div>
+
+      </div><!-- /igFeedView -->
+
+      <!-- EXPLORE TAB -->
+      <div id="igExploreView" style="display:none;flex:1;overflow-y:auto;scrollbar-width:none;background:#fafafa;">
+        <!-- Search bar -->
+        <div style="padding:10px 14px;background:#fff;border-bottom:1px solid rgba(0,0,0,.06);">
+          <div style="background:var(--sky);border-radius:12px;padding:9px 14px;display:flex;align-items:center;gap:8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7A8E9E" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span style="font-size:13px;color:var(--muted);">Search practitioners, poses, shalas…</span>
+          </div>
+        </div>
+        <!-- Grid -->
+        <div class="ig-grid">
+          <div class="ig-grid-cell big" onclick="showToast('priya.ashtanga · Marichyasana D 🙏')" style="background:url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80') center/cover no-repeat;"></div>
+          <div class="ig-grid-cell" onclick="showToast('sara.mysore · Shala morning ☀️')" style="background:url('https://images.unsplash.com/photo-1545389336-cf090694435e?w=400&q=80') center/cover no-repeat;"></div>
+          <div class="ig-grid-cell" onclick="showToast('marco.yoga · 2 years 🎉')" style="background:url('https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=400&q=80') center/cover no-repeat;"></div>
+          <div class="ig-grid-cell" onclick="showToast('leila.practice · Tuscany bound 🌿')" style="background:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80') center/cover no-repeat;"></div>
+          <div class="ig-grid-cell" onclick="showToast('kpjayi.official · Morning chanting 🕉️')" style="background:url('https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=400&q=80') center/cover no-repeat;"></div>
+          <div class="ig-grid-cell" onclick="showToast('ashtanga.world · 247 practicing now 🌍')" style="background:url('https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400&q=80') center/cover no-repeat;"></div>
+          <div class="ig-grid-cell big" onclick="showToast('sangha.gatherings · Bali Nov 2026 🌴')" style="background:url('https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80') center/cover no-repeat;"></div>
+          <div class="ig-grid-cell" onclick="showToast('tom.ashtanga · Home practice 🏠')" style="background:url('https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=400&q=80') center/cover no-repeat;"></div>
+          <div class="ig-grid-cell" onclick="showToast('mysore.shala · Open today 6–11am 🕕')" style="background:url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&q=80') center/cover no-repeat;"></div>
+        </div>
+      </div>
+
+    </div><!-- /community view -->
+
+    <!-- ══ PRACTICE VIEW ══ -->
+    <div class="view" id="view-practice">
+      <div class="placeholder-screen">
+        <div class="placeholder-icon">🧘</div>
+        <div class="placeholder-title">Start Your Practice</div>
+        <div class="placeholder-sub">Choose your series and let the breath guide you. Your mat is ready.</div>
+        <div class="placeholder-badge">Primary Series · 41 poses</div>
+        <div style="margin-top:20px;width:100%;display:flex;flex-direction:column;gap:10px;">
+          <div class="log-btn" style="align-self:stretch;justify-content:center;padding:15px;border-radius:16px;font-size:14px;" onclick="openModal()">
+            <div class="log-btn-circle">▶</div>
+            Begin Mysore Practice
+          </div>
+          <div style="background:var(--sky);border-radius:16px;padding:15px;text-align:center;font-size:14px;font-weight:500;color:var(--blue-deep);cursor:pointer;" onclick="showToast('Guided practice coming soon ✨')">
+            Guided Practice Mode
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ EXPLORE VIEW ══ -->
+    <div class="view" id="view-explore">
+      <div class="placeholder-screen">
+        <div class="placeholder-icon">🗺️</div>
+        <div class="placeholder-title">Explore the Sangha</div>
+        <div class="placeholder-sub">Discover shalas, teachers, and practitioners around the world.</div>
+        <div class="placeholder-badge">247 practicing right now</div>
+        <div style="margin-top:20px;background:var(--sky-mid);border-radius:16px;padding:16px;width:100%;">
+          <div style="font-size:13px;color:var(--ink-mid);margin-bottom:10px;font-weight:500;">🟢 Near you — Tel Aviv</div>
+          <div style="display:flex;gap:-6px;margin-bottom:8px;">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=40&h=40&fit=crop&crop=face" style="width:32px;height:32px;border-radius:50%;border:2px solid white;margin-right:-8px;">
+            <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=40&h=40&fit=crop&crop=face" style="width:32px;height:32px;border-radius:50%;border:2px solid white;margin-right:-8px;">
+            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=40&h=40&fit=crop&crop=face" style="width:32px;height:32px;border-radius:50%;border:2px solid white;margin-right:6px;">
+            <span style="font-size:12px;color:var(--blue-deep);font-weight:500;align-self:center;">+4 more</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted);">3 shalas open now · 7 practitioners nearby</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RETREATS VIEW ══ -->
+    <div class="view" id="view-retreats">
+
+      <!-- Topbar -->
+      <div class="topbar" style="background:var(--page);">
+        <div style="font-size:20px;font-weight:600;color:var(--ink);letter-spacing:-.02em;">Gatherings</div>
+        <div style="display:flex;gap:8px;">
+          <div class="notif-btn" onclick="showToast('Search gatherings 🔍')" style="cursor:pointer;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div class="notif-btn" onclick="showToast('Filter options 🎛️')" style="cursor:pointer;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter pills -->
+      <div style="padding:0 16px 12px;background:var(--page);">
+        <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;" id="retFilterRow">
+          <div class="ret-filter active" onclick="retFilter(this,'all')">All</div>
+          <div class="ret-filter" onclick="retFilter(this,'india')">🇮🇳 India</div>
+          <div class="ret-filter" onclick="retFilter(this,'bali')">🌴 Bali</div>
+          <div class="ret-filter" onclick="retFilter(this,'europe')">🏛️ Europe</div>
+          <div class="ret-filter" onclick="retFilter(this,'greece')">⛵ Greece</div>
+          <div class="ret-filter" onclick="retFilter(this,'japan')">⛩️ Japan</div>
+        </div>
+      </div>
+
+      <div class="scroll" id="retreatsScroll">
+
+        <!-- ── RETREAT 1: TUSCANY (hero) ── -->
+        <div class="ret-hero" onclick="openRetreat(0)">
+          <div class="ret-hero-img" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80');"></div>
+          <div class="ret-hero-overlay"></div>
+          <div class="ret-hero-save" onclick="event.stopPropagation();retToggleSave(this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="ret-hero-content">
+            <div style="display:flex;gap:6px;margin-bottom:10px;">
+              <div class="ret-badge featured">⭐ Featured</div>
+              <div class="ret-badge">8 days</div>
+            </div>
+            <div class="ret-hero-location">Tuscany, Italy</div>
+            <div class="ret-hero-name">Hills of the Heart</div>
+            <div class="ret-hero-meta">July 10–17, 2026 · Primary & Intermediate</div>
+            <div class="ret-hero-footer">
+              <div class="ret-hero-price">from <span>$1,650</span></div>
+              <div class="ret-spots warn">3 spots left</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section label -->
+        <div class="ret-section-lbl">All Gatherings <span>5 available</span></div>
+
+        <!-- ── RETREAT 2: MYSORE ── -->
+        <div class="ret-card" onclick="openRetreat(1)" data-region="india">
+          <div class="ret-card-img" style="background-image:url('https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=700&q=80');">
+            <div class="ret-card-badge fill">Filling Fast</div>
+            <div class="ret-card-save" onclick="event.stopPropagation();retToggleSave(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </div>
+          </div>
+          <div class="ret-card-body">
+            <div class="ret-card-region india">🇮🇳 India · 21 days</div>
+            <div class="ret-card-name">Mysore Immersion</div>
+            <div class="ret-card-sub">Oct 4–24 · KPJAYI Authorized Shala</div>
+            <div class="ret-card-footer">
+              <div class="ret-card-price">from <strong>$2,400</strong></div>
+              <div class="ret-spots warn" style="font-size:11px;">3 spots</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── RETREAT 3: BALI ── -->
+        <div class="ret-card" onclick="openRetreat(2)" data-region="bali">
+          <div class="ret-card-img" style="background-image:url('https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=700&q=80');">
+            <div class="ret-card-badge early">Early Bird</div>
+            <div class="ret-card-save" onclick="event.stopPropagation();retToggleSave(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </div>
+          </div>
+          <div class="ret-card-body">
+            <div class="ret-card-region bali">🌴 Bali · 10 days</div>
+            <div class="ret-card-name">Sacred Ubud Sādhanā</div>
+            <div class="ret-card-sub">Nov 1–10 · Ubud Rice Terraces</div>
+            <div class="ret-card-footer">
+              <div class="ret-card-price">from <strong>$1,980</strong></div>
+              <div class="ret-spots ok" style="font-size:11px;">8 spots</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── RETREAT 4: GREECE ── -->
+        <div class="ret-card" onclick="openRetreat(3)" data-region="greece">
+          <div class="ret-card-img" style="background-image:url('https://images.unsplash.com/photo-1533105079780-92b9be482077?w=700&q=80');">
+            <div class="ret-card-save" onclick="event.stopPropagation();retToggleSave(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </div>
+          </div>
+          <div class="ret-card-body">
+            <div class="ret-card-region europe">⛵ Greece · 7 days</div>
+            <div class="ret-card-name">Santorini Sunrise</div>
+            <div class="ret-card-sub">Aug 18–24 · Caldera clifftop shala</div>
+            <div class="ret-card-footer">
+              <div class="ret-card-price">from <strong>$2,100</strong></div>
+              <div class="ret-spots ok" style="font-size:11px;">12 spots</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── RETREAT 5: JAPAN ── -->
+        <div class="ret-card" onclick="openRetreat(4)" data-region="japan" style="margin-bottom:24px;">
+          <div class="ret-card-img" style="background-image:url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=700&q=80');">
+            <div class="ret-card-badge new">New</div>
+            <div class="ret-card-save" onclick="event.stopPropagation();retToggleSave(this)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </div>
+          </div>
+          <div class="ret-card-body">
+            <div class="ret-card-region japan">⛩️ Japan · 14 days</div>
+            <div class="ret-card-name">Kyoto Zen & Ashtanga</div>
+            <div class="ret-card-sub">Sept 5–18 · Temple grounds, Kyoto</div>
+            <div class="ret-card-footer">
+              <div class="ret-card-price">from <strong>$3,200</strong></div>
+              <div class="ret-spots ok" style="font-size:11px;">6 spots</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /retreatsScroll -->
+
+      <!-- ── RETREAT DETAIL SHEET ── -->
+      <div class="ret-sheet-backdrop" id="retSheet">
+        <div class="ret-sheet" id="retSheetInner">
+          <div class="ret-sheet-handle"></div>
+          <div class="ret-sheet-scroll">
+            <!-- hero image -->
+            <div class="ret-sheet-hero" id="retSheetImg"></div>
+            <!-- close btn -->
+            <div class="ret-sheet-close" onclick="closeRetreat()">✕</div>
+            <div class="ret-sheet-save-big" id="retSheetSave" onclick="retToggleSave(this)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="ret-sheet-body">
+              <div class="ret-sheet-badges" id="retSheetBadges"></div>
+              <div class="ret-sheet-title" id="retSheetTitle"></div>
+              <div class="ret-sheet-location" id="retSheetLocation"></div>
+              <div class="ret-sheet-divider"></div>
+              <!-- key info row -->
+              <div class="ret-info-row" id="retSheetInfo"></div>
+              <div class="ret-sheet-divider"></div>
+
+              <!-- TAB BAR -->
+              <div class="ret-tabs">
+                <div class="ret-tab active" id="retTabOverview" onclick="retSwitchTab('overview')">Overview</div>
+                <div class="ret-tab" id="retTabItinerary" onclick="retSwitchTab('itinerary')">Itinerary</div>
+                <div class="ret-tab" id="retTabSocial" onclick="retSwitchTab('social')">Community</div>
+              </div>
+
+              <!-- OVERVIEW PANEL -->
+              <div id="retPanelOverview">
+                <div class="ret-sheet-desc" id="retSheetDesc"></div>
+                <div class="ret-sheet-includes-title">What's included</div>
+                <div class="ret-sheet-includes" id="retSheetIncludes"></div>
+                <div class="ret-sheet-teacher" id="retSheetTeacher"></div>
+              </div>
+
+              <!-- ITINERARY PANEL -->
+              <div id="retPanelItinerary" style="display:none;">
+                <div id="retSheetItinerary"></div>
+              </div>
+
+              <!-- SOCIAL PANEL -->
+              <div id="retPanelSocial" style="display:none;">
+                <!-- attendees row -->
+                <div class="ret-social-going" id="retSheetGoing"></div>
+                <!-- social posts -->
+                <div id="retSheetSocialPosts"></div>
+              </div>
+
+            </div>
+          </div>
+          <!-- sticky CTA -->
+          <div class="ret-sheet-cta-bar">
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:2px;">Starting from</div>
+              <div class="ret-sheet-cta-price" id="retSheetPrice"></div>
+            </div>
+            <button class="ret-sheet-cta-btn" onclick="showToast('Booking enquiry sent! 🙏')">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /retreats view -->
+
+    <!-- ─── BOTTOM NAV ─── -->
+    <div class="nav">
+      <div class="nav-item active" data-tab="home" onclick="switchNav('home')">
+        <div class="nav-icon-bg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="nav-icon-svg"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        </div>
+        <div class="nav-lbl">Home</div>
+      </div>
+      <div class="nav-item" data-tab="community" onclick="switchNav('community')">
+        <div class="nav-icon-bg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="nav-icon-svg"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="nav-lbl">Community</div>
+      </div>
+      <div class="nav-fab-wrap" onclick="openModal()">
+        <div class="nav-fab">🧘</div>
+        <div class="nav-fab-lbl">Practice</div>
+      </div>
+      <div class="nav-item" data-tab="explore" onclick="switchNav('explore')">
+        <div class="nav-icon-bg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="nav-icon-svg"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <div class="nav-lbl">Explore</div>
+      </div>
+      <div class="nav-item" data-tab="retreats" onclick="switchNav('retreats')">
+        <div class="nav-icon-bg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="nav-icon-svg"><path d="M3 9l9-7 9 7"/><path d="M9 22V12h6v10"/><rect x="2" y="9" width="20" height="13" rx="2"/></svg>
+        </div>
+        <div class="nav-lbl">Gatherings</div>
+      </div>
+    </div>
+
+    <!-- ─── LOG PRACTICE MODAL ─── -->
+    <div class="modal-backdrop" id="modal">
+      <div class="modal">
+        <div class="modal-handle"></div>
+        <div class="modal-title">Log Practice</div>
+        <div class="modal-sub">What did you practice today?</div>
+        <div class="modal-options" id="modalOptions">
+          <div class="modal-option selected" onclick="selectOption(this)">
+            <div class="modal-option-icon">🧘</div>
+            <div><div class="modal-option-name">Primary Series</div><div class="modal-option-sub">Full Mysore practice · ~90 min</div></div>
+            <div class="modal-check">✓</div>
+          </div>
+          <div class="modal-option" onclick="selectOption(this)">
+            <div class="modal-option-icon">🌅</div>
+            <div><div class="modal-option-name">Sun Salutations</div><div class="modal-option-sub">Sūrya Namaskāra A & B · ~30 min</div></div>
+            <div class="modal-check"></div>
+          </div>
+          <div class="modal-option" onclick="selectOption(this)">
+            <div class="modal-option-icon">✨</div>
+            <div><div class="modal-option-name">Short Practice</div><div class="modal-option-sub">Standing poses only · ~45 min</div></div>
+            <div class="modal-check"></div>
+          </div>
+        </div>
+        <button class="modal-cta" onclick="confirmLog()">Save Practice ✓</button>
+      </div>
+    </div>
+
+    <!-- ─── NOTIFICATIONS PANEL ─── -->
+    <div class="notif-panel" id="notifPanel">
+      <div class="notif-header">
+        <div class="notif-header-title">Notifications</div>
+        <div class="notif-close" onclick="closeNotif()">✕</div>
+      </div>
+      <div class="notif-list">
+        <div class="notif-item">
+          <div class="notif-dot-badge"></div>
+          <div><div class="notif-text"><strong>Priya</strong> posted a new photo from Mysore 🌅</div><div class="notif-time">2 hours ago</div></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-dot-badge"></div>
+          <div><div class="notif-text"><strong>Sara</strong> liked your practice log 🙏</div><div class="notif-time">4 hours ago</div></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-dot-badge read"></div>
+          <div><div class="notif-text">Your <strong>37-day streak</strong> is your longest yet! Keep going 🔥</div><div class="notif-time">Yesterday</div></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-dot-badge read"></div>
+          <div><div class="notif-text"><strong>Marco</strong> is now following you</div><div class="notif-time">2 days ago</div></div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-dot-badge read"></div>
+          <div><div class="notif-text">🌕 Moon Day tomorrow — rest and restore</div><div class="notif-time">3 days ago</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── TOAST ─── -->
+    <div class="toast" id="toast"></div>
+
+
+
+  </div><!-- /screen -->
+
+    <!-- ══════════════════════════════════════════
+         ONBOARDING OVERLAY (sits on top of app)
+    ══════════════════════════════════════════ -->
+    <div id="onboarding">
+
+      <!-- SLIDE 0: SPLASH -->
+      <div class="ob-slide ob-splash active" id="ob-0">
+        <div class="ob-mandala-wrap">
+          <div class="ob-glow"></div>
+          <div class="ob-ring ob-ring-5"></div>
+          <div class="ob-ring ob-ring-4"></div>
+          <div class="ob-ring ob-ring-3"></div>
+          <div class="ob-ring ob-ring-2"></div>
+          <div class="ob-ring ob-ring-1"></div>
+          <svg class="ob-lotus-svg" viewBox="0 0 56 56" fill="none">
+            <ellipse cx="28" cy="18" rx="5" ry="12" fill="rgba(74,144,196,.45)"/>
+            <ellipse cx="28" cy="18" rx="5" ry="12" fill="rgba(74,144,196,.35)" transform="rotate(45,28,28)"/>
+            <ellipse cx="28" cy="18" rx="5" ry="12" fill="rgba(74,144,196,.3)" transform="rotate(90,28,28)"/>
+            <ellipse cx="28" cy="18" rx="5" ry="12" fill="rgba(74,144,196,.35)" transform="rotate(135,28,28)"/>
+            <ellipse cx="28" cy="18" rx="5" ry="12" fill="rgba(74,144,196,.45)" transform="rotate(180,28,28)"/>
+            <ellipse cx="28" cy="18" rx="5" ry="12" fill="rgba(74,144,196,.35)" transform="rotate(225,28,28)"/>
+            <ellipse cx="28" cy="18" rx="5" ry="12" fill="rgba(74,144,196,.3)" transform="rotate(270,28,28)"/>
+            <ellipse cx="28" cy="18" rx="5" ry="12" fill="rgba(74,144,196,.35)" transform="rotate(315,28,28)"/>
+            <circle cx="28" cy="28" r="8" fill="rgba(106,171,216,.75)"/>
+            <circle cx="28" cy="28" r="4" fill="rgba(184,212,238,.9)"/>
+          </svg>
+        </div>
+        <div class="ob-splash-bottom">
+          <div class="ob-logo-pill">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+              <path d="M12 20C12 20 5 16 5 10C5 7 8 5 12 5C16 5 19 7 19 10C19 16 12 20 12 20Z" fill="rgba(74,144,196,.35)"/>
+              <path d="M12 20C12 20 5 16 5 10" stroke="#6AABD8" stroke-width="1.3" stroke-linecap="round"/>
+              <path d="M12 20C12 20 19 16 19 10" stroke="#6AABD8" stroke-width="1.3" stroke-linecap="round"/>
+              <path d="M12 5C12 5 9 8 9 12C9 15.3 10.5 18 12 20" stroke="#B8D4EE" stroke-width="1.3" stroke-linecap="round"/>
+              <path d="M12 5C12 5 15 8 15 12C15 15.3 13.5 18 12 20" stroke="#B8D4EE" stroke-width="1.3" stroke-linecap="round"/>
+              <circle cx="12" cy="20" r="1.2" fill="#6AABD8"/>
+            </svg>
+          </div>
+          <div class="ob-splash-title">Ashtanga<br><em>Sangha</em></div>
+          <div class="ob-splash-slogan"><em>Practice,</em> and all is coming.</div>
+          <div class="ob-splash-sub">The global community for dedicated practitioners</div>
+          <button class="ob-btn ob-btn-solid" onclick="obGoTo(1)">Begin your journey</button>
+          <button class="ob-btn ob-btn-ghost" onclick="obLaunchApp()">I already have an account</button>
+        </div>
+      </div>
+
+      <!-- SLIDE 1: JOURNEY / PHILOSOPHY -->
+      <div class="ob-slide ob-journey" id="ob-1">
+        <div class="ob-j-photo" style="background-image:url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80')"></div>
+        <div class="ob-j-veil"></div>
+        <div class="ob-j-content">
+          <div class="ob-j-badge">Start Your Journey</div>
+          <div class="ob-j-h1">More than a practice.<br><em>A way of belonging.</em></div>
+          <p class="ob-j-p">Ashtanga is a living tradition — walked together, breath by breath, dawn after dawn. The word <em>Sangha</em> means community, and it gives this path its heart.</p>
+          <div class="ob-j-quote">
+            <div class="ob-j-qt">Practice, and all is coming.</div>
+            <div class="ob-j-qa">— Sri K. Pattabhi Jois</div>
+          </div>
+          <p class="ob-j-p">Practitioners gather — in shalas in Mysore, on rooftops at first light — to share the silence of the mat. <em>The practice itself is the teacher.</em> Show up. Do the work. Return tomorrow.</p>
+          <div class="ob-j-pills">
+            <div class="ob-j-pill">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A90C4" stroke-width="2" stroke-linecap="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 6v6l4 2"/></svg>
+              <span><strong>Practice</strong> — Show up daily</span>
+            </div>
+            <div class="ob-j-pill">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A90C4" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span><strong>Gather</strong> — Find your people</span>
+            </div>
+            <div class="ob-j-pill">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A90C4" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <span><strong>Community</strong> — Grow together</span>
+            </div>
+          </div>
+          <button class="ob-j-btn-solid" onclick="obGoTo(2)">Explore the app</button>
+          <button class="ob-j-btn-ghost" onclick="obGoTo(9)">Create your account now</button>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: PRACTICE FEATURE -->
+      <div class="ob-slide ob-feat" id="ob-2">
+        <div class="ob-feat-photo-wrap">
+          <div class="ob-feat-photo" style="background-image:url('https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800&q=80');"></div>
+          <div class="ob-feat-grad"></div>
+          <div class="ob-feat-step">01 / 03</div>
+          <div class="ob-float-card">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#6AABD8,#4A90C4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 6v6l4 2"/></svg>
+              </div>
+              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#1C2B3A;">Primary Series</div><div style="font-size:11px;color:#7A8E9E;">Mysore Practice · 47-day streak</div></div>
+              <div style="background:#4A90C4;color:#fff;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;">Start</div>
+            </div>
+          </div>
+        </div>
+        <div class="ob-feat-text">
+          <div class="ob-feat-tag">Track · Abhyāsa</div>
+          <div class="ob-feat-title">Log every practice<br>you <em>complete</em></div>
+          <div class="ob-feat-body">Build unbroken streaks, track moon days, and watch your dedication compound into transformation.</div>
+        </div>
+        <div class="ob-feat-nav">
+          <div class="ob-skip-btn" onclick="obGoTo(5)">Skip</div>
+          <div class="ob-dots"><div class="ob-dot on"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+          <button class="ob-next-btn" onclick="obGoTo(3)">Next <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: COMMUNITY FEATURE -->
+      <div class="ob-slide ob-feat" id="ob-3">
+        <div class="ob-feat-photo-wrap">
+          <div class="ob-feat-photo" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80');"></div>
+          <div class="ob-feat-grad"></div>
+          <div class="ob-feat-step">02 / 03</div>
+          <div class="ob-float-card">
+            <div style="font-size:11px;color:#7A8E9E;font-weight:500;margin-bottom:8px;">Practicing right now</div>
+            <div style="display:flex;align-items:center;">
+              <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop&crop=face" style="width:28px;height:28px;border-radius:50%;border:2px solid white;margin-right:-7px;flex-shrink:0;">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face" style="width:28px;height:28px;border-radius:50%;border:2px solid white;margin-right:-7px;flex-shrink:0;">
+              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=60&h=60&fit=crop&crop=face" style="width:28px;height:28px;border-radius:50%;border:2px solid white;margin-right:10px;flex-shrink:0;">
+              <span style="font-size:12px;color:#1C2B3A;font-weight:600;flex:1;">+244 more</span>
+            </div>
+          </div>
+        </div>
+        <div class="ob-feat-text">
+          <div class="ob-feat-tag">Connect · Saṅgha</div>
+          <div class="ob-feat-title">Practice with<br>the global <em>community</em></div>
+          <div class="ob-feat-body">See who's on the mat right now, follow practitioners worldwide, and share your journey.</div>
+        </div>
+        <div class="ob-feat-nav">
+          <div class="ob-skip-btn" onclick="obGoTo(5)">Skip</div>
+          <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot on"></div><div class="ob-dot"></div></div>
+          <button class="ob-next-btn" onclick="obGoTo(4)">Next <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: RETREATS FEATURE -->
+      <div class="ob-slide ob-feat" id="ob-4">
+        <div class="ob-feat-photo-wrap">
+          <div class="ob-feat-photo" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80');"></div>
+          <div class="ob-feat-grad"></div>
+          <div class="ob-feat-step">03 / 03</div>
+          <div class="ob-float-card">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B8F71" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#1C2B3A;">Tuscany, Italy</div><div style="font-size:11px;color:#7A8E9E;">July 10–17 · from $1,650</div></div>
+              <span style="font-size:11px;color:#E8834A;font-weight:600;">3 left</span>
+            </div>
+          </div>
+        </div>
+        <div class="ob-feat-text">
+          <div class="ob-feat-tag">Gathering · Sādhanā</div>
+          <div class="ob-feat-title">Deepen your<br>practice at <em>gatherings</em></div>
+          <div class="ob-feat-body">Curated Ashtanga gatherings worldwide — Mysore shalas to mountain sanctuaries in Tuscany and Bali.</div>
+        </div>
+        <div class="ob-feat-nav">
+          <div class="ob-skip-btn" onclick="obGoTo(5)">Skip</div>
+          <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot on"></div></div>
+          <button class="ob-next-btn blue" onclick="obGoTo(5)">Let's go <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: PERSONALIZE -->
+      <div class="ob-slide ob-pers" id="ob-5">
+        <div class="ob-pers-head">
+          <div class="ob-pers-kicker">Personalize</div>
+          <div class="ob-pers-h1">What brings<br>you to the mat?</div>
+          <div class="ob-pers-sub">Choose all that apply.</div>
+        </div>
+        <div class="ob-pers-body">
+          <div class="ob-pers-group"><div class="ob-group-label">Your practice</div>
+            <div class="ob-chips">
+              <div class="ob-chip on" onclick="this.classList.toggle('on')">Primary Series</div>
+              <div class="ob-chip" onclick="this.classList.toggle('on')">Intermediate</div>
+              <div class="ob-chip" onclick="this.classList.toggle('on')">Advanced A</div>
+              <div class="ob-chip on" onclick="this.classList.toggle('on')">Mysore-style</div>
+              <div class="ob-chip" onclick="this.classList.toggle('on')">Led Class</div>
+              <div class="ob-chip" onclick="this.classList.toggle('on')">Home practice</div>
+            </div>
+          </div>
+          <div class="ob-pers-group"><div class="ob-group-label">I'm interested in</div>
+            <div class="ob-chips">
+              <div class="ob-chip on" onclick="this.classList.toggle('on')">Community</div>
+              <div class="ob-chip on" onclick="this.classList.toggle('on')">Gatherings</div>
+              <div class="ob-chip" onclick="this.classList.toggle('on')">Find a teacher</div>
+              <div class="ob-chip" onclick="this.classList.toggle('on')">Track streaks</div>
+              <div class="ob-chip" onclick="this.classList.toggle('on')">Find a shala</div>
+            </div>
+          </div>
+          <div class="ob-pers-group"><div class="ob-group-label">Practicing since</div>
+            <div class="ob-chips">
+              <div class="ob-chip" onclick="this.classList.toggle('on')">Just starting</div>
+              <div class="ob-chip" onclick="this.classList.toggle('on')">&lt; 1 year</div>
+              <div class="ob-chip on" onclick="this.classList.toggle('on')">1–3 years</div>
+              <div class="ob-chip" onclick="this.classList.toggle('on')">3–10 years</div>
+              <div class="ob-chip" onclick="this.classList.toggle('on')">10+ years</div>
+            </div>
+          </div>
+        </div>
+        <div class="ob-pers-foot"><button class="ob-btn ob-btn-solid" onclick="obGoTo(6)">Continue</button></div>
+      </div>
+
+      <!-- SLIDE 6: LEVEL -->
+      <div class="ob-slide ob-level" id="ob-6">
+        <div class="ob-level-head">
+          <div class="ob-level-kicker">Your practice</div>
+          <div class="ob-level-h1">Where are you<br>in your journey?</div>
+          <div class="ob-level-sub">Helps us show the right content.</div>
+        </div>
+        <div class="ob-level-list">
+          <div class="ob-level-card" id="ob-lv-0" onclick="obPickLevel(0)"><div class="ob-level-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6B8F71" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 6v6l4 2"/></svg></div><div><div class="ob-level-name">Beginner</div><div class="ob-level-desc">Learning Sun Salutations, building a foundation.</div></div><div class="ob-level-tick"></div></div>
+          <div class="ob-level-card on" id="ob-lv-1" onclick="obPickLevel(1)"><div class="ob-level-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4A90C4" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div><div><div class="ob-level-name">Regular Practitioner</div><div class="ob-level-desc">Practicing Primary Series with a teacher or at home.</div></div><div class="ob-level-tick">✓</div></div>
+          <div class="ob-level-card" id="ob-lv-2" onclick="obPickLevel(2)"><div class="ob-level-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4A90C4" stroke-width="2" stroke-linecap="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div><div><div class="ob-level-name">Intermediate</div><div class="ob-level-desc">Working into the Intermediate Series.</div></div><div class="ob-level-tick"></div></div>
+          <div class="ob-level-card" id="ob-lv-3" onclick="obPickLevel(3)"><div class="ob-level-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8834A" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div><div class="ob-level-name">Advanced</div><div class="ob-level-desc">Advanced A/B or beyond. Authorized teacher.</div></div><div class="ob-level-tick"></div></div>
+          <div class="ob-level-card" id="ob-lv-4" onclick="obPickLevel(4)"><div class="ob-level-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8B49A" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div><div class="ob-level-name">Teacher / Shala Owner</div><div class="ob-level-desc">Teaching and growing your community online.</div></div><div class="ob-level-tick"></div></div>
+        </div>
+        <div class="ob-level-foot"><button class="ob-btn ob-btn-solid" onclick="obGoTo(7)">Continue</button></div>
+      </div>
+
+      <!-- SLIDE 7: NOTIFICATIONS -->
+      <div class="ob-slide ob-notif" id="ob-7">
+        <div class="ob-notif-body">
+          <div class="ob-mini-phone-wrap">
+            <div class="ob-notif-glow-ring"></div>
+            <div class="ob-mini-phone">
+              <div class="ob-mini-island"></div>
+              <div style="height:48px;border-radius:8px;margin-bottom:8px;background:url('https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=60') center/cover;opacity:.5;"></div>
+              <div class="ob-notif-banner"><div class="ob-banner-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="ob-banner-text"><b>Time to practice</b>Your mat is waiting · 6:00 AM</div></div>
+              <div class="ob-notif-banner"><div class="ob-banner-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10"/></svg></div><div class="ob-banner-text"><b>Moon Day tomorrow</b>Rest and restore</div></div>
+              <div class="ob-notif-banner"><div class="ob-banner-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="ob-banner-text"><b>priya.ashtanga liked</b>your practice log</div></div>
+            </div>
+          </div>
+          <div class="ob-notif-title">Never miss<br>your practice</div>
+          <div class="ob-notif-sub">Gentle morning reminders, moon day alerts, and updates from your sangha.</div>
+        </div>
+        <div class="ob-notif-foot">
+          <button class="ob-btn ob-btn-solid" onclick="obGoTo(8)">Enable notifications</button>
+          <button class="ob-btn ob-btn-ghost" onclick="obGoTo(8)">Maybe later</button>
+        </div>
+      </div>
+
+      <!-- SLIDE 8: DONE -->
+      <div class="ob-slide ob-done" id="ob-8">
+        <div class="ob-confetti-layer" id="ob-confetti"></div>
+        <div class="ob-done-inner">
+          <div class="ob-done-badge">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(184,212,238,.9)" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="ob-done-title">Welcome to the<br><em>Sangha</em></div>
+          <div class="ob-done-sub">Your practice, your community, your gatherings — all in one place.</div>
+          <div class="ob-done-stats">
+            <div class="ob-stat"><div class="ob-stat-num" id="ob-s1">0</div><div class="ob-stat-lbl">Practitioners</div></div>
+            <div class="ob-stat"><div class="ob-stat-num" id="ob-s2">0</div><div class="ob-stat-lbl">Gatherings</div></div>
+            <div class="ob-stat"><div class="ob-stat-num" id="ob-s3">0</div><div class="ob-stat-lbl">Countries</div></div>
+          </div>
+          <button class="ob-btn ob-btn-solid" onclick="obGoTo(9)">Create my account</button>
+          <button class="ob-btn ob-btn-ghost" onclick="obLaunchApp()" style="margin-top:4px;">Explore first</button>
+        </div>
+      </div>
+
+      <!-- SLIDE 9: REGISTER -->
+      <div class="ob-slide ob-register" id="ob-9">
+        <div class="ob-reg-bg"></div>
+        <div class="ob-reg-inner">
+          <div class="ob-reg-logo">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+              <path d="M12 20C12 20 5 16 5 10C5 7 8 5 12 5C16 5 19 7 19 10C19 16 12 20 12 20Z" fill="rgba(74,144,196,.35)"/>
+              <path d="M12 20C12 20 5 16 5 10" stroke="#6AABD8" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M12 20C12 20 19 16 19 10" stroke="#6AABD8" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="12" cy="20" r="1.3" fill="#6AABD8"/>
+            </svg>
+          </div>
+          <div class="ob-reg-kicker">Join the Sangha</div>
+          <div class="ob-reg-h1">Create your<br><em>free account</em></div>
+          <div class="ob-reg-sub">Join 12,847 practitioners worldwide</div>
+          <div class="ob-reg-fields">
+            <div class="ob-reg-field"><label class="ob-reg-lbl">Full name</label><input class="ob-reg-input" type="text" placeholder="e.g. Maya Goldberg" id="reg-name"></div>
+            <div class="ob-reg-field"><label class="ob-reg-lbl">Email address</label><input class="ob-reg-input" type="email" placeholder="you@example.com" id="reg-email"></div>
+            <div class="ob-reg-field"><label class="ob-reg-lbl">Password</label><input class="ob-reg-input" type="password" placeholder="At least 8 characters" id="reg-pw"></div>
+          </div>
+          <div class="ob-reg-divider"><span>or</span></div>
+          <div class="ob-reg-socials">
+            <button class="ob-reg-soc" onclick="showToast('Google sign-in coming soon')">
+              <svg width="16" height="16" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              Google
+            </button>
+            <button class="ob-reg-soc" onclick="showToast('Apple sign-in coming soon')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              Apple
+            </button>
+          </div>
+          <div class="ob-reg-terms">By creating an account you agree to our <span class="ob-reg-link">Terms</span> and <span class="ob-reg-link">Privacy Policy</span></div>
+          <button class="ob-reg-submit" onclick="obRegSubmit()">Create Account</button>
+          <div class="ob-reg-signin">Already a member? <span class="ob-reg-link" onclick="obLaunchApp()">Sign in</span></div>
+        </div>
+      </div>
+
+      <!-- OB STATUS BAR -->
+      <div id="ob-statusbar">
+        <div id="ob-clock">9:41</div>
+        <div style="display:flex;align-items:center;gap:5px;">
+          <svg width="17" height="12" viewBox="0 0 17 12"><rect x="0" y="3" width="3" height="9" rx="1" fill="white" opacity=".6"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="white" opacity=".8"/><rect x="9" y="0" width="3" height="12" rx="1" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="white"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 2.5C10.2 2.5 12.2 3.5 13.5 5.1L15 3.5C13.3 1.3 10.8 0 8 0C5.2 0 2.7 1.3 1 3.5L2.5 5.1C3.8 3.5 5.8 2.5 8 2.5Z" fill="white"/><path d="M8 5.5C9.4 5.5 10.6 6.1 11.5 7.1L13 5.5C11.7 4.1 9.9 3.2 8 3.2C6.1 3.2 4.3 4.1 3 5.5L4.5 7.1C5.4 6.1 6.6 5.5 8 5.5Z" fill="white"/><circle cx="8" cy="11" r="1.5" fill="white"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3.5" stroke="white" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.5 24.5 6C24.5 5.5 23.8 4.8 23 4.5Z" fill="white" opacity=".4"/></svg>
+        </div>
+      </div>
+
+    </div><!-- /onboarding -->
+</div><!-- /phone -->
+
+<script>
+// ── Live clock
+function updateClock(){
+  const now=new Date();
+  const h=now.getHours().toString().padStart(2,'0');
+  const m=now.getMinutes().toString().padStart(2,'0');
+  document.getElementById('clock').textContent=h+':'+m;
+}
+updateClock(); setInterval(updateClock,10000);
+
+// ── Nav switching
+function switchNav(tab){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('view-'+tab).classList.add('active');
+  document.querySelector('[data-tab="'+tab+'"]')?.classList.add('active');
+  if(tab==='home') triggerReveals();
+}
+
+// ── Scroll topbar effect
+document.getElementById('homeScroll').addEventListener('scroll',function(){
+  const tb=document.getElementById('home-topbar');
+  tb.classList.toggle('scrolled',this.scrollTop>10);
+});
+
+// ── Reveal animations
+function triggerReveals(){
+  setTimeout(()=>{
+    document.querySelectorAll('#view-home .reveal').forEach((el,i)=>{
+      setTimeout(()=>el.classList.add('in'),i*80);
+    });
+  },50);
+  // Animate progress bar
+  setTimeout(()=>{
+    document.getElementById('progFill').style.width='66%';
+  },500);
+}
+// Initial trigger
+triggerReveals();
+
+// ── Modal
+function openModal(){
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+}
+document.getElementById('modal').addEventListener('click',function(e){
+  if(e.target===this) closeModal();
+});
+document.getElementById('logPracticeBtn').addEventListener('click',openModal);
+
+function selectOption(el){
+  document.querySelectorAll('.modal-option').forEach(o=>{
+    o.classList.remove('selected');
+    o.querySelector('.modal-check').textContent='';
+  });
+  el.classList.add('selected');
+  el.querySelector('.modal-check').textContent='✓';
+}
+
+function confirmLog(){
+  closeModal();
+  showToast('Practice logged! 🙏 Day 38 streak!');
+  // Update today pip
+  const todayPip=document.querySelector('.pip.today');
+  if(todayPip){
+    todayPip.classList.remove('today');
+    todayPip.classList.add('done');
+  }
+}
+
+// ── Home feed like toggle (home card)
+let liked=true, likeCount=48;
+function toggleLike(){
+  liked=!liked;
+  likeCount+=liked?1:-1;
+  const btn=document.getElementById('likeBtn');
+  btn.classList.toggle('liked',liked);
+  document.getElementById('likeLabel').textContent='Like · '+likeCount;
+  btn.classList.add('animating');
+  setTimeout(()=>btn.classList.remove('animating'),350);
+}
+
+// ── IG Like states
+const igLikeState={};
+
+function igToggleLike(btnId, countId, baseCount){
+  const state = igLikeState[btnId] || {liked:false, count:baseCount};
+  state.liked = !state.liked;
+  state.count = baseCount + (state.liked?1:0);
+  igLikeState[btnId] = state;
+
+  const btn = document.getElementById(btnId);
+  const countEl = document.getElementById(countId);
+
+  if(state.liked){
+    btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="#E8834A"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+  } else {
+    btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C2B3A" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+  }
+  btn.classList.add('heart-anim');
+  setTimeout(()=>btn.classList.remove('heart-anim'),300);
+  countEl.textContent = state.count;
+}
+
+// ── Double-tap to like
+function igDoubleTapLike(imgId, btnId, countId, baseCount){
+  const pop = document.getElementById(imgId+'-pop');
+  pop.classList.remove('pop');
+  void pop.offsetWidth; // reflow
+  pop.classList.add('pop');
+  setTimeout(()=>pop.classList.remove('pop'),700);
+
+  const state = igLikeState[btnId] || {liked:false, count:baseCount};
+  if(!state.liked){
+    igToggleLike(btnId, countId, baseCount);
+  }
+}
+
+// ── IG Feed / Explore tab switcher
+function switchIgTab(tab){
+  const feedView = document.getElementById('igFeedView');
+  const exploreView = document.getElementById('igExploreView');
+  const tabFeed = document.getElementById('igTabFeed');
+  const tabExplore = document.getElementById('igTabExplore');
+
+  if(tab==='feed'){
+    feedView.style.display='block';
+    exploreView.style.display='none';
+    tabFeed.classList.add('active');
+    tabExplore.classList.remove('active');
+  } else {
+    feedView.style.display='none';
+    exploreView.style.display='block';
+    tabFeed.classList.remove('active');
+    tabExplore.classList.add('active');
+  }
+}
+
+// ── Toast
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ── RETREATS ──────────────────────────────
+const retData = [
+  {
+    name: 'Hills of the Heart',
+    location: 'Tuscany, Italy',
+    dates: 'July 10–17, 2026',
+    days: '8 days',
+    series: 'Primary & Intermediate',
+    price: '$1,650',
+    spots: '3 spots left',
+    spotsClass: 'warn',
+    img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80',
+    badges: ['⭐ Featured','🌿 Europe'],
+    desc: 'Immerse yourself in the hills of Tuscany for an unforgettable 8-day Ashtanga gathering. Practice twice daily in an open-air shala overlooking rolling vineyards, guided by senior authorized teacher Marco Rossi. Evenings are for rest, reflection, and farm-to-table meals sourced from the property.',
+    includes: [
+      {icon:'🧘', text:'Morning Mysore & evening led Primary'},
+      {icon:'🍽️', text:'All meals — organic farm-to-table'},
+      {icon:'🏡', text:'Private room in stone farmhouse'},
+      {icon:'🚐', text:'Airport transfers from Florence'},
+      {icon:'📿', text:'Daily pranayama & meditation session'},
+    ],
+    teacher: {name:'Marco Rossi', role:'Authorized Level 2 · 12 years teaching', img:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&h=80&fit=crop&crop=face'},
+    itinerary: [
+      {day:1, title:'Arrival Day', date:'July 10', slots:[
+        {time:'14:00–18:00', activity:'Arrivals & welcome', detail:'Settle in, tour of the farmhouse and grounds'},
+        {time:'18:30', activity:'Opening circle & tea ceremony', detail:'Meet your fellow practitioners', tag:'🌿 Grounding'},
+        {time:'20:00', activity:'Welcome dinner', detail:'Farm-to-table feast under the Tuscan sky'},
+      ]},
+      {day:2, title:'First Practice', date:'July 11', slots:[
+        {time:'06:00', activity:'Morning Mysore practice', detail:'90-min guided Mysore, all levels', tag:'🧘 Practice'},
+        {time:'08:30', activity:'Pranayama & silent breakfast', detail:'Breathwork followed by mindful eating'},
+        {time:'11:00', activity:'Anatomy & alignment workshop', detail:'Focus on forward bends and hip openers'},
+        {time:'17:00', activity:'Vineyard walk', detail:'Guided walk through the Chianti estates'},
+        {time:'19:00', activity:'Led Primary Series', detail:'Evening full practice', tag:'🧘 Practice'},
+      ]},
+      {day:3, title:'Deep Practice', date:'July 12', slots:[
+        {time:'06:00', activity:'Morning Mysore', detail:'Individual adjustments from Marco', tag:'🧘 Practice'},
+        {time:'09:00', activity:'Philosophy talk', detail:'Pata\u00f1jali\u2019s Yoga S\u016btras \u00b7 Sthira & Sukha'},
+        {time:'14:00', activity:'Free time / rest', detail:'Siesta, journaling, pool time'},
+        {time:'17:30', activity:'Yoga Nidra', detail:'45-minute guided deep relaxation'},
+        {time:'19:30', activity:'Dinner & sharing circle', detail:'Group reflection on the day'},
+      ]},
+      {day:'4–6', title:'Deepening Days', date:'July 13–15', slots:[
+        {time:'Daily', activity:'Twice-daily Mysore practice', detail:'Morning 6am + optional evening led', tag:'🧘 Practice'},
+        {time:'Rotating', activity:'Workshops & excursions', detail:'Siena day trip · Cooking class · Pranayama masterclass'},
+        {time:'Evening', activity:'Community dinners & bonfires', detail:'Sharing practice, stories, laughter'},
+      ]},
+      {day:7, title:'Integration Day', date:'July 16', slots:[
+        {time:'06:00', activity:'Sunrise practice · outdoor shala', detail:'Practice facing the Tuscan sunrise', tag:'✨ Special'},
+        {time:'09:00', activity:'Partner work & assists', detail:'Learning to adjust and be adjusted'},
+        {time:'Afternoon', activity:'Free afternoon', detail:'Rest, explore San Gimignano, or spa treatments'},
+        {time:'19:30', activity:'Closing ceremony & feast', detail:'Gratitude circle, music, celebration dinner'},
+      ]},
+      {day:8, title:'Departure', date:'July 17', slots:[
+        {time:'06:00', activity:'Final morning practice', detail:'Short Mysore — honour your week', tag:'🧘 Practice'},
+        {time:'09:00', activity:'Breakfast & farewells', detail:'Exchange contacts, certificates issued'},
+        {time:'11:00+', activity:'Airport transfers depart', detail:'Transfers to Florence airport on request'},
+      ]},
+    ],
+    social: {
+      going: [
+        {img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop&crop=face'},
+        {img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face'},
+        {img:'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=60&h=60&fit=crop&crop=face'},
+        {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop&crop=face'},
+      ],
+      count: 14,
+      posts: [
+        {user:'leila.practice', userImg:'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=60&h=60&fit=crop&crop=face', loc:'Tuscany, Italy', time:'2d ago', img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80', likes:57, caption:'Just booked my spot for Hills of the Heart 🌿🏔️ Cannot wait to practice in these landscapes.', tags:['#tuscanygathering','#ashtangasangha']},
+        {user:'marco.yoga', userImg:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=60&h=60&fit=crop&crop=face', loc:'Florence, Italy', time:'5d ago', img:'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=700&q=80', likes:143, caption:'Preparing the open-air shala for July. 8 days of practice, community and stillness in the Tuscan hills 🙏', tags:['#hillsoftheheart','#ashtanga']},
+        {user:'priya.ashtanga', userImg:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop&crop=face', loc:'Mysore, India', time:'1w ago', img:'https://images.unsplash.com/photo-1538598159-8ee3f6218ad3?w=700&q=80', likes:89, caption:'Counting down to Tuscany. Last year\'s retreat changed everything for me 🌅 If you\'re on the fence — go.', tags:['#gatheringlife','#ashtangacommunity']},
+      ],
+    },
+  },
+  {
+    name: 'Mysore Immersion',
+    location: 'Mysore, India · KPJAYI',
+    dates: 'Oct 4–24, 2026',
+    days: '21 days',
+    series: 'All levels',
+    price: '$2,400',
+    spots: '3 spots left',
+    spotsClass: 'warn',
+    img: 'https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=900&q=80',
+    badges: ['🔥 Filling Fast','🇮🇳 India'],
+    desc: 'Study at the source. This 21-day immersion places you in the heart of Mysore with daily Mysore-style practice at an authorized shala. An extraordinary opportunity to deepen your practice in the city where Ashtanga was born.',
+    includes: [
+      {icon:'🕔', text:'Daily Mysore practice 6–9am'},
+      {icon:'🏘️', text:'Shared accommodation near shala'},
+      {icon:'🍵', text:'Daily breakfast'},
+      {icon:'🗺️', text:'Mysore city orientation walk'},
+      {icon:'📚', text:'Philosophy talks 3× per week'},
+    ],
+    teacher: {name:'Priya Ramanathan', role:'Authorized Level 1 · Mysore-based', img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&h=80&fit=crop&crop=face'},
+    itinerary: [
+      {day:1, title:'Arrival & Orientation', date:'Oct 4', slots:[
+        {time:'Afternoon', activity:'Arrivals & registration', detail:'Room allocation, shala orientation'},
+        {time:'17:00', activity:'Welcome walk through Mysore', detail:'Guided neighbourhood tour with your host'},
+        {time:'19:00', activity:'Opening dinner & introductions', detail:'Meet the group, share your intention'},
+      ]},
+      {day:'2–7', title:'Week One — Foundation', date:'Oct 5–11', slots:[
+        {time:'06:00', activity:'Mysore practice · shala', detail:'Self-practice with teacher adjustments', tag:'🧘 Daily'},
+        {time:'09:00', activity:'Breakfast & rest', detail:'Optional chanting class at 10:00'},
+        {time:'15:00', activity:'Philosophy sessions', detail:'Yoga Sutras · Tue, Thu, Sat'},
+        {time:'17:00', activity:'City exploration', detail:'Chamundi Hill, Devaraja Market, palaces'},
+      ]},
+      {day:'8–14', title:'Week Two — Deepening', date:'Oct 12–18', slots:[
+        {time:'06:00', activity:'Mysore practice', detail:'Longer holds, focus on breath & bandha', tag:'🧘 Daily'},
+        {time:'11:00', activity:'Anatomy workshop', detail:'Twice weekly — safe backbending & twists'},
+        {time:'15:30', activity:'Sanskrit chanting', detail:'Learning the Ashtanga opening & closing'},
+        {time:'18:00', activity:'Led class · Fridays', detail:'Full Primary led by Priya', tag:'✨ Special'},
+      ]},
+      {day:'15–20', title:'Week Three — Integration', date:'Oct 19–24', slots:[
+        {time:'06:00', activity:'Independent Mysore', detail:'Growing confidence, personal rhythm', tag:'🧘 Daily'},
+        {time:'10:00', activity:'Closing workshop series', detail:'How to maintain practice at home'},
+        {time:'Evenings', activity:'Community dinners', detail:'Shared meals, stories, reflections'},
+        {time:'Oct 24', activity:'Closing ceremony & certificates', detail:'Gratitude circle, farewells'},
+      ]},
+    ],
+    social: {
+      going: [
+        {img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face'},
+        {img:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=60&h=60&fit=crop&crop=face'},
+        {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop&crop=face'},
+      ],
+      count: 9,
+      posts: [
+        {user:'sara.mysore', userImg:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face', loc:'Mysore, India', time:'3d ago', img:'https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=700&q=80', likes:91, caption:'Week 3 at the shala. 5am wakeups are easier when the sunrise looks like this 🌅', tags:['#mysoreimmersion','#kpjayi']},
+        {user:'marco.yoga', userImg:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=60&h=60&fit=crop&crop=face', loc:'Mysore, India', time:'1w ago', img:'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=700&q=80', likes:203, caption:'Studying at the source. There is no substitute for Mysore. 🙏', tags:['#ashtanga','#mysore']},
+      ],
+    },
+  },
+  {
+    name: 'Sacred Ubud Sādhanā',
+    location: 'Ubud, Bali',
+    dates: 'Nov 1–10, 2026',
+    days: '10 days',
+    series: 'Primary Series',
+    price: '$1,980',
+    spots: '8 spots left',
+    spotsClass: 'ok',
+    img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=900&q=80',
+    badges: ['🌿 Early Bird','🌴 Bali'],
+    desc: 'Ten days of deep practice nestled among Ubud\'s emerald rice terraces. Begin each morning with Mysore practice in an open bamboo shala, then spend afternoons exploring Bali\'s sacred temples and healing traditions.',
+    includes: [
+      {icon:'🌅', text:'Morning Mysore · 6am daily'},
+      {icon:'🌺', text:'Balinese purification ceremony'},
+      {icon:'🏡', text:'Private villa with rice terrace view'},
+      {icon:'🍃', text:'Twice-daily plant-based meals'},
+      {icon:'🛵', text:'Temple tours & cultural excursions'},
+    ],
+    teacher: {name:'Sara Chen', role:'Certified teacher · Bali-based 4 years', img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face'},
+    itinerary: [
+      {day:1, title:'Arrival & Melukat', date:'Nov 1', slots:[
+        {time:'Afternoon', activity:'Arrivals & villa orientation', detail:'Settle in, welcome coconut water'},
+        {time:'17:00', activity:'Melukat purification ceremony', detail:'Sacred Balinese water cleansing ritual', tag:'🌺 Ceremony'},
+        {time:'19:00', activity:'Welcome dinner · village warung', detail:'Local Balinese feast with the group'},
+      ]},
+      {day:'2–4', title:'Foundation Days', date:'Nov 2–4', slots:[
+        {time:'06:00', activity:'Morning Mysore · bamboo shala', detail:'Open rice terrace views, birdsong', tag:'🧘 Daily'},
+        {time:'08:30', activity:'Breakfast & fruit platter', detail:'Organic tropical produce'},
+        {time:'10:30', activity:'Philosophy & chanting', detail:'Alternating days'},
+        {time:'15:00', activity:'Afternoon excursion', detail:'Tirta Empul temple · Sacred monkey forest'},
+      ]},
+      {day:'5–8', title:'Deep Practice Days', date:'Nov 5–8', slots:[
+        {time:'06:00', activity:'Mysore practice', detail:'Individual focus, longer practice times', tag:'🧘 Daily'},
+        {time:'11:00', activity:'Cooking class · Balinese cuisine', detail:'Learn to make jamu & temple offerings'},
+        {time:'16:00', activity:'Yoga Nidra / Yin', detail:'Deep rest and somatic integration'},
+        {time:'19:00', activity:'Fire ceremony · Day 7', detail:'Traditional Balinese Agni Hotra', tag:'✨ Special'},
+      ]},
+      {day:'9–10', title:'Closing & Departure', date:'Nov 9–10', slots:[
+        {time:'06:00', activity:'Final Mysore practice', detail:'Hold the space you have created', tag:'🧘 Practice'},
+        {time:'10:00', activity:'Closing circle & gratitude', detail:'Sharing, certificates, farewells'},
+        {time:'Nov 10', activity:'Departures', detail:'Transfers to Ngurah Rai airport'},
+      ]},
+    ],
+    social: {
+      going: [
+        {img:'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=60&h=60&fit=crop&crop=face'},
+        {img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop&crop=face'},
+        {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop&crop=face'},
+      ],
+      count: 11,
+      posts: [
+        {user:'leila.practice', userImg:'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=60&h=60&fit=crop&crop=face', loc:'Ubud, Bali', time:'1w ago', img:'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=700&q=80', likes:74, caption:'Booked for Bali November. The early bird price was too good to miss 🌴', tags:['#ubudgathering','#sadhana']},
+      ],
+    },
+  },
+  {
+    name: 'Santorini Sunrise',
+    location: 'Santorini, Greece',
+    dates: 'Aug 18–24, 2026',
+    days: '7 days',
+    series: 'Primary Series',
+    price: '$2,100',
+    spots: '12 spots left',
+    spotsClass: 'ok',
+    img: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=900&q=80',
+    badges: ['⛵ Greece','☀️ Summer'],
+    desc: 'Practice on a clifftop shala overlooking the legendary Santorini caldera as the sun rises over the Aegean. 7 days of serious practice combined with the magic of one of the world\'s most iconic landscapes.',
+    includes: [
+      {icon:'🌅', text:'Sunrise Mysore · clifftop shala'},
+      {icon:'🌊', text:'Afternoon swim in the caldera'},
+      {icon:'🫒', text:'Mediterranean meals · local produce'},
+      {icon:'🏨', text:'Boutique cave hotel accommodation'},
+      {icon:'🕉️', text:'Evening chanting & breathwork'},
+    ],
+    teacher: {name:'Leila Mansouri', role:'Authorized teacher · 8 years', img:'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=80&h=80&fit=crop&crop=face'},
+    itinerary: [
+      {day:1, title:'Arrival', date:'Aug 18', slots:[
+        {time:'Afternoon', activity:'Ferry or flight arrivals', detail:'Meet at Fira port or Santorini airport'},
+        {time:'Sunset', activity:'Welcome drinks on the caldera', detail:'First glimpse of the legendary view', tag:'🌅 Iconic'},
+        {time:'20:00', activity:'Opening dinner & intentions', detail:'Meze feast at clifftop taverna'},
+      ]},
+      {day:'2–3', title:'Practice & Explore', date:'Aug 19–20', slots:[
+        {time:'06:15', activity:'Sunrise Mysore · outdoor shala', detail:'90 minutes facing the caldera', tag:'🧘 Practice'},
+        {time:'09:00', activity:'Greek breakfast', detail:'Fresh figs, yoghurt, honey, village bread'},
+        {time:'14:00', activity:'Caldera swim & boat trip', detail:'Swim in the volcanic hot springs'},
+        {time:'18:00', activity:'Pranayama & sunset', detail:'Breathwork as the sun sets over the sea', tag:'✨ Special'},
+      ]},
+      {day:'4–6', title:'Deep Practice Days', date:'Aug 21–23', slots:[
+        {time:'06:15', activity:'Mysore practice', detail:'Growing confidence and steadiness', tag:'🧘 Practice'},
+        {time:'11:00', activity:'Workshops', detail:'Backbending & dropbacks · Breath & bandha'},
+        {time:'Afternoons', activity:'Free time', detail:'Oia exploration · Akrotiri excavations · beach'},
+        {time:'Evening', activity:'Greek cooking class', detail:'Learn mezze, fresh fish, loukoumades'},
+      ]},
+      {day:7, title:'Closing Day', date:'Aug 24', slots:[
+        {time:'06:15', activity:'Final sunrise practice', detail:'Full Primary led by Leila', tag:'🧘 Practice'},
+        {time:'09:00', activity:'Gratitude breakfast & sharing', detail:'Reflections, certificates, tearful goodbyes'},
+        {time:'Midday', activity:'Departures', detail:'Airport and ferry transfers arranged'},
+      ]},
+    ],
+    social: {
+      going: [
+        {img:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop&crop=face'},
+        {img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face'},
+        {img:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=60&h=60&fit=crop&crop=face'},
+      ],
+      count: 18,
+      posts: [
+        {user:'sara.mysore', userImg:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face', loc:'Santorini, Greece', time:'4d ago', img:'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=700&q=80', likes:118, caption:'Practicing with THIS view. Santorini is something else entirely ⛵🌅', tags:['#santorini','#ashtangagathering']},
+        {user:'priya.ashtanga', userImg:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop&crop=face', loc:'Greece', time:'2w ago', img:'https://images.unsplash.com/photo-1519817914152-22d216bb9170?w=700&q=80', likes:166, caption:'Applied for Santorini. Greece + Ashtanga = my dream August 🙏☀️', tags:['#sunrisepractice','#sangha']},
+      ],
+    },
+  },
+  {
+    name: 'Kyoto Zen & Ashtanga',
+    location: 'Kyoto, Japan',
+    dates: 'Sept 5–18, 2026',
+    days: '14 days',
+    series: 'Intermediate welcome',
+    price: '$3,200',
+    spots: '6 spots left',
+    spotsClass: 'ok',
+    img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=900&q=80',
+    badges: ['⛩️ New','🎋 Japan'],
+    desc: 'A once-in-a-lifetime fusion of Ashtanga and Zen practice within the grounds of a 400-year-old Kyoto temple. Wake before dawn for morning zazen, then transition to Mysore practice in a tatami-floored dojo.',
+    includes: [
+      {icon:'⛩️', text:'Practice within temple grounds'},
+      {icon:'🍵', text:'Daily tea ceremony & zazen'},
+      {icon:'🎋', text:'Traditional ryokan accommodation'},
+      {icon:'🍱', text:'Kaiseki-inspired vegetarian meals'},
+      {icon:'🚆', text:'Bullet train pass included'},
+    ],
+    teacher: {name:'Tom Nakamura', role:'Certified · Kyoto resident · Zen practitioner', img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face'},
+    itinerary: [
+      {day:1, title:'Arrival in Kyoto', date:'Sept 5', slots:[
+        {time:'Afternoon', activity:'Shinkansen from Tokyo or fly in', detail:'Bullet train pass activated on arrival'},
+        {time:'16:00', activity:'Ryokan check-in & orientation', detail:'Traditional inn, tea and wagashi sweets'},
+        {time:'18:00', activity:'Temple opening ceremony', detail:'Meeting the head monk, sandalwood incense', tag:'⛩️ Sacred'},
+        {time:'19:30', activity:'Kaiseki welcome dinner', detail:'7-course seasonal Japanese vegetarian meal'},
+      ]},
+      {day:'2–5', title:'Week One — Sitting & Moving', date:'Sept 6–9', slots:[
+        {time:'05:00', activity:'Zazen · temple meditation hall', detail:'30 minutes seated Zen practice', tag:'🧘 Daily'},
+        {time:'06:00', activity:'Mysore practice · tatami dojo', detail:'Self-practice, adjustments from Tom'},
+        {time:'08:30', activity:'Breakfast at ryokan', detail:'Miso soup, rice, pickles, tofu'},
+        {time:'14:00', activity:'Tea ceremony & calligraphy', detail:'Learn to write the kanji for breath (息)'},
+        {time:'16:00', activity:'Temple & neighbourhood walks', detail:'Fushimi Inari · Gion · Philosopher\'s Path'},
+      ]},
+      {day:'6–10', title:'Week Two — Integration', date:'Sept 10–14', slots:[
+        {time:'05:00', activity:'Zazen & chanting', detail:'Morning sutras with the monks', tag:'🧘 Daily'},
+        {time:'06:30', activity:'Mysore practice', detail:'Deepening focus after Zen sitting'},
+        {time:'11:00', activity:'Workshops', detail:'Zen mind & Ashtanga · The Breath as Teacher'},
+        {time:'Afternoons', activity:'Exploration', detail:'Arashiyama bamboo · Nishiki Market · onsen'},
+      ]},
+      {day:'11–14', title:'Closing Chapter', date:'Sept 15–18', slots:[
+        {time:'05:00', activity:'Dawn zazen', detail:'Sitting in silence as Kyoto wakes', tag:'✨ Special'},
+        {time:'06:30', activity:'Final Mysore sessions', detail:'Carrying both practices together'},
+        {time:'Sept 17', activity:'Farewell ceremony & dinner', detail:'Formal tea ceremony, certificates, farewells'},
+        {time:'Sept 18', activity:'Departures', detail:'Shinkansen to Tokyo or Kansai airport'},
+      ]},
+    ],
+    social: {
+      going: [
+        {img:'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=60&h=60&fit=crop&crop=face'},
+        {img:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=60&h=60&fit=crop&crop=face'},
+      ],
+      count: 7,
+      posts: [
+        {user:'marco.yoga', userImg:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=60&h=60&fit=crop&crop=face', loc:'Kyoto, Japan', time:'6d ago', img:'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=700&q=80', likes:88, caption:'Zazen at 5am followed by Mysore in a tatami hall. This is a gathering unlike anything else. ⛩️🎋', tags:['#kyoto','#zenandashtanga']},
+      ],
+    },
+  },
+];
+
+// Current tab state
+let retCurrentTab = 'overview';
+
+function retSwitchTab(tab){
+  retCurrentTab = tab;
+  ['overview','itinerary','social'].forEach(t=>{
+    document.getElementById('retPanel'+t.charAt(0).toUpperCase()+t.slice(1)).style.display = t===tab?'block':'none';
+    document.getElementById('retTab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle('active', t===tab);
+  });
+}
+
+function openRetreat(i){
+  const r = retData[i];
+
+  document.getElementById('retSheetImg').style.backgroundImage = `url('${r.img}')`;
+  document.getElementById('retSheetTitle').textContent = r.name;
+  document.getElementById('retSheetLocation').textContent = '📍 ' + r.location;
+  document.getElementById('retSheetPrice').textContent = r.price;
+
+  // badges
+  document.getElementById('retSheetBadges').innerHTML =
+    r.badges.map(b=>`<span class="ret-badge" style="background:var(--sky-mid);color:var(--ink-mid);padding:4px 10px;font-size:10px;">${b}</span>`).join('');
+
+  // info row
+  document.getElementById('retSheetInfo').innerHTML = `
+    <div class="ret-info-cell"><div class="ret-info-val">${r.days.split(' ')[0]}</div><div class="ret-info-lbl">Days</div></div>
+    <div class="ret-info-cell"><div class="ret-info-val">${r.spots.split(' ')[0]}</div><div class="ret-info-lbl">Spots Left</div></div>
+    <div class="ret-info-cell"><div class="ret-info-val" style="font-size:11px;line-height:1.3;">${r.series.split(' ').slice(0,2).join(' ')}</div><div class="ret-info-lbl">Series</div></div>
+  `;
+
+  // Overview
+  document.getElementById('retSheetDesc').textContent = r.desc;
+  document.getElementById('retSheetIncludes').innerHTML =
+    r.includes.map(inc=>`<div class="ret-include-item"><div class="ret-include-icon">${inc.icon}</div>${inc.text}</div>`).join('');
+  document.getElementById('retSheetTeacher').innerHTML = `
+    <div class="ret-teacher-av"><img src="${r.teacher.img}" alt="${r.teacher.name}"></div>
+    <div><div class="ret-teacher-name">${r.teacher.name}</div><div class="ret-teacher-role">${r.teacher.role}</div></div>
+    <div class="ret-teacher-arrow">›</div>
+  `;
+
+  // Itinerary
+  document.getElementById('retSheetItinerary').innerHTML = r.itinerary.map(d=>`
+    <div class="itin-day">
+      <div class="itin-day-header">
+        <div class="itin-day-num">${typeof d.day==='number'?d.day:'…'}</div>
+        <div><div class="itin-day-title">${d.title}</div><div class="itin-day-sub">${d.date}</div></div>
+      </div>
+      <div class="itin-timeline">
+        ${d.slots.map(s=>`
+          <div class="itin-slot">
+            <div class="itin-time">${s.time}</div>
+            <div class="itin-activity">${s.activity}</div>
+            <div class="itin-detail">${s.detail}</div>
+            ${s.tag?`<div class="itin-tag">${s.tag}</div>`:''}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  // Social
+  const soc = r.social;
+  document.getElementById('retSheetGoing').innerHTML = `
+    <div class="ret-social-going-title">👥 ${soc.count} people going</div>
+    <div class="ret-going-avatars">
+      ${soc.going.map(a=>`<div class="ret-going-av"><img src="${a.img}"></div>`).join('')}
+      <div class="ret-going-count">+${soc.count - soc.going.length} more</div>
+    </div>
+    <div class="ret-going-sub">From your sangha: ${soc.going.length} connections are going</div>
+  `;
+
+  document.getElementById('retSheetSocialPosts').innerHTML = soc.posts.map((p,pi)=>`
+    <div class="ret-soc-post">
+      <div class="ret-soc-hd">
+        <div class="ret-soc-av"><div class="ret-soc-av-inner"><img src="${p.userImg}" alt="${p.user}"></div></div>
+        <div><div class="ret-soc-name">${p.user}</div><div class="ret-soc-meta">📍 ${p.loc}</div></div>
+        <div class="ret-soc-time">${p.time}</div>
+      </div>
+      <div class="ret-soc-img" style="background-image:url('${p.img}');"></div>
+      <div class="ret-soc-body">
+        <div class="ret-soc-actions">
+          <div class="ret-soc-act" onclick="retSocLike(this,${i},${pi})">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span class="soc-like-lbl">${p.likes}</span>
+          </div>
+          <div class="ret-soc-act" onclick="showToast('Comments coming soon 💬')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="ret-soc-act" onclick="showToast('Share post 📤')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </div>
+        </div>
+        <div class="ret-soc-caption"><span class="soc-handle">${p.user}</span> ${p.caption} ${p.tags.map(t=>`<span class="soc-tag">${t}</span>`).join(' ')}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // reset to overview tab
+  retSwitchTab('overview');
+
+  document.getElementById('retSheet').classList.add('open');
+  document.getElementById('retSheetInner').scrollTop = 0;
+}
+
+const retSocLikedState = {};
+function retSocLike(el, ri, pi){
+  const key = `${ri}-${pi}`;
+  retSocLikedState[key] = !retSocLikedState[key];
+  const liked = retSocLikedState[key];
+  el.classList.toggle('liked', liked);
+  const base = retData[ri].social.posts[pi].likes;
+  el.querySelector('.soc-like-lbl').textContent = base + (liked?1:0);
+  el.querySelector('svg').style.fill = liked ? '#E8834A' : 'none';
+  el.querySelector('svg').style.stroke = liked ? '#E8834A' : 'currentColor';
+}
+
+function closeRetreat(){
+  document.getElementById('retSheet').classList.remove('open');
+}
+document.getElementById('retSheet').addEventListener('click', function(e){
+  if(e.target === this) closeRetreat();
+});
+
+// Save/bookmark toggle
+function retToggleSave(el){
+  el.classList.toggle('saved');
+  const saved = el.classList.contains('saved');
+  el.querySelector('svg').style.fill = saved ? '#fff' : 'none';
+  showToast(saved ? 'Gathering saved ✨' : 'Removed from saved');
+}
+
+// Filter pills
+function retFilter(el, region){
+  document.querySelectorAll('.ret-filter').forEach(f=>f.classList.remove('active'));
+  el.classList.add('active');
+  const cards = document.querySelectorAll('.ret-card');
+  cards.forEach(c=>{
+    if(region === 'all'){
+      c.style.display = '';
+    } else {
+      const r = c.getAttribute('data-region') || '';
+      c.style.display = r === region ? '' : 'none';
+    }
+  });
+  const visible = region === 'all' ? 5 : document.querySelectorAll(`.ret-card[data-region="${region}"]`).length;
+  showToast(`${visible} gathering${visible!==1?'s':''} found`);
+}
+
+// ── Notifications
+document.getElementById('notifBtn').addEventListener('click',()=>{
+  document.getElementById('notifPanel').classList.add('open');
+  document.getElementById('notifDot').style.display='none';
+});
+function closeNotif(){
+  document.getElementById('notifPanel').classList.remove('open');
+}
+
+// ═══════════════════════════════════════
+// ONBOARDING
+// ═══════════════════════════════════════
+
+// Clock
+function syncObClock(){
+  const now=new Date();
+  const el=document.getElementById('ob-clock');
+  if(el) el.textContent=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+}
+syncObClock(); setInterval(syncObClock,10000);
+
+// Navigate slides
+let obCurrent=0;
+function obGoTo(n){
+  const prev=document.getElementById('ob-'+obCurrent);
+  const next=document.getElementById('ob-'+n);
+  if(!next||!prev) return;
+  prev.classList.remove('active');
+  prev.classList.add('out');
+  setTimeout(()=>prev.classList.remove('out'),420);
+  next.classList.add('active');
+  obCurrent=n;
+  if(n===8) obTriggerDone();
+}
+
+// Level picker (0-4)
+function obPickLevel(idx){
+  for(let i=0;i<5;i++){
+    const c=document.getElementById('ob-lv-'+i);
+    if(!c) continue;
+    c.classList.toggle('on',i===idx);
+    c.querySelector('.ob-level-tick').textContent=i===idx?'✓':'';
+  }
+}
+
+// Done animations
+function obTriggerDone(){
+  obSpawnConfetti();
+  obCountUp('ob-s1',0,12847,1300,'k');
+  obCountUp('ob-s2',0,186,950,'');
+  obCountUp('ob-s3',0,47,750,'');
+}
+function obCountUp(id,from,to,dur,suffix){
+  const el=document.getElementById(id);
+  if(!el) return;
+  const start=performance.now();
+  (function step(now){
+    const p=Math.min((now-start)/dur,1);
+    const ease=1-Math.pow(1-p,3);
+    const val=Math.round(from+(to-from)*ease);
+    el.textContent=(val>=1000?(val/1000).toFixed(1)+'k':val)+suffix;
+    if(p<1) requestAnimationFrame(step);
+  })(performance.now());
+}
+function obSpawnConfetti(){
+  const c=document.getElementById('ob-confetti');
+  if(!c) return;
+  c.innerHTML='';
+  const cols=['#4A90C4','#E8834A','#6B8F71','#B8D4EE','#F0A070','#9DB8A0','#DDEAF6','#EDE3D4'];
+  for(let i=0;i<55;i++){
+    const p=document.createElement('div');
+    p.className='ob-confetti-piece';
+    const sz=Math.random()*8+4;
+    p.style.cssText=`width:${sz}px;height:${sz*(Math.random()>.5?1:2.5)}px;background:${cols[Math.floor(Math.random()*cols.length)]};left:${Math.random()*100}%;top:-20px;opacity:${Math.random()*.8+.2};border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*.8}s;`;
+    c.appendChild(p);
+  }
+}
+
+
+// ── Register slide helpers
+function obTogglePw(){
+  const inp = document.getElementById('reg-pw');
+  const eye = document.getElementById('reg-eye');
+  if(!inp) return;
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  eye.style.opacity = show ? '1' : '.5';
+}
+
+function obRegSubmit(){
+  const name  = (document.getElementById('reg-name')  || {}).value || '';
+  const email = (document.getElementById('reg-email') || {}).value || '';
+  const pw    = (document.getElementById('reg-pw')    || {}).value || '';
+  if(!name.trim()){  showToast('Please enter your name ✍️'); return; }
+  if(!email.includes('@')){ showToast('Please enter a valid email 📧'); return; }
+  if(pw.length < 8){  showToast('Password needs 8+ characters 🔒'); return; }
+  // Simulate account creation → launch app
+  showToast('Welcome, ' + name.split(' ')[0] + '! 🙏');
+  setTimeout(obLaunchApp, 900);
+}
+
+function obLaunchApp(){
+  const ob=document.getElementById('onboarding');
+  ob.classList.add('exiting');
+  document.querySelector('.phone').classList.remove('ob-active');
+  setTimeout(()=>{
+    ob.classList.add('gone');
+    triggerReveals();
+    showToast('Welcome to Ashtanga Sangha 🙏');
+  },680);
+}
+</script>
+</body>
+</html>

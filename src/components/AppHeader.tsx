@@ -1,0 +1,154 @@
+// src/components/AppHeader.tsx
+import React, { useState } from 'react';
+import {
+  View, Text, Image, TouchableOpacity, Modal,
+  Pressable, StyleSheet,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
+import AppLogo from '@/components/AppLogo';
+import { useAppStore } from '@/store/useAppStore';
+import { signOut } from '@/lib/supabase';
+
+export default function AppHeader() {
+  const router = useRouter();
+  const { user } = useAppStore();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    setMenuOpen(false);
+    await signOut();
+  };
+
+  return (
+    <>
+      <View style={s.topbar}>
+        <View style={s.topbarLeft}>
+          <AppLogo size={36} />
+          <Text style={s.appTitle}>Ashtanga Sangha</Text>
+        </View>
+
+        <TouchableOpacity onPress={() => setMenuOpen(true)} activeOpacity={0.75}>
+          {user?.avatarUrl ? (
+            <Image source={{ uri: user.avatarUrl }} style={s.avatar} />
+          ) : (
+            <View style={[s.avatar, s.avatarPlaceholder]}>
+              <Text style={s.avatarLetter}>{user?.name?.charAt(0)?.toUpperCase() ?? '?'}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
+
+      {/* ── Dropdown menu modal ── */}
+      <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
+        <Pressable style={s.menuBackdrop} onPress={() => setMenuOpen(false)}>
+          <View style={s.menuContainer}>
+            {/* User info */}
+            <View style={s.menuHeader}>
+              {user?.avatarUrl ? (
+                <Image source={{ uri: user.avatarUrl }} style={s.menuAvatar} />
+              ) : (
+                <View style={[s.menuAvatar, s.avatarPlaceholder]}>
+                  <Text style={s.avatarLetter}>{user?.name?.charAt(0)?.toUpperCase() ?? '?'}</Text>
+                </View>
+              )}
+              <View style={{ flex: 1 }}>
+                <Text style={s.menuName}>{user?.name ?? 'Yogi'}</Text>
+                <Text style={s.menuEmail}>{user?.email ?? ''}</Text>
+              </View>
+            </View>
+
+            <View style={s.menuDivider} />
+
+            {/* My Profile */}
+            <TouchableOpacity
+              style={s.menuItem}
+              onPress={() => { setMenuOpen(false); router.push('/(tabs)/profile'); }}
+              activeOpacity={0.7}
+            >
+              <Text style={s.menuIcon}>👤</Text>
+              <Text style={s.menuItemText}>My Profile</Text>
+            </TouchableOpacity>
+
+            <View style={s.menuDivider} />
+
+            {/* Sign Out */}
+            <TouchableOpacity style={s.menuItem} onPress={handleSignOut} activeOpacity={0.7}>
+              <Text style={s.menuIcon}>🚪</Text>
+              <Text style={[s.menuItemText, { color: '#C0392B' }]}>Sign Out</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
+    </>
+  );
+}
+
+const s = StyleSheet.create({
+  topbar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+  },
+  topbarLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  appTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 18,
+    color: colors.ink,
+    lineHeight: 22,
+  },
+  avatar: { width: 40, height: 40, borderRadius: 20 },
+  avatarPlaceholder: {
+    backgroundColor: colors.sage,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarLetter: { fontSize: 16, color: '#fff', fontWeight: '600' },
+
+  // ── Dropdown menu ──
+  menuBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    paddingTop: 95,
+    paddingRight: spacing.lg,
+  },
+  menuContainer: {
+    backgroundColor: '#fff',
+    borderRadius: radius.xl,
+    width: 240,
+    ...shadows.lg,
+    overflow: 'hidden',
+  },
+  menuHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.lg,
+  },
+  menuAvatar: { width: 40, height: 40, borderRadius: 20 },
+  menuName: {
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 16,
+    lineHeight: 20,
+    color: colors.ink,
+  },
+  menuEmail: { ...typography.bodyXs, color: colors.muted, marginTop: 1 },
+  menuDivider: { height: 1, backgroundColor: '#F0EDE8' },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+  },
+  menuIcon: { fontSize: 18, width: 24, textAlign: 'center' },
+  menuItemText: { ...typography.bodyMd, color: colors.ink },
+});

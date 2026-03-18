@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="warmGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#C47A4A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#A0603A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle - light -->
+  <circle cx="200" cy="200" r="180" fill="#FAF7F4" />
+
+  <!-- Inner ring -->
+  <circle cx="200" cy="200" r="155" fill="none" stroke="#EDE5DD" stroke-width="0.75" />
+
+  <!-- Stylized seated yoga figure -->
+  <g transform="translate(200, 185)">
+    <circle cx="0" cy="-62" r="16" fill="url(#warmGrad)" />
+    <line x1="0" y1="-46" x2="0" y2="20" stroke="url(#warmGrad)" stroke-width="5" stroke-linecap="round" />
+    <path d="M 0,-30 C -15,-50 -12,-70 -4,-78" stroke="url(#warmGrad)" stroke-width="4.5" fill="none" stroke-linecap="round" />
+    <path d="M 0,-30 C 15,-50 12,-70 4,-78" stroke="url(#warmGrad)" stroke-width="4.5" fill="none" stroke-linecap="round" />
+    <path d="M 0,20 C -10,30 -35,35 -42,28" stroke="url(#warmGrad)" stroke-width="4.5" fill="none" stroke-linecap="round" />
+    <path d="M 0,20 C 10,30 35,35 42,28" stroke="url(#warmGrad)" stroke-width="4.5" fill="none" stroke-linecap="round" />
+    <path d="M -42,28 C -38,35 -15,38 0,32" stroke="url(#warmGrad)" stroke-width="4" fill="none" stroke-linecap="round" />
+    <path d="M 42,28 C 38,35 15,38 0,32" stroke="url(#warmGrad)" stroke-width="4" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- Community dots -->
+  <circle cx="170" cy="108" r="3.5" fill="#C47A4A" opacity="0.5" />
+  <circle cx="200" cy="98" r="3.5" fill="#C47A4A" opacity="0.7" />
+  <circle cx="230" cy="108" r="3.5" fill="#C47A4A" opacity="0.5" />
+
+  <!-- Text -->
+  <text x="200" y="310" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="400" letter-spacing="8" fill="#2A2A3E">
+    ASHTANGA
+  </text>
+  <text x="200" y="340" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="16" font-weight="300" letter-spacing="12" fill="#6A6A80">
+    SANGHA
+  </text>
+</svg>
