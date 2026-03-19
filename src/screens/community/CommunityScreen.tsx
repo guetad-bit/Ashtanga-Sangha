@@ -201,6 +201,7 @@ export default function CommunityScreen() {
                   likesCount={post.likes_count ?? 0}
                   isLiked={false}
                   createdAt={post.created_at}
+                  tags={[]}
                   onUserPress={() => openProfile(post.profiles?.name ?? '')}
                 />
               ))
