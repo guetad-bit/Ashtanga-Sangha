@@ -2,6 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? '';
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '';
@@ -52,9 +53,13 @@ export async function signInWithGoogle() {
 
   if (error) return { data: null, error };
 
-  // Open the OAuth URL in the device browser
+  // Open the OAuth URL in an in-app auth browser session.
+  // Unlike Linking.openURL (which opens Safari), openAuthSessionAsync
+  // uses SFAuthenticationSession / ASWebAuthenticationSession on iOS
+  // which can redirect back to the app via custom scheme automatically.
   if (data?.url) {
-    await Linking.openURL(data.url);
+    const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+    console.log('WebBrowser result:', result.type);
   }
 
   return { data, error: null };
