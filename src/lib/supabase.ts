@@ -245,7 +245,7 @@ export async function getFeed(userId: string) {
   // Posts from people you follow
   return supabase
     .from('posts')
-    .select('*, profiles(name, avatar_url)')
+    .select('*, profiles!posts_user_id_fkey(name, avatar_url)')
     .order('created_at', { ascending: false })
     .limit(20);
 }
