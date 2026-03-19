@@ -1,7 +1,7 @@
 // src/screens/onboarding/OnboardingTour.tsx
 import React, { useRef, useState } from 'react';
 import {
-  View, Text, TouchableOpacity, StyleSheet, Dimensions,
+  View, Text, TouchableOpacity, StyleSheet, Dimensions, Platform,
   FlatList, NativeSyntheticEvent, NativeScrollEvent,
   ImageBackground, ImageSourcePropType, StatusBar,
 } from 'react-native';
@@ -15,9 +15,7 @@ const { width, height } = Dimensions.get('window');
 interface Slide {
   id: string;
   image: ImageSourcePropType;
-  /** Accent colour used for kicker text, active dot, and button */
   accent: string;
-  /** Bottom colour of the gradient overlay — gives each slide a distinct mood */
   gradientFloor: string;
   title: string;
   kicker: string;
@@ -28,7 +26,7 @@ const SLIDES: Slide[] = [
   {
     id: '1',
     image: require('../../../assets/onboard-1.png'),
-    accent: '#7EC8A4',           // soft mint-green
+    accent: '#7EC8A4',
     gradientFloor: 'rgba(17,42,32,0.97)',
     title: 'Welcome to Sangha',
     kicker: 'Your Ashtanga Community',
@@ -37,7 +35,7 @@ const SLIDES: Slide[] = [
   {
     id: '2',
     image: require('../../../assets/onboard-1.png'),
-    accent: '#74B3E0',           // sky-blue
+    accent: '#74B3E0',
     gradientFloor: 'rgba(10,24,44,0.97)',
     title: 'Step on the Mat',
     kicker: 'Practice together, apart',
@@ -46,7 +44,7 @@ const SLIDES: Slide[] = [
   {
     id: '3',
     image: require('../../../assets/onboard-1.png'),
-    accent: '#F0A86A',           // warm amber
+    accent: '#F0A86A',
     gradientFloor: 'rgba(40,20,8,0.97)',
     title: 'Build Your Streak',
     kicker: 'One day at a time',
@@ -55,7 +53,7 @@ const SLIDES: Slide[] = [
   {
     id: '4',
     image: require('../../../assets/onboard-1.png'),
-    accent: '#C4A8E0',           // soft lavender
+    accent: '#C4A8E0',
     gradientFloor: 'rgba(22,14,38,0.97)',
     title: 'Join the Sangha',
     kicker: 'You\'re not practicing alone',
@@ -94,12 +92,11 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
       style={s.slideBg}
       resizeMode="cover"
     >
-      {/* Per-slide gradient: transparent at top, tinted dark at bottom */}
       <LinearGradient
         colors={[
-          'rgba(0,0,0,0.08)',       // near-transparent top — image shines through
-          'rgba(0,0,0,0.35)',       // mid-point darkening
-          item.gradientFloor,       // rich tinted floor — unique to each slide
+          'rgba(0,0,0,0.08)',
+          'rgba(0,0,0,0.35)',
+          item.gradientFloor,
         ]}
         locations={[0, 0.45, 1]}
         style={s.gradient}
@@ -111,7 +108,7 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
     <View style={s.root}>
       <StatusBar barStyle="light-content" />
 
-      {/* Full-screen sliding image backgrounds */}
+      {/* Full-screen sliding image backgrounds — z-index 1 */}
       <FlatList
         ref={flatListRef}
         data={SLIDES}
@@ -123,11 +120,14 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
         onScroll={handleScroll}
         scrollEventThrottle={16}
         bounces={false}
-        style={StyleSheet.absoluteFill}
+        style={[StyleSheet.absoluteFill, { zIndex: 1 }]}
       />
 
-      {/* ── Top bar: Logo + App name + Skip ── */}
-      <View style={[s.topBar, { paddingTop: insets.top + spacing.sm }]}>
+      {/* Top bar — z-index 10, above FlatList */}
+      <View
+        style={[s.topBar, { paddingTop: insets.top + spacing.sm }]}
+        pointerEvents="box-none"
+      >
         <View style={s.logoRow}>
           <AppLogo size={32} />
           <Text style={s.appName}>Ashtanga Sangha</Text>
@@ -137,10 +137,8 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
         </TouchableOpacity>
       </View>
 
-      {/* ── Bottom card: kicker, title, desc, dots, button ── */}
+      {/* Bottom card — z-index 10, above FlatList */}
       <View style={[s.card, { paddingBottom: insets.bottom + spacing.xl }]}>
-
-        {/* Kicker — accent-coloured, uppercase, fully opaque */}
         <Text style={[s.kicker, { color: slide.accent }]}>
           {slide.kicker.toUpperCase()}
         </Text>
@@ -192,7 +190,6 @@ const s = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
 
-  // Top bar — absolute, floats over images
   topBar: {
     position: 'absolute',
     top: 0, left: 0, right: 0,
@@ -218,16 +215,15 @@ const s = StyleSheet.create({
     color: 'rgba(255,255,255,0.6)',
   },
 
-  // Bottom text card — absolute, anchored to bottom
   card: {
     position: 'absolute',
     bottom: 0, left: 0, right: 0,
     paddingHorizontal: spacing['2xl'],
     paddingTop: spacing['2xl'],
     gap: spacing.sm,
+    zIndex: 10,
   },
 
-  // Kicker — fully legible accent-coloured label
   kicker: {
     fontSize: 11,
     fontFamily: 'DMSans_500Medium',
@@ -270,6 +266,7 @@ const s = StyleSheet.create({
     borderRadius: radius.xl,
     paddingVertical: spacing.lg,
     alignItems: 'center',
+    ...(Platform.OS === 'web' ? { cursor: 'pointer' } : {}),
   },
   nextBtnText: {
     ...typography.headingLg,
