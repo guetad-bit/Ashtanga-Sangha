@@ -1,7 +1,7 @@
 // src/screens/onboarding/OnboardingTour.tsx
 import React, { useRef, useState } from 'react';
 import {
-  View, Text, TouchableOpacity, StyleSheet, Dimensions, Platform,
+  View, Text, Pressable, StyleSheet, Dimensions, Platform,
   FlatList, NativeSyntheticEvent, NativeScrollEvent,
   ImageBackground, ImageSourcePropType, StatusBar,
 } from 'react-native';
@@ -71,6 +71,10 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
   const insets = useSafeAreaInsets();
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    // On web the FlatList has pointerEvents="none" so manual swiping is
+    // disabled and we drive navigation purely through state.  Letting the
+    // scroll handler fire on web would reset currentIndex back to 0.
+    if (Platform.OS === 'web') return;
     const index = Math.round(e.nativeEvent.contentOffset.x / width);
     setCurrentIndex(index);
   };
@@ -135,9 +139,9 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
           <AppLogo size={32} />
           <Text style={s.appName}>Ashtanga Sangha</Text>
         </View>
-        <TouchableOpacity onPress={onFinish} hitSlop={12}>
+        <Pressable onPress={onFinish} hitSlop={12}>
           <Text style={s.skipText}>Skip</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {/* Bottom card — z-index 10, above FlatList */}
@@ -165,15 +169,17 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
         </View>
 
         {/* CTA */}
-        <TouchableOpacity
-          style={[s.nextBtn, { backgroundColor: slide.accent }]}
+        <Pressable
+          style={({ pressed }) => [
+            s.nextBtn,
+            { backgroundColor: slide.accent, opacity: pressed ? 0.85 : 1 },
+          ]}
           onPress={goNext}
-          activeOpacity={0.85}
         >
           <Text style={[s.nextBtnText, { color: slide.gradientFloor.startsWith('rgba(40') ? '#1C1008' : '#fff' }]}>
             {isLast ? 'Get Started  →' : 'Next'}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
