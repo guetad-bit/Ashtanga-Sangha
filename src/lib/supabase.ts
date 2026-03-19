@@ -1,5 +1,6 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js';
+import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
@@ -38,10 +39,30 @@ export async function signInWithEmail(email: string, password: string) {
 }
 
 export async function signInWithGoogle() {
-  // Build the correct redirect URL for both Expo Go and standalone builds
-  const redirectUrl = Linking.createURL('auth/callback');
+  const isWeb = Platform.OS === 'web';
+
+  // On web, redirect back to the current origin + /auth/callback
+  // On native, use the deep link scheme (e.g. ashtangasangha://auth/callback)
+  const redirectUrl = isWeb
+    ? `${window.location.origin}/auth/callback`
+    : Linking.createURL('auth/callback');
+
   console.log('OAuth redirect URL:', redirectUrl);
 
+  if (isWeb) {
+    // On web: let Supabase handle the redirect natively (no skipBrowserRedirect).
+    // The browser will navigate to Google, then back to our /auth/callback page.
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectUrl,
+        queryParams: { prompt: 'select_account' },
+      },
+    });
+    return { data, error };
+  }
+
+  // On native: use skipBrowserRedirect + in-app auth browser
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
@@ -53,10 +74,8 @@ export async function signInWithGoogle() {
 
   if (error) return { data: null, error };
 
-  // Open the OAuth URL in an in-app auth browser session.
-  // Unlike Linking.openURL (which opens Safari), openAuthSessionAsync
-  // uses SFAuthenticationSession / ASWebAuthenticationSession on iOS
-  // which can redirect back to the app via custom scheme automatically.
+  // openAuthSessionAsync uses ASWebAuthenticationSession on iOS
+  // which can handle the deep link redirect back to the app.
   if (data?.url) {
     const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
     console.log('WebBrowser result:', result.type);
