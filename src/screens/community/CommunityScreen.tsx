@@ -12,7 +12,7 @@ import { useAppStore } from '@/store/useAppStore';
 import AppHeader from '@/components/AppHeader';
 import FriendRow from '@/components/community/FriendRow';
 import PostCard from '@/components/community/PostCard';
-import { getPracticingNow } from '@/lib/supabase';
+import { getPracticingNow, getFeed, supabase } from '@/lib/supabase';
 
 type Tab = 'feed' | 'practicing' | 'discover';
 
@@ -26,12 +26,36 @@ interface PracticingUser {
   practicing_since: string;
 }
 
+interface FeedPost {
+  id: string;
+  user_id: string;
+  caption: string;
+  image_url: string | null;
+  location: string | null;
+  likes_count: number;
+  created_at: string;
+  profiles: { name: string; avatar_url: string | null } | null;
+}
+
+interface Member {
+  id: string;
+  name: string;
+  avatar_url: string | null;
+  series: string;
+  level: string;
+  streak: number;
+  location: string | null;
+  bio: string | null;
+}
+
 export default function CommunityScreen() {
   const router = useRouter();
   const { user, userPosts } = useAppStore();
   const [activeTab, setActiveTab] = useState<Tab>('feed');
   const [refreshing, setRefreshing] = useState(false);
   const [livePractitioners, setLivePractitioners] = useState<PracticingUser[]>([]);
+  const [feedPosts, setFeedPosts] = useState<FeedPost[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
 
   /** Open profile (currently disabled - would need user lookup) */
   const openProfile = useCallback((name: string) => {
@@ -44,7 +68,28 @@ export default function CommunityScreen() {
     if (data) setLivePractitioners(data as PracticingUser[]);
   }, []);
 
-  useEffect(() => { fetchPracticing(); }, []);
+  // Fetch all posts from Supabase for the feed
+  const fetchFeed = useCallback(async () => {
+    const { data } = await getFeed(user?.id ?? '');
+    if (data) setFeedPosts(data as FeedPost[]);
+  }, [user?.id]);
+
+  // Fetch all members for the Discover tab
+  const fetchMembers = useCallback(async () => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, name, avatar_url, series, level, streak, location, bio')
+      .neq('id', user?.id ?? '')
+      .order('streak', { ascending: false })
+      .limit(50);
+    if (data) setMembers(data as Member[]);
+  }, [user?.id]);
+
+  useEffect(() => {
+    fetchPracticing();
+    fetchFeed();
+    fetchMembers();
+  }, []);
 
   // Real Supabase data only - show empty when no practitioners
   const practicingNow = livePractitioners.map((p) => ({
@@ -60,7 +105,7 @@ export default function CommunityScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchPracticing();
+    await Promise.all([fetchPracticing(), fetchFeed(), fetchMembers()]);
     setRefreshing(false);
   }, []);
 
@@ -143,8 +188,23 @@ export default function CommunityScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* User's own posts (newest first) */}
-            {userPosts.length > 0 ? (
+            {/* Community posts from Supabase + user's own posts */}
+            {feedPosts.length > 0 ? (
+              feedPosts.map((post) => (
+                <PostCard
+                  key={post.id}
+                  userName={post.profiles?.name ?? 'Practitioner'}
+                  userAvatar={post.profiles?.avatar_url ?? 'https://via.placeholder.com/120'}
+                  imageUrl={post.image_url ?? undefined}
+                  caption={post.caption ?? ''}
+                  location={post.location ?? undefined}
+                  likesCount={post.likes_count ?? 0}
+                  isLiked={false}
+                  createdAt={post.created_at}
+                  onUserPress={() => openProfile(post.profiles?.name ?? '')}
+                />
+              ))
+            ) : userPosts.length > 0 ? (
               userPosts.map((post) => (
                 <PostCard
                   key={post.id}
@@ -233,19 +293,27 @@ export default function CommunityScreen() {
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Suggested Practitioners</Text>
             </View>
-            <View style={styles.friendsCard}>
-              <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
-                <Text style={{ color: colors.muted, fontSize: 14 }}>No suggestions yet</Text>
+            {members.length > 0 ? (
+              <View style={styles.friendsCard}>
+                {members.map((m) => (
+                  <FriendRow
+                    key={m.id}
+                    name={m.name}
+                    avatarUrl={m.avatar_url ?? ''}
+                    series={m.series}
+                    streak={m.streak ?? 0}
+                    isFollowing={false}
+                    onPress={() => openProfile(m.name)}
+                  />
+                ))}
               </View>
-            </View>
-
-            {/* Teachers spotlight */}
-            <View style={[styles.sectionHeader, { marginTop: spacing.lg }]}>
-              <Text style={styles.sectionTitle}>Featured Teachers</Text>
-            </View>
-            <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
-              <Text style={{ color: colors.muted, fontSize: 14 }}>No teachers yet</Text>
-            </View>
+            ) : (
+              <View style={styles.friendsCard}>
+                <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
+                  <Text style={{ color: colors.muted, fontSize: 14 }}>No suggestions yet</Text>
+                </View>
+              </View>
+            )}
           </>
         )}
       </ScrollView>
