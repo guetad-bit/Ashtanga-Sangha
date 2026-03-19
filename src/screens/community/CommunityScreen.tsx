@@ -12,7 +12,6 @@ import { useAppStore } from '@/store/useAppStore';
 import AppHeader from '@/components/AppHeader';
 import FriendRow from '@/components/community/FriendRow';
 import PostCard from '@/components/community/PostCard';
-import { mockUsers, mockPosts, type MockUser } from '@/data/mockUsers';
 import { getPracticingNow } from '@/lib/supabase';
 
 type Tab = 'feed' | 'practicing' | 'discover';
@@ -33,12 +32,10 @@ export default function CommunityScreen() {
   const [activeTab, setActiveTab] = useState<Tab>('feed');
   const [refreshing, setRefreshing] = useState(false);
   const [livePractitioners, setLivePractitioners] = useState<PracticingUser[]>([]);
-  const [profileUser, setProfileUser] = useState<MockUser | null>(null);
 
-  /** Find a MockUser by name (fallback for posts that only carry a name) */
+  /** Open profile (currently disabled - would need user lookup) */
   const openProfile = useCallback((name: string) => {
-    const found = mockUsers.find((u) => u.name === name);
-    if (found) setProfileUser(found);
+    // User profiles would be fetched from Supabase
   }, []);
 
   // Fetch who's on the mat from Supabase
@@ -49,22 +46,17 @@ export default function CommunityScreen() {
 
   useEffect(() => { fetchPracticing(); }, []);
 
-  // Merge: real Supabase data + mock fallback
-  const mockPracticingNow = mockUsers.filter(
-    (u) => u.lastPractice && (Date.now() - new Date(u.lastPractice).getTime()) < 2 * 3600000,
-  );
-  const practicingNow = livePractitioners.length > 0
-    ? livePractitioners.map((p) => ({
-        id: p.id,
-        name: p.name ?? 'Practitioner',
-        avatarUrl: p.avatar_url,
-        series: p.series,
-        streak: p.streak ?? 0,
-        lastPractice: p.practicing_since,
-        isFollowing: true,
-        level: p.level,
-      }))
-    : mockPracticingNow;
+  // Real Supabase data only - show empty when no practitioners
+  const practicingNow = livePractitioners.map((p) => ({
+    id: p.id,
+    name: p.name ?? 'Practitioner',
+    avatarUrl: p.avatar_url,
+    series: p.series,
+    streak: p.streak ?? 0,
+    lastPractice: p.practicing_since,
+    isFollowing: true,
+    level: p.level,
+  }));
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -152,38 +144,27 @@ export default function CommunityScreen() {
             </View>
 
             {/* User's own posts (newest first) */}
-            {userPosts.map((post) => (
-              <PostCard
-                key={post.id}
-                userName={post.userName}
-                userAvatar={post.userAvatar ?? 'https://via.placeholder.com/120'}
-                imageUrl={post.imageUri}
-                caption={post.caption}
-                location={post.location}
-                likesCount={post.likesCount}
-                isLiked={post.isLiked}
-                createdAt={post.createdAt}
-                tags={post.tags}
-                onUserPress={() => openProfile(post.userName)}
-              />
-            ))}
-
-            {/* Mock community posts */}
-            {mockPosts.map((post) => (
-              <PostCard
-                key={post.id}
-                userName={post.userName}
-                userAvatar={post.userAvatar}
-                imageUrl={post.imageUrl}
-                caption={post.caption}
-                location={post.location}
-                likesCount={post.likesCount}
-                isLiked={post.isLiked}
-                createdAt={post.createdAt}
-                tags={post.tags}
-                onUserPress={() => openProfile(post.userName)}
-              />
-            ))}
+            {userPosts.length > 0 ? (
+              userPosts.map((post) => (
+                <PostCard
+                  key={post.id}
+                  userName={post.userName}
+                  userAvatar={post.userAvatar ?? 'https://via.placeholder.com/120'}
+                  imageUrl={post.imageUri}
+                  caption={post.caption}
+                  location={post.location}
+                  likesCount={post.likesCount}
+                  isLiked={post.isLiked}
+                  createdAt={post.createdAt}
+                  tags={post.tags}
+                  onUserPress={() => openProfile(post.userName)}
+                />
+              ))
+            ) : (
+              <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
+                <Text style={{ color: colors.muted, fontSize: 14 }}>No posts yet</Text>
+              </View>
+            )}
           </>
         )}
 
@@ -198,14 +179,12 @@ export default function CommunityScreen() {
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <Text style={styles.statNumber}>{mockUsers.length}</Text>
+                <Text style={styles.statNumber}>0</Text>
                 <Text style={styles.statLabel}>In your sangha</Text>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <Text style={styles.statNumber}>
-                  {mockUsers.reduce((sum, u) => sum + u.streak, 0)}
-                </Text>
+                <Text style={styles.statNumber}>0</Text>
                 <Text style={styles.statLabel}>Combined streak</Text>
               </View>
             </View>
@@ -241,20 +220,9 @@ export default function CommunityScreen() {
               <Text style={styles.sectionTitle}>Your Sangha</Text>
             </View>
             <View style={styles.friendsCard}>
-              {mockUsers
-                .filter((u) => u.isFollowing)
-                .map((u) => (
-                  <FriendRow
-                    key={u.id}
-                    name={u.name}
-                    avatarUrl={u.avatarUrl}
-                    series={u.series}
-                    streak={u.streak}
-                    lastPractice={u.lastPractice}
-                    isFollowing={u.isFollowing}
-                    onPress={() => setProfileUser(u)}
-                  />
-                ))}
+              <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
+                <Text style={{ color: colors.muted, fontSize: 14 }}>No sangha members yet</Text>
+              </View>
             </View>
           </>
         )}
@@ -266,133 +234,22 @@ export default function CommunityScreen() {
               <Text style={styles.sectionTitle}>Suggested Practitioners</Text>
             </View>
             <View style={styles.friendsCard}>
-              {mockUsers
-                .filter((u) => !u.isFollowing)
-                .map((u) => (
-                  <FriendRow
-                    key={u.id}
-                    name={u.name}
-                    avatarUrl={u.avatarUrl}
-                    series={u.series}
-                    streak={u.streak}
-                    lastPractice={u.lastPractice}
-                    isFollowing={u.isFollowing}
-                    onPress={() => setProfileUser(u)}
-                  />
-                ))}
+              <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
+                <Text style={{ color: colors.muted, fontSize: 14 }}>No suggestions yet</Text>
+              </View>
             </View>
 
             {/* Teachers spotlight */}
             <View style={[styles.sectionHeader, { marginTop: spacing.lg }]}>
               <Text style={styles.sectionTitle}>Featured Teachers</Text>
             </View>
-            {mockUsers
-              .filter((u) => u.level === 'teacher')
-              .map((u) => (
-                <TouchableOpacity key={u.id} style={styles.teacherCard} activeOpacity={0.8} onPress={() => setProfileUser(u)}>
-                  <Image source={{ uri: u.avatarUrl }} style={styles.teacherAvatar} />
-                  <View style={styles.teacherInfo}>
-                    <View style={styles.teacherNameRow}>
-                      <Text style={styles.teacherName}>{u.name}</Text>
-                      <View style={styles.teacherBadge}>
-                        <Text style={styles.teacherBadgeText}>Teacher</Text>
-                      </View>
-                    </View>
-                    <Text style={styles.teacherBio} numberOfLines={2}>{u.bio}</Text>
-                    <View style={styles.teacherMeta}>
-                      <View style={styles.teacherTag}>
-                        <Text style={styles.teacherTagText}>📍 {u.location}</Text>
-                      </View>
-                      <View style={styles.teacherTag}>
-                        <Text style={styles.teacherTagText}>🔥 {u.streak}d</Text>
-                      </View>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
+            <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
+              <Text style={{ color: colors.muted, fontSize: 14 }}>No teachers yet</Text>
+            </View>
           </>
         )}
       </ScrollView>
 
-      {/* ── User Profile Sheet ── */}
-      <Modal
-        visible={!!profileUser}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setProfileUser(null)}
-      >
-        <Pressable style={styles.sheetBackdrop} onPress={() => setProfileUser(null)}>
-          <Pressable style={styles.sheetContainer} onPress={() => {}}>
-            {profileUser && (
-              <>
-                {/* Handle bar */}
-                <View style={styles.sheetHandle} />
-
-                {/* Close button */}
-                <TouchableOpacity style={styles.sheetClose} onPress={() => setProfileUser(null)} activeOpacity={0.7}>
-                  <Ionicons name="close" size={20} color={colors.muted} />
-                </TouchableOpacity>
-
-                {/* Avatar + name */}
-                <View style={styles.sheetHero}>
-                  {profileUser.avatarUrl ? (
-                    <Image source={{ uri: profileUser.avatarUrl }} style={styles.sheetAvatar} />
-                  ) : (
-                    <View style={[styles.sheetAvatar, { backgroundColor: colors.sage, alignItems: 'center', justifyContent: 'center' }]}>
-                      <Text style={{ fontSize: 28, color: '#fff', fontWeight: '600' }}>{profileUser.name.charAt(0)}</Text>
-                    </View>
-                  )}
-                  <Text style={styles.sheetName}>{profileUser.name}</Text>
-                  {profileUser.level === 'teacher' && (
-                    <View style={styles.sheetTeacherBadge}>
-                      <Text style={styles.sheetTeacherBadgeText}>Teacher</Text>
-                    </View>
-                  )}
-                  <View style={styles.sheetLocationRow}>
-                    <Ionicons name="location-outline" size={13} color={colors.muted} />
-                    <Text style={styles.sheetLocation}>{profileUser.location}</Text>
-                  </View>
-                </View>
-
-                {/* Stats row */}
-                <View style={styles.sheetStats}>
-                  <View style={styles.sheetStatItem}>
-                    <Text style={styles.sheetStatNum}>{profileUser.streak}</Text>
-                    <Text style={styles.sheetStatLabel}>Day streak</Text>
-                  </View>
-                  <View style={styles.sheetStatDivider} />
-                  <View style={styles.sheetStatItem}>
-                    <Text style={styles.sheetStatNum}>{profileUser.practicingSince}</Text>
-                    <Text style={styles.sheetStatLabel}>Since</Text>
-                  </View>
-                  <View style={styles.sheetStatDivider} />
-                  <View style={styles.sheetStatItem}>
-                    <Text style={styles.sheetStatNum}>
-                      {profileUser.series === 'primary' ? 'Primary' : profileUser.series === 'intermediate' ? '2nd' : '3rd'}
-                    </Text>
-                    <Text style={styles.sheetStatLabel}>Series</Text>
-                  </View>
-                </View>
-
-                {/* Bio */}
-                {profileUser.bio ? (
-                  <Text style={styles.sheetBio}>{profileUser.bio}</Text>
-                ) : null}
-
-                {/* Follow button */}
-                <TouchableOpacity
-                  style={[styles.sheetFollowBtn, profileUser.isFollowing && styles.sheetFollowBtnActive]}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.sheetFollowText, profileUser.isFollowing && styles.sheetFollowTextActive]}>
-                    {profileUser.isFollowing ? '✓  Following' : '+ Follow'}
-                  </Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </Pressable>
-        </Pressable>
-      </Modal>
     </SafeAreaView>
   );
 }

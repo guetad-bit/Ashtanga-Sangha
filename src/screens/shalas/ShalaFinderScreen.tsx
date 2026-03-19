@@ -16,8 +16,44 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import { colors, spacing, radius, shadows, typography } from '@/styles/tokens';
-import { shalas, type Shala, type Review } from '@/data/mockShalas';
 import AppHeader from '@/components/AppHeader';
+
+interface Shala {
+  id: string;
+  name: string;
+  imageUrl: string;
+  city: string;
+  country: string;
+  region: string;
+  teacher: string;
+  teacherImg: string;
+  authorization: string;
+  rating: number;
+  checkins: number;
+  style: string[];
+  dropIn?: boolean;
+  dropInPrice?: string;
+  reviewCount: number;
+  reviews: Review[];
+  description: string;
+  schedule: Array<{ day: string; time: string; class: string }>;
+  lineage: string;
+  moonDayPolicy: string;
+  amenities: string[];
+  practitioners: Array<{ name: string; img: string }>;
+  monthlyPrice?: string;
+}
+
+interface Review {
+  id: string;
+  userName: string;
+  userImg: string;
+  userLocation: string;
+  date: string;
+  practicedMonths?: number;
+  rating: number;
+  text: string;
+}
 
 const { width: SCREEN_W } = Dimensions.get('window');
 
@@ -158,26 +194,8 @@ export default function ShalaFinderScreen() {
   const [showFilters, setShowFilters] = useState(false);
   const [selected, setSelected] = useState<Shala | null>(null);
 
-  const filtered = useMemo(() => {
-    let results = shalas;
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      results = results.filter(
-        (sh) =>
-          sh.name.toLowerCase().includes(q) ||
-          sh.city.toLowerCase().includes(q) ||
-          sh.country.toLowerCase().includes(q) ||
-          sh.teacher.toLowerCase().includes(q)
-      );
-    }
-    if (regionFilter !== 'all') {
-      results = results.filter((sh) => sh.region === regionFilter);
-    }
-    if (authFilter !== 'all') {
-      results = results.filter((sh) => sh.authorization === authFilter);
-    }
-    return results;
-  }, [search, regionFilter, authFilter]);
+  // Empty state - Shala database is coming soon
+  const filtered: Shala[] = [];
 
   const activeFilterCount =
     (regionFilter !== 'all' ? 1 : 0) + (authFilter !== 'all' ? 1 : 0);
@@ -253,9 +271,9 @@ export default function ShalaFinderScreen() {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={s.empty}>
-            <Ionicons name="search-outline" size={48} color={colors.mutedL} />
-            <Text style={s.emptyTitle}>No shalas found</Text>
-            <Text style={s.emptyText}>Try a different city or adjust filters</Text>
+            <Ionicons name="build-outline" size={48} color={colors.mutedL} />
+            <Text style={s.emptyTitle}>Coming soon</Text>
+            <Text style={s.emptyText}>Shala directory is being built</Text>
           </View>
         }
         renderItem={({ item }) => (

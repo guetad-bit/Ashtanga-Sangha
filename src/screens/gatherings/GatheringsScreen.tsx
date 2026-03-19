@@ -9,7 +9,29 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
 import { getGatherings, bookGathering, getUserBookings, cancelBooking } from '@/lib/supabase';
-import { gatherings as mockData, type Gathering, type Attendee } from '@/data/mockGatherings';
+
+interface Gathering {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  location: string;
+  region: string;
+  days: number;
+  spotsFilled: number;
+  spotsTotal: number;
+  spotsLeft: number;
+  dateStart: string;
+  dateEnd: string;
+  imageUrl: string;
+  attendees: Attendee[];
+}
+
+interface Attendee {
+  id: string;
+  name: string;
+  avatar: string;
+}
 
 type BookingStep = 'review' | 'details' | 'confirmed';
 
@@ -59,8 +81,13 @@ export default function GatheringsScreen() {
   const [selectedAttendee, setSelectedAttendee] = useState<Attendee | null>(null);
 
   const fetchData = useCallback(async () => {
-    // Use mock data (Supabase can be wired later)
-    setGatherings(mockData);
+    // Fetch real data from Supabase
+    const { data } = await getGatherings();
+    if (data) {
+      setGatherings(data as Gathering[]);
+    } else {
+      setGatherings([]);
+    }
 
     if (user) {
       const { data: bookings } = await getUserBookings(user.id);

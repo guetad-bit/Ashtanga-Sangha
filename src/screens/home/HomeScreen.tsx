@@ -11,7 +11,6 @@ import { useAppStore } from '@/store/useAppStore';
 import { getWeeklyRhythm, calculateStreak } from '@/utils/practiceStreak';
 import { isMoonDay, daysUntilNextMoonDay } from '@/utils/moonDay';
 import { getPracticeLogs, setPracticingNow, logPractice, getPracticingNow, signOut } from '@/lib/supabase';
-import { mockUsers, mockPosts } from '@/data/mockUsers';
 
 import AppLogo from '@/components/AppLogo';
 import { Ionicons } from '@expo/vector-icons';
@@ -140,22 +139,17 @@ export default function HomeScreen() {
   const moonDaysUntil = daysUntilNextMoonDay();
   const practicesThisWeek = rhythm.filter((d) => d.status === 'done').length;
 
-  // Community: who's on the mat
-  const mockPracticingNow = mockUsers.filter(
-    (u) => u.lastPractice && (Date.now() - new Date(u.lastPractice).getTime()) < 2 * 3600000,
-  );
-  const othersOnMat = livePractitioners.length > 0
-    ? livePractitioners
-        .filter((p) => p.id !== user?.id)
-        .map((p) => ({ id: p.id, name: p.name ?? 'Practitioner', avatarUrl: p.avatar_url }))
-    : mockPracticingNow.map((u) => ({ id: u.id, name: u.name, avatarUrl: u.avatarUrl }));
+  // Community: who's on the mat (real data only)
+  const othersOnMat = livePractitioners
+    .filter((p) => p.id !== user?.id)
+    .map((p) => ({ id: p.id, name: p.name ?? 'Practitioner', avatarUrl: p.avatar_url }));
   const meOnMat = (isPracticing || practicedToday) && user
     ? [{ id: user.id, name: 'You', avatarUrl: user.avatarUrl ?? null }]
     : [];
   const sanghaOnMat = [...meOnMat, ...othersOnMat];
 
-  // Featured community post (latest with image)
-  const featuredPost = mockPosts.find((p) => p.imageUrl);
+  // Featured community post would come from Supabase
+  const featuredPost = userPosts.find((p) => p.imageUri);
 
   // ── Actions ──
   const handleLogPractice = (seriesKey?: string) => {
