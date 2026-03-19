@@ -377,9 +377,6 @@ export default function HomeScreen() {
                 </>
               )}
 
-              {/* Quote */}
-              <Text style={s.heroEncourage}>"Practice, and all is coming." — Pattabhi Jois</Text>
-
               {/* Action button */}
               {!practicedToday ? (
                 <TouchableOpacity
@@ -629,10 +626,10 @@ const s = StyleSheet.create({
   heroImageInner: { borderRadius: 24 },
   heroGradientTop: {
     position: 'absolute', top: 0, left: 0, right: 0, height: 80,
-    backgroundColor: 'rgba(0,0,0,0.15)',
+    backgroundColor: 'rgba(0,0,0,0.08)',
   },
   heroOverlay: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.3)',
     paddingHorizontal: 18, paddingTop: 12, paddingBottom: 14,
   },
 
