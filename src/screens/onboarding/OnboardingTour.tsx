@@ -121,6 +121,7 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
         scrollEventThrottle={16}
         bounces={false}
         style={[StyleSheet.absoluteFill, { zIndex: 1 }]}
+        pointerEvents={Platform.OS === "web" ? "none" : "auto"}
       />
 
       {/* Top bar — z-index 10, above FlatList */}
