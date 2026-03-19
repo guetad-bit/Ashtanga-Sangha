@@ -113,6 +113,7 @@ export default function HomeScreen() {
   const {
     user, practiceLogs, setPracticeLogs,
     isPracticing, setIsPracticing, addPracticeLog,
+    userPosts,
   } = useAppStore();
 
   const router = useRouter();
