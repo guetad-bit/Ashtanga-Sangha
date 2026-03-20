@@ -234,8 +234,8 @@ const s = StyleSheet.create({
   },
 
   kicker: {
-    fontSize: 11,
-    fontFamily: 'DMSans_500Medium',
+    fontSize: 15,
+    fontFamily: 'DMSans_700Bold',
     letterSpacing: 1.6,
     marginBottom: spacing.xs,
   },
@@ -249,8 +249,9 @@ const s = StyleSheet.create({
   },
   desc: {
     ...typography.bodyLg,
+    fontSize: 18,
     color: 'rgba(255,255,255,0.72)',
-    lineHeight: 26,
+    lineHeight: 28,
     marginBottom: spacing.md,
   },
 
