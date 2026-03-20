@@ -53,6 +53,7 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
     <ImageBackground
       source={require('../../../assets/onboard-1.png')}
       style={s.bg}
+      imageStyle={s.bgImage}
       resizeMode="cover"
     >
       <StatusBar barStyle="light-content" />
@@ -170,6 +171,7 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
 
 const s = StyleSheet.create({
   bg: { flex: 1, backgroundColor: '#0D1922' },
+  bgImage: { left: -80 },
   flex: { flex: 1 },
 
   logoRow: {
