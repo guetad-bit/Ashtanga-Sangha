@@ -14,6 +14,7 @@ import { getPracticeLogs, setPracticingNow, logPractice, getPracticingNow, signO
 
 import AppLogo from '@/components/AppLogo';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface PracticingUser {
   id: string;
@@ -322,7 +323,13 @@ export default function HomeScreen() {
 
         {/* ═══ 1. HERO — Today's Practice ═══ */}
         <View style={[s.heroCard, { opacity: heroReady ? 1 : 0 }]}>
-<View style={s.heroOverlay}>
+<LinearGradient
+            colors={['#FF6B6B', '#FFA07A', '#FFD93D', '#6BCB77']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 24 }}
+          />
+          <View style={s.heroOverlay}>
               {/* Status pill */}
               <View style={[s.heroPill, practicedToday && s.heroPillDone]}>
                 <Text style={s.heroPillText}>
@@ -631,7 +638,7 @@ const s = StyleSheet.create({
   heroCard: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
     borderRadius: 24, overflow: 'hidden',
-    backgroundColor: '#1C2B3A',
+    backgroundColor: 'transparent',
     ...shadows.lg,
   },
   heroImage: { display: 'none' },
