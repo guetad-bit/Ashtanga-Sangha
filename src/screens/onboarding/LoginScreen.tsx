@@ -58,8 +58,8 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
     >
       <StatusBar barStyle="light-content" />
       <LinearGradient
-        colors={['rgba(0,0,0,0.1)', 'rgba(13,25,34,0.65)', 'rgba(13,25,34,0.98)']}
-        locations={[0, 0.4, 1]}
+        colors={['rgba(0,0,0,0.08)', 'rgba(0,0,0,0.35)', 'rgba(10,24,44,0.97)']}
+        locations={[0, 0.45, 1]}
         style={StyleSheet.absoluteFill}
       />
 
