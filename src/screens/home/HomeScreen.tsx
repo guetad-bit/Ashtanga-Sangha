@@ -136,7 +136,7 @@ export default function HomeScreen() {
   const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
   const asanaOfDay = ASANAS[dayOfYear % ASANAS.length];
   const guruWisdom = GURU_WISDOM[dayOfYear % GURU_WISDOM.length];
-  const practicedToday = loggedSeries !== null;
+  const practicedToday = isPracticing || loggedSeries !== null;
   const practiceImage = practicedToday
     ? COMPLETED_IMAGES[dayOfYear % COMPLETED_IMAGES.length]
     : PRACTICE_IMAGES[dayOfYear % PRACTICE_IMAGES.length];
