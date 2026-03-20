@@ -132,6 +132,17 @@ export default function HomeScreen() {
   const [editingSeries, setEditingSeries] = useState(false);
   const [heroReady, setHeroReady] = useState(false);
 
+  // Preload both possible hero images so switches are instant
+  useEffect(() => {
+    const todayPractice = PRACTICE_IMAGES[dayOfYear % PRACTICE_IMAGES.length];
+    const todayCompleted = COMPLETED_IMAGES[dayOfYear % COMPLETED_IMAGES.length];
+    Promise.all([
+      Image.prefetch(todayPractice),
+      Image.prefetch(todayCompleted),
+    ]).then(() => setHeroReady(true))
+      .catch(() => setHeroReady(true));
+  }, []);
+
   // Computed
   const now = new Date();
   const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
@@ -228,7 +239,6 @@ export default function HomeScreen() {
       // Restore "on the mat" state — store resets on reload, so we re-hydrate it
       setIsPracticing(true);
     }
-    setHeroReady(true);
   }, [practiceLogs]);
 
   useEffect(() => { fetchLogs(); fetchPracticing(); }, [user?.id]);
