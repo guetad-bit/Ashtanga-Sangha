@@ -146,7 +146,7 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
 
       {/* Bottom card — z-index 10, above FlatList */}
       <View style={[s.card, { paddingBottom: insets.bottom + spacing.xl }]}>
-        <Text style={[s.kicker, { color: slide.accent }]}>
+        <Text style={s.kicker}>
           {slide.kicker.toUpperCase()}
         </Text>
 
