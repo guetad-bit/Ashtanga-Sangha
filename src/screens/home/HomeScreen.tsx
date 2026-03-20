@@ -121,7 +121,13 @@ export default function HomeScreen() {
   const [livePractitioners, setLivePractitioners] = useState<PracticingUser[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedSeries, setSelectedSeries] = useState(user?.series ?? 'primary');
-  const [loggedSeries, setLoggedSeries] = useState<string | null>(null);
+  const [loggedSeries, setLoggedSeries] = useState<string | null>(() => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const existing = practiceLogs.find(
+      (log) => new Date(log.loggedAt).toISOString().split('T')[0] === todayStr
+    );
+    return existing?.series ?? null;
+  });
   const [loggedDuration, setLoggedDuration] = useState<number | null>(null);
   const [editingSeries, setEditingSeries] = useState(false);
 
@@ -622,7 +628,7 @@ const s = StyleSheet.create({
     borderRadius: 24, overflow: 'hidden',
     ...shadows.lg,
   },
-  heroImage: { justifyContent: 'flex-end' },
+  heroImage: { justifyContent: 'flex-end', height: 220 },
   heroImageInner: { borderRadius: 24 },
   heroGradientTop: {
     position: 'absolute', top: 0, left: 0, right: 0, height: 80,
