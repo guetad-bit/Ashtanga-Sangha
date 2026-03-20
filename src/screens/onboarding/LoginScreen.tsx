@@ -146,7 +146,15 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
 
           {/* Google */}
           <TouchableOpacity style={s.googleBtn} onPress={() => signInWithGoogle()} activeOpacity={0.85}>
-            <Text style={s.googleBtnText}>Continue with Google</Text>
+            <Text style={s.googleBtnText}>
+              Continue with{' '}
+              <Text style={{ color: '#4285F4' }}>G</Text>
+              <Text style={{ color: '#EA4335' }}>o</Text>
+              <Text style={{ color: '#FBBC05' }}>o</Text>
+              <Text style={{ color: '#4285F4' }}>g</Text>
+              <Text style={{ color: '#34A853' }}>l</Text>
+              <Text style={{ color: '#EA4335' }}>e</Text>
+            </Text>
           </TouchableOpacity>
 
           {/* Register link */}
@@ -183,29 +191,33 @@ const s = StyleSheet.create({
   },
 
   kicker: {
-    fontSize: 11,
-    fontFamily: 'DMSans_500Medium',
-    letterSpacing: 1.8,
+    fontSize: 13,
+    fontFamily: 'DMSans_600SemiBold',
+    letterSpacing: 2,
     color: '#7EC8A4',
     marginBottom: spacing.sm,
   },
   title: {
     fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 36,
-    lineHeight: 42,
+    fontSize: 40,
+    lineHeight: 48,
     color: '#fff',
     marginBottom: spacing.sm,
   },
   sub: {
-    ...typography.bodyMd,
-    color: 'rgba(255,255,255,0.55)',
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 16,
+    lineHeight: 24,
+    color: 'rgba(255,255,255,0.75)',
     marginBottom: spacing['2xl'],
   },
 
   field: { marginBottom: spacing.lg },
   label: {
-    ...typography.labelSm,
-    color: 'rgba(255,255,255,0.6)',
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 14,
+    lineHeight: 20,
+    color: 'rgba(255,255,255,0.85)',
     letterSpacing: 0.4,
     marginBottom: spacing.xs,
   },
@@ -222,8 +234,8 @@ const s = StyleSheet.create({
   input: {
     flex: 1,
     paddingVertical: spacing.md,
-    fontSize: 15,
-    fontFamily: 'DMSans_400Regular',
+    fontSize: 16,
+    fontFamily: 'DMSans_500Medium',
     color: '#fff',
   },
   inputPw: { paddingRight: 36 },
@@ -242,7 +254,9 @@ const s = StyleSheet.create({
   },
   primaryBtnDisabled: { opacity: 0.6 },
   primaryBtnText: {
-    ...typography.headingLg,
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 18,
+    lineHeight: 26,
     color: '#fff',
   },
 
@@ -253,26 +267,33 @@ const s = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   dividerLine: { flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.15)' },
-  dividerText: { ...typography.bodySm, color: 'rgba(255,255,255,0.4)' },
+  dividerText: { fontFamily: 'DMSans_500Medium', fontSize: 14, lineHeight: 20, color: 'rgba(255,255,255,0.55)' },
 
   googleBtn: {
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.25)',
+    borderColor: 'rgba(255,255,255,0.3)',
     borderRadius: radius.xl,
     paddingVertical: spacing.lg,
     alignItems: 'center',
     marginBottom: spacing['2xl'],
-    backgroundColor: 'rgba(255,255,255,0.07)',
+    backgroundColor: 'rgba(255,255,255,0.12)',
   },
-  googleBtnText: { ...typography.headingSm, color: 'rgba(255,255,255,0.85)' },
+  googleBtnText: {
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 16,
+    lineHeight: 24,
+    color: '#fff',
+  },
 
   footer: {
-    ...typography.bodyMd,
-    color: 'rgba(255,255,255,0.45)',
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 15,
+    lineHeight: 22,
+    color: 'rgba(255,255,255,0.65)',
     textAlign: 'center',
   },
   footerLink: {
     color: '#7EC8A4',
-    fontFamily: 'DMSans_500Medium',
+    fontFamily: 'DMSans_600SemiBold',
   },
 });
