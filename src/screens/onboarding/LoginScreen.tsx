@@ -171,7 +171,7 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
 
 const s = StyleSheet.create({
   bg: { flex: 1, backgroundColor: '#0D1922' },
-  bgImage: { left: -80 },
+  bgImage: { width: '100%' },
   flex: { flex: 1 },
 
   logoRow: {
