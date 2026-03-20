@@ -321,7 +321,7 @@ export default function HomeScreen() {
         <Text style={s.welcome}>Welcome back, {user?.name?.split(' ')[0] ?? 'Yogi'}</Text>
 
         {/* ═══ 1. HERO — Today's Practice ═══ */}
-        <View style={s.heroCard}>
+        <View style={[s.heroCard, { opacity: heroReady ? 1 : 0 }]}>
 <View style={s.heroOverlay}>
               {/* Status pill */}
               <View style={[s.heroPill, practicedToday && s.heroPillDone]}>
