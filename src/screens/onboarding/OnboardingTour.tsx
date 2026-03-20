@@ -216,12 +216,12 @@ const s = StyleSheet.create({
   appName: {
     fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 17,
-    color: 'rgba(255,255,255,0.92)',
+    color: '#1C2B3A',
     letterSpacing: 0.2,
   },
   skipText: {
     ...typography.labelLg,
-    color: 'rgba(255,255,255,0.6)',
+    color: '#1C2B3A',
   },
 
   card: {
