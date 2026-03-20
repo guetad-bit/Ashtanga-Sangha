@@ -130,6 +130,7 @@ export default function HomeScreen() {
   });
   const [loggedDuration, setLoggedDuration] = useState<number | null>(null);
   const [editingSeries, setEditingSeries] = useState(false);
+  const [heroReady, setHeroReady] = useState(false);
 
   // Computed
   const now = new Date();
@@ -227,6 +228,7 @@ export default function HomeScreen() {
       // Restore "on the mat" state — store resets on reload, so we re-hydrate it
       setIsPracticing(true);
     }
+    setHeroReady(true);
   }, [practiceLogs]);
 
   useEffect(() => { fetchLogs(); fetchPracticing(); }, [user?.id]);
@@ -309,7 +311,7 @@ export default function HomeScreen() {
         <Text style={s.welcome}>Welcome back, {user?.name?.split(' ')[0] ?? 'Yogi'}</Text>
 
         {/* ═══ 1. HERO — Today's Practice ═══ */}
-        <View style={s.heroCard}>
+        <View style={[s.heroCard, { opacity: heroReady ? 1 : 0 }]}>
           <ImageBackground
             source={{ uri: practiceImage }}
             style={s.heroImage}
