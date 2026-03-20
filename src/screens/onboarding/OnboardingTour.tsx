@@ -235,7 +235,7 @@ const s = StyleSheet.create({
 
   kicker: {
     fontSize: 15,
-    fontFamily: 'DMSans_700Bold',
+    fontFamily: 'DMSans_600SemiBold',
     letterSpacing: 1.6,
     marginBottom: spacing.xs,
   },
