@@ -321,16 +321,8 @@ export default function HomeScreen() {
         <Text style={s.welcome}>Welcome back, {user?.name?.split(' ')[0] ?? 'Yogi'}</Text>
 
         {/* ═══ 1. HERO — Today's Practice ═══ */}
-        <View style={[s.heroCard, { opacity: heroReady ? 1 : 0 }]}>
-          <ImageBackground
-            source={{ uri: practiceImage }}
-            style={s.heroImage}
-            imageStyle={s.heroImageInner}
-          >
-            <View style={s.heroGradientTop} />
-
-            {/* ── Main overlay — never changes height ── */}
-            <View style={s.heroOverlay}>
+        <View style={s.heroCard}>
+<View style={s.heroOverlay}>
               {/* Status pill */}
               <View style={[s.heroPill, practicedToday && s.heroPillDone]}>
                 <Text style={s.heroPillText}>
@@ -441,7 +433,8 @@ export default function HomeScreen() {
             </View>
 
             {/* ── Series edit overlay — absolute, never affects card height ── */}
-            {editingSeries && (
+            
+{editingSeries && (
               <View style={s.heroEditOverlay}>
                 <Text style={s.heroChipsLabel}>Change practice:</Text>
                 <View style={s.heroChipsWrap}>
@@ -463,7 +456,7 @@ export default function HomeScreen() {
                 </TouchableOpacity>
               </View>
             )}
-          </ImageBackground>
+          
         </View>
 
 
@@ -638,17 +631,19 @@ const s = StyleSheet.create({
   heroCard: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
     borderRadius: 24, overflow: 'hidden',
+    backgroundColor: '#1C2B3A',
     ...shadows.lg,
   },
-  heroImage: { justifyContent: 'flex-end', height: 220 },
+  heroImage: { display: 'none' },
   heroImageInner: { borderRadius: 24 },
   heroGradientTop: {
     position: 'absolute', top: 0, left: 0, right: 0, height: 80,
     backgroundColor: 'rgba(0,0,0,0.08)',
   },
   heroOverlay: {
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    paddingHorizontal: 18, paddingTop: 12, paddingBottom: 14,
+    padding: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
   },
 
   // Edit overlay — absolute, covers the overlay area, never changes card height
