@@ -234,9 +234,10 @@ const s = StyleSheet.create({
   },
 
   kicker: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'DMSans_600SemiBold',
     letterSpacing: 1.6,
+    color: '#FFFFFF',
     marginBottom: spacing.xs,
   },
 
