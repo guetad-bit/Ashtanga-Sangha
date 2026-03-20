@@ -194,7 +194,7 @@ const s = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'DMSans_600SemiBold',
     letterSpacing: 2,
-    color: '#7EC8A4',
+    color: '#FFFFFF',
     marginBottom: spacing.sm,
   },
   title: {
