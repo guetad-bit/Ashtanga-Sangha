@@ -132,16 +132,7 @@ export default function HomeScreen() {
   const [editingSeries, setEditingSeries] = useState(false);
   const [heroReady, setHeroReady] = useState(false);
 
-  // Preload both possible hero images so switches are instant
-  useEffect(() => {
-    const todayPractice = PRACTICE_IMAGES[dayOfYear % PRACTICE_IMAGES.length];
-    const todayCompleted = COMPLETED_IMAGES[dayOfYear % COMPLETED_IMAGES.length];
-    Promise.all([
-      Image.prefetch(todayPractice),
-      Image.prefetch(todayCompleted),
-    ]).then(() => setHeroReady(true))
-      .catch(() => setHeroReady(true));
-  }, []);
+
 
   // Computed
   const now = new Date();
@@ -213,13 +204,22 @@ export default function HomeScreen() {
     if (!user) return;
     const { data } = await getPracticeLogs(user.id);
     if (data) {
-      setPracticeLogs(
-        data.map((row: any) => ({
+      const logs = data.map((row: any) => ({
           id: row.id, userId: row.user_id, loggedAt: row.logged_at,
           series: row.series, durationMin: row.duration_min,
-        }))
+        }));
+      setPracticeLogs(logs);
+      const todayStr = new Date().toISOString().split('T')[0];
+      const todayLog = logs.find(
+        (log) => new Date(log.loggedAt).toISOString().split('T')[0] === todayStr
       );
+      if (todayLog) {
+        setLoggedSeries(todayLog.series);
+        setLoggedDuration(todayLog.durationMin);
+        setIsPracticing(true);
+      }
     }
+    setHeroReady(true);
   };
 
   const fetchPracticing = async () => {
