@@ -187,7 +187,7 @@ const s = StyleSheet.create({
   appName: {
     fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 17,
-    color: 'rgba(255,255,255,0.9)',
+    color: '#1C2B3A',
   },
 
   scroll: {
