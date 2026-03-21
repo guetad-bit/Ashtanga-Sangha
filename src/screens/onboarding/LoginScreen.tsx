@@ -13,6 +13,21 @@ import { signInWithEmail, signInWithGoogle } from '@/lib/supabase';
 import { useAppStore } from '@/store/useAppStore';
 import AppLogo from '@/components/AppLogo';
 
+// ââ Warm earth-tone palette (matches Community & Home) ââââââââââââââââââ
+const warm = {
+  bg: '#FAF6F0',
+  ink: '#3D3229',
+  inkMid: '#5C4F42',
+  muted: '#8B7D6E',
+  accent: '#C47B3F',
+  sage: '#7A8B5E',
+  gold: '#B8944A',
+  terra: '#A0704C',
+  orange: '#E8834A',
+  divider: '#EDE5D8',
+  cardBg: '#FFFFFF',
+};
+
 interface LoginScreenProps {
   onLogin: () => void;
   onGoToRegister: () => void;
@@ -58,12 +73,16 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
     >
       <StatusBar barStyle="light-content" />
       <LinearGradient
-        colors={['rgba(0,0,0,0.08)', 'rgba(0,0,0,0.35)', 'rgba(10,24,44,0.97)']}
-        locations={[0, 0.45, 1]}
+        colors={[
+          'rgba(0,0,0,0.08)',
+          'rgba(61,50,41,0.60)',
+          'rgba(61,50,41,0.97)',
+        ]}
+        locations={[0, 0.4, 1]}
         style={StyleSheet.absoluteFill}
       />
 
-      {/* Logo — top */}
+      {/* Logo â top */}
       <View style={[s.logoRow, { paddingTop: insets.top + spacing.lg }]}>
         <AppLogo size={30} />
         <Text style={s.appName}>Ashtanga Sangha</Text>
@@ -170,8 +189,8 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
 }
 
 const s = StyleSheet.create({
-  bg: { flex: 1, backgroundColor: '#0D1922' },
-  bgImage: { width: '100%' },
+  bg: { flex: 1, backgroundColor: '#3D3229' },
+  bgImage: { left: -80 },
   flex: { flex: 1 },
 
   logoRow: {
@@ -184,7 +203,7 @@ const s = StyleSheet.create({
   appName: {
     fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 17,
-    color: '#1C2B3A',
+    color: warm.bg,
   },
 
   scroll: {
@@ -196,7 +215,7 @@ const s = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'DMSans_600SemiBold',
     letterSpacing: 2,
-    color: '#FFFFFF',
+    color: warm.orange,
     marginBottom: spacing.sm,
   },
   title: {
@@ -226,7 +245,7 @@ const s = StyleSheet.create({
   inputWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: 'rgba(255,255,255,0.10)',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.18)',
     borderRadius: radius.lg,
@@ -248,7 +267,7 @@ const s = StyleSheet.create({
   },
 
   primaryBtn: {
-    backgroundColor: '#7EC8A4',
+    backgroundColor: warm.orange,
     borderRadius: radius.xl,
     paddingVertical: spacing.lg,
     alignItems: 'center',
@@ -295,7 +314,7 @@ const s = StyleSheet.create({
     textAlign: 'center',
   },
   footerLink: {
-    color: '#7EC8A4',
+    color: warm.orange,
     fontFamily: 'DMSans_600SemiBold',
   },
 });
