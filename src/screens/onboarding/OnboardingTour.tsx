@@ -12,6 +12,21 @@ import AppLogo from '@/components/AppLogo';
 
 const { width, height } = Dimensions.get('window');
 
+// ââ Warm earth-tone palette (matches Community & Home) ââââââââââââââââââ
+const warm = {
+  bg: '#FAF6F0',
+  ink: '#3D3229',
+  inkMid: '#5C4F42',
+  muted: '#8B7D6E',
+  accent: '#C47B3F',
+  sage: '#7A8B5E',
+  gold: '#B8944A',
+  terra: '#A0704C',
+  orange: '#E8834A',
+  divider: '#EDE5D8',
+  cardBg: '#FFFFFF',
+};
+
 interface Slide {
   id: string;
   image: ImageSourcePropType;
@@ -26,8 +41,8 @@ const SLIDES: Slide[] = [
   {
     id: '1',
     image: require('../../../assets/onboard-1.png'),
-    accent: '#7EC8A4',
-    gradientFloor: 'rgba(17,42,32,0.97)',
+    accent: warm.orange,
+    gradientFloor: 'rgba(61,50,41,0.97)',
     title: 'Welcome to Sangha',
     kicker: 'Your Ashtanga Community',
     description: 'Track your practice, connect with fellow yogis around the world, and deepen your commitment to the mat.',
@@ -35,17 +50,17 @@ const SLIDES: Slide[] = [
   {
     id: '2',
     image: require('../../../assets/onboard-1.png'),
-    accent: '#74B3E0',
-    gradientFloor: 'rgba(10,24,44,0.97)',
+    accent: warm.sage,
+    gradientFloor: 'rgba(50,56,38,0.97)',
     title: 'Step on the Mat',
     kicker: 'Practice together, apart',
-    description: 'Tap "On the Mat" when you start practicing. Your sangha will see you\'re there — even from across the globe.',
+    description: 'Tap "On the Mat" when you start practicing. Your sangha will see you\'re there â even from across the globe.',
   },
   {
     id: '3',
     image: require('../../../assets/onboard-1.png'),
-    accent: '#F0A86A',
-    gradientFloor: 'rgba(40,20,8,0.97)',
+    accent: warm.gold,
+    gradientFloor: 'rgba(60,48,30,0.97)',
     title: 'Build Your Streak',
     kicker: 'One day at a time',
     description: 'Track your daily rhythm, build streaks, and honor moon days. Consistency is the heart of Ashtanga.',
@@ -53,8 +68,8 @@ const SLIDES: Slide[] = [
   {
     id: '4',
     image: require('../../../assets/onboard-1.png'),
-    accent: '#C4A8E0',
-    gradientFloor: 'rgba(22,14,38,0.97)',
+    accent: warm.accent,
+    gradientFloor: 'rgba(55,36,22,0.97)',
     title: 'Join the Sangha',
     kicker: 'You\'re not practicing alone',
     description: 'Share moments, join gatherings, and grow with a community that breathes together.',
@@ -71,9 +86,6 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
   const insets = useSafeAreaInsets();
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    // On web the FlatList has pointerEvents="none" so manual swiping is
-    // disabled and we drive navigation purely through state.  Letting the
-    // scroll handler fire on web would reset currentIndex back to 0.
     if (Platform.OS === 'web') return;
     const index = Math.round(e.nativeEvent.contentOffset.x / width);
     setCurrentIndex(index);
@@ -100,8 +112,8 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
     >
       <LinearGradient
         colors={[
-          'rgba(0,0,0,0.08)',
-          'rgba(0,0,0,0.35)',
+          'rgba(0,0,0,0.05)',
+          'rgba(0,0,0,0.30)',
           item.gradientFloor,
         ]}
         locations={[0, 0.45, 1]}
@@ -114,7 +126,7 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
     <View style={s.root}>
       <StatusBar barStyle="light-content" />
 
-      {/* Full-screen sliding image backgrounds — z-index 1 */}
+      {/* Full-screen sliding image backgrounds */}
       <FlatList
         ref={flatListRef}
         data={SLIDES}
@@ -130,7 +142,7 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
         pointerEvents={Platform.OS === "web" ? "none" : "auto"}
       />
 
-      {/* Top bar — z-index 10, above FlatList */}
+      {/* Top bar */}
       <View
         style={[s.topBar, { paddingTop: insets.top + spacing.sm }]}
         pointerEvents="box-none"
@@ -144,7 +156,7 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
         </Pressable>
       </View>
 
-      {/* Bottom card — z-index 10, above FlatList */}
+      {/* Bottom card */}
       <View style={[s.card, { paddingBottom: insets.bottom + spacing.xl }]}>
         <Text style={s.kicker}>
           {slide.kicker.toUpperCase()}
@@ -176,8 +188,8 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
           ]}
           onPress={goNext}
         >
-          <Text style={[s.nextBtnText, { color: slide.gradientFloor.startsWith('rgba(40') ? '#1C1008' : '#fff' }]}>
-            {isLast ? 'Get Started  →' : 'Next'}
+          <Text style={s.nextBtnText}>
+            {isLast ? 'Get Started  \u2192' : 'Next'}
           </Text>
         </Pressable>
       </View>
@@ -188,7 +200,7 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
 const s = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#0D1922',
+    backgroundColor: '#3D3229',
   },
 
   slideBg: {
@@ -216,12 +228,12 @@ const s = StyleSheet.create({
   appName: {
     fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 17,
-    color: '#1C2B3A',
+    color: warm.bg,
     letterSpacing: 0.2,
   },
   skipText: {
     ...typography.labelLg,
-    color: '#1C2B3A',
+    color: warm.bg,
   },
 
   card: {
@@ -281,5 +293,6 @@ const s = StyleSheet.create({
   },
   nextBtnText: {
     ...typography.headingLg,
+    color: '#fff',
   },
 });
