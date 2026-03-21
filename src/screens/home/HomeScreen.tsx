@@ -141,6 +141,22 @@ const RETREAT_IMAGES = [
   'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&q=80',
 ];
 
+// Fake yogis for Friends Practicing Today
+const FAKE_YOGIS = [
+  { id: 'f1', name: 'Priya Sharma', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80' },
+  { id: 'f2', name: 'Marco Rossi', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80' },
+  { id: 'f3', name: 'Yuki Tanaka', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80' },
+  { id: 'f4', name: 'Amit Patel', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80' },
+  { id: 'f5', name: 'Sofia Costa', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80' },
+  { id: 'f6', name: 'Daniel Kim', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80' },
+  { id: 'f7', name: 'Lena Weber', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&q=80' },
+  { id: 'f8', name: 'Ravi Kumar', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80' },
+  { id: 'f9', name: 'Mia Chen', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80' },
+  { id: 'f10', name: 'Lucas Silva', avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&q=80' },
+  { id: 'f11', name: 'Anika Berg', avatarUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80' },
+  { id: 'f12', name: 'Omar Hassan', avatarUrl: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=200&q=80' },
+];
+
 // Series display names
 const SERIES_LABELS: Record<string, string> = {
   sun_sals: 'Sun Salutations',
@@ -200,7 +216,7 @@ export default function HomeScreen() {
   const meOnMat = (isPracticing || practicedToday) && user
     ? [{ id: user.id, name: 'You', avatarUrl: user.avatarUrl ?? null }]
     : [];
-  const sanghaOnMat = [...meOnMat, ...othersOnMat];
+  const sanghaOnMat = [...meOnMat, ...othersOnMat, ...FAKE_YOGIS];
 
   // Featured community post
   const featuredPost = feedPosts.length > 0 ? feedPosts[0] : userPosts.find((p) => p.imageUri);
@@ -690,11 +706,11 @@ const s = StyleSheet.create({
     borderRadius: 20, overflow: 'hidden' as any,
     ...shadows.lg,
   },
-  heroImage: { minHeight: 220, justifyContent: 'flex-end' as any },
+  heroImage: { minHeight: 340, justifyContent: 'flex-end' as any },
   heroImageInner: { borderRadius: 20 },
   heroOverlay: {
     backgroundColor: 'rgba(0,0,0,0.35)',
-    paddingHorizontal: 20, paddingTop: 16, paddingBottom: 18,
+    paddingHorizontal: 22, paddingTop: 20, paddingBottom: 22,
   },
   heroLabel: {
     fontFamily: 'DMSans_600SemiBold', fontSize: 12,
@@ -702,12 +718,12 @@ const s = StyleSheet.create({
     textTransform: 'uppercase' as any, marginBottom: 4,
   },
   heroTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, lineHeight: 28,
-    color: '#fff', marginBottom: 4,
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 26, lineHeight: 32,
+    color: '#fff', marginBottom: 6,
   },
   heroDuration: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13,
-    color: 'rgba(255,255,255,0.65)', marginBottom: 14,
+    fontFamily: 'DMSans_400Regular', fontSize: 14,
+    color: 'rgba(255,255,255,0.65)', marginBottom: 16,
   },
   heroChipsLabel: {
     fontFamily: 'DMSans_500Medium', fontSize: 12,
@@ -727,7 +743,7 @@ const s = StyleSheet.create({
   },
   heroChipTextActive: { color: warm.ink },
   heroBtn: {
-    borderRadius: 14, paddingVertical: 12, alignSelf: 'stretch' as any,
+    borderRadius: 16, paddingVertical: 14, alignSelf: 'stretch' as any,
     alignItems: 'center' as any, justifyContent: 'center' as any,
     flexDirection: 'row' as any, gap: 8,
     backgroundColor: warm.orange,
