@@ -183,7 +183,6 @@ export default function HomeScreen() {
   const [selectedSeries, setSelectedSeries] = useState(user?.series ?? 'primary');
   const [loggedSeries, setLoggedSeries] = useState<string | null>(null);
   const [loggedDuration, setLoggedDuration] = useState<number | null>(null);
-  const [editingSeries, setEditingSeries] = useState(false);
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>([]);
 
   // Computed
@@ -228,7 +227,6 @@ export default function HomeScreen() {
     setLoggedSeries(series);
     setLoggedDuration(90);
     setIsPracticing(true);
-    setEditingSeries(false);
     addPracticeLog({
       id: Date.now().toString(),
       userId: user.id,
@@ -376,7 +374,7 @@ export default function HomeScreen() {
         {/* ââ Welcome ââ */}
         <Text style={s.welcome}>Welcome back, {user?.name?.split(' ')[0] ?? 'Yogi'}</Text>
 
-        {/* âââ 1. TODAY'S PRACTICE â Hero Card âââ */}
+        {/* ─── 1. TODAY’S PRACTICE — Hero Card ─── */}
         <View style={s.heroCard}>
           <ImageBackground
             source={{ uri: practiceImage }}
@@ -384,35 +382,15 @@ export default function HomeScreen() {
             imageStyle={s.heroImageInner}
           >
             <View style={s.heroOverlay}>
-              <Text style={s.heroLabel}>Today's Practice</Text>
+              <Text style={s.heroLabel}>Today’s Practice</Text>
               <Text style={s.heroTitle}>
                 {practicedToday
                   ? (SERIES_LABELS[loggedSeries!] ?? loggedSeries)
-                  : (SERIES_LABELS[selectedSeries] ?? 'Primary Series')} â Mysore Style
+                  : (SERIES_LABELS[selectedSeries] ?? 'Primary Series')}{' \u2013 '}Mysore Style
               </Text>
               <Text style={s.heroDuration}>
                 Duration: {loggedDuration ?? 75} min
               </Text>
-
-              {/* Series chips â only shown before first log */}
-              {!practicedToday && (
-                <View style={s.heroChipsWrap}>
-                  {Object.entries(SERIES_LABELS).map(([key, label]) => (
-                    <TouchableOpacity
-                      key={key}
-                      style={[s.heroChip, selectedSeries === key && s.heroChipActive]}
-                      onPress={() => setSelectedSeries(key)}
-                      activeOpacity={0.7}
-                    >
-                      <Text style={[s.heroChipText, selectedSeries === key && s.heroChipTextActive]}>
-                        {label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-
-              {/* Action button */}
               {!practicedToday ? (
                 <TouchableOpacity
                   style={s.heroBtn}
@@ -422,45 +400,13 @@ export default function HomeScreen() {
                   <Text style={s.heroBtnText}>Log Practice</Text>
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity
-                  style={[s.heroBtn, isPracticing ? s.heroBtnActive : s.heroBtnOff]}
-                  onPress={handleToggleMat}
-                  activeOpacity={0.85}
-                >
-                  {isPracticing && <View style={s.heroBtnLive} />}
-                  <Text style={[s.heroBtnText, !isPracticing && s.heroBtnTextOff]}>
-                    {isPracticing ? 'On the mat' : 'Off the mat'}
-                  </Text>
-                </TouchableOpacity>
+                <View style={s.heroLoggedBadge}>
+                  <Text style={s.heroLoggedText}>✓ Logged</Text>
+                </View>
               )}
             </View>
-
-            {/* Edit overlay */}
-            {editingSeries && (
-              <View style={s.heroEditOverlay}>
-                <Text style={s.heroChipsLabel}>Change practice:</Text>
-                <View style={s.heroChipsWrap}>
-                  {Object.entries(SERIES_LABELS).map(([key, label]) => (
-                    <TouchableOpacity
-                      key={key}
-                      style={[s.heroChip, loggedSeries === key && s.heroChipActive]}
-                      onPress={() => { setSelectedSeries(key); handleLogPractice(key); }}
-                      activeOpacity={0.7}
-                    >
-                      <Text style={[s.heroChipText, loggedSeries === key && s.heroChipTextActive]}>
-                        {label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-                <TouchableOpacity onPress={() => setEditingSeries(false)} style={s.heroCancelEdit}>
-                  <Text style={s.heroCancelEditText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            )}
           </ImageBackground>
         </View>
-
 
         {/* âââ 2. PRACTICE RHYTHM â Separate Card âââ */}
         <View style={s.rhythmCard}>
@@ -702,72 +648,70 @@ const s = StyleSheet.create({
 
   /* ââ Hero card âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
   heroCard: {
-    marginHorizontal: spacing.lg, marginBottom: spacing.lg,
-    borderRadius: 20, overflow: 'hidden' as any,
-    ...shadows.lg,
+    marginHorizontal: 16,
+    borderRadius: 18,
+    overflow: 'hidden' as any,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
   },
-  heroImage: { minHeight: 340, justifyContent: 'flex-end' as any },
-  heroImageInner: { borderRadius: 20 },
+  heroImage: { minHeight: 240, justifyContent: 'flex-end' as any },
+  heroImageInner: { borderRadius: 18 },
   heroOverlay: {
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    paddingHorizontal: 22, paddingTop: 20, paddingBottom: 22,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 20,
+    backgroundColor: 'rgba(255,255,255,0.72)',
   },
   heroLabel: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 12,
-    color: 'rgba(255,255,255,0.7)', letterSpacing: 0.5,
-    textTransform: 'uppercase' as any, marginBottom: 4,
+    fontFamily: 'DMSans_500Medium',
+    fontSize: 12,
+    letterSpacing: 0.8,
+    color: warm.accent,
+    textTransform: 'uppercase' as any,
+    marginBottom: 4,
   },
   heroTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 26, lineHeight: 32,
-    color: '#fff', marginBottom: 6,
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 22,
+    lineHeight: 28,
+    color: warm.ink,
+    marginBottom: 4,
   },
   heroDuration: {
-    fontFamily: 'DMSans_400Regular', fontSize: 14,
-    color: 'rgba(255,255,255,0.65)', marginBottom: 16,
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 14,
+    color: warm.inkMid,
+    marginBottom: 16,
   },
-  heroChipsLabel: {
-    fontFamily: 'DMSans_500Medium', fontSize: 12,
-    color: 'rgba(255,255,255,0.55)', letterSpacing: 0.3, marginBottom: 8,
-  },
-  heroChipsWrap: {
-    flexDirection: 'row' as any, flexWrap: 'wrap' as any, gap: 7, marginBottom: 14,
-  },
-  heroChip: {
-    paddingHorizontal: 13, paddingVertical: 6, borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)',
-  },
-  heroChipActive: { backgroundColor: '#fff', borderColor: '#fff' },
-  heroChipText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 12, color: 'rgba(255,255,255,0.7)',
-  },
-  heroChipTextActive: { color: warm.ink },
   heroBtn: {
-    borderRadius: 16, paddingVertical: 14, alignSelf: 'stretch' as any,
-    alignItems: 'center' as any, justifyContent: 'center' as any,
-    flexDirection: 'row' as any, gap: 8,
     backgroundColor: warm.orange,
-  },
-  heroBtnActive: { backgroundColor: warm.sage },
-  heroBtnOff: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)',
+    borderRadius: 22,
+    paddingVertical: 10,
+    paddingHorizontal: 28,
+    alignSelf: 'flex-start' as any,
   },
   heroBtnText: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: '#fff',
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 15,
+    color: '#fff',
+    textAlign: 'center' as any,
   },
-  heroBtnTextOff: { color: 'rgba(255,255,255,0.75)' },
-  heroBtnLive: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#fff' },
-  heroEditOverlay: {
-    position: 'absolute' as any, bottom: 0, left: 0, right: 0,
-    backgroundColor: 'rgba(10,20,30,0.96)',
-    paddingHorizontal: 18, paddingTop: 16, paddingBottom: 14,
-    borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.1)',
+  heroLoggedBadge: {
+    flexDirection: 'row' as any,
+    alignItems: 'center' as any,
+    backgroundColor: warm.sage,
+    borderRadius: 22,
+    paddingVertical: 10,
+    paddingHorizontal: 28,
+    alignSelf: 'flex-start' as any,
   },
-  heroCancelEdit: { alignSelf: 'flex-start' as any, marginBottom: 4, marginTop: -4 },
-  heroCancelEditText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 12,
-    color: 'rgba(255,255,255,0.5)', textDecorationLine: 'underline' as any,
+  heroLoggedText: {
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 15,
+    color: '#fff',
   },
 
   /* ââ Rhythm card âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
