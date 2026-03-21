@@ -141,7 +141,7 @@ const RETREAT_IMAGES = [
   'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&q=80',
 ];
 
-// Fake yogis for Friends Practicing Today
+// Fake yogis for Yogis on the mat
 const FAKE_YOGIS = [
   { id: 'f1', name: 'Priya Sharma', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80' },
   { id: 'f2', name: 'Marco Rossi', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80' },
@@ -208,7 +208,7 @@ export default function HomeScreen() {
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   })();
 
-  // Friends on mat
+  // Yogis on mat
   const othersOnMat = livePractitioners
     .filter((p) => p.id !== user?.id)
     .map((p) => ({ id: p.id, name: p.name ?? 'Practitioner', avatarUrl: p.avatar_url }));
@@ -374,39 +374,56 @@ export default function HomeScreen() {
         {/* ââ Welcome ââ */}
         <Text style={s.welcome}>Welcome back, {user?.name?.split(' ')[0] ?? 'Yogi'}</Text>
 
-        {/* ─── 1. TODAY’S PRACTICE — Hero Card ─── */}
+        {/* ââ Yogis on the mat ââ */}
+        <View style={s.yogisOnMat}>
+          <Text style={s.yogisCountText}>
+            <Text style={s.yogisCountBold}>{sanghaOnMat.length} yogis</Text> on the mat right now
+          </Text>
+          <View style={s.yogisAvatarRow}>
+            {sanghaOnMat.slice(0, 7).map((u, i) => (
+              <View key={u.id} style={[s.yogisAvatarWrap, { marginLeft: i === 0 ? 0 : -10, zIndex: 7 - i }]}>
+                {u.avatarUrl ? (
+                  <Image source={{ uri: u.avatarUrl }} style={s.yogisAvatar} />
+                ) : (
+                  <View style={[s.yogisAvatar, s.avatarPlaceholder]}>
+                    <Text style={s.avatarLetterSm}>{u.name.charAt(0)}</Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* âââ 1. HERO CARD âââ */}
         <View style={s.heroCard}>
           <ImageBackground
             source={{ uri: practiceImage }}
             style={s.heroImage}
             imageStyle={s.heroImageInner}
           >
-            <View style={s.heroOverlay}>
-              <Text style={s.heroLabel}>Today’s Practice</Text>
-              <Text style={s.heroTitle}>
-                {practicedToday
-                  ? (SERIES_LABELS[loggedSeries!] ?? loggedSeries)
-                  : (SERIES_LABELS[selectedSeries] ?? 'Primary Series')}{' \u2013 '}Mysore Style
-              </Text>
-              <Text style={s.heroDuration}>
-                Duration: {loggedDuration ?? 75} min
-              </Text>
-              {!practicedToday ? (
-                <TouchableOpacity
-                  style={s.heroBtn}
-                  onPress={() => handleLogPractice()}
-                  activeOpacity={0.85}
-                >
-                  <Text style={s.heroBtnText}>Log Practice</Text>
-                </TouchableOpacity>
-              ) : (
-                <View style={s.heroLoggedBadge}>
-                  <Text style={s.heroLoggedText}>✓ Logged</Text>
-                </View>
-              )}
+            <View style={s.heroGradient} />
+            <View style={s.heroContent}>
+              <Text style={s.heroTitle}>Practice, and all is coming</Text>
+              <Text style={s.heroSubtitle}>Join me on the mat!</Text>
+              <TouchableOpacity
+                style={[s.heroBtn, isPracticing ? s.heroBtnOnMat : s.heroBtnDefault]}
+                onPress={() => {
+                  if (!isPracticing && !practicedToday) {
+                    handleLogPractice();
+                  } else {
+                    handleToggleMat();
+                  }
+                }}
+                activeOpacity={0.85}
+              >
+                <Text style={s.heroBtnText}>
+                  {isPracticing ? 'ON THE MAT' : 'LOG MY PRACTICE'}
+                </Text>
+              </TouchableOpacity>
             </View>
           </ImageBackground>
         </View>
+
 
         {/* âââ 2. PRACTICE RHYTHM â Separate Card âââ */}
         <View style={s.rhythmCard}>
@@ -443,80 +460,69 @@ export default function HomeScreen() {
         </View>
 
 
-        {/* âââ 3. COMMUNITY â Preview Card âââ */}
-        <TouchableOpacity
-          style={s.communityCard}
-          onPress={() => router.push('/(tabs)/community')}
-          activeOpacity={0.8}
-        >
-          <View style={s.communityHeader}>
-            <Ionicons name="chatbubble-ellipses" size={18} color={warm.blue} />
-            <Text style={s.sectionTitle}>Community</Text>
-            <Ionicons name="chevron-forward" size={16} color={warm.mutedLight} style={{ marginLeft: 'auto' as any }} />
-          </View>
+        {/* âââ 3. LIVE PRACTICE FEED âââ */}
+        <View style={s.feedSection}>
+          <Text style={s.feedTitle}>Live Practice Feed</Text>
 
-          {featuredPost && (
-            <View style={s.postRow}>
-              {/* Post image */}
-              {(('image_url' in featuredPost && featuredPost.image_url) || ('imageUri' in featuredPost && (featuredPost as any).imageUri)) && (
-                <Image
-                  source={{ uri: ('image_url' in featuredPost ? featuredPost.image_url : (featuredPost as any).imageUri) ?? '' }}
-                  style={s.postImage}
-                />
-              )}
-              <View style={s.postBody}>
-                <Text style={s.postCaption} numberOfLines={3}>
-                  {('caption' in featuredPost ? featuredPost.caption : (featuredPost as any).caption) ?? ''}
-                </Text>
-                <View style={s.postStats}>
-                  <Text style={s.postStat}>â¤ï¸ {('likes_count' in featuredPost ? featuredPost.likes_count : (featuredPost as any).likesCount) ?? 0}</Text>
-                  <Text style={s.postStat}>ð¬ {('comments_count' in featuredPost ? (featuredPost as any).comments_count : 0) ?? 0}</Text>
+          {/* Feed Card - example 1 */}
+          <View style={s.feedCard}>
+            <View style={s.feedCardInner}>
+              <View style={s.feedCardLeft}>
+                <View style={s.feedUserRow}>
+                  <Image source={{ uri: 'https://i.pravatar.cc/100?img=5' }} style={s.feedAvatar} />
+                  <View>
+                    <Text style={s.feedUserName}>Liat</Text>
+                    <Text style={s.feedTimeAgo}>4 min ago</Text>
+                  </View>
+                </View>
+                <Text style={s.feedCaption}>Just finished practice ð</Text>
+                <View style={s.feedStats}>
+                  <Text style={s.feedHeart}>â¤ï¸ 1</Text>
+                  <Text style={s.feedComment}>ð¬ 1</Text>
                 </View>
               </View>
+              <Image source={{ uri: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80' }} style={s.feedCardImage} />
             </View>
-          )}
-
-          {!featuredPost && (
-            <View style={s.postEmpty}>
-              <Ionicons name="chatbubbles-outline" size={32} color={warm.mutedLight} />
-              <Text style={s.postEmptyText}>No posts yet â be the first!</Text>
-            </View>
-          )}
-        </TouchableOpacity>
-
-
-        {/* âââ 4. FRIENDS PRACTICING TODAY âââ */}
-        <View style={s.friendsSection}>
-          <View style={s.friendsHeader}>
-            <Ionicons name="people" size={18} color={warm.accent} />
-            <Text style={s.sectionTitle}>Friends Practicing Today</Text>
           </View>
-          {sanghaOnMat.length > 0 ? (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={s.friendsScroll}
-            >
-              {sanghaOnMat.map((u) => (
-                <View key={u.id} style={s.friendBubble}>
-                  <View style={s.friendRing}>
-                    {u.avatarUrl ? (
-                      <Image source={{ uri: u.avatarUrl }} style={s.friendAvatar} />
-                    ) : (
-                      <View style={[s.friendAvatar, s.avatarPlaceholder]}>
-                        <Text style={s.avatarLetterSm}>{u.name.charAt(0)}</Text>
-                      </View>
-                    )}
+
+          {/* Feed Card - example 2 */}
+          <View style={s.feedCard}>
+            <View style={s.feedCardInner}>
+              <View style={s.feedCardLeft}>
+                <View style={s.feedUserRow}>
+                  <Image source={{ uri: 'https://i.pravatar.cc/100?img=11' }} style={s.feedAvatar} />
+                  <View>
+                    <Text style={s.feedUserName}>David</Text>
+                    <Text style={s.feedTimeAgo}>15 min ago</Text>
                   </View>
-                  <Text style={s.friendName} numberOfLines={1}>{u.name.split(' ')[0]}</Text>
                 </View>
-              ))}
-            </ScrollView>
-          ) : (
-            <View style={s.friendsEmpty}>
-              <Text style={s.friendsEmptyText}>No one on the mat yet today</Text>
+                <Text style={s.feedCaption}>Working on my dropbacks!</Text>
+                <View style={s.feedStats}>
+                  <Text style={s.feedHeart}>â¤ï¸ 1</Text>
+                  <Text style={s.feedComment}>ð¬ 1</Text>
+                </View>
+              </View>
+              <Image source={{ uri: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80' }} style={s.feedCardImage} />
             </View>
-          )}
+          </View>
+        </View>
+
+        {/* âââ 4. HOW WAS YOUR PRACTICE? âââ */}
+        <View style={s.moodSection}>
+          <Text style={s.moodTitle}>How was your practice today?</Text>
+          <View style={s.moodRow}>
+            {[
+              { emoji: 'ð', label: 'Strong', isAccent: true },
+              { emoji: 'ð', label: 'Challenging', isAccent: false },
+              { emoji: 'ð´', label: 'Low energy', isAccent: false },
+            ].map((m) => (
+              <TouchableOpacity key={m.label} style={s.moodBtn} activeOpacity={0.7}>
+                <Text style={[s.moodBtnText, m.isAccent && s.moodBtnTextAccent]}>
+                  {m.emoji} {m.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
 
@@ -551,14 +557,6 @@ export default function HomeScreen() {
                   <Text style={s.poseEnglish}>{asanaOfDay.english}</Text>
                 </View>
               </View>
-
-              <TouchableOpacity
-                style={s.retreatBtn}
-                onPress={() => router.push('/(tabs)/library')}
-                activeOpacity={0.85}
-              >
-                <Text style={s.retreatBtnText}>View Library</Text>
-              </TouchableOpacity>
             </View>
           </ImageBackground>
         </View>
@@ -646,80 +644,90 @@ const s = StyleSheet.create({
     paddingVertical: spacing.md,
   },
 
+  /* ââ Yogis on mat ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  yogisOnMat: {
+    alignItems: 'center' as any,
+    paddingHorizontal: spacing.xl,
+    marginBottom: spacing.md,
+  },
+  yogisCountText: {
+    fontFamily: 'DMSans_400Regular', fontSize: 15, color: warm.ink,
+    marginBottom: 10,
+  },
+  yogisCountBold: {
+    fontFamily: 'DMSans_700Bold', fontSize: 15, color: '#3B6FC0',
+  },
+  yogisAvatarRow: {
+    flexDirection: 'row' as any, justifyContent: 'center' as any,
+  },
+  yogisAvatarWrap: {
+    width: 44, height: 44, borderRadius: 22,
+    borderWidth: 2.5, borderColor: '#fff',
+    overflow: 'hidden' as any,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 4,
+    elevation: 3,
+  },
+  yogisAvatar: {
+    width: '100%' as any, height: '100%' as any, borderRadius: 22,
+  },
+
   /* ââ Hero card âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
   heroCard: {
-    marginHorizontal: 16,
-    borderRadius: 18,
-    overflow: 'hidden' as any,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
+    marginHorizontal: spacing.lg, marginBottom: spacing.lg,
+    borderRadius: 20, overflow: 'hidden' as any,
+    height: 320,
+    ...shadows.lg,
   },
-  heroImage: { minHeight: 260, justifyContent: 'flex-end' as any },
-  heroImageInner: { borderRadius: 18 },
-  heroOverlay: {
-    position: 'absolute' as any,
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: '60%',
-    paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 20,
-    justifyContent: 'flex-end' as any,
-    backgroundColor: 'rgba(255,255,255,0.78)',
-    borderTopLeftRadius: 18,
-    borderBottomLeftRadius: 18,
+  heroImage: { flex: 1, justifyContent: 'center' as any, alignItems: 'center' as any },
+  heroImageInner: { borderRadius: 20 },
+  heroGradient: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'transparent',
   },
-  heroLabel: {
-    fontFamily: 'DMSans_500Medium',
-    fontSize: 12,
-    letterSpacing: 0.8,
-    color: warm.accent,
-    textTransform: 'uppercase' as any,
-    marginBottom: 4,
+  heroContent: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center' as any,
+    alignItems: 'center' as any,
+    paddingHorizontal: 24,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    borderRadius: 20,
   },
   heroTitle: {
     fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 22,
-    lineHeight: 28,
-    color: warm.ink,
-    marginBottom: 4,
+    fontSize: 32, lineHeight: 38,
+    color: '#fff', fontStyle: 'italic' as any,
+    textAlign: 'center' as any,
+    marginBottom: 6,
+    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 12,
   },
-  heroDuration: {
+  heroSubtitle: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 14,
-    color: warm.inkMid,
-    marginBottom: 16,
+    fontSize: 16, color: 'rgba(255,255,255,0.9)',
+    textAlign: 'center' as any,
+    marginBottom: 24,
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 6,
   },
   heroBtn: {
-    backgroundColor: warm.orange,
-    borderRadius: 22,
-    paddingVertical: 10,
-    paddingHorizontal: 28,
-    alignSelf: 'flex-start' as any,
+    borderRadius: 28, paddingVertical: 14, paddingHorizontal: 44,
+    alignItems: 'center' as any, justifyContent: 'center' as any,
+  },
+  heroBtnDefault: {
+    backgroundColor: '#3B6FC0',
+    shadowColor: 'rgba(59,111,192,0.4)',
+    shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 16,
+  },
+  heroBtnOnMat: {
+    backgroundColor: '#E8834A',
+    shadowColor: 'rgba(232,131,74,0.4)',
+    shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 16,
   },
   heroBtnText: {
-    fontFamily: 'DMSans_600SemiBold',
-    fontSize: 15,
-    color: '#fff',
-    textAlign: 'center' as any,
-  },
-  heroLoggedBadge: {
-    flexDirection: 'row' as any,
-    alignItems: 'center' as any,
-    backgroundColor: warm.sage,
-    borderRadius: 22,
-    paddingVertical: 10,
-    paddingHorizontal: 28,
-    alignSelf: 'flex-start' as any,
-  },
-  heroLoggedText: {
-    fontFamily: 'DMSans_600SemiBold',
-    fontSize: 15,
-    color: '#fff',
+    fontFamily: 'DMSans_700Bold', fontSize: 16, color: '#fff',
+    letterSpacing: 1.5, textTransform: 'uppercase' as any,
   },
 
   /* ââ Rhythm card âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
@@ -770,68 +778,76 @@ const s = StyleSheet.create({
     fontFamily: 'DMSans_400Regular', fontSize: 13, color: warm.muted,
   },
 
-  /* ââ Community card ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
-  communityCard: {
+  /* ââ Live Practice Feed ââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  feedSection: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
-    backgroundColor: warm.cardBg, borderRadius: 20,
-    padding: spacing.xl,
-    ...shadows.sm,
+  },
+  feedTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20,
+    color: warm.ink, marginBottom: 14,
+  },
+  feedCard: {
+    backgroundColor: warm.cardBg, borderRadius: 16,
     borderWidth: 1, borderColor: warm.divider,
+    marginBottom: 12, overflow: 'hidden' as any,
   },
-  communityHeader: {
-    flexDirection: 'row' as any, alignItems: 'center' as any, gap: spacing.sm,
-    marginBottom: spacing.md,
+  feedCardInner: {
+    flexDirection: 'row' as any,
   },
-  sectionTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18, lineHeight: 24,
-    color: warm.ink,
+  feedCardLeft: {
+    flex: 1, padding: 16,
   },
-  postRow: {
-    flexDirection: 'row' as any, gap: spacing.md,
-    borderRadius: radius.lg, overflow: 'hidden' as any,
-    backgroundColor: warm.bg,
+  feedUserRow: {
+    flexDirection: 'row' as any, alignItems: 'center' as any, gap: 10, marginBottom: 8,
   },
-  postImage: { width: 110, height: 100, borderRadius: radius.md },
-  postBody: { flex: 1, padding: spacing.md, justifyContent: 'center' as any },
-  postCaption: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, lineHeight: 19,
-    color: warm.inkMid,
+  feedAvatar: {
+    width: 40, height: 40, borderRadius: 20,
   },
-  postStats: { flexDirection: 'row' as any, gap: spacing.lg, marginTop: spacing.sm },
-  postStat: {
-    fontFamily: 'DMSans_500Medium', fontSize: 12, color: warm.muted,
+  feedUserName: {
+    fontFamily: 'DMSans_700Bold', fontSize: 15, color: warm.ink,
   },
-  postEmpty: {
-    alignItems: 'center' as any, paddingVertical: spacing.xl, gap: spacing.sm,
+  feedTimeAgo: {
+    fontFamily: 'DMSans_400Regular', fontSize: 13, color: warm.muted,
   },
-  postEmptyText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: warm.mutedLight,
+  feedCaption: {
+    fontFamily: 'DMSans_400Regular', fontSize: 15, color: warm.ink, marginBottom: 10,
+  },
+  feedStats: {
+    flexDirection: 'row' as any, gap: 14, alignItems: 'center' as any,
+  },
+  feedHeart: {
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: '#E05A5A',
+  },
+  feedComment: {
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: warm.muted,
+  },
+  feedCardImage: {
+    width: 130, height: 'auto' as any, minHeight: 120,
   },
 
-  /* ââ Friends âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
-  friendsSection: { marginBottom: spacing.lg },
-  friendsHeader: {
-    flexDirection: 'row' as any, alignItems: 'center' as any, gap: spacing.sm,
-    paddingHorizontal: spacing.xl, marginBottom: spacing.md,
+  /* ââ Mood section ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  moodSection: {
+    marginHorizontal: spacing.lg, marginBottom: spacing.lg,
+    alignItems: 'center' as any,
   },
-  friendsScroll: { paddingHorizontal: spacing.xl, gap: spacing.lg },
-  friendBubble: { alignItems: 'center' as any, width: 64 },
-  friendRing: {
-    width: 56, height: 56, borderRadius: 28,
-    borderWidth: 2.5, borderColor: warm.ring,
+  moodTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
+    color: warm.ink, marginBottom: 14,
+  },
+  moodRow: {
+    flexDirection: 'row' as any, gap: 10,
+  },
+  moodBtn: {
+    flex: 1, backgroundColor: warm.cardBg,
+    borderWidth: 1, borderColor: warm.divider,
+    borderRadius: 28, paddingVertical: 10, paddingHorizontal: 8,
     alignItems: 'center' as any, justifyContent: 'center' as any,
-    marginBottom: spacing.xs,
   },
-  friendAvatar: { width: 48, height: 48, borderRadius: 24 },
-  friendName: {
-    fontFamily: 'DMSans_500Medium', fontSize: 11, color: warm.ink,
-    textAlign: 'center' as any,
+  moodBtnText: {
+    fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: warm.ink,
   },
-  friendsEmpty: {
-    paddingHorizontal: spacing.xl, paddingVertical: spacing.lg,
-  },
-  friendsEmptyText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: warm.mutedLight,
+  moodBtnTextAccent: {
+    color: '#E8834A',
   },
 
   /* ââ Pose of the Day (beach card) ââââââââââââââââââââââââââââââââââââââââââââ */
@@ -869,14 +885,6 @@ const s = StyleSheet.create({
   },
   poseEnglish: {
     fontFamily: 'DMSans_400Regular', fontSize: 12, color: warm.muted,
-  },
-  retreatBtn: {
-    backgroundColor: warm.accent, borderRadius: 14,
-    paddingVertical: 10, alignItems: 'center' as any,
-    marginTop: spacing.md,
-  },
-  retreatBtnText: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#fff',
   },
 
   /* ââ Guru wisdom âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
