@@ -2,19 +2,49 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, Image,
-  StyleSheet, RefreshControl, FlatList, Modal, Pressable,
+  StyleSheet, RefreshControl, TextInput, Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '@/store/useAppStore';
-import AppHeader from '@/components/AppHeader';
-import FriendRow from '@/components/community/FriendRow';
 import PostCard from '@/components/community/PostCard';
 import { getPracticingNow, getFeed, supabase } from '@/lib/supabase';
 
-type Tab = 'feed' | 'practicing' | 'discover';
+/* ââ Warm earth-tone palette (from mockup) âââââââââââââââââââââââââââââââ */
+const warm = {
+  headerBg:    '#463B31',
+  headerText:  '#FAF6F0',
+  pageBg:      '#FAF6F0',
+  cardBg:      '#FFFCF8',
+  searchBg:    '#FFFFFF',
+  searchBorder:'#E8E0D4',
+  searchText:  '#8B7D6E',
+  ink:         '#3D3229',
+  inkMid:      '#5C4F42',
+  muted:       '#8B7D6E',
+  mutedLight:  '#B5A899',
+  accent:      '#C47B3F',   // warm orange-brown
+  accentLight: '#F0E0CC',
+  sage:        '#7A8B5E',   // olive green for discussion cards
+  sageBg:      '#E8EDDF',
+  gold:        '#B8944A',   // golden for discussion cards
+  goldBg:      '#F5EDD8',
+  amber:       '#C4874D',   // amber for discussion cards
+  amberBg:     '#F8E8D4',
+  terra:       '#A0704C',   // terracotta for accents
+  terraBg:     '#F3E4D6',
+  divider:     '#EDE5D8',
+  greenBadge:  '#4CAF7D',
+  heartRed:    '#E05555',
+  white:       '#FFFFFF',
+  ring:        '#D4A76A',   // avatar ring color
+};
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+
+type Tab = 'latest' | 'people' | 'topics';
 
 interface PracticingUser {
   id: string;
@@ -24,6 +54,7 @@ interface PracticingUser {
   level: string;
   streak: number;
   practicing_since: string;
+  location?: string;
 }
 
 interface FeedPost {
@@ -48,33 +79,35 @@ interface Member {
   bio: string | null;
 }
 
+/* ââ Mock discussion topics âââââââââââââââââââââââââââââââââââââââââââââââ */
+const DISCUSSIONS = [
+  { id: '1', title: 'Padmasana Tips',    replies: 125, color: warm.sage,  bg: warm.sageBg  },
+  { id: '2', title: 'Overcoming Injury', replies: 99,  color: warm.gold,  bg: warm.goldBg  },
+  { id: '3', title: 'Morning Practice Wins', replies: 154, color: warm.amber, bg: warm.amberBg },
+];
+
 export default function CommunityScreen() {
   const router = useRouter();
   const { user, userPosts } = useAppStore();
-  const [activeTab, setActiveTab] = useState<Tab>('feed');
+  const [activeTab, setActiveTab] = useState<Tab>('latest');
   const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [livePractitioners, setLivePractitioners] = useState<PracticingUser[]>([]);
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
 
-  /** Open profile (currently disabled - would need user lookup) */
-  const openProfile = useCallback((name: string) => {
-    // User profiles would be fetched from Supabase
-  }, []);
+  const openProfile = useCallback((name: string) => {}, []);
 
-  // Fetch who's on the mat from Supabase
   const fetchPracticing = useCallback(async () => {
     const { data } = await getPracticingNow();
     if (data) setLivePractitioners(data as PracticingUser[]);
   }, []);
 
-  // Fetch all posts from Supabase for the feed
   const fetchFeed = useCallback(async () => {
     const { data } = await getFeed(user?.id ?? '');
     if (data) setFeedPosts(data as FeedPost[]);
   }, [user?.id]);
 
-  // Fetch all members for the Discover tab
   const fetchMembers = useCallback(async () => {
     const { data } = await supabase
       .from('profiles')
@@ -91,104 +124,180 @@ export default function CommunityScreen() {
     fetchMembers();
   }, []);
 
-  // Real Supabase data only - show empty when no practitioners
-  const practicingNow = livePractitioners.map((p) => ({
-    id: p.id,
-    name: p.name ?? 'Practitioner',
-    avatarUrl: p.avatar_url,
-    series: p.series,
-    streak: p.streak ?? 0,
-    lastPractice: p.practicing_since,
-    isFollowing: true,
-    level: p.level,
-  }));
-
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([fetchPracticing(), fetchFeed(), fetchMembers()]);
     setRefreshing(false);
   }, []);
 
-  return (
-    <SafeAreaView style={styles.safe}>
-      <AppHeader />
+  const allPeople = [
+    ...livePractitioners.map((p) => ({
+      id: p.id,
+      name: p.name ?? 'Practitioner',
+      avatarUrl: p.avatar_url,
+      location: p.location ?? null,
+      series: p.series,
+      streak: p.streak ?? 0,
+    })),
+    ...members.map((m) => ({
+      id: m.id,
+      name: m.name ?? 'Practitioner',
+      avatarUrl: m.avatar_url,
+      location: m.location,
+      series: m.series,
+      streak: m.streak ?? 0,
+    })),
+  ];
 
-      {/* Tab selector */}
-      <View style={styles.tabRow}>
-        {(['feed', 'practicing', 'discover'] as Tab[]).map((tab) => (
+  /* ââ Render helpers âââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+
+  const renderPartnerAvatar = (p: typeof allPeople[0], index: number) => (
+    <TouchableOpacity key={p.id + index} style={s.partnerItem} activeOpacity={0.7} onPress={() => openProfile(p.name)}>
+      <View style={s.partnerAvatarRing}>
+        {p.avatarUrl ? (
+          <Image source={{ uri: p.avatarUrl }} style={s.partnerAvatar} />
+        ) : (
+          <View style={[s.partnerAvatar, { backgroundColor: warm.accent, alignItems: 'center', justifyContent: 'center' }]}>
+            <Text style={{ fontSize: 22, color: warm.white, fontWeight: '600' }}>
+              {p.name.charAt(0)}
+            </Text>
+          </View>
+        )}
+      </View>
+      <Text style={s.partnerName} numberOfLines={1}>{p.name.split(' ')[0]}</Text>
+      {p.location && <Text style={s.partnerLocation} numberOfLines={1}>{p.location}</Text>}
+    </TouchableOpacity>
+  );
+
+  const renderDiscussionCard = (d: typeof DISCUSSIONS[0]) => (
+    <TouchableOpacity key={d.id} style={[s.discussionCard, { backgroundColor: d.bg }]} activeOpacity={0.7}>
+      <Text style={[s.discussionTitle, { color: d.color }]}>{d.title}</Text>
+      <Text style={[s.discussionReplies, { color: d.color }]}>{d.replies} Replies</Text>
+    </TouchableOpacity>
+  );
+
+  return (
+    <SafeAreaView style={s.safe} edges={['top']}>
+      {/* ââ Warm header ââ */}
+      <View style={s.header}>
+        <TouchableOpacity activeOpacity={0.7}>
+          <Ionicons name="menu" size={26} color={warm.headerText} />
+        </TouchableOpacity>
+        <Text style={s.headerTitle}>Community</Text>
+        <View style={s.headerRight}>
+          <TouchableOpacity activeOpacity={0.7} style={s.headerIcon}>
+            <Ionicons name="chatbubble-ellipses-outline" size={22} color={warm.headerText} />
+            <View style={s.notifDot} />
+          </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => router.push('/(tabs)/profile')}>
+            {user?.avatarUrl ? (
+              <Image source={{ uri: user.avatarUrl }} style={s.headerAvatar} />
+            ) : (
+              <Ionicons name="person" size={22} color={warm.headerText} />
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* ââ Search bar ââ */}
+      <View style={s.searchWrap}>
+        <View style={s.searchBar}>
+          <Ionicons name="search-outline" size={18} color={warm.muted} />
+          <TextInput
+            style={s.searchInput}
+            placeholder="Search members..."
+            placeholderTextColor={warm.muted}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+      </View>
+
+      {/* ââ Underline tabs ââ */}
+      <View style={s.tabRow}>
+        {(['latest', 'people', 'topics'] as Tab[]).map((tab) => (
           <TouchableOpacity
             key={tab}
-            style={[styles.tab, activeTab === tab && styles.tabActive]}
+            style={[s.tab, activeTab === tab && s.tabActive]}
             onPress={() => setActiveTab(tab)}
             activeOpacity={0.7}
           >
-            <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-              {tab === 'feed' ? 'Feed' : tab === 'practicing' ? 'Practicing' : 'Discover'}
+            <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>
+              {tab === 'latest' ? 'Latest' : tab === 'people' ? 'People' : 'Topics'}
             </Text>
-            {tab === 'practicing' && practicingNow.length > 0 && (
-              <View style={styles.tabBadge}>
-                <Text style={styles.tabBadgeText}>{practicingNow.length}</Text>
-              </View>
-            )}
           </TouchableOpacity>
         ))}
       </View>
 
+      {/* ââ Scrollable content ââ */}
       <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+        style={s.scroll}
+        contentContainerStyle={s.scrollContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={warm.accent} />}
       >
-        {/* ── Feed tab ─────────────────────────────────────── */}
-        {activeTab === 'feed' && (
-          <>
-            {/* Practicing now strip */}
-            {practicingNow.length > 0 && (
-              <View style={styles.practicingStrip}>
-                <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>On the mat now</Text>
-                  <View style={styles.liveChip}>
-                    <View style={styles.liveDot} />
-                    <Text style={styles.liveText}>{practicingNow.length} practicing</Text>
-                  </View>
-                </View>
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.avatarStrip}
-                >
-                  {practicingNow.map((u) => (
-                    <TouchableOpacity key={u.id} style={styles.avatarBubble} activeOpacity={0.7} onPress={() => openProfile(u.name)}>
-                      <View style={styles.avatarRing}>
-                        {u.avatarUrl ? (
-                          <Image source={{ uri: u.avatarUrl }} style={styles.miniAvatar} />
-                        ) : (
-                          <View style={[styles.miniAvatar, { backgroundColor: colors.skyDeep, alignItems: 'center', justifyContent: 'center' }]}>
-                            <Text style={{ fontSize: 18, color: colors.white, fontWeight: '600' }}>
-                              {u.name.charAt(0)}
-                            </Text>
-                          </View>
-                        )}
-                      </View>
-                      <Text style={styles.avatarName} numberOfLines={1}>
-                        {u.name.split(' ')[0]}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              </View>
-            )}
 
-            {/* Posts feed */}
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Latest Posts</Text>
-              <TouchableOpacity onPress={() => router.push('/new-post')}>
-                <Text style={styles.sectionLink}>New post →</Text>
+        {/* âââââââââââ LATEST TAB âââââââââââ */}
+        {activeTab === 'latest' && (
+          <>
+            {/* Find Practicing Partners */}
+            <View style={s.sectionHeader}>
+              <Text style={s.sectionTitle}>Find Practicing Partners</Text>
+            </View>
+            <View style={s.partnersCard}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={s.partnersScroll}
+              >
+                {allPeople.length > 0 ? (
+                  <>
+                    {allPeople.slice(0, 4).map((p, i) => renderPartnerAvatar(p, i))}
+                    {allPeople.length > 4 && (
+                      <TouchableOpacity style={s.partnerItem} activeOpacity={0.7}>
+                        <View style={[s.partnerAvatarRing, { borderColor: warm.greenBadge }]}>
+                          <View style={[s.partnerAvatar, { backgroundColor: warm.greenBadge, alignItems: 'center', justifyContent: 'center' }]}>
+                            <Text style={{ color: warm.white, fontFamily: 'DMSans_600SemiBold', fontSize: 12 }}>More</Text>
+                          </View>
+                        </View>
+                        <Text style={s.partnerName}>+ More</Text>
+                      </TouchableOpacity>
+                    )}
+                  </>
+                ) : (
+                  <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.xl }}>
+                    <Text style={{ color: warm.muted, fontSize: 14 }}>No practitioners yet</Text>
+                  </View>
+                )}
+                {/* Arrow indicator */}
+                {allPeople.length > 3 && (
+                  <View style={s.arrowWrap}>
+                    <Ionicons name="chevron-forward" size={20} color={warm.mutedLight} />
+                  </View>
+                )}
+              </ScrollView>
+            </View>
+
+            {/* Popular Discussions */}
+            <View style={s.sectionHeader}>
+              <Text style={s.sectionTitle}>Popular Discussions</Text>
+            </View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={s.discussionsScroll}
+            >
+              {DISCUSSIONS.map(renderDiscussionCard)}
+            </ScrollView>
+
+            {/* Sangha Feed */}
+            <View style={s.sectionHeader}>
+              <Text style={s.sectionTitle}>Sangha Feed</Text>
+              <TouchableOpacity onPress={() => router.push('/new-post')} activeOpacity={0.7}>
+                <Text style={s.sectionLink}>New post</Text>
               </TouchableOpacity>
             </View>
 
-            {/* Community posts from Supabase + user's own posts */}
             {feedPosts.length > 0 ? (
               feedPosts.map((post) => (
                 <PostCard
@@ -222,365 +331,437 @@ export default function CommunityScreen() {
                 />
               ))
             ) : (
-              <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
-                <Text style={{ color: colors.muted, fontSize: 14 }}>No posts yet</Text>
+              <View style={s.emptyState}>
+                <Ionicons name="chatbubbles-outline" size={40} color={warm.mutedLight} />
+                <Text style={s.emptyText}>No posts yet</Text>
               </View>
             )}
           </>
         )}
 
-        {/* ── Practicing tab ───────────────────────────────── */}
-        {activeTab === 'practicing' && (
+        {/* âââââââââââ PEOPLE TAB âââââââââââ */}
+        {activeTab === 'people' && (
           <>
-            {/* Stats card */}
-            <View style={styles.statsCard}>
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>{practicingNow.length}</Text>
-                <Text style={styles.statLabel}>Practicing now</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>0</Text>
-                <Text style={styles.statLabel}>In your sangha</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>0</Text>
-                <Text style={styles.statLabel}>Combined streak</Text>
-              </View>
-            </View>
-
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Who's practicing</Text>
-            </View>
-
-            {/* Live practitioners */}
-            {practicingNow.length > 0 && (
-              <View style={styles.friendsCard}>
-                <View style={styles.friendsCardHeader}>
-                  <View style={styles.liveDot} />
-                  <Text style={styles.friendsCardTitle}>On the mat</Text>
+            {/* On the mat now */}
+            {livePractitioners.length > 0 && (
+              <>
+                <View style={s.sectionHeader}>
+                  <Text style={s.sectionTitle}>On the Mat Now</Text>
+                  <View style={s.liveBadge}>
+                    <View style={s.liveDot} />
+                    <Text style={s.liveText}>{livePractitioners.length}</Text>
+                  </View>
                 </View>
-                {practicingNow.map((u) => (
-                  <FriendRow
-                    key={u.id}
-                    name={u.name}
-                    avatarUrl={u.avatarUrl}
-                    series={u.series}
-                    streak={u.streak}
-                    lastPractice={u.lastPractice}
-                    isFollowing={u.isFollowing}
-                    onPress={() => openProfile(u.name)}
-                  />
-                ))}
-              </View>
+                <View style={s.peopleCard}>
+                  {livePractitioners.map((p) => (
+                    <TouchableOpacity key={p.id} style={s.personRow} activeOpacity={0.7} onPress={() => openProfile(p.name)}>
+                      <View style={s.personAvatarWrap}>
+                        {p.avatar_url ? (
+                          <Image source={{ uri: p.avatar_url }} style={s.personAvatar} />
+                        ) : (
+                          <View style={[s.personAvatar, { backgroundColor: warm.accent, alignItems: 'center', justifyContent: 'center' }]}>
+                            <Text style={{ fontSize: 16, color: warm.white, fontWeight: '600' }}>{p.name.charAt(0)}</Text>
+                          </View>
+                        )}
+                        <View style={s.onlineDot} />
+                      </View>
+                      <View style={s.personInfo}>
+                        <Text style={s.personName}>{p.name}</Text>
+                        <Text style={s.personMeta}>{p.series} {p.streak > 0 ? `Â· ${p.streak}d streak` : ''}</Text>
+                      </View>
+                      <View style={s.followBtnActive}>
+                        <Text style={s.followTextActive}>Following</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </>
             )}
 
-            {/* All community members */}
-            <View style={[styles.sectionHeader, { marginTop: spacing.lg }]}>
-              <Text style={styles.sectionTitle}>Your Sangha</Text>
-            </View>
-            <View style={styles.friendsCard}>
-              <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
-                <Text style={{ color: colors.muted, fontSize: 14 }}>No sangha members yet</Text>
-              </View>
-            </View>
-          </>
-        )}
-
-        {/* ── Discover tab ─────────────────────────────────── */}
-        {activeTab === 'discover' && (
-          <>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Suggested Practitioners</Text>
+            {/* All Members */}
+            <View style={s.sectionHeader}>
+              <Text style={s.sectionTitle}>Community Members</Text>
             </View>
             {members.length > 0 ? (
-              <View style={styles.friendsCard}>
+              <View style={s.peopleCard}>
                 {members.map((m) => (
-                  <FriendRow
-                    key={m.id}
-                    name={m.name}
-                    avatarUrl={m.avatar_url ?? ''}
-                    series={m.series}
-                    streak={m.streak ?? 0}
-                    isFollowing={false}
-                    onPress={() => openProfile(m.name)}
-                  />
+                  <TouchableOpacity key={m.id} style={s.personRow} activeOpacity={0.7} onPress={() => openProfile(m.name)}>
+                    <View style={s.personAvatarWrap}>
+                      {m.avatar_url ? (
+                        <Image source={{ uri: m.avatar_url }} style={s.personAvatar} />
+                      ) : (
+                        <View style={[s.personAvatar, { backgroundColor: warm.terra, alignItems: 'center', justifyContent: 'center' }]}>
+                          <Text style={{ fontSize: 16, color: warm.white, fontWeight: '600' }}>{m.name.charAt(0)}</Text>
+                        </View>
+                      )}
+                    </View>
+                    <View style={s.personInfo}>
+                      <Text style={s.personName}>{m.name}</Text>
+                      <Text style={s.personMeta}>
+                        {m.series} {m.location ? `Â· ${m.location}` : ''}
+                      </Text>
+                    </View>
+                    <TouchableOpacity style={s.followBtn} activeOpacity={0.7}>
+                      <Text style={s.followText}>Follow</Text>
+                    </TouchableOpacity>
+                  </TouchableOpacity>
                 ))}
               </View>
             ) : (
-              <View style={styles.friendsCard}>
-                <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
-                  <Text style={{ color: colors.muted, fontSize: 14 }}>No suggestions yet</Text>
-                </View>
+              <View style={s.emptyState}>
+                <Ionicons name="people-outline" size={40} color={warm.mutedLight} />
+                <Text style={s.emptyText}>No members found yet</Text>
               </View>
             )}
           </>
         )}
-      </ScrollView>
 
+        {/* âââââââââââ TOPICS TAB âââââââââââ */}
+        {activeTab === 'topics' && (
+          <>
+            <View style={s.sectionHeader}>
+              <Text style={s.sectionTitle}>Discussion Topics</Text>
+            </View>
+            {DISCUSSIONS.map((d) => (
+              <TouchableOpacity key={d.id} style={[s.topicRow, { borderLeftColor: d.color }]} activeOpacity={0.7}>
+                <View style={{ flex: 1 }}>
+                  <Text style={s.topicTitle}>{d.title}</Text>
+                  <Text style={s.topicMeta}>{d.replies} replies Â· Active today</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={warm.mutedLight} />
+              </TouchableOpacity>
+            ))}
+            <View style={s.emptyState}>
+              <Text style={[s.emptyText, { marginTop: spacing.lg }]}>More topics coming soon</Text>
+            </View>
+          </>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.page },
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+/* STYLES                                                                     */
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 
+const s = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: warm.pageBg },
 
-  // ── Tabs ───────────────────────────────────────────────────────────────────
+  /* ââ Header âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: warm.headerBg,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md + 2,
+  },
+  headerTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 22,
+    color: warm.headerText,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+  },
+  headerIcon: { position: 'relative' },
+  headerAvatar: { width: 28, height: 28, borderRadius: 14 },
+  notifDot: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 9,
+    height: 9,
+    borderRadius: 4.5,
+    backgroundColor: warm.heartRed,
+    borderWidth: 1.5,
+    borderColor: warm.headerBg,
+  },
+
+  /* ââ Search âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  searchWrap: {
+    backgroundColor: warm.headerBg,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.md,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: warm.searchBg,
+    borderRadius: radius.lg,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 10,
+    gap: spacing.sm,
+    borderWidth: 1,
+    borderColor: warm.searchBorder,
+  },
+  searchInput: {
+    flex: 1,
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 14,
+    color: warm.ink,
+    padding: 0,
+  },
+
+  /* ââ Tabs (underline style) âââââââââââââââââââââââââââââââââââââââââââââââ */
   tabRow: {
     flexDirection: 'row',
+    backgroundColor: warm.pageBg,
+    borderBottomWidth: 1,
+    borderBottomColor: warm.divider,
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
-    marginBottom: spacing.md,
-    gap: spacing.sm,
   },
   tab: {
-    flexDirection: 'row',
+    flex: 1,
     alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.full,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.skyMid,
-    gap: spacing.xs,
+    paddingVertical: spacing.md + 2,
+    borderBottomWidth: 2.5,
+    borderBottomColor: 'transparent',
   },
   tabActive: {
-    backgroundColor: colors.blueDeep,
-    borderColor: colors.blueDeep,
+    borderBottomColor: warm.ink,
   },
-  tabText: { ...typography.headingSm, color: colors.inkMid },
-  tabTextActive: { color: colors.white },
-  tabBadge: {
-    backgroundColor: colors.orange,
-    borderRadius: radius.full,
-    minWidth: 18,
-    height: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 5,
+  tabText: {
+    fontFamily: 'DMSans_500Medium',
+    fontSize: 15,
+    color: warm.muted,
   },
-  tabBadgeText: { ...typography.headingXs, color: colors.white, fontSize: 10 },
+  tabTextActive: {
+    fontFamily: 'DMSans_600SemiBold',
+    color: warm.ink,
+  },
 
-  // ── Scroll ─────────────────────────────────────────────────────────────────
+  /* ââ Scroll âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
   scroll: { flex: 1 },
-  scrollContent: { paddingBottom: spacing['4xl'] },
+  scrollContent: { paddingBottom: 100 },
 
-  // ── Section headers (same pattern as HomeScreen) ───────────────────────────
+  /* ââ Section headers ââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
+    marginTop: spacing.xl,
     marginBottom: spacing.md,
   },
-  sectionTitle: { ...typography.headingLg, color: colors.ink },
-  sectionLink: { ...typography.labelMd, color: colors.blue },
+  sectionTitle: {
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 17,
+    color: warm.ink,
+  },
+  sectionLink: {
+    fontFamily: 'DMSans_500Medium',
+    fontSize: 13,
+    color: warm.accent,
+  },
 
-  // ── Practicing now strip ───────────────────────────────────────────────────
-  practicingStrip: { marginBottom: spacing.xl },
-  liveChip: {
+  /* ââ Find Practicing Partners âââââââââââââââââââââââââââââââââââââââââââââ */
+  partnersCard: {
+    marginHorizontal: spacing.lg,
+    backgroundColor: warm.cardBg,
+    borderRadius: radius['2xl'],
+    overflow: 'hidden',
+    shadowColor: '#3D3229',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  partnersScroll: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
+    gap: spacing.xl,
+  },
+  partnerItem: { alignItems: 'center', width: 72 },
+  partnerAvatarRing: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 2.5,
+    borderColor: warm.ring,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.xs,
+  },
+  partnerAvatar: { width: 54, height: 54, borderRadius: 27 },
+  partnerName: {
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 12,
+    color: warm.ink,
+    textAlign: 'center',
+  },
+  partnerLocation: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 10,
+    color: warm.muted,
+    textAlign: 'center',
+    marginTop: 1,
+  },
+  arrowWrap: {
+    justifyContent: 'center',
+    paddingLeft: spacing.sm,
+  },
+
+  /* ââ Popular Discussions ââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  discussionsScroll: {
+    paddingHorizontal: spacing.lg,
+    gap: spacing.md,
+  },
+  discussionCard: {
+    width: SCREEN_WIDTH * 0.38,
+    borderRadius: radius.xl,
+    padding: spacing.lg,
+    minHeight: 90,
+    justifyContent: 'space-between',
+  },
+  discussionTitle: {
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: spacing.sm,
+  },
+  discussionReplies: {
+    fontFamily: 'DMSans_500Medium',
+    fontSize: 12,
+  },
+
+  /* ââ People tab âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  liveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
-    backgroundColor: colors.sagePale,
+    gap: 5,
+    backgroundColor: warm.sageBg,
     borderRadius: radius.full,
     paddingHorizontal: spacing.md,
-    paddingVertical: 4,
+    paddingVertical: 3,
   },
   liveDot: {
     width: 7,
     height: 7,
     borderRadius: 3.5,
-    backgroundColor: colors.sage,
+    backgroundColor: warm.sage,
   },
-  liveText: { ...typography.labelSm, color: colors.sage },
-  avatarStrip: { paddingHorizontal: spacing.xl, gap: spacing.lg },
-  avatarBubble: { alignItems: 'center', width: 60 },
-  avatarRing: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    borderWidth: 2,
-    borderColor: colors.sage,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.xs,
+  liveText: {
+    fontFamily: 'DMSans_500Medium',
+    fontSize: 11,
+    color: warm.sage,
   },
-  miniAvatar: { width: 44, height: 44, borderRadius: 22 },
-  avatarName: { ...typography.bodyXs, color: colors.ink, textAlign: 'center' },
-
-  // ── Stats card ─────────────────────────────────────────────────────────────
-  statsCard: {
-    flexDirection: 'row',
+  peopleCard: {
     marginHorizontal: spacing.lg,
-    marginBottom: spacing.xl,
-    backgroundColor: colors.white,
-    borderRadius: radius['2xl'],
-    padding: spacing.lg,
-    ...shadows.sm,
-  },
-  statItem: { flex: 1, alignItems: 'center' },
-  statNumber: { ...typography.displaySm, color: colors.blueDeep },
-  statLabel: { ...typography.bodyXs, color: colors.muted, marginTop: 2 },
-  statDivider: { width: 1, backgroundColor: colors.skyMid, marginVertical: spacing.xs },
-
-  // ── Friends card ───────────────────────────────────────────────────────────
-  friendsCard: {
-    marginHorizontal: spacing.lg,
-    backgroundColor: colors.white,
+    backgroundColor: warm.cardBg,
     borderRadius: radius['2xl'],
     overflow: 'hidden',
-    marginBottom: spacing.lg,
-    ...shadows.sm,
+    shadowColor: '#3D3229',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  friendsCardHeader: {
+  personRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.xs,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    gap: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: warm.divider,
   },
-  friendsCardTitle: { ...typography.headingSm, color: colors.sage },
-
-  // ── Teacher cards ──────────────────────────────────────────────────────────
-  teacherCard: {
-    flexDirection: 'row',
-    marginHorizontal: spacing.lg,
-    marginBottom: spacing.md,
-    backgroundColor: colors.white,
-    borderRadius: radius['2xl'],
-    padding: spacing.lg,
-    gap: spacing.lg,
-    ...shadows.sm,
+  personAvatarWrap: { position: 'relative' },
+  personAvatar: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: warm.accentLight,
   },
-  teacherAvatar: {
-    width: 64, height: 64, borderRadius: radius.xl,
-    backgroundColor: colors.skyMid,
-  },
-  teacherInfo: { flex: 1 },
-  teacherNameRow: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: 4,
-  },
-  teacherName: { ...typography.headingMd, color: colors.ink },
-  teacherBadge: {
-    backgroundColor: colors.sagePale,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
-  },
-  teacherBadgeText: { ...typography.bodyXs, color: colors.sage, fontFamily: 'DMSans_500Medium' },
-  teacherBio: { ...typography.bodySm, color: colors.inkMid, marginBottom: spacing.sm },
-  teacherMeta: { flexDirection: 'row', gap: spacing.sm },
-  teacherTag: {
-    backgroundColor: colors.sky,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 3,
-  },
-  teacherTagText: { ...typography.bodyXs, color: colors.blueDeep },
-
-  // ── User Profile Sheet ──────────────────────────────────────────────────────
-  sheetBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'flex-end',
-  },
-  sheetContainer: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: radius['3xl'],
-    borderTopRightRadius: radius['3xl'],
-    paddingHorizontal: spacing.xl,
-    paddingBottom: 40,
-    paddingTop: spacing.md,
-    ...shadows.lg,
-  },
-  sheetHandle: {
-    width: 40, height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.skyMid,
-    alignSelf: 'center',
-    marginBottom: spacing.lg,
-  },
-  sheetClose: {
+  onlineDot: {
     position: 'absolute',
-    top: spacing.lg,
-    right: spacing.xl,
-    width: 32, height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.sky,
-    alignItems: 'center',
-    justifyContent: 'center',
+    bottom: 0,
+    right: 0,
+    width: 13,
+    height: 13,
+    borderRadius: 6.5,
+    backgroundColor: warm.sage,
+    borderWidth: 2,
+    borderColor: warm.cardBg,
   },
-  sheetHero: {
-    alignItems: 'center',
-    marginBottom: spacing.xl,
+  personInfo: { flex: 1 },
+  personName: {
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 14,
+    color: warm.ink,
   },
-  sheetAvatar: {
-    width: 88, height: 88,
-    borderRadius: 44,
-    marginBottom: spacing.md,
-    borderWidth: 3,
-    borderColor: colors.sageL ?? colors.sage,
-  },
-  sheetName: {
-    fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 22, lineHeight: 28,
-    color: colors.ink,
-    marginBottom: 4,
-  },
-  sheetTeacherBadge: {
-    backgroundColor: colors.sky,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 3,
-    marginBottom: spacing.xs,
-  },
-  sheetTeacherBadgeText: { ...typography.bodyXs, color: colors.blueDeep, fontWeight: '700' },
-  sheetLocationRow: {
-    flexDirection: 'row', alignItems: 'center', gap: 4,
+  personMeta: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 11,
+    color: warm.muted,
     marginTop: 2,
   },
-  sheetLocation: { ...typography.bodySm, color: colors.muted },
-
-  sheetStats: {
-    flexDirection: 'row',
-    backgroundColor: colors.page,
-    borderRadius: radius.xl,
-    padding: spacing.lg,
-    marginBottom: spacing.lg,
-  },
-  sheetStatItem: { flex: 1, alignItems: 'center' },
-  sheetStatNum: {
-    fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 20, lineHeight: 26,
-    color: colors.blueDeep,
-  },
-  sheetStatLabel: { ...typography.bodyXs, color: colors.muted, marginTop: 2 },
-  sheetStatDivider: { width: 1, backgroundColor: colors.skyMid, marginVertical: 4 },
-
-  sheetBio: {
-    ...typography.bodyMd,
-    color: colors.muted,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-    lineHeight: 22,
-  },
-
-  sheetFollowBtn: {
+  followBtn: {
     borderRadius: radius.full,
     borderWidth: 1.5,
-    borderColor: colors.blue,
-    paddingVertical: spacing.md,
+    borderColor: warm.accent,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 5,
+  },
+  followText: {
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 11,
+    color: warm.accent,
+  },
+  followBtnActive: {
+    borderRadius: radius.full,
+    backgroundColor: warm.accentLight,
+    borderWidth: 1.5,
+    borderColor: warm.ring,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 5,
+  },
+  followTextActive: {
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 11,
+    color: warm.terra,
+  },
+
+  /* ââ Topics tab âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  topicRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: spacing.sm,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.md,
+    backgroundColor: warm.cardBg,
+    borderRadius: radius.xl,
+    padding: spacing.lg,
+    borderLeftWidth: 4,
+    shadowColor: '#3D3229',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  sheetFollowBtnActive: {
-    backgroundColor: colors.sage,
-    borderColor: colors.sage,
+  topicTitle: {
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 15,
+    color: warm.ink,
+    marginBottom: 3,
   },
-  sheetFollowText: { ...typography.headingSm, color: colors.blue },
-  sheetFollowTextActive: { color: '#fff' },
+  topicMeta: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 12,
+    color: warm.muted,
+  },
+
+  /* ââ Empty state ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: spacing['3xl'],
+    gap: spacing.md,
+  },
+  emptyText: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 14,
+    color: warm.muted,
+  },
 });
