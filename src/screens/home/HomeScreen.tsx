@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, Pressable, Modal,
-  StyleSheet, Image, RefreshControl, ImageBackground, Linking, Dimensions,
+  StyleSheet, Image, RefreshControl, ImageBackground, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -70,39 +70,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-// Asana of the Day — Ashtanga Primary Series
-const ASANAS = [
-  { sanskrit: 'Padangusthasana', english: 'Big Toe Pose', tip: 'Grip your big toes, fold from the hips. Let gravity do the work.', youtube: 'https://www.youtube.com/watch?v=8QTLriT8mwA' },
-  { sanskrit: 'Utthita Trikonasana', english: 'Extended Triangle', tip: 'Extend through both arms equally. Keep the chest open to the sky.', youtube: 'https://www.youtube.com/watch?v=KaTv00w1hqk' },
-  { sanskrit: 'Parivrtta Parsvakonasana', english: 'Revolved Side Angle', tip: 'Ground the back heel. Twist from your core, not your shoulders.', youtube: 'https://www.youtube.com/watch?v=HKucylP9I3s' },
-  { sanskrit: 'Prasarita Padottanasana', english: 'Wide-Legged Forward Fold', tip: 'Feet parallel, crown of head reaching to the floor.', youtube: 'https://www.youtube.com/watch?v=n5AQZO4P6h0' },
-  { sanskrit: 'Utthita Hasta Padangusthasana', english: 'Hand-to-Big-Toe Pose', tip: 'Drishti is forward. The standing leg is your foundation.', youtube: 'https://www.youtube.com/watch?v=3MSbUSseP_E' },
-  { sanskrit: 'Ardha Baddha Padmottanasana', english: 'Half Bound Lotus Forward Fold', tip: 'If the bind doesn\'t come, hold the knee instead.', youtube: 'https://www.youtube.com/watch?v=sm75URCiOhI' },
-  { sanskrit: 'Utkatasana', english: 'Chair Pose', tip: 'Sit deep into the pose. Root down through the heels, reach up through the arms.', youtube: 'https://www.youtube.com/watch?v=KaTv00w1hqk' },
-  { sanskrit: 'Marichyasana A', english: 'Sage Marichi\'s Pose A', tip: 'Heel close to the sit bone. Lengthen first, then fold.', youtube: 'https://www.youtube.com/watch?v=GsRLDgwqFnY' },
-  { sanskrit: 'Marichyasana C', english: 'Sage Marichi\'s Twist C', tip: 'Inhale to grow tall, exhale to twist deeper.', youtube: 'https://www.youtube.com/watch?v=K3D_3XL_UmM' },
-  { sanskrit: 'Navasana', english: 'Boat Pose', tip: 'Five rounds, five breaths. Engage your bandhas between each one.', youtube: 'https://www.youtube.com/watch?v=5dUOD0LeU3k' },
-  { sanskrit: 'Bhujapidasana', english: 'Shoulder Pressing Pose', tip: 'The lift comes from bandha, not brute strength.', youtube: 'https://www.youtube.com/watch?v=KMTkPAihuSw' },
-  { sanskrit: 'Kurmasana', english: 'Tortoise Pose', tip: 'Surrender into the fold. This posture teaches patience.', youtube: 'https://www.youtube.com/watch?v=mz8V56B6tC8' },
-  { sanskrit: 'Urdhva Dhanurasana', english: 'Upward Bow', tip: 'Push evenly through hands and feet. Let the heart open skyward.', youtube: 'https://www.youtube.com/watch?v=gxyekLi3oS8' },
-  { sanskrit: 'Sirsasana', english: 'Headstand', tip: 'Foundation in the forearms, not the head. Stay for 25 breaths.', youtube: 'https://www.youtube.com/watch?v=EDXgOM_I8qY' },
-  { sanskrit: 'Surya Namaskara A', english: 'Sun Salutation A', tip: 'Nine vinyasas. Let each breath guide the movement — never rush.', youtube: 'https://www.youtube.com/watch?v=aUgtMaAZzW0' },
-  { sanskrit: 'Paschimottanasana', english: 'Seated Forward Fold', tip: 'Inhale to lengthen the spine, exhale to fold deeper. Surrender, don\'t force.', youtube: 'https://www.youtube.com/watch?v=5dUOD0LeU3k' },
-  { sanskrit: 'Janu Sirsasana A', english: 'Head-to-Knee Pose A', tip: 'Rotate the bent knee slightly back. Square the hips as much as possible.', youtube: 'https://www.youtube.com/watch?v=GsRLDgwqFnY' },
-  { sanskrit: 'Marichyasana B', english: 'Sage Marichi\'s Pose B', tip: 'Set the lotus first. Then wrap and bind. Patience opens the hip.', youtube: 'https://www.youtube.com/watch?v=GsRLDgwqFnY' },
-  { sanskrit: 'Marichyasana D', english: 'Sage Marichi\'s Twist D', tip: 'Half lotus and twist together. The gateway posture of the primary series.', youtube: 'https://www.youtube.com/watch?v=K3D_3XL_UmM' },
-  { sanskrit: 'Baddha Konasana', english: 'Bound Angle Pose', tip: 'Bring the soles together, fold the torso forward. Let the inner thighs soften.', youtube: 'https://www.youtube.com/watch?v=sm75URCiOhI' },
-  { sanskrit: 'Salamba Sarvangasana', english: 'Shoulderstand', tip: 'The queen of asanas. Stack hips over shoulders. Chin draws to chest.', youtube: 'https://www.youtube.com/watch?v=EDXgOM_I8qY' },
-  { sanskrit: 'Utthita Parsvakonasana', english: 'Extended Side Angle', tip: 'Create one long diagonal line from the back heel to the fingertips.', youtube: 'https://www.youtube.com/watch?v=HKucylP9I3s' },
-  { sanskrit: 'Parsvottanasana', english: 'Intense Side Stretch', tip: 'Reverse prayer opens the chest. Fold completely over the front leg.', youtube: 'https://www.youtube.com/watch?v=KaTv00w1hqk' },
-  { sanskrit: 'Dandasana', english: 'Staff Pose', tip: 'The foundation of all seated postures. Sit tall, legs active, breath steady.', youtube: 'https://www.youtube.com/watch?v=5dUOD0LeU3k' },
-  { sanskrit: 'Purvottanasana', english: 'Upward Plank', tip: 'Press through all four limbs equally. Open the chest fully to the sky.', youtube: 'https://www.youtube.com/watch?v=gxyekLi3oS8' },
-  { sanskrit: 'Garbha Pindasana', english: 'Embryo in the Womb', tip: 'Thread the arms through lotus. Roll in a circle — nine rotations for nine months.', youtube: 'https://www.youtube.com/watch?v=mz8V56B6tC8' },
-  { sanskrit: 'Supta Kurmasana', english: 'Sleeping Tortoise', tip: 'Complete pratyahara — withdrawal of the senses. Rest here. Listen inward.', youtube: 'https://www.youtube.com/watch?v=mz8V56B6tC8' },
-  { sanskrit: 'Halasana', english: 'Plow Pose', tip: 'From shoulderstand, lower the feet overhead. Keep the legs straight and active.', youtube: 'https://www.youtube.com/watch?v=EDXgOM_I8qY' },
-  { sanskrit: 'Padmasana', english: 'Lotus Pose', tip: 'The classical seat. Spine tall, breath steady, gaze softened. Simply be.', youtube: 'https://www.youtube.com/watch?v=sm75URCiOhI' },
-  { sanskrit: 'Ardha Matsyendrasana', english: 'Half Lord of the Fishes', tip: 'Sit tall before twisting. Use your breath to go deeper each exhale.', youtube: 'https://www.youtube.com/watch?v=o7SBH0zd16o' },
-];
+
 
 // Guru wisdom
 const GURU_WISDOM = [
@@ -126,20 +94,7 @@ const PRACTICE_IMAGES = [
   'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=800&q=80',
 ];
 
-// Practice hero images — after practice
-const COMPLETED_IMAGES = [
-  'https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=800&q=80',
-  'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
-  'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=800&q=80',
-  'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80',
-];
 
-// Retreat / beach images for Pose of the Day
-const RETREAT_IMAGES = [
-  'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
-  'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=80',
-  'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&q=80',
-];
 
 // Fake yogis for Yogis on the mat
 const FAKE_YOGIS = [
@@ -188,11 +143,11 @@ export default function HomeScreen() {
   // Computed
   const now = new Date();
   const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
-  const asanaOfDay = ASANAS[dayOfYear % ASANAS.length];
+  
   const guruWisdom = GURU_WISDOM[dayOfYear % GURU_WISDOM.length];
   const practicedToday = loggedSeries !== null;
   const practiceImage = PRACTICE_IMAGES[dayOfYear % PRACTICE_IMAGES.length];
-  const retreatImage = RETREAT_IMAGES[dayOfYear % RETREAT_IMAGES.length];
+  
   const rhythm = getWeeklyRhythm(practiceLogs);
   const streak = calculateStreak(practiceLogs);
   const moonDay = isMoonDay();
@@ -455,6 +410,27 @@ export default function HomeScreen() {
             <Text style={s.moonIcon}>🌘</Text>
             <Text style={s.moonText}>Next Moon Day: {nextMoonDate}</Text>
           </View>
+
+
+        {/* ═══ 4. HOW WAS YOUR PRACTICE? ═══ */}
+        <View style={s.moodSection}>
+          <Text style={s.moodTitle}>How was your practice today?</Text>
+          <View style={s.moodRow}>
+            {[
+              { icon: 'flame-outline', label: 'Strong', isAccent: true },
+              { icon: 'water-outline', label: 'Challenging', isAccent: false },
+              { icon: 'moon-outline', label: 'Low energy', isAccent: false },
+            ].map((m) => (
+              <TouchableOpacity key={m.label} style={s.moodBtn} activeOpacity={0.7}>
+                <Text style={[s.moodBtnText, m.isAccent && s.moodBtnTextAccent]}>
+                <Ionicons name={m.icon as any} size={18} color={m.isAccent ? warm.orange : warm.inkMid} />
+                {m.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
         </View>
 
 
@@ -504,64 +480,6 @@ export default function HomeScreen() {
             </View>
           </View>
         </View>
-
-        {/* ═══ 4. HOW WAS YOUR PRACTICE? ═══ */}
-        <View style={s.moodSection}>
-          <Text style={s.moodTitle}>How was your practice today?</Text>
-          <View style={s.moodRow}>
-            {[
-              { icon: 'flame-outline', label: 'Strong', isAccent: true },
-              { icon: 'water-outline', label: 'Challenging', isAccent: false },
-              { icon: 'moon-outline', label: 'Low energy', isAccent: false },
-            ].map((m) => (
-              <TouchableOpacity key={m.label} style={s.moodBtn} activeOpacity={0.7}>
-                <Text style={[s.moodBtnText, m.isAccent && s.moodBtnTextAccent]}>
-                <Ionicons name={m.icon as any} size={18} color={m.isAccent ? warm.orange : warm.inkMid} />
-                {m.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-
-        {/* ═══ 5. POSE OF THE DAY — Beach Card ═══ */}
-        <View style={s.poseCard}>
-          <ImageBackground
-            source={{ uri: retreatImage }}
-            style={s.poseImageBg}
-            imageStyle={s.poseImageBgInner}
-          >
-            <View style={s.poseOverlay}>
-              <View style={s.poseContent}>
-                {/* YouTube thumbnail */}
-                {asanaOfDay.youtube && (
-                  <TouchableOpacity
-                    style={s.poseThumb}
-                    onPress={() => Linking.openURL(asanaOfDay.youtube)}
-                    activeOpacity={0.85}
-                  >
-                    <Image
-                      source={{ uri: `https://img.youtube.com/vi/${asanaOfDay.youtube.split('v=')[1]}/mqdefault.jpg` }}
-                      style={s.poseThumbImg}
-                    />
-                    <View style={s.posePlayBtn}>
-                      <Ionicons name="play" size={18} color="#fff" />
-                    </View>
-                  </TouchableOpacity>
-                )}
-                <View style={s.poseInfo}>
-                  <Text style={s.poseBadgeText}>Pose of the Day</Text>
-                  <Text style={s.poseSanskrit}>{asanaOfDay.sanskrit}</Text>
-                  <Text style={s.poseEnglish}>{asanaOfDay.english}</Text>
-                </View>
-              </View>
-            </View>
-          </ImageBackground>
-        </View>
-
-
-        
       </ScrollView>
     </SafeAreaView>
   );
@@ -845,41 +763,6 @@ const s = StyleSheet.create({
     color: '#E8834A',
   },
 
-  /* ── Pose of the Day (beach card) ──────────────────────────────────────────── */
-  poseCard: {
-    marginHorizontal: spacing.lg, marginBottom: spacing.lg,
-    borderRadius: 20, overflow: 'hidden' as any,
-    ...shadows.lg,
-  },
-  poseImageBg: { minHeight: 180 },
-  poseImageBgInner: { borderRadius: 20 },
-  poseOverlay: {
-    flex: 1, backgroundColor: 'rgba(255,255,255,0.85)',
-    padding: spacing.xl,
-    justifyContent: 'space-between' as any,
-  },
-  poseContent: { flexDirection: 'row' as any, gap: spacing.lg },
-  poseThumb: {
-    width: 100, height: 80, borderRadius: radius.md,
-    overflow: 'hidden' as any, position: 'relative' as any,
-  },
-  poseThumbImg: { width: '100%' as any, height: '100%' as any },
-  posePlayBtn: {
-    position: 'absolute' as any, top: 0, left: 0, right: 0, bottom: 0,
-    alignItems: 'center' as any, justifyContent: 'center' as any,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
-  poseInfo: { flex: 1 },
-  poseBadgeText: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 16,
-    color: warm.ink, marginBottom: 4,
-  },
-  poseSanskrit: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 14,
-    color: warm.inkMid, marginBottom: 2,
-  },
-  poseEnglish: {
-    fontFamily: 'DMSans_400Regular', fontSize: 12, color: warm.muted,
-  },
+  
 
 });
