@@ -40,9 +40,9 @@ export default function TabLayout() {
         <Tabs.Screen
           name="shalas"
           options={{
-            title: 'Shalas',
+            title: 'My Log',
             tabBarIcon: ({ color, focused }) => (
-              <MaterialCommunityIcons name={focused ? 'map-marker-radius' : 'map-marker-radius-outline'} size={22} color={color} />
+              <Ionicons name={focused ? 'journal' : 'journal-outline'} size={22} color={color} />
             ),
           }}
         />
