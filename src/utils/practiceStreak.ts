@@ -12,10 +12,10 @@ export interface PracticeLog {
 
 /**
  * Calculate current streak from a list of practice logs.
- * Moon days don't break the streak — they are valid rest days.
+ * Moon days don't break the streak â they are valid rest days.
  */
 export function calculateStreak(logs: PracticeLog[]): number {
-  if (logs.length === 0) return 0;
+  if (!logs || !Array.isArray(logs) || logs.length === 0) return 0;
 
   // Sort descending by date
   const sorted = [...logs].sort(
@@ -55,8 +55,9 @@ export function getWeeklyRhythm(logs: PracticeLog[]): {
   label: string;
   status: 'done' | 'today' | 'rest' | 'empty' | 'future';
 }[] {
+  const safeLogs = logs && Array.isArray(logs) ? logs : [];
   const practicedDates = new Set(
-    logs.map(l => new Date(l.loggedAt).toISOString().split('T')[0])
+    safeLogs.map(l => new Date(l.loggedAt).toISOString().split('T')[0])
   );
 
   const today = new Date();
