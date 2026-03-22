@@ -36,7 +36,7 @@ interface FeedPost {
   profiles: { name: string; avatar_url: string | null } | null;
 }
 
-/* ââ Warm palette (matching Community page redesign) ââââââââââââââââââââââââ */
+/* ── Warm palette (matching Community page redesign) ──────────────────────── */
 const warm = {
   bg:          '#FAF8F5',
   cardBg:      '#FFFFFF',
@@ -66,11 +66,11 @@ const warm = {
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-// ââ Data ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Data ──────────────────────────────────────────────────────────────────────
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-// Asana of the Day â Ashtanga Primary Series
+// Asana of the Day — Ashtanga Primary Series
 const ASANAS = [
   { sanskrit: 'Padangusthasana', english: 'Big Toe Pose', tip: 'Grip your big toes, fold from the hips. Let gravity do the work.', youtube: 'https://www.youtube.com/watch?v=8QTLriT8mwA' },
   { sanskrit: 'Utthita Trikonasana', english: 'Extended Triangle', tip: 'Extend through both arms equally. Keep the chest open to the sky.', youtube: 'https://www.youtube.com/watch?v=KaTv00w1hqk' },
@@ -86,7 +86,7 @@ const ASANAS = [
   { sanskrit: 'Kurmasana', english: 'Tortoise Pose', tip: 'Surrender into the fold. This posture teaches patience.', youtube: 'https://www.youtube.com/watch?v=mz8V56B6tC8' },
   { sanskrit: 'Urdhva Dhanurasana', english: 'Upward Bow', tip: 'Push evenly through hands and feet. Let the heart open skyward.', youtube: 'https://www.youtube.com/watch?v=gxyekLi3oS8' },
   { sanskrit: 'Sirsasana', english: 'Headstand', tip: 'Foundation in the forearms, not the head. Stay for 25 breaths.', youtube: 'https://www.youtube.com/watch?v=EDXgOM_I8qY' },
-  { sanskrit: 'Surya Namaskara A', english: 'Sun Salutation A', tip: 'Nine vinyasas. Let each breath guide the movement â never rush.', youtube: 'https://www.youtube.com/watch?v=aUgtMaAZzW0' },
+  { sanskrit: 'Surya Namaskara A', english: 'Sun Salutation A', tip: 'Nine vinyasas. Let each breath guide the movement — never rush.', youtube: 'https://www.youtube.com/watch?v=aUgtMaAZzW0' },
   { sanskrit: 'Paschimottanasana', english: 'Seated Forward Fold', tip: 'Inhale to lengthen the spine, exhale to fold deeper. Surrender, don\'t force.', youtube: 'https://www.youtube.com/watch?v=5dUOD0LeU3k' },
   { sanskrit: 'Janu Sirsasana A', english: 'Head-to-Knee Pose A', tip: 'Rotate the bent knee slightly back. Square the hips as much as possible.', youtube: 'https://www.youtube.com/watch?v=GsRLDgwqFnY' },
   { sanskrit: 'Marichyasana B', english: 'Sage Marichi\'s Pose B', tip: 'Set the lotus first. Then wrap and bind. Patience opens the hip.', youtube: 'https://www.youtube.com/watch?v=GsRLDgwqFnY' },
@@ -97,8 +97,8 @@ const ASANAS = [
   { sanskrit: 'Parsvottanasana', english: 'Intense Side Stretch', tip: 'Reverse prayer opens the chest. Fold completely over the front leg.', youtube: 'https://www.youtube.com/watch?v=KaTv00w1hqk' },
   { sanskrit: 'Dandasana', english: 'Staff Pose', tip: 'The foundation of all seated postures. Sit tall, legs active, breath steady.', youtube: 'https://www.youtube.com/watch?v=5dUOD0LeU3k' },
   { sanskrit: 'Purvottanasana', english: 'Upward Plank', tip: 'Press through all four limbs equally. Open the chest fully to the sky.', youtube: 'https://www.youtube.com/watch?v=gxyekLi3oS8' },
-  { sanskrit: 'Garbha Pindasana', english: 'Embryo in the Womb', tip: 'Thread the arms through lotus. Roll in a circle â nine rotations for nine months.', youtube: 'https://www.youtube.com/watch?v=mz8V56B6tC8' },
-  { sanskrit: 'Supta Kurmasana', english: 'Sleeping Tortoise', tip: 'Complete pratyahara â withdrawal of the senses. Rest here. Listen inward.', youtube: 'https://www.youtube.com/watch?v=mz8V56B6tC8' },
+  { sanskrit: 'Garbha Pindasana', english: 'Embryo in the Womb', tip: 'Thread the arms through lotus. Roll in a circle — nine rotations for nine months.', youtube: 'https://www.youtube.com/watch?v=mz8V56B6tC8' },
+  { sanskrit: 'Supta Kurmasana', english: 'Sleeping Tortoise', tip: 'Complete pratyahara — withdrawal of the senses. Rest here. Listen inward.', youtube: 'https://www.youtube.com/watch?v=mz8V56B6tC8' },
   { sanskrit: 'Halasana', english: 'Plow Pose', tip: 'From shoulderstand, lower the feet overhead. Keep the legs straight and active.', youtube: 'https://www.youtube.com/watch?v=EDXgOM_I8qY' },
   { sanskrit: 'Padmasana', english: 'Lotus Pose', tip: 'The classical seat. Spine tall, breath steady, gaze softened. Simply be.', youtube: 'https://www.youtube.com/watch?v=sm75URCiOhI' },
   { sanskrit: 'Ardha Matsyendrasana', english: 'Half Lord of the Fishes', tip: 'Sit tall before twisting. Use your breath to go deeper each exhale.', youtube: 'https://www.youtube.com/watch?v=o7SBH0zd16o' },
@@ -118,7 +118,7 @@ const GURU_WISDOM = [
   { guru: 'T. Krishnamacharya', quote: 'Where is the delusion when truth is known?' },
 ];
 
-// Practice hero images â before practice
+// Practice hero images — before practice
 const PRACTICE_IMAGES = [
   'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80',
   'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
@@ -126,7 +126,7 @@ const PRACTICE_IMAGES = [
   'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=800&q=80',
 ];
 
-// Practice hero images â after practice
+// Practice hero images — after practice
 const COMPLETED_IMAGES = [
   'https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=800&q=80',
   'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
@@ -167,7 +167,7 @@ const SERIES_LABELS: Record<string, string> = {
   short: 'Short Practice',
 };
 
-// ââ Component âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
   const {
@@ -220,7 +220,7 @@ export default function HomeScreen() {
   // Featured community post
   const featuredPost = feedPosts.length > 0 ? feedPosts[0] : userPosts.find((p) => p.imageUri);
 
-  // ââ Actions ââ
+  // ── Actions ──
   const handleLogPractice = (seriesKey?: string) => {
     if (!user) return;
     const series = seriesKey ?? selectedSeries;
@@ -250,7 +250,7 @@ export default function HomeScreen() {
     await signOut();
   };
 
-  // ââ Data fetching ââ
+  // ── Data fetching ──
   const fetchLogs = async () => {
     if (!user) return;
     const { data } = await getPracticeLogs(user.id);
@@ -302,10 +302,10 @@ export default function HomeScreen() {
     return '#D9D3CA';
   };
 
-  // ââ Render ââ
+  // ── Render ──
   return (
     <SafeAreaView style={s.safe}>
-      {/* ââ Top bar ââ */}
+      {/* ── Top bar ── */}
       <View style={s.topbar}>
         <View style={s.topbarLeft}>
           <AppLogo size={36} />
@@ -330,7 +330,7 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* ââ Avatar dropdown menu ââ */}
+      {/* ── Avatar dropdown menu ── */}
       <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
         <Pressable style={s.menuBackdrop} onPress={() => setMenuOpen(false)}>
           <View style={s.menuContainer}>
@@ -371,10 +371,10 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={warm.accent} />}
       >
-        {/* ââ Welcome ââ */}
+        {/* ── Welcome ── */}
         <Text style={s.welcome}>Welcome back, {user?.name?.split(' ')[0] ?? 'Yogi'}</Text>
 
-        {/* ââ Yogis on the mat ââ */}
+        {/* ── Yogis on the mat ── */}
         <View style={s.yogisOnMat}>
           <Text style={s.yogisCountText}>
             <Text style={s.yogisCountBold}>{sanghaOnMat.length} yogis</Text> on the mat right now
@@ -394,7 +394,7 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* âââ 1. HERO CARD âââ */}
+        {/* ═══ 1. HERO CARD ═══ */}
         <View style={s.heroCard}>
           <ImageBackground
             source={{ uri: practiceImage }}
@@ -425,7 +425,7 @@ export default function HomeScreen() {
         </View>
 
 
-        {/* âââ 2. PRACTICE RHYTHM â Separate Card âââ */}
+        {/* ═══ 2. PRACTICE RHYTHM — Separate Card ═══ */}
         <View style={s.rhythmCard}>
           <Text style={s.rhythmTitle}>Practice Rhythm</Text>
 
@@ -447,20 +447,20 @@ export default function HomeScreen() {
             </Text>
             {streak > 0 && (
               <View style={s.streakBadge}>
-                <Text style={s.streakText}>ð¥ {streak}</Text>
+                <Text style={s.streakText}>🔥 {streak}</Text>
               </View>
             )}
           </View>
 
           {/* Moon day info */}
           <View style={s.moonRow}>
-            <Text style={s.moonIcon}>ð</Text>
+            <Text style={s.moonIcon}>🌘</Text>
             <Text style={s.moonText}>Next Moon Day: {nextMoonDate}</Text>
           </View>
         </View>
 
 
-        {/* âââ 3. LIVE PRACTICE FEED âââ */}
+        {/* ═══ 3. LIVE PRACTICE FEED ═══ */}
         <View style={s.feedSection}>
           <Text style={s.feedTitle}>Live Practice Feed</Text>
 
@@ -475,10 +475,10 @@ export default function HomeScreen() {
                     <Text style={s.feedTimeAgo}>4 min ago</Text>
                   </View>
                 </View>
-                <Text style={s.feedCaption}>Just finished practice ð</Text>
+                <Text style={s.feedCaption}>Just finished practice 🙏</Text>
                 <View style={s.feedStats}>
-                  <Text style={s.feedHeart}>â¤ï¸ 1</Text>
-                  <Text style={s.feedComment}>ð¬ 1</Text>
+                  <Text style={s.feedHeart}>❤️ 1</Text>
+                  <Text style={s.feedComment}>💬 1</Text>
                 </View>
               </View>
               <Image source={{ uri: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80' }} style={s.feedCardImage} />
@@ -498,8 +498,8 @@ export default function HomeScreen() {
                 </View>
                 <Text style={s.feedCaption}>Working on my dropbacks!</Text>
                 <View style={s.feedStats}>
-                  <Text style={s.feedHeart}>â¤ï¸ 1</Text>
-                  <Text style={s.feedComment}>ð¬ 1</Text>
+                  <Text style={s.feedHeart}>❤️ 1</Text>
+                  <Text style={s.feedComment}>💬 1</Text>
                 </View>
               </View>
               <Image source={{ uri: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80' }} style={s.feedCardImage} />
@@ -507,14 +507,14 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* âââ 4. HOW WAS YOUR PRACTICE? âââ */}
+        {/* ═══ 4. HOW WAS YOUR PRACTICE? ═══ */}
         <View style={s.moodSection}>
           <Text style={s.moodTitle}>How was your practice today?</Text>
           <View style={s.moodRow}>
             {[
-              { emoji: 'ð', label: 'Strong', isAccent: true },
-              { emoji: 'ð', label: 'Challenging', isAccent: false },
-              { emoji: 'ð´', label: 'Low energy', isAccent: false },
+              { emoji: '🙌', label: 'Strong', isAccent: true },
+              { emoji: '😌', label: 'Challenging', isAccent: false },
+              { emoji: '😴', label: 'Low energy', isAccent: false },
             ].map((m) => (
               <TouchableOpacity key={m.label} style={s.moodBtn} activeOpacity={0.7}>
                 <Text style={[s.moodBtnText, m.isAccent && s.moodBtnTextAccent]}>
@@ -526,7 +526,7 @@ export default function HomeScreen() {
         </View>
 
 
-        {/* âââ 5. POSE OF THE DAY â Beach Card âââ */}
+        {/* ═══ 5. POSE OF THE DAY — Beach Card ═══ */}
         <View style={s.poseCard}>
           <ImageBackground
             source={{ uri: retreatImage }}
@@ -562,10 +562,10 @@ export default function HomeScreen() {
         </View>
 
 
-        {/* âââ 6. GURU WISDOM âââ */}
+        {/* ═══ 6. GURU WISDOM ═══ */}
         <View style={s.guruStrip}>
           <Text style={s.guruQuote}>"{guruWisdom.quote}"</Text>
-          <Text style={s.guruName}>â {guruWisdom.guru}</Text>
+          <Text style={s.guruName}>— {guruWisdom.guru}</Text>
         </View>
 
       </ScrollView>
@@ -573,14 +573,14 @@ export default function HomeScreen() {
   );
 }
 
-/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+/* ═══════════════════════════════════════════════════════════════════════════════ */
 /* STYLES                                                                        */
-/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+/* ═══════════════════════════════════════════════════════════════════════════════ */
 
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: warm.bg },
 
-  /* ââ Top bar âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  /* ── Top bar ───────────────────────────────────────────────────────────────── */
   topbar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: spacing.xl, paddingVertical: spacing.md,
@@ -607,7 +607,7 @@ const s = StyleSheet.create({
   avatarLetter: { fontSize: 16, color: '#fff', fontWeight: '600' as any },
   avatarLetterSm: { fontSize: 14, color: '#fff', fontWeight: '600' as any },
 
-  /* ââ Menu âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  /* ── Menu ───────────────────────────────────────────────────────────────────── */
   menuBackdrop: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.25)',
     justifyContent: 'flex-start' as any, alignItems: 'flex-end' as any,
@@ -637,14 +637,14 @@ const s = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
 
-  /* ââ Welcome âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  /* ── Welcome ───────────────────────────────────────────────────────────────── */
   welcome: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, lineHeight: 28,
     color: warm.ink, textAlign: 'center' as any,
     paddingVertical: spacing.md,
   },
 
-  /* ââ Yogis on mat ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  /* ── Yogis on mat ──────────────────────────────────────────────────────────── */
   yogisOnMat: {
     alignItems: 'center' as any,
     paddingHorizontal: spacing.xl,
@@ -671,7 +671,7 @@ const s = StyleSheet.create({
     width: '100%' as any, height: '100%' as any, borderRadius: 22,
   },
 
-  /* ââ Hero card âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  /* ── Hero card ─────────────────────────────────────────────────────────────── */
   heroCard: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
     borderRadius: 20, overflow: 'hidden' as any,
@@ -730,7 +730,7 @@ const s = StyleSheet.create({
     letterSpacing: 1.5, textTransform: 'uppercase' as any,
   },
 
-  /* ââ Rhythm card âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  /* ── Rhythm card ───────────────────────────────────────────────────────────── */
   rhythmCard: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
     backgroundColor: warm.cardBg, borderRadius: 20,
@@ -778,7 +778,7 @@ const s = StyleSheet.create({
     fontFamily: 'DMSans_400Regular', fontSize: 13, color: warm.muted,
   },
 
-  /* ââ Live Practice Feed ââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  /* ── Live Practice Feed ────────────────────────────────────────────────────── */
   feedSection: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
   },
@@ -825,7 +825,7 @@ const s = StyleSheet.create({
     width: 130, height: 'auto' as any, minHeight: 120,
   },
 
-  /* ââ Mood section ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  /* ── Mood section ──────────────────────────────────────────────────────────── */
   moodSection: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
     alignItems: 'center' as any,
@@ -850,7 +850,7 @@ const s = StyleSheet.create({
     color: '#E8834A',
   },
 
-  /* ââ Pose of the Day (beach card) ââââââââââââââââââââââââââââââââââââââââââââ */
+  /* ── Pose of the Day (beach card) ──────────────────────────────────────────── */
   poseCard: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
     borderRadius: 20, overflow: 'hidden' as any,
@@ -887,7 +887,7 @@ const s = StyleSheet.create({
     fontFamily: 'DMSans_400Regular', fontSize: 12, color: warm.muted,
   },
 
-  /* ââ Guru wisdom âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+  /* ── Guru wisdom ───────────────────────────────────────────────────────────── */
   guruStrip: {
     marginHorizontal: spacing.lg, marginBottom: spacing.xl,
     backgroundColor: warm.cardBg, borderRadius: 16,
