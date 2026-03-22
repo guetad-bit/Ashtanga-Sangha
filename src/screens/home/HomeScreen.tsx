@@ -512,13 +512,15 @@ export default function HomeScreen() {
           <Text style={s.moodTitle}>How was your practice today?</Text>
           <View style={s.moodRow}>
             {[
-              { emoji: '🙌', label: 'Strong', isAccent: true },
-              { emoji: '😌', label: 'Challenging', isAccent: false },
+              { icon: 'flame-outline', label: 'Strong', isAccent: true },
+              { icon: 'water-outline', label: 'Challenging', isAccent: false },
+              { icon: 'moon-outline', label: 'Low energy', isAccent: false },
               { emoji: '😴', label: 'Low energy', isAccent: false },
             ].map((m) => (
               <TouchableOpacity key={m.label} style={s.moodBtn} activeOpacity={0.7}>
                 <Text style={[s.moodBtnText, m.isAccent && s.moodBtnTextAccent]}>
-                  {m.emoji} {m.label}
+                <Ionicons name={m.icon as any} size={20} color={m.isAccent ? warm.orange : warm.inkMid} style={{ marginBottom: 2 }} />
+                {m.label}
                 </Text>
               </TouchableOpacity>
             ))}
