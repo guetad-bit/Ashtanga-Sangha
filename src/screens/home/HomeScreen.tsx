@@ -515,7 +515,6 @@ export default function HomeScreen() {
               { icon: 'flame-outline', label: 'Strong', isAccent: true },
               { icon: 'water-outline', label: 'Challenging', isAccent: false },
               { icon: 'moon-outline', label: 'Low energy', isAccent: false },
-              { emoji: '😴', label: 'Low energy', isAccent: false },
             ].map((m) => (
               <TouchableOpacity key={m.label} style={s.moodBtn} activeOpacity={0.7}>
                 <Text style={[s.moodBtnText, m.isAccent && s.moodBtnTextAccent]}>
