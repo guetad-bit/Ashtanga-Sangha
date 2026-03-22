@@ -191,9 +191,7 @@ export default function HomeScreen() {
   const asanaOfDay = ASANAS[dayOfYear % ASANAS.length];
   const guruWisdom = GURU_WISDOM[dayOfYear % GURU_WISDOM.length];
   const practicedToday = loggedSeries !== null;
-  const practiceImage = practicedToday
-    ? COMPLETED_IMAGES[dayOfYear % COMPLETED_IMAGES.length]
-    : PRACTICE_IMAGES[dayOfYear % PRACTICE_IMAGES.length];
+  const practiceImage = PRACTICE_IMAGES[dayOfYear % PRACTICE_IMAGES.length];
   const retreatImage = RETREAT_IMAGES[dayOfYear % RETREAT_IMAGES.length];
   const rhythm = getWeeklyRhythm(practiceLogs);
   const streak = calculateStreak(practiceLogs);
@@ -403,8 +401,8 @@ export default function HomeScreen() {
           >
             <View style={s.heroGradient} />
             <View style={s.heroContent}>
-              <Text style={s.heroTitle}>Practice, and all is coming</Text>
-              <Text style={s.heroSubtitle}>Join me on the mat!</Text>
+              <Text style={s.heroTitle}>{guruWisdom.quote}</Text>
+              <Text style={s.heroSubtitle}>— {guruWisdom.guru}</Text>
               <TouchableOpacity
                 style={[s.heroBtn, isPracticing ? s.heroBtnOnMat : s.heroBtnDefault]}
                 onPress={() => {
@@ -518,7 +516,7 @@ export default function HomeScreen() {
             ].map((m) => (
               <TouchableOpacity key={m.label} style={s.moodBtn} activeOpacity={0.7}>
                 <Text style={[s.moodBtnText, m.isAccent && s.moodBtnTextAccent]}>
-                <Ionicons name={m.icon as any} size={20} color={m.isAccent ? warm.orange : warm.inkMid} style={{ marginBottom: 2 }} />
+                <Ionicons name={m.icon as any} size={18} color={m.isAccent ? warm.orange : warm.inkMid} />
                 {m.label}
                 </Text>
               </TouchableOpacity>
@@ -563,12 +561,7 @@ export default function HomeScreen() {
         </View>
 
 
-        {/* ═══ 6. GURU WISDOM ═══ */}
-        <View style={s.guruStrip}>
-          <Text style={s.guruQuote}>"{guruWisdom.quote}"</Text>
-          <Text style={s.guruName}>— {guruWisdom.guru}</Text>
-        </View>
-
+        
       </ScrollView>
     </SafeAreaView>
   );
@@ -836,13 +829,14 @@ const s = StyleSheet.create({
     color: warm.ink, marginBottom: 14,
   },
   moodRow: {
-    flexDirection: 'row' as any, gap: 10,
+    flexDirection: 'row' as any, gap: 10, justifyContent: 'center' as any,
   },
   moodBtn: {
-    flex: 1, backgroundColor: warm.cardBg,
+    width: 110, backgroundColor: warm.cardBg,
     borderWidth: 1, borderColor: warm.divider,
     borderRadius: 28, paddingVertical: 10, paddingHorizontal: 8,
     alignItems: 'center' as any, justifyContent: 'center' as any,
+    flexDirection: 'row' as any, gap: 6,
   },
   moodBtnText: {
     fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: warm.ink,
@@ -888,20 +882,4 @@ const s = StyleSheet.create({
     fontFamily: 'DMSans_400Regular', fontSize: 12, color: warm.muted,
   },
 
-  /* ── Guru wisdom ───────────────────────────────────────────────────────────── */
-  guruStrip: {
-    marginHorizontal: spacing.lg, marginBottom: spacing.xl,
-    backgroundColor: warm.cardBg, borderRadius: 16,
-    padding: spacing.xl,
-    borderWidth: 1, borderColor: warm.divider,
-  },
-  guruQuote: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 16, lineHeight: 24,
-    color: warm.ink, fontStyle: 'italic' as any, textAlign: 'center' as any,
-    marginBottom: spacing.sm,
-  },
-  guruName: {
-    fontFamily: 'DMSans_500Medium', fontSize: 12, color: warm.muted,
-    textAlign: 'center' as any,
-  },
 });
