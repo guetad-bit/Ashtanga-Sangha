@@ -172,7 +172,7 @@ export async function logPractice(userId: string, series: string, durationMin: n
     duration_min: durationMin,
     notes,
     logged_at: new Date().toISOString(),
-  });
+  }).select();
 }
 
 export async function getPracticeLogs(userId: string, limit = 30) {
