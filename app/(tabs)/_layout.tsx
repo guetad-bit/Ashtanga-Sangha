@@ -47,22 +47,22 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="library"
+          name="profile"
           options={{
-            title: 'Library',
+            title: 'Profile',
             tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? 'book' : 'book-outline'} size={22} color={color} />
+              <Ionicons name={focused ? 'person' : 'person-outline'} size={22} color={color} />
             ),
           }}
         />
         <Tabs.Screen
-          name="gatherings"
+          name="library"
           options={{
             href: null,
           }}
         />
         <Tabs.Screen
-          name="profile"
+          name="gatherings"
           options={{
             href: null,
           }}
