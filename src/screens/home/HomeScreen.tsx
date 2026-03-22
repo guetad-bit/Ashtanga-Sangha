@@ -110,8 +110,9 @@ export default function HomeScreen() {
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   // Derived
-  const streak = calculateStreak(practiceLogs);
-  const weekDays = getWeeklyRhythm(practiceLogs);
+  const safeLogs = practiceLogs ?? [];
+  const streak = calculateStreak(safeLogs);
+  const weekDays = getWeeklyRhythm(safeLogs);
   const practiceCount = weekDays.filter(d => d.status === 'done').length;
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
   const guruWisdom = GURU_WISDOM[dayOfYear % GURU_WISDOM.length];
