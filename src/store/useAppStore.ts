@@ -28,6 +28,7 @@ export interface UserProfile {
   location?: string;
   bio?: string;
   practicingSince?: number; // year
+  teacher?: string;
 }
 
 interface AppState {
