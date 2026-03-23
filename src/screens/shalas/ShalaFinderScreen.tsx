@@ -1,14 +1,14 @@
 // src/screens/shalas/ShalaFinderScreen.tsx â "My Log" redesigned
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, RefreshControl,
-  TouchableOpacity, Image,
+  TouchableOpacity, Image, Modal, Pressable, Alert, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'expo-router';
-import { getPracticeLogs } from '@/lib/supabase';
+import { getPracticeLogs, deletePracticeLog, updatePracticeLog } from '@/lib/supabase';
 import { calculateStreak } from '@/utils/practiceStreak';
 import type { PracticeLog } from '@/utils/practiceStreak';
 
@@ -150,11 +150,24 @@ function PracticeCalendar({ logs, year, month }: { logs: PracticeLog[]; year: nu
 }
 
 /* ââ Main Component ââ */
+const SERIES_OPTIONS = Object.entries(SERIES_LABELS).map(([key, label]) => ({ key, label }));
+const DURATION_OPTIONS = [5, 10, 15, 20, 30, 45, 60, 75, 90, 120];
+
 export default function MyLogScreen() {
   const router = useRouter();
-  const { user, practiceLogs, setPracticeLogs } = useAppStore();
+  const { user, practiceLogs, setPracticeLogs, removePracticeLog, updatePracticeLog: updateLogInStore } = useAppStore();
   const [refreshing, setRefreshing] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Edit modal state
+  const [editingLog, setEditingLog] = useState<PracticeLog | null>(null);
+  const [editSeries, setEditSeries] = useState('');
+  const [editDuration, setEditDuration] = useState(0);
+  const [editSaving, setEditSaving] = useState(false);
+
+  // Delete confirmation state
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const safeLogs = practiceLogs && Array.isArray(practiceLogs) ? practiceLogs : [];
   const streak = calculateStreak(safeLogs);
@@ -201,6 +214,42 @@ export default function MyLogScreen() {
   };
 
   const toggleExpand = (id: string) => setExpandedId(prev => prev === id ? null : id);
+
+  const handleEditOpen = useCallback((log: PracticeLog) => {
+    setEditingLog(log);
+    setEditSeries(log.series);
+    setEditDuration(log.durationMin);
+  }, []);
+
+  const handleEditSave = useCallback(async () => {
+    if (!editingLog) return;
+    setEditSaving(true);
+    try {
+      const { error } = await updatePracticeLog(editingLog.id, {
+        series: editSeries,
+        duration_min: editDuration,
+      });
+      if (!error) {
+        updateLogInStore(editingLog.id, { series: editSeries, durationMin: editDuration });
+      }
+    } catch (e) { console.log('edit error', e); }
+    setEditSaving(false);
+    setEditingLog(null);
+  }, [editingLog, editSeries, editDuration]);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!deletingId) return;
+    setDeleteLoading(true);
+    try {
+      const { error } = await deletePracticeLog(deletingId);
+      if (!error) {
+        removePracticeLog(deletingId);
+      }
+    } catch (e) { console.log('delete error', e); }
+    setDeleteLoading(false);
+    setDeletingId(null);
+    setExpandedId(null);
+  }, [deletingId]);
 
   return (
     <SafeAreaView style={st.safe} edges={['top']}>
@@ -336,6 +385,17 @@ export default function MyLogScreen() {
                             {new Date(log.loggedAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                           </Text>
                         </View>
+                        {/* ââ Edit / Delete Actions ââ */}
+                        <View style={st.logActions}>
+                          <TouchableOpacity style={st.editBtn} onPress={() => handleEditOpen(log)}>
+                            <Ionicons name="pencil-outline" size={15} color={warm.blue} />
+                            <Text style={st.editBtnText}>Edit</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity style={st.deleteBtn} onPress={() => setDeletingId(log.id)}>
+                            <Ionicons name="trash-outline" size={15} color={warm.red} />
+                            <Text style={st.deleteBtnText}>Delete</Text>
+                          </TouchableOpacity>
+                        </View>
                       </View>
                     )}
                   </TouchableOpacity>
@@ -347,6 +407,101 @@ export default function MyLogScreen() {
 
         <View style={{ height: 32 }} />
       </ScrollView>
+
+      {/* ââ Delete Confirmation Modal ââ */}
+      <Modal visible={!!deletingId} transparent animationType="fade" onRequestClose={() => setDeletingId(null)}>
+        <Pressable style={st.modalOverlay} onPress={() => setDeletingId(null)}>
+          <View style={st.modalCard}>
+            <View style={st.modalIconWrap}>
+              <Ionicons name="trash" size={28} color={warm.red} />
+            </View>
+            <Text style={st.modalTitle}>Delete Practice?</Text>
+            <Text style={st.modalBody}>This will permanently remove this practice log. This action cannot be undone.</Text>
+            <View style={st.modalBtns}>
+              <TouchableOpacity style={st.modalCancelBtn} onPress={() => setDeletingId(null)}>
+                <Text style={st.modalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[st.modalDeleteBtn, deleteLoading && { opacity: 0.6 }]}
+                onPress={handleDeleteConfirm}
+                disabled={deleteLoading}
+              >
+                <Text style={st.modalDeleteText}>{deleteLoading ? 'Deleting...' : 'Delete'}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* ââ Edit Modal ââ */}
+      <Modal visible={!!editingLog} transparent animationType="slide" onRequestClose={() => setEditingLog(null)}>
+        <Pressable style={st.modalOverlay} onPress={() => setEditingLog(null)}>
+          <Pressable style={st.editModalCard} onPress={() => {}}>
+            <View style={st.editModalHeader}>
+              <Text style={st.editModalTitle}>Edit Practice</Text>
+              <TouchableOpacity onPress={() => setEditingLog(null)}>
+                <Ionicons name="close" size={22} color={warm.muted} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Series Picker */}
+            <Text style={st.editLabel}>Series</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={st.editSeriesScroll} contentContainerStyle={st.editSeriesRow}>
+              {SERIES_OPTIONS.map((s) => (
+                <TouchableOpacity
+                  key={s.key}
+                  style={[st.editSeriesChip, editSeries === s.key && st.editSeriesChipActive]}
+                  onPress={() => setEditSeries(s.key)}
+                >
+                  <Ionicons name={(SERIES_ICONS[s.key] || 'fitness-outline') as any} size={14} color={editSeries === s.key ? warm.white : warm.inkMid} />
+                  <Text style={[st.editSeriesChipText, editSeries === s.key && st.editSeriesChipTextActive]}>{s.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            {/* Duration Picker */}
+            <Text style={st.editLabel}>Duration (minutes)</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={st.editDurationScroll} contentContainerStyle={st.editDurationRow}>
+              {DURATION_OPTIONS.map((d) => (
+                <TouchableOpacity
+                  key={d}
+                  style={[st.editDurationChip, editDuration === d && st.editDurationChipActive]}
+                  onPress={() => setEditDuration(d)}
+                >
+                  <Text style={[st.editDurationChipText, editDuration === d && st.editDurationChipTextActive]}>{d}m</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            {/* Custom duration row */}
+            <View style={st.customDurRow}>
+              <TouchableOpacity
+                style={st.durAdjustBtn}
+                onPress={() => setEditDuration(Math.max(1, editDuration - 5))}
+              >
+                <Ionicons name="remove" size={18} color={warm.ink} />
+              </TouchableOpacity>
+              <Text style={st.customDurText}>{editDuration} min</Text>
+              <TouchableOpacity
+                style={st.durAdjustBtn}
+                onPress={() => setEditDuration(editDuration + 5)}
+              >
+                <Ionicons name="add" size={18} color={warm.ink} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Save Button */}
+            <TouchableOpacity
+              style={[st.editSaveBtn, editSaving && { opacity: 0.6 }]}
+              onPress={handleEditSave}
+              disabled={editSaving}
+            >
+              <Text style={st.editSaveBtnText}>{editSaving ? 'Saving...' : 'Save Changes'}</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
     </SafeAreaView>
   );
 }
@@ -463,4 +618,96 @@ const st = StyleSheet.create({
   logDetailRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   logDetailLabel: { fontSize: 13, color: warm.muted, width: 70 },
   logDetailValue: { fontSize: 13, fontWeight: '600', color: warm.ink, flex: 1 },
+
+  /* Log action buttons */
+  logActions: {
+    flexDirection: 'row', justifyContent: 'flex-end', gap: 10, marginTop: 6, paddingTop: 10,
+    borderTopWidth: 1, borderTopColor: warm.divider,
+  },
+  editBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    paddingHorizontal: 14, paddingVertical: 7,
+    backgroundColor: warm.blueBg, borderRadius: 20,
+  },
+  editBtnText: { fontSize: 13, fontWeight: '600', color: warm.blue },
+  deleteBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    paddingHorizontal: 14, paddingVertical: 7,
+    backgroundColor: warm.redBg, borderRadius: 20,
+  },
+  deleteBtnText: { fontSize: 13, fontWeight: '600', color: warm.red },
+
+  /* Shared modal styles */
+  modalOverlay: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center', alignItems: 'center', padding: 24,
+  },
+  modalCard: {
+    backgroundColor: warm.white, borderRadius: 20, padding: 24,
+    width: '100%', maxWidth: 340, alignItems: 'center',
+  },
+  modalIconWrap: {
+    width: 56, height: 56, borderRadius: 28,
+    backgroundColor: warm.redBg, alignItems: 'center', justifyContent: 'center',
+    marginBottom: 16,
+  },
+  modalTitle: { fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20, color: warm.ink, marginBottom: 8 },
+  modalBody: { fontSize: 14, color: warm.muted, textAlign: 'center', lineHeight: 20, marginBottom: 20 },
+  modalBtns: { flexDirection: 'row', gap: 12, width: '100%' },
+  modalCancelBtn: {
+    flex: 1, paddingVertical: 12, borderRadius: 14,
+    borderWidth: 1.5, borderColor: warm.divider, alignItems: 'center',
+  },
+  modalCancelText: { fontSize: 15, fontWeight: '600', color: warm.inkMid },
+  modalDeleteBtn: {
+    flex: 1, paddingVertical: 12, borderRadius: 14,
+    backgroundColor: warm.red, alignItems: 'center',
+  },
+  modalDeleteText: { fontSize: 15, fontWeight: '600', color: '#fff' },
+
+  /* Edit modal */
+  editModalCard: {
+    backgroundColor: warm.white, borderRadius: 20, padding: 20,
+    width: '100%', maxWidth: 400,
+  },
+  editModalHeader: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20,
+  },
+  editModalTitle: { fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20, color: warm.ink },
+  editLabel: { fontSize: 13, fontWeight: '600', color: warm.muted, marginBottom: 8, marginTop: 4 },
+  editSeriesScroll: { marginBottom: 12 },
+  editSeriesRow: { gap: 8 },
+  editSeriesChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    paddingHorizontal: 14, paddingVertical: 8,
+    borderRadius: 24, borderWidth: 1.5, borderColor: warm.divider,
+    backgroundColor: warm.cardBg,
+  },
+  editSeriesChipActive: { backgroundColor: warm.orange, borderColor: warm.orange },
+  editSeriesChipText: { fontSize: 13, color: warm.inkMid, fontWeight: '500' },
+  editSeriesChipTextActive: { color: '#fff', fontWeight: '600' },
+  editDurationScroll: { marginBottom: 12 },
+  editDurationRow: { gap: 8 },
+  editDurationChip: {
+    paddingHorizontal: 16, paddingVertical: 8,
+    borderRadius: 20, borderWidth: 1.5, borderColor: warm.divider,
+    backgroundColor: warm.cardBg,
+  },
+  editDurationChipActive: { backgroundColor: warm.sage, borderColor: warm.sage },
+  editDurationChipText: { fontSize: 13, fontWeight: '600', color: warm.inkMid },
+  editDurationChipTextActive: { color: '#fff' },
+  customDurRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 20, marginVertical: 12,
+  },
+  durAdjustBtn: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: warm.divider, alignItems: 'center', justifyContent: 'center',
+  },
+  customDurText: { fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: warm.ink, minWidth: 70, textAlign: 'center' },
+  editSaveBtn: {
+    backgroundColor: warm.orange, borderRadius: 14,
+    paddingVertical: 14, alignItems: 'center', marginTop: 8,
+  },
+  editSaveBtnText: { fontSize: 16, fontWeight: '700', color: '#fff' },
 });
