@@ -37,10 +37,10 @@ export default function RootLayout() {
     if (inOAuthCallback) return;
 
     if (!isAuthenticated && !inAuthGroup) {
-      // Not signed in — redirect to login
-      router.replace('/(auth)/welcome');
+      // Not signed in â redirect to login
+      router.replace('/(auth)/login');
     } else if (isAuthenticated && inAuthGroup) {
-      // Signed in — redirect to main app
+      // Signed in â redirect to main app
       router.replace('/(tabs)');
     }
   }, [isAuthenticated, segments, isReady]);
