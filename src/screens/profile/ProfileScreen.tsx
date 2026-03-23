@@ -3,28 +3,43 @@ import React, { useState, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
   StyleSheet, Image, Alert, ActivityIndicator, RefreshControl,
-  ImageBackground, Modal, Pressable,
+  Modal, Pressable,
 } from 'react-native';
 import type { PracticeLog } from '@/utils/practiceStreak';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
+import { spacing, radius, typography } from '@/styles/tokens';
 import { useAppStore, Series, Level } from '@/store/useAppStore';
 import { upsertProfile, signOut, getProfile, uploadAvatar } from '@/lib/supabase';
 import { calculateStreak } from '@/utils/practiceStreak';
 import AppLogo from '@/components/AppLogo';
 
-const HERO_BG = require('../../../assets/onboard-1.png');
+/* ââ Warm palette ââ */
+const warm = {
+  bg:      '#FAF6F0',
+  card:    '#FFFFFF',
+  ink:     '#3D3229',
+  inkMid:  '#5C4D3C',
+  orange:  '#E8834A',
+  orangeL: '#F0A070',
+  sage:    '#7A8B5E',
+  sageL:   '#9BAA7E',
+  muted:   '#8B7D6E',
+  mutedL:  '#B5A899',
+  border:  '#E8DDD0',
+  borderL: '#F0E8DD',
+  field:   '#F5F0EA',
+};
 
 const SERIES_OPTIONS: { value: Series; label: string; emoji: string }[] = [
-  { value: 'sun_sals', label: 'Sun Salutations', emoji: '☀️' },
-  { value: 'primary',  label: 'Primary',         emoji: '🧘' },
-  { value: 'intermediate', label: 'Intermediate', emoji: '🔥' },
-  { value: 'advanced_a',   label: 'Advanced A',   emoji: '⚡' },
-  { value: 'advanced_b',   label: 'Advanced B',   emoji: '🌟' },
-  { value: 'short',        label: 'Short',        emoji: '🕐' },
+  { value: 'sun_sals',     label: 'Sun Salutations', emoji: 'âï¸' },
+  { value: 'primary',      label: 'Primary',         emoji: 'ð§' },
+  { value: 'intermediate', label: 'Intermediate',    emoji: 'ð¥' },
+  { value: 'advanced_a',   label: 'Advanced A',      emoji: 'â¡' },
+  { value: 'advanced_b',   label: 'Advanced B',      emoji: 'ð' },
+  { value: 'short',        label: 'Short',           emoji: 'ð' },
 ];
 
 const LEVEL_OPTIONS: { value: Level; label: string }[] = [
@@ -186,208 +201,207 @@ export default function ProfileScreen() {
   const currentLevelOpt  = LEVEL_OPTIONS.find((l) => l.value === (user?.level ?? 'beginner'));
 
   return (
-    <SafeAreaView style={s.safe} edges={['top']}>
+    <View style={[st.root, { paddingTop: insets.top }]}>
 
-      {/* ── Top bar ── */}
-      <View style={s.topbar}>
-        <View style={s.topbarLeft}>
-          <AppLogo size={36} />
-          <Text style={s.appTitle}>Ashtanga Sangha</Text>
+      {/* ââ Top bar ââ */}
+      <View style={st.topbar}>
+        <View style={st.topbarLeft}>
+          <AppLogo size={34} />
+          <Text style={st.appTitle}>Ashtanga Sangha</Text>
         </View>
         {editing ? (
-          <View style={s.topbarActions}>
-            <TouchableOpacity onPress={handleCancel} style={s.cancelBtn}>
-              <Text style={s.cancelText}>Cancel</Text>
+          <View style={st.topbarActions}>
+            <TouchableOpacity onPress={handleCancel} style={st.cancelBtn}>
+              <Text style={st.cancelText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleSave} disabled={saving} style={s.saveBtn}>
-              {saving ? <ActivityIndicator color="#fff" size="small" /> : <Text style={s.saveBtnText}>Save</Text>}
+            <TouchableOpacity onPress={handleSave} disabled={saving} style={st.saveBtn}>
+              {saving ? <ActivityIndicator color="#fff" size="small" /> : <Text style={st.saveBtnText}>Save</Text>}
             </TouchableOpacity>
           </View>
         ) : (
-          <TouchableOpacity onPress={() => setEditing(true)} style={s.editBtn} activeOpacity={0.7}>
-            <Ionicons name="pencil" size={15} color={colors.ink} />
-            <Text style={s.editBtnText}>Edit</Text>
+          <TouchableOpacity onPress={() => setEditing(true)} style={st.editBtn} activeOpacity={0.7}>
+            <Ionicons name="pencil" size={14} color={warm.ink} />
+            <Text style={st.editBtnText}>Edit</Text>
           </TouchableOpacity>
         )}
       </View>
 
       <ScrollView
-        style={s.scroll}
-        contentContainerStyle={s.scrollContent}
+        style={st.scroll}
+        contentContainerStyle={st.scrollContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={warm.orange} />}
       >
-        {/* ── Hero ── */}
-        <View style={s.heroCard}>
-          <ImageBackground source={HERO_BG} style={s.heroBg} imageStyle={s.heroBgImage}>
-            <LinearGradient
-              colors={['rgba(30,45,55,0.55)', 'rgba(20,35,45,0.85)']}
-              style={s.heroGradient}
+        {/* ââ Hero gradient card ââ */}
+        <View style={st.heroCard}>
+          <LinearGradient
+            colors={['#D4A574', '#B87D4A', '#8B5E3C', '#5C3D28']}
+            locations={[0, 0.35, 0.7, 1]}
+            style={st.heroGradient}
+          >
+            {/* Avatar */}
+            <TouchableOpacity
+              onPress={editing ? handlePickPhoto : undefined}
+              activeOpacity={editing ? 0.75 : 1}
+              style={st.avatarWrap}
             >
-              {/* Avatar */}
-              <TouchableOpacity
-                onPress={editing ? handlePickPhoto : undefined}
-                activeOpacity={editing ? 0.75 : 1}
-                style={s.avatarWrap}
-              >
-                {user?.avatarUrl ? (
-                  <Image source={{ uri: user.avatarUrl }} style={s.avatar} />
-                ) : (
-                  <View style={[s.avatar, s.avatarFallback]}>
-                    <Text style={s.avatarInitial}>{(user?.name ?? 'P')[0].toUpperCase()}</Text>
-                  </View>
-                )}
-                <View style={s.avatarRing} />
-                {editing && (
-                  <View style={s.avatarEditOverlay}>
-                    {uploadingPhoto
-                      ? <ActivityIndicator color="#fff" />
-                      : <Ionicons name="camera" size={22} color="#fff" />}
-                  </View>
-                )}
-              </TouchableOpacity>
-
-              {/* Name */}
-              {editing ? (
-                <TextInput
-                  style={s.nameInput}
-                  value={name}
-                  onChangeText={setName}
-                  placeholder="Your name"
-                  placeholderTextColor="rgba(255,255,255,0.4)"
-                  autoFocus
-                />
+              {user?.avatarUrl ? (
+                <Image source={{ uri: user.avatarUrl }} style={st.avatar} />
               ) : (
-                <Text style={s.heroName}>{user?.name ?? 'Practitioner'}</Text>
+                <View style={[st.avatar, st.avatarFallback]}>
+                  <Text style={st.avatarInitial}>{(user?.name ?? 'P')[0].toUpperCase()}</Text>
+                </View>
               )}
-
-              {/* Level badge + email */}
-              <View style={s.heroBadgeRow}>
-                <View style={s.levelBadge}>
-                  <Text style={s.levelBadgeText}>{currentLevelOpt?.label ?? 'Practitioner'}</Text>
+              <View style={st.avatarRing} />
+              {editing && (
+                <View style={st.avatarEditOverlay}>
+                  {uploadingPhoto
+                    ? <ActivityIndicator color="#fff" />
+                    : <Ionicons name="camera" size={22} color="#fff" />}
                 </View>
-                {currentSeriesOpt && (
-                  <View style={[s.levelBadge, s.seriesBadge]}>
-                    <Text style={s.levelBadgeText}>{currentSeriesOpt.emoji} {currentSeriesOpt.label}</Text>
-                  </View>
-                )}
+              )}
+            </TouchableOpacity>
+
+            {/* Name */}
+            {editing ? (
+              <TextInput
+                style={st.nameInput}
+                value={name}
+                onChangeText={setName}
+                placeholder="Your name"
+                placeholderTextColor="rgba(255,255,255,0.4)"
+                autoFocus
+              />
+            ) : (
+              <Text style={st.heroName}>{user?.name ?? 'Practitioner'}</Text>
+            )}
+
+            {/* Level badge + series */}
+            <View style={st.heroBadgeRow}>
+              <View style={st.levelBadge}>
+                <Text style={st.levelBadgeText}>{currentLevelOpt?.label ?? 'Practitioner'}</Text>
               </View>
-
-              {user?.location ? (
-                <View style={s.heroLocation}>
-                  <Ionicons name="location-outline" size={13} color="rgba(255,255,255,0.7)" />
-                  <Text style={s.heroLocationText}>{user.location}</Text>
+              {currentSeriesOpt && (
+                <View style={[st.levelBadge, st.seriesBadge]}>
+                  <Text style={st.levelBadgeText}>{currentSeriesOpt.emoji} {currentSeriesOpt.label}</Text>
                 </View>
-              ) : null}
-            </LinearGradient>
-          </ImageBackground>
+              )}
+            </View>
+
+            {user?.location ? (
+              <View style={st.heroLocation}>
+                <Ionicons name="location-outline" size={13} color="rgba(255,255,255,0.7)" />
+                <Text style={st.heroLocationText}>{user.location}</Text>
+              </View>
+            ) : null}
+          </LinearGradient>
         </View>
 
-        {/* ── Stats ── */}
-        <View style={s.statsCard}>
-          <View style={s.statItem}>
-            <Text style={s.statNum}>{streak}</Text>
-            <Text style={s.statLabel}>🔥 Streak</Text>
+        {/* ââ Stats ââ */}
+        <View style={st.statsCard}>
+          <View style={st.statItem}>
+            <Text style={st.statNum}>{streak}</Text>
+            <Text style={st.statLabel}>Streak</Text>
           </View>
-          <View style={s.statDiv} />
-          <View style={s.statItem}>
-            <Text style={s.statNum}>{totalPractices}</Text>
-            <Text style={s.statLabel}>Practices</Text>
+          <View style={st.statDiv} />
+          <View style={st.statItem}>
+            <Text style={st.statNum}>{totalPractices}</Text>
+            <Text style={st.statLabel}>Practices</Text>
           </View>
-          <View style={s.statDiv} />
-          <View style={s.statItem}>
-            <Text style={s.statNum}>{totalHours}</Text>
-            <Text style={s.statLabel}>Hours</Text>
+          <View style={st.statDiv} />
+          <View style={st.statItem}>
+            <Text style={st.statNum}>{totalHours}</Text>
+            <Text style={st.statLabel}>Hours</Text>
           </View>
         </View>
 
-        {/* ── Weekly rhythm ── */}
-        <View style={s.card}>
-          <Text style={s.cardTitle}>This Week</Text>
-          <View style={s.rhythmRow}>
+        {/* ââ Weekly rhythm ââ */}
+        <View style={st.card}>
+          <Text style={st.cardTitle}>This Week</Text>
+          <View style={st.rhythmRow}>
             {last7.map((day, i) => (
-              <View key={i} style={s.rhythmDay}>
+              <View key={i} style={st.rhythmDay}>
                 <View style={[
-                  s.rhythmDot,
-                  day.practiced && s.rhythmDotDone,
-                  day.isToday && !day.practiced && s.rhythmDotToday,
+                  st.rhythmDot,
+                  day.practiced && st.rhythmDotDone,
+                  day.isToday && !day.practiced && st.rhythmDotToday,
                 ]} />
-                <Text style={[s.rhythmLabel, day.isToday && s.rhythmLabelToday]}>{day.label}</Text>
+                <Text style={[st.rhythmLabel, day.isToday && st.rhythmLabelToday]}>{day.label}</Text>
               </View>
             ))}
           </View>
         </View>
 
-        {/* ── About ── */}
-        <View style={s.card}>
-          <Text style={s.cardTitle}>About</Text>
+        {/* ââ About ââ */}
+        <View style={st.card}>
+          <Text style={st.cardTitle}>About</Text>
           {editing ? (
             <TextInput
-              style={s.bioInput}
+              style={st.bioInput}
               value={bio}
               onChangeText={setBio}
               placeholder="Share your practice journey..."
-              placeholderTextColor={colors.mutedL}
+              placeholderTextColor={warm.mutedL}
               multiline
               numberOfLines={3}
               textAlignVertical="top"
             />
           ) : (
-            <Text style={s.bioText}>
+            <Text style={st.bioText}>
               {user?.bio || 'No bio yet. Tap Edit to add one.'}
             </Text>
           )}
         </View>
 
-        {/* ── Location (edit only) ── */}
+        {/* ââ Location (edit only) ââ */}
         {editing && (
-          <View style={s.card}>
-            <Text style={s.cardTitle}>Location</Text>
+          <View style={st.card}>
+            <Text style={st.cardTitle}>Location</Text>
             <TextInput
-              style={s.fieldInput}
+              style={st.fieldInput}
               value={location}
               onChangeText={setLocation}
               placeholder="e.g. Mysore, India"
-              placeholderTextColor={colors.mutedL}
+              placeholderTextColor={warm.mutedL}
             />
           </View>
         )}
 
-        {/* ── Series + Level (edit mode) ── */}
+        {/* ââ Series + Level (edit mode) ââ */}
         {editing && (
-          <View style={s.card}>
-            <Text style={s.cardTitle}>Current Series</Text>
-            <View style={s.chipRow}>
+          <View style={st.card}>
+            <Text style={st.cardTitle}>Current Series</Text>
+            <View style={st.chipRow}>
               {SERIES_OPTIONS.map((opt) => (
                 <TouchableOpacity
                   key={opt.value}
-                  style={[s.chip, series === opt.value && s.chipActive]}
+                  style={[st.chip, series === opt.value && st.chipActive]}
                   onPress={() => setSeries(opt.value)}
                 >
-                  <Text style={s.chipEmoji}>{opt.emoji}</Text>
-                  <Text style={[s.chipText, series === opt.value && s.chipTextActive]}>{opt.label}</Text>
+                  <Text style={st.chipEmoji}>{opt.emoji}</Text>
+                  <Text style={[st.chipText, series === opt.value && st.chipTextActive]}>{opt.label}</Text>
                 </TouchableOpacity>
               ))}
             </View>
-            <Text style={[s.cardTitle, { marginTop: spacing.lg }]}>Level</Text>
-            <View style={s.chipRow}>
+            <Text style={[st.cardTitle, { marginTop: spacing.lg }]}>Level</Text>
+            <View style={st.chipRow}>
               {LEVEL_OPTIONS.map((opt) => (
                 <TouchableOpacity
                   key={opt.value}
-                  style={[s.chip, level === opt.value && s.chipActive]}
+                  style={[st.chip, level === opt.value && st.chipActive]}
                   onPress={() => setLevel(opt.value)}
                 >
-                  <Text style={[s.chipText, level === opt.value && s.chipTextActive]}>{opt.label}</Text>
+                  <Text style={[st.chipText, level === opt.value && st.chipTextActive]}>{opt.label}</Text>
                 </TouchableOpacity>
               ))}
             </View>
           </View>
         )}
 
-        {/* ── Recent practices ── */}
+        {/* ââ Recent practices ââ */}
         {recentLogs.length > 0 && (
-          <View style={s.card}>
-            <Text style={s.cardTitle}>Recent Practices</Text>
+          <View style={st.card}>
+            <Text style={st.cardTitle}>Recent Practices</Text>
             {recentLogs.map((log, i) => {
               const d = new Date(log.loggedAt);
               const label = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
@@ -395,18 +409,18 @@ export default function ProfileScreen() {
               return (
                 <TouchableOpacity
                   key={log.id}
-                  style={[s.logRow, i < recentLogs.length - 1 && s.logRowDivider]}
+                  style={[st.logRow, i < recentLogs.length - 1 && st.logRowDivider]}
                   onPress={() => openLogEdit(log)}
                   activeOpacity={0.7}
                 >
-                  <View style={s.logDot} />
-                  <View style={s.logInfo}>
-                    <Text style={s.logSeries}>{seriesOpt?.emoji ?? '🧘'} {seriesOpt?.label ?? log.series}</Text>
-                    <Text style={s.logDate}>{label}</Text>
+                  <View style={st.logDot} />
+                  <View style={st.logInfo}>
+                    <Text style={st.logSeries}>{seriesOpt?.emoji ?? 'ð§'} {seriesOpt?.label ?? log.series}</Text>
+                    <Text style={st.logDate}>{label}</Text>
                   </View>
-                  <View style={s.logRight}>
-                    <Text style={s.logDuration}>{log.durationMin} min</Text>
-                    <Ionicons name="pencil" size={13} color={colors.mutedL} />
+                  <View style={st.logRight}>
+                    <Text style={st.logDuration}>{log.durationMin} min</Text>
+                    <Ionicons name="pencil" size={13} color={warm.mutedL} />
                   </View>
                 </TouchableOpacity>
               );
@@ -414,31 +428,31 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        {/* ── Sign out ── */}
-        <TouchableOpacity style={s.signOutBtn} onPress={handleSignOut} activeOpacity={0.8}>
+        {/* ââ Sign out ââ */}
+        <TouchableOpacity style={st.signOutBtn} onPress={handleSignOut} activeOpacity={0.8}>
           <Ionicons name="log-out-outline" size={18} color="#C0392B" />
-          <Text style={s.signOutText}>Sign Out</Text>
+          <Text style={st.signOutText}>Sign Out</Text>
         </TouchableOpacity>
 
-        <Text style={s.version}>Ashtanga Sangha v1.0</Text>
+        <Text style={st.version}>Ashtanga Sangha v1.0</Text>
       </ScrollView>
 
-      {/* ── Edit Practice Log Sheet ── */}
+      {/* ââ Edit Practice Log Sheet ââ */}
       <Modal
         visible={!!editingLog}
         transparent
         animationType="slide"
         onRequestClose={() => setEditingLog(null)}
       >
-        <Pressable style={s.sheetBackdrop} onPress={() => setEditingLog(null)}>
-          <Pressable style={s.sheetBox} onPress={() => {}}>
+        <Pressable style={st.sheetBackdrop} onPress={() => setEditingLog(null)}>
+          <Pressable style={st.sheetBox} onPress={() => {}}>
             {editingLog && (
               <>
-                <View style={s.sheetHandle} />
+                <View style={st.sheetHandle} />
 
-                <View style={s.sheetTopRow}>
-                  <Text style={s.sheetTitle}>Edit Practice</Text>
-                  <Text style={s.sheetDate}>
+                <View style={st.sheetTopRow}>
+                  <Text style={st.sheetTitle}>Edit Practice</Text>
+                  <Text style={st.sheetDate}>
                     {new Date(editingLog.loggedAt).toLocaleDateString('en-US', {
                       weekday: 'long', month: 'long', day: 'numeric',
                     })}
@@ -446,16 +460,16 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* Series picker */}
-                <Text style={s.sheetLabel}>Series</Text>
-                <View style={s.chipRow}>
+                <Text style={st.sheetLabel}>Series</Text>
+                <View style={st.chipRow}>
                   {SERIES_OPTIONS.map((opt) => (
                     <TouchableOpacity
                       key={opt.value}
-                      style={[s.chip, editLogSeries === opt.value && s.chipActive]}
+                      style={[st.chip, editLogSeries === opt.value && st.chipActive]}
                       onPress={() => setEditLogSeries(opt.value)}
                     >
-                      <Text style={s.chipEmoji}>{opt.emoji}</Text>
-                      <Text style={[s.chipText, editLogSeries === opt.value && s.chipTextActive]}>
+                      <Text style={st.chipEmoji}>{opt.emoji}</Text>
+                      <Text style={[st.chipText, editLogSeries === opt.value && st.chipTextActive]}>
                         {opt.label}
                       </Text>
                     </TouchableOpacity>
@@ -463,33 +477,33 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* Duration stepper */}
-                <Text style={[s.sheetLabel, { marginTop: spacing.lg }]}>Duration</Text>
-                <View style={s.stepper}>
+                <Text style={[st.sheetLabel, { marginTop: spacing.lg }]}>Duration</Text>
+                <View style={st.stepper}>
                   <TouchableOpacity
-                    style={s.stepBtn}
+                    style={st.stepBtn}
                     onPress={() => setEditLogDuration((v) => Math.max(10, v - 15))}
                     activeOpacity={0.7}
                   >
-                    <Ionicons name="remove" size={20} color={colors.ink} />
+                    <Ionicons name="remove" size={20} color={warm.ink} />
                   </TouchableOpacity>
-                  <Text style={s.stepValue}>{editLogDuration} min</Text>
+                  <Text style={st.stepValue}>{editLogDuration} min</Text>
                   <TouchableOpacity
-                    style={s.stepBtn}
+                    style={st.stepBtn}
                     onPress={() => setEditLogDuration((v) => Math.min(300, v + 15))}
                     activeOpacity={0.7}
                   >
-                    <Ionicons name="add" size={20} color={colors.ink} />
+                    <Ionicons name="add" size={20} color={warm.ink} />
                   </TouchableOpacity>
                 </View>
 
                 {/* Actions */}
-                <View style={s.sheetActions}>
-                  <TouchableOpacity style={s.deleteBtn} onPress={deleteLog} activeOpacity={0.8}>
+                <View style={st.sheetActions}>
+                  <TouchableOpacity style={st.deleteBtn} onPress={deleteLog} activeOpacity={0.8}>
                     <Ionicons name="trash-outline" size={16} color="#C0392B" />
-                    <Text style={s.deleteBtnText}>Delete</Text>
+                    <Text style={st.deleteBtnText}>Delete</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={s.saveSheetBtn} onPress={saveLogEdit} activeOpacity={0.8}>
-                    <Text style={s.saveSheetBtnText}>Save Changes</Text>
+                  <TouchableOpacity style={st.saveSheetBtn} onPress={saveLogEdit} activeOpacity={0.8}>
+                    <Text style={st.saveSheetBtnText}>Save Changes</Text>
                   </TouchableOpacity>
                 </View>
               </>
@@ -497,80 +511,76 @@ export default function ProfileScreen() {
           </Pressable>
         </Pressable>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
-const s = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#FAF8F5' },
+const st = StyleSheet.create({
+  root: { flex: 1, backgroundColor: warm.bg },
 
-  // ── Top bar ──
+  /* ââ Top bar ââ */
   topbar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl, paddingVertical: spacing.md,
+    paddingHorizontal: 20, paddingVertical: 12,
   },
-  topbarLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  topbarLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   appTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: colors.ink, lineHeight: 22,
+    color: warm.ink, lineHeight: 22,
   },
-  topbarActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  topbarActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   editBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
-    backgroundColor: colors.white, borderRadius: radius.full,
-    paddingHorizontal: spacing.md, paddingVertical: spacing.xs,
-    borderWidth: 1, borderColor: colors.skyMid,
+    backgroundColor: warm.card, borderRadius: 9999,
+    paddingHorizontal: 12, paddingVertical: 6,
+    borderWidth: 1, borderColor: warm.border,
   },
-  editBtnText: { ...typography.labelSm, color: colors.ink },
-  cancelBtn: {
-    paddingHorizontal: spacing.md, paddingVertical: spacing.xs,
+  editBtnText: {
+    fontFamily: 'DMSans_500Medium', fontSize: 12, lineHeight: 16, color: warm.ink,
   },
-  cancelText: { ...typography.labelMd, color: colors.muted },
+  cancelBtn: { paddingHorizontal: 12, paddingVertical: 6 },
+  cancelText: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.muted },
   saveBtn: {
-    backgroundColor: colors.sage, borderRadius: radius.full,
-    paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
+    backgroundColor: warm.orange, borderRadius: 9999,
+    paddingHorizontal: 16, paddingVertical: 8,
     minWidth: 64, alignItems: 'center',
   },
-  saveBtnText: { ...typography.headingSm, color: '#fff' },
+  saveBtnText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: '#fff' },
 
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 48 },
 
-  // ── Hero card ──
+  /* ââ Hero card ââ */
   heroCard: {
-    marginHorizontal: spacing.lg, marginBottom: spacing.lg,
-    borderRadius: radius['2xl'], overflow: 'hidden',
-    ...shadows.md,
+    marginHorizontal: 16, marginBottom: 16,
+    borderRadius: 24, overflow: 'hidden',
+    shadowColor: '#8B5E3C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 6,
   },
-  heroBg: { width: '100%' },
-  heroBgImage: { borderRadius: radius['2xl'] },
   heroGradient: {
     alignItems: 'center',
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.xl,
-    paddingHorizontal: spacing.lg,
+    paddingTop: 28,
+    paddingBottom: 24,
+    paddingHorizontal: 16,
   },
 
-  // Avatar
-  avatarWrap: {
-    position: 'relative',
-    marginBottom: spacing.md,
-  },
+  /* Avatar */
+  avatarWrap: { position: 'relative', marginBottom: 12 },
   avatar: {
     width: 96, height: 96, borderRadius: 48,
-    backgroundColor: colors.sage,
+    backgroundColor: warm.orange,
   },
-  avatarFallback: {
-    alignItems: 'center', justifyContent: 'center',
-  },
+  avatarFallback: { alignItems: 'center', justifyContent: 'center' },
   avatarInitial: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 38, color: '#fff',
   },
   avatarRing: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: 52,
-    borderWidth: 3,
-    borderColor: 'rgba(255,255,255,0.55)',
+    borderRadius: 52, borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.45)',
     margin: -3,
   },
   avatarEditOverlay: {
@@ -582,206 +592,210 @@ const s = StyleSheet.create({
 
   heroName: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 26, lineHeight: 32,
-    color: '#fff', marginBottom: spacing.sm,
+    color: '#fff', marginBottom: 8,
+    textShadowColor: 'rgba(0,0,0,0.15)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   nameInput: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 24, color: '#fff',
     textAlign: 'center', borderBottomWidth: 1.5,
     borderBottomColor: 'rgba(255,255,255,0.5)',
-    paddingBottom: 4, marginBottom: spacing.sm, minWidth: 200,
+    paddingBottom: 4, marginBottom: 8, minWidth: 200,
   },
-  heroBadgeRow: {
-    flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm,
-  },
+  heroBadgeRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
   levelBadge: {
     backgroundColor: 'rgba(255,255,255,0.18)',
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md, paddingVertical: 4,
+    borderRadius: 9999,
+    paddingHorizontal: 12, paddingVertical: 4,
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.28)',
   },
   seriesBadge: {
-    backgroundColor: 'rgba(126,200,164,0.3)',
-    borderColor: 'rgba(126,200,164,0.5)',
+    backgroundColor: 'rgba(122,139,94,0.35)',
+    borderColor: 'rgba(122,139,94,0.5)',
   },
   levelBadgeText: {
     fontSize: 12, color: 'rgba(255,255,255,0.92)', fontWeight: '600', letterSpacing: 0.4,
   },
-  heroLocation: {
-    flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4,
-  },
+  heroLocation: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
   heroLocationText: {
-    ...typography.bodyXs, color: 'rgba(255,255,255,0.7)',
+    fontFamily: 'DMSans_400Regular', fontSize: 12, color: 'rgba(255,255,255,0.7)',
   },
 
-  // ── Stats ──
+  /* ââ Stats ââ */
   statsCard: {
     flexDirection: 'row',
-    marginHorizontal: spacing.lg, marginBottom: spacing.md,
-    backgroundColor: colors.white, borderRadius: radius['2xl'],
-    paddingVertical: spacing.lg, ...shadows.sm,
+    marginHorizontal: 16, marginBottom: 12,
+    backgroundColor: warm.card, borderRadius: 20,
+    paddingVertical: 16,
+    borderWidth: 1, borderColor: warm.borderL,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04, shadowRadius: 4, elevation: 2,
   },
   statItem: { flex: 1, alignItems: 'center' },
   statNum: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 26, color: colors.blueDeep,
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 26, color: warm.orange,
   },
-  statLabel: { ...typography.bodyXs, color: colors.muted, marginTop: 2 },
-  statDiv: { width: 1, backgroundColor: colors.skyMid, marginVertical: spacing.xs },
+  statLabel: {
+    fontFamily: 'DMSans_400Regular', fontSize: 11, color: warm.muted, marginTop: 2,
+  },
+  statDiv: { width: 1, backgroundColor: warm.border, marginVertical: 4 },
 
-  // ── Cards ──
+  /* ââ Cards ââ */
   card: {
-    marginHorizontal: spacing.lg, marginBottom: spacing.md,
-    backgroundColor: colors.white, borderRadius: radius.xl,
-    padding: spacing.lg, ...shadows.sm,
+    marginHorizontal: 16, marginBottom: 12,
+    backgroundColor: warm.card, borderRadius: 20,
+    padding: 16,
+    borderWidth: 1, borderColor: warm.borderL,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04, shadowRadius: 4, elevation: 2,
   },
   cardTitle: {
-    ...typography.headingXs, color: colors.muted,
-    textTransform: 'uppercase', letterSpacing: 0.8,
-    marginBottom: spacing.md,
+    fontFamily: 'DMSans_600SemiBold', fontSize: 11, lineHeight: 16,
+    color: warm.muted, textTransform: 'uppercase', letterSpacing: 0.8,
+    marginBottom: 12,
   },
 
-  // Weekly rhythm
-  rhythmRow: {
-    flexDirection: 'row', justifyContent: 'space-between',
-  },
+  /* Weekly rhythm */
+  rhythmRow: { flexDirection: 'row', justifyContent: 'space-between' },
   rhythmDay: { alignItems: 'center', gap: 6 },
   rhythmDot: {
     width: 30, height: 30, borderRadius: 15,
-    backgroundColor: colors.page,
-    borderWidth: 1.5, borderColor: colors.skyMid,
+    backgroundColor: warm.field,
+    borderWidth: 1.5, borderColor: warm.border,
   },
   rhythmDotDone: {
-    backgroundColor: colors.sage, borderColor: colors.sage,
+    backgroundColor: warm.sage, borderColor: warm.sage,
   },
   rhythmDotToday: {
-    borderColor: colors.blue, borderWidth: 2,
+    borderColor: warm.orange, borderWidth: 2,
   },
-  rhythmLabel: { ...typography.bodyXs, color: colors.muted },
-  rhythmLabelToday: { color: colors.blue, fontWeight: '700' },
+  rhythmLabel: { fontFamily: 'DMSans_400Regular', fontSize: 11, color: warm.muted },
+  rhythmLabelToday: { color: warm.orange, fontWeight: '700' },
 
-  // Bio / fields
-  bioText: { ...typography.bodyMd, color: colors.inkMid, lineHeight: 22 },
+  /* Bio / fields */
+  bioText: {
+    fontFamily: 'DMSans_400Regular', fontSize: 14, lineHeight: 22, color: warm.inkMid,
+  },
   bioInput: {
-    ...typography.bodyMd, color: colors.ink,
-    borderWidth: 1, borderColor: colors.skyMid, borderRadius: radius.md,
-    padding: spacing.md, minHeight: 80, textAlignVertical: 'top',
+    fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.ink,
+    borderWidth: 1, borderColor: warm.border, borderRadius: 12,
+    padding: 12, minHeight: 80, textAlignVertical: 'top',
+    backgroundColor: warm.field,
   },
   fieldInput: {
-    ...typography.bodyMd, color: colors.ink,
-    borderWidth: 1, borderColor: colors.skyMid, borderRadius: radius.md,
-    padding: spacing.md,
+    fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.ink,
+    borderWidth: 1, borderColor: warm.border, borderRadius: 12,
+    padding: 12, backgroundColor: warm.field,
   },
 
-  // Chips
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  /* Chips */
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.xs,
-    paddingVertical: spacing.sm, paddingHorizontal: spacing.md,
-    borderRadius: radius.full, borderWidth: 1.5, borderColor: colors.skyMid,
-    backgroundColor: colors.page,
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingVertical: 8, paddingHorizontal: 12,
+    borderRadius: 9999, borderWidth: 1.5, borderColor: warm.border,
+    backgroundColor: warm.field,
   },
-  chipActive: { borderColor: colors.sage, backgroundColor: 'rgba(126,200,164,0.12)' },
+  chipActive: { borderColor: warm.orange, backgroundColor: 'rgba(232,131,74,0.08)' },
   chipEmoji: { fontSize: 13 },
-  chipText: { ...typography.labelSm, color: colors.inkMid },
-  chipTextActive: { color: colors.sage, fontWeight: '700' },
+  chipText: { fontFamily: 'DMSans_500Medium', fontSize: 11, lineHeight: 16, color: warm.inkMid },
+  chipTextActive: { color: warm.orange, fontWeight: '700' },
 
-  // Recent practices
+  /* Recent practices */
   logRow: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.md,
-    paddingVertical: spacing.sm,
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    paddingVertical: 8,
   },
-  logRowDivider: {
-    borderBottomWidth: 1, borderBottomColor: colors.skyMid,
-  },
+  logRowDivider: { borderBottomWidth: 1, borderBottomColor: warm.borderL },
   logDot: {
     width: 8, height: 8, borderRadius: 4,
-    backgroundColor: colors.sage,
+    backgroundColor: warm.sage,
   },
   logInfo: { flex: 1 },
-  logSeries: { ...typography.headingXs, color: colors.ink },
-  logDate: { ...typography.bodyXs, color: colors.muted, marginTop: 1 },
-  logDuration: { ...typography.bodyXs, color: colors.muted },
+  logSeries: { fontFamily: 'DMSans_600SemiBold', fontSize: 11, lineHeight: 16, color: warm.ink },
+  logDate: { fontFamily: 'DMSans_400Regular', fontSize: 11, color: warm.muted, marginTop: 1 },
+  logDuration: { fontFamily: 'DMSans_400Regular', fontSize: 11, color: warm.muted },
 
-  // Sign out
+  /* Sign out */
   signOutBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm,
-    marginHorizontal: spacing.lg, marginTop: spacing.sm,
-    paddingVertical: spacing.lg,
-    backgroundColor: colors.white, borderRadius: radius.xl,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+    marginHorizontal: 16, marginTop: 8,
+    paddingVertical: 16,
+    backgroundColor: warm.card, borderRadius: 20,
     borderWidth: 1, borderColor: '#F0E0E0',
-    ...shadows.sm,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04, shadowRadius: 4, elevation: 2,
   },
-  signOutText: { ...typography.headingSm, color: '#C0392B' },
+  signOutText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: '#C0392B' },
 
   version: {
-    ...typography.bodyXs, color: colors.mutedL,
-    textAlign: 'center', marginTop: spacing.xl, marginBottom: spacing.xl,
+    fontFamily: 'DMSans_400Regular', fontSize: 11,
+    color: warm.mutedL, textAlign: 'center',
+    marginTop: 20, marginBottom: 20,
   },
 
-  // Log row — tappable with pencil hint
-  logRight: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-  },
+  logRight: { flexDirection: 'row', alignItems: 'center', gap: 6 },
 
-  // ── Edit log sheet ──
+  /* ââ Edit log sheet ââ */
   sheetBackdrop: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end',
   },
   sheetBox: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: radius['3xl'],
-    borderTopRightRadius: radius['3xl'],
-    paddingHorizontal: spacing.xl,
+    backgroundColor: warm.card,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: 20,
     paddingBottom: 40,
-    paddingTop: spacing.md,
-    ...shadows.lg,
+    paddingTop: 12,
+    shadowColor: '#000', shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1, shadowRadius: 16, elevation: 8,
   },
   sheetHandle: {
     width: 40, height: 4, borderRadius: 2,
-    backgroundColor: colors.skyMid,
-    alignSelf: 'center', marginBottom: spacing.lg,
+    backgroundColor: warm.border,
+    alignSelf: 'center', marginBottom: 16,
   },
-  sheetTopRow: { marginBottom: spacing.lg },
+  sheetTopRow: { marginBottom: 16 },
   sheetTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, lineHeight: 28,
-    color: colors.ink, marginBottom: 2,
+    color: warm.ink, marginBottom: 2,
   },
-  sheetDate: { ...typography.bodySm, color: colors.muted },
+  sheetDate: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: warm.muted },
   sheetLabel: {
-    ...typography.headingXs, color: colors.muted,
-    textTransform: 'uppercase', letterSpacing: 0.8,
-    marginBottom: spacing.sm,
+    fontFamily: 'DMSans_600SemiBold', fontSize: 11, lineHeight: 16,
+    color: warm.muted, textTransform: 'uppercase', letterSpacing: 0.8,
+    marginBottom: 8,
   },
 
-  // Duration stepper
+  /* Duration stepper */
   stepper: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: colors.page, borderRadius: radius.xl,
-    padding: spacing.xs, alignSelf: 'flex-start',
-    gap: spacing.md,
+    backgroundColor: warm.field, borderRadius: 20,
+    padding: 4, alignSelf: 'flex-start', gap: 12,
   },
   stepBtn: {
     width: 42, height: 42, borderRadius: 21,
-    backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center',
-    ...shadows.sm,
+    backgroundColor: warm.card, alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06, shadowRadius: 4, elevation: 2,
   },
   stepValue: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20,
-    color: colors.ink, minWidth: 80, textAlign: 'center',
+    color: warm.ink, minWidth: 80, textAlign: 'center',
   },
 
-  // Sheet action buttons
-  sheetActions: {
-    flexDirection: 'row', gap: spacing.md, marginTop: spacing.xl,
-  },
+  /* Sheet action buttons */
+  sheetActions: { flexDirection: 'row', gap: 12, marginTop: 20 },
   deleteBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    borderWidth: 1.5, borderColor: '#F0D0D0', borderRadius: radius.full,
-    paddingVertical: spacing.md, paddingHorizontal: spacing.lg,
+    borderWidth: 1.5, borderColor: '#F0D0D0', borderRadius: 9999,
+    paddingVertical: 12, paddingHorizontal: 16,
   },
-  deleteBtnText: { ...typography.headingSm, color: '#C0392B' },
+  deleteBtnText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: '#C0392B' },
   saveSheetBtn: {
-    flex: 1, backgroundColor: colors.sage, borderRadius: radius.full,
-    paddingVertical: spacing.md, alignItems: 'center',
+    flex: 1, backgroundColor: warm.orange, borderRadius: 9999,
+    paddingVertical: 12, alignItems: 'center',
   },
-  saveSheetBtnText: { ...typography.headingSm, color: '#fff' },
+  saveSheetBtnText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: '#fff' },
 });
