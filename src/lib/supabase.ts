@@ -128,6 +128,8 @@ export async function upsertProfile(profile: {
   location?: string;
   bio?: string;
   avatar_url?: string;
+  practicing_since?: number;
+  teacher?: string;
 }) {
   return supabase.from('profiles').upsert(profile);
 }
