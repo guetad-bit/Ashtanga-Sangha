@@ -47,7 +47,7 @@ export function useAuthListener() {
   ) {
     const { data: profile } = await getProfile(userId);
 
-    // Derive the best available name: profiles table → OAuth metadata → email prefix
+    // Derive the best available name: profiles table â OAuth metadata â email prefix
     const name =
       profile?.name ||
       userMetadata?.full_name ||
@@ -67,6 +67,7 @@ export function useAuthListener() {
       location: profile?.location ?? undefined,
       bio: profile?.bio ?? undefined,
       practicingSince: profile?.practicing_since ?? undefined,
+      teacher: profile?.teacher ?? undefined,
     });
     setOnboarded(true);
   }
