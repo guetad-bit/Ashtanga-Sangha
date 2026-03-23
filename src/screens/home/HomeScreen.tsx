@@ -151,12 +151,22 @@ export default function HomeScreen() {
   const fetchAll = useCallback(async () => {
     if (!user) return;
     try {
-      const [logs, practicing, feed] = await Promise.all([
+      const [logsRes, practicing, feed] = await Promise.all([
         getPracticeLogs(user.id),
         getPracticingNow(),
         getFeed(),
       ]);
-      if (logs) setPracticeLogs(logs);
+      if (logsRes?.data && Array.isArray(logsRes.data)) {
+        setPracticeLogs(
+          logsRes.data.map((row: any) => ({
+            id: row.id,
+            userId: row.user_id,
+            loggedAt: row.logged_at,
+            series: row.series,
+            durationMin: row.duration_min,
+          }))
+        );
+      }
       if (practicing) setPracticingUsers(practicing);
       if (feed) setFeedPosts(feed);
     } catch (e) {
@@ -180,8 +190,17 @@ export default function HomeScreen() {
       setIsPracticing(false);
       if (user) {
         try {
-          const result = await logPractice(user.id, user.series || 'primary', durationMin);
-          if (result) addPracticeLog(result);
+          const { data, error } = await logPractice(user.id, user.series || 'primary', durationMin);
+          if (!error && data && Array.isArray(data) && data.length > 0) {
+            const row = data[0];
+            addPracticeLog({
+              id: row.id,
+              userId: row.user_id,
+              loggedAt: row.logged_at,
+              series: row.series,
+              durationMin: row.duration_min,
+            });
+          }
         } catch (e) { console.log('log error', e); }
       }
     } else {
