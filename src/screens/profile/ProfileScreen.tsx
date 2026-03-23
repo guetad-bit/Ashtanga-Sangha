@@ -3,17 +3,14 @@ import React, { useState, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
   StyleSheet, Image, Alert, ActivityIndicator, RefreshControl,
-  Modal, Pressable,
 } from 'react-native';
-import type { PracticeLog } from '@/utils/practiceStreak';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { spacing, radius, typography } from '@/styles/tokens';
+import { spacing } from '@/styles/tokens';
 import { useAppStore, Series, Level } from '@/store/useAppStore';
 import { upsertProfile, signOut, getProfile, uploadAvatar } from '@/lib/supabase';
-import { calculateStreak } from '@/utils/practiceStreak';
 import AppLogo from '@/components/AppLogo';
 
 /* ââ Warm palette ââ */
@@ -52,39 +49,16 @@ const LEVEL_OPTIONS: { value: Level; label: string }[] = [
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+const currentYear = new Date().getFullYear();
+
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { user, setUser, clearUser, practiceLogs, updatePracticeLog, removePracticeLog } = useAppStore();
+  const { user, setUser, clearUser, practiceLogs } = useAppStore();
 
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-
-  // Practice log editing
-  const [editingLog, setEditingLog] = useState<PracticeLog | null>(null);
-  const [editLogSeries, setEditLogSeries] = useState<string>('primary');
-  const [editLogDuration, setEditLogDuration] = useState<number>(90);
-
-  const openLogEdit = (log: PracticeLog) => {
-    setEditingLog(log);
-    setEditLogSeries(log.series);
-    setEditLogDuration(log.durationMin);
-  };
-
-  const saveLogEdit = () => {
-    if (!editingLog) return;
-    updatePracticeLog(editingLog.id, { series: editLogSeries, durationMin: editLogDuration });
-    setEditingLog(null);
-  };
-
-  const deleteLog = () => {
-    if (!editingLog) return;
-    Alert.alert('Delete Practice', 'Remove this practice from your log?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => { removePracticeLog(editingLog.id); setEditingLog(null); } },
-    ]);
-  };
 
   // Editable fields
   const [name, setName] = useState(user?.name ?? '');
@@ -92,8 +66,24 @@ export default function ProfileScreen() {
   const [location, setLocation] = useState(user?.location ?? '');
   const [series, setSeries] = useState<Series>(user?.series ?? 'primary');
   const [level, setLevel] = useState<Level>(user?.level ?? 'beginner');
+  const [teacher, setTeacher] = useState(user?.teacher ?? '');
+  const [practicingSince, setPracticingSince] = useState(user?.practicingSince?.toString() ?? '');
 
-  const streak = calculateStreak(practiceLogs);
+  const streak = practiceLogs.length > 0
+    ? (() => {
+        const td = new Date();
+        td.setHours(0, 0, 0, 0);
+        let count = 0;
+        for (let i = 0; i < 365; i++) {
+          const d = new Date(td);
+          d.setDate(td.getDate() - i);
+          const key = d.toISOString().split('T')[0];
+          if (practiceLogs.some((l) => l.loggedAt.split('T')[0] === key)) count++;
+          else if (i > 0) break;
+        }
+        return count;
+      })()
+    : 0;
   const totalPractices = practiceLogs.length;
   const totalHours = Math.round(practiceLogs.reduce((sum, l) => sum + l.durationMin, 0) / 60);
 
@@ -107,9 +97,6 @@ export default function ProfileScreen() {
     return { label: DAY_LABELS[d.getDay()], practiced, isToday: i === 6 };
   });
 
-  // Recent logs (up to 5)
-  const recentLogs = practiceLogs.slice(0, 5);
-
   useEffect(() => {
     if (user) {
       setName(user.name);
@@ -117,6 +104,8 @@ export default function ProfileScreen() {
       setLocation(user.location ?? '');
       setSeries(user.series);
       setLevel(user.level);
+      setTeacher(user.teacher ?? '');
+      setPracticingSince(user.practicingSince?.toString() ?? '');
     }
   }, [user]);
 
@@ -133,11 +122,14 @@ export default function ProfileScreen() {
         series: (data.series as Series) ?? user.series,
         level: (data.level as Level) ?? user.level,
         avatarUrl: data.avatar_url ?? user.avatarUrl,
+        teacher: data.teacher ?? '',
+        practicingSince: data.practicing_since ?? undefined,
       });
     }
     setRefreshing(false);
   };
 
+  /* ââ Photo picker (always available) ââ */
   const handlePickPhoto = () => {
     Alert.alert('Profile Photo', 'Choose a photo source', [
       { text: 'Camera', onPress: () => pickImage('camera') },
@@ -170,13 +162,23 @@ export default function ProfileScreen() {
     if (!user) return;
     if (!name.trim()) { Alert.alert('Name required', 'Please enter your name.'); return; }
     setSaving(true);
+    const yearNum = practicingSince ? parseInt(practicingSince, 10) : undefined;
+    const validYear = yearNum && yearNum >= 1950 && yearNum <= currentYear ? yearNum : undefined;
     const { error } = await upsertProfile({
       id: user.id, name: name.trim(), series, level,
       location: location.trim() || undefined,
       bio: bio.trim() || undefined,
+      teacher: teacher.trim() || undefined,
+      practicing_since: validYear,
     });
     if (error) { Alert.alert('Error', error.message); setSaving(false); return; }
-    setUser({ ...user, name: name.trim(), bio: bio.trim(), series, level, location: location.trim() });
+    setUser({
+      ...user,
+      name: name.trim(), bio: bio.trim(), series, level,
+      location: location.trim(),
+      teacher: teacher.trim(),
+      practicingSince: validYear,
+    });
     setEditing(false);
     setSaving(false);
   };
@@ -187,6 +189,8 @@ export default function ProfileScreen() {
     setLocation(user?.location ?? '');
     setSeries(user?.series ?? 'primary');
     setLevel(user?.level ?? 'beginner');
+    setTeacher(user?.teacher ?? '');
+    setPracticingSince(user?.practicingSince?.toString() ?? '');
     setEditing(false);
   };
 
@@ -239,10 +243,10 @@ export default function ProfileScreen() {
             locations={[0, 0.35, 0.7, 1]}
             style={st.heroGradient}
           >
-            {/* Avatar */}
+            {/* Avatar â always tappable to change photo */}
             <TouchableOpacity
-              onPress={editing ? handlePickPhoto : undefined}
-              activeOpacity={editing ? 0.75 : 1}
+              onPress={handlePickPhoto}
+              activeOpacity={0.75}
               style={st.avatarWrap}
             >
               {user?.avatarUrl ? (
@@ -253,13 +257,11 @@ export default function ProfileScreen() {
                 </View>
               )}
               <View style={st.avatarRing} />
-              {editing && (
-                <View style={st.avatarEditOverlay}>
-                  {uploadingPhoto
-                    ? <ActivityIndicator color="#fff" />
-                    : <Ionicons name="camera" size={22} color="#fff" />}
-                </View>
-              )}
+              <View style={st.avatarEditOverlay}>
+                {uploadingPhoto
+                  ? <ActivityIndicator color="#fff" size="small" />
+                  : <Ionicons name="camera" size={16} color="rgba(255,255,255,0.9)" />}
+              </View>
             </TouchableOpacity>
 
             {/* Name */}
@@ -353,16 +355,63 @@ export default function ProfileScreen() {
           )}
         </View>
 
-        {/* ââ Location (edit only) ââ */}
+        {/* ââ Personal Details (view mode) ââ */}
+        {!editing && (user?.location || user?.teacher || user?.practicingSince) && (
+          <View style={st.card}>
+            <Text style={st.cardTitle}>Details</Text>
+            {user?.location ? (
+              <View style={st.detailRow}>
+                <Ionicons name="location-outline" size={16} color={warm.muted} />
+                <Text style={st.detailText}>{user.location}</Text>
+              </View>
+            ) : null}
+            {user?.teacher ? (
+              <View style={st.detailRow}>
+                <Ionicons name="person-outline" size={16} color={warm.muted} />
+                <Text style={st.detailText}>{user.teacher}</Text>
+              </View>
+            ) : null}
+            {user?.practicingSince ? (
+              <View style={[st.detailRow, { borderBottomWidth: 0 }]}>
+                <Ionicons name="calendar-outline" size={16} color={warm.muted} />
+                <Text style={st.detailText}>Practicing since {user.practicingSince}</Text>
+              </View>
+            ) : null}
+          </View>
+        )}
+
+        {/* ââ Personal Details (edit mode) ââ */}
         {editing && (
           <View style={st.card}>
-            <Text style={st.cardTitle}>Location</Text>
+            <Text style={st.cardTitle}>Personal Details</Text>
+
+            <Text style={st.fieldLabel}>Location</Text>
             <TextInput
               style={st.fieldInput}
               value={location}
               onChangeText={setLocation}
               placeholder="e.g. Mysore, India"
               placeholderTextColor={warm.mutedL}
+            />
+
+            <Text style={[st.fieldLabel, { marginTop: 16 }]}>Teacher / Shala</Text>
+            <TextInput
+              style={st.fieldInput}
+              value={teacher}
+              onChangeText={setTeacher}
+              placeholder="e.g. Sharath Jois, KPJAYI"
+              placeholderTextColor={warm.mutedL}
+            />
+
+            <Text style={[st.fieldLabel, { marginTop: 16 }]}>Practicing Since</Text>
+            <TextInput
+              style={st.fieldInput}
+              value={practicingSince}
+              onChangeText={(t) => setPracticingSince(t.replace(/[^0-9]/g, '').slice(0, 4))}
+              placeholder="e.g. 2018"
+              placeholderTextColor={warm.mutedL}
+              keyboardType="number-pad"
+              maxLength={4}
             />
           </View>
         )}
@@ -398,36 +447,6 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        {/* ââ Recent practices ââ */}
-        {recentLogs.length > 0 && (
-          <View style={st.card}>
-            <Text style={st.cardTitle}>Recent Practices</Text>
-            {recentLogs.map((log, i) => {
-              const d = new Date(log.loggedAt);
-              const label = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-              const seriesOpt = SERIES_OPTIONS.find((o) => o.value === log.series);
-              return (
-                <TouchableOpacity
-                  key={log.id}
-                  style={[st.logRow, i < recentLogs.length - 1 && st.logRowDivider]}
-                  onPress={() => openLogEdit(log)}
-                  activeOpacity={0.7}
-                >
-                  <View style={st.logDot} />
-                  <View style={st.logInfo}>
-                    <Text style={st.logSeries}>{seriesOpt?.emoji ?? 'ð§'} {seriesOpt?.label ?? log.series}</Text>
-                    <Text style={st.logDate}>{label}</Text>
-                  </View>
-                  <View style={st.logRight}>
-                    <Text style={st.logDuration}>{log.durationMin} min</Text>
-                    <Ionicons name="pencil" size={13} color={warm.mutedL} />
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        )}
-
         {/* ââ Sign out ââ */}
         <TouchableOpacity style={st.signOutBtn} onPress={handleSignOut} activeOpacity={0.8}>
           <Ionicons name="log-out-outline" size={18} color="#C0392B" />
@@ -436,81 +455,6 @@ export default function ProfileScreen() {
 
         <Text style={st.version}>Ashtanga Sangha v1.0</Text>
       </ScrollView>
-
-      {/* ââ Edit Practice Log Sheet ââ */}
-      <Modal
-        visible={!!editingLog}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setEditingLog(null)}
-      >
-        <Pressable style={st.sheetBackdrop} onPress={() => setEditingLog(null)}>
-          <Pressable style={st.sheetBox} onPress={() => {}}>
-            {editingLog && (
-              <>
-                <View style={st.sheetHandle} />
-
-                <View style={st.sheetTopRow}>
-                  <Text style={st.sheetTitle}>Edit Practice</Text>
-                  <Text style={st.sheetDate}>
-                    {new Date(editingLog.loggedAt).toLocaleDateString('en-US', {
-                      weekday: 'long', month: 'long', day: 'numeric',
-                    })}
-                  </Text>
-                </View>
-
-                {/* Series picker */}
-                <Text style={st.sheetLabel}>Series</Text>
-                <View style={st.chipRow}>
-                  {SERIES_OPTIONS.map((opt) => (
-                    <TouchableOpacity
-                      key={opt.value}
-                      style={[st.chip, editLogSeries === opt.value && st.chipActive]}
-                      onPress={() => setEditLogSeries(opt.value)}
-                    >
-                      <Text style={st.chipEmoji}>{opt.emoji}</Text>
-                      <Text style={[st.chipText, editLogSeries === opt.value && st.chipTextActive]}>
-                        {opt.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-
-                {/* Duration stepper */}
-                <Text style={[st.sheetLabel, { marginTop: spacing.lg }]}>Duration</Text>
-                <View style={st.stepper}>
-                  <TouchableOpacity
-                    style={st.stepBtn}
-                    onPress={() => setEditLogDuration((v) => Math.max(10, v - 15))}
-                    activeOpacity={0.7}
-                  >
-                    <Ionicons name="remove" size={20} color={warm.ink} />
-                  </TouchableOpacity>
-                  <Text style={st.stepValue}>{editLogDuration} min</Text>
-                  <TouchableOpacity
-                    style={st.stepBtn}
-                    onPress={() => setEditLogDuration((v) => Math.min(300, v + 15))}
-                    activeOpacity={0.7}
-                  >
-                    <Ionicons name="add" size={20} color={warm.ink} />
-                  </TouchableOpacity>
-                </View>
-
-                {/* Actions */}
-                <View style={st.sheetActions}>
-                  <TouchableOpacity style={st.deleteBtn} onPress={deleteLog} activeOpacity={0.8}>
-                    <Ionicons name="trash-outline" size={16} color="#C0392B" />
-                    <Text style={st.deleteBtnText}>Delete</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={st.saveSheetBtn} onPress={saveLogEdit} activeOpacity={0.8}>
-                    <Text style={st.saveSheetBtnText}>Save Changes</Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            )}
-          </Pressable>
-        </Pressable>
-      </Modal>
     </View>
   );
 }
@@ -584,10 +528,11 @@ const st = StyleSheet.create({
     margin: -3,
   },
   avatarEditOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: 48,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    position: 'absolute', bottom: 0, right: 0,
+    width: 32, height: 32, borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.55)',
     alignItems: 'center', justifyContent: 'center',
+    borderWidth: 2, borderColor: 'rgba(255,255,255,0.6)',
   },
 
   heroName: {
@@ -683,10 +628,25 @@ const st = StyleSheet.create({
     padding: 12, minHeight: 80, textAlignVertical: 'top',
     backgroundColor: warm.field,
   },
+  fieldLabel: {
+    fontFamily: 'DMSans_500Medium', fontSize: 12, color: warm.muted,
+    marginBottom: 6,
+  },
   fieldInput: {
     fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.ink,
     borderWidth: 1, borderColor: warm.border, borderRadius: 12,
     padding: 12, backgroundColor: warm.field,
+  },
+
+  /* Detail rows (view mode) */
+  detailRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    paddingVertical: 8,
+    borderBottomWidth: 1, borderBottomColor: warm.borderL,
+  },
+  detailText: {
+    fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.inkMid,
+    flex: 1,
   },
 
   /* Chips */
@@ -701,21 +661,6 @@ const st = StyleSheet.create({
   chipEmoji: { fontSize: 13 },
   chipText: { fontFamily: 'DMSans_500Medium', fontSize: 11, lineHeight: 16, color: warm.inkMid },
   chipTextActive: { color: warm.orange, fontWeight: '700' },
-
-  /* Recent practices */
-  logRow: {
-    flexDirection: 'row', alignItems: 'center', gap: 12,
-    paddingVertical: 8,
-  },
-  logRowDivider: { borderBottomWidth: 1, borderBottomColor: warm.borderL },
-  logDot: {
-    width: 8, height: 8, borderRadius: 4,
-    backgroundColor: warm.sage,
-  },
-  logInfo: { flex: 1 },
-  logSeries: { fontFamily: 'DMSans_600SemiBold', fontSize: 11, lineHeight: 16, color: warm.ink },
-  logDate: { fontFamily: 'DMSans_400Regular', fontSize: 11, color: warm.muted, marginTop: 1 },
-  logDuration: { fontFamily: 'DMSans_400Regular', fontSize: 11, color: warm.muted },
 
   /* Sign out */
   signOutBtn: {
@@ -734,68 +679,4 @@ const st = StyleSheet.create({
     color: warm.mutedL, textAlign: 'center',
     marginTop: 20, marginBottom: 20,
   },
-
-  logRight: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-
-  /* ââ Edit log sheet ââ */
-  sheetBackdrop: {
-    flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end',
-  },
-  sheetBox: {
-    backgroundColor: warm.card,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-    paddingTop: 12,
-    shadowColor: '#000', shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1, shadowRadius: 16, elevation: 8,
-  },
-  sheetHandle: {
-    width: 40, height: 4, borderRadius: 2,
-    backgroundColor: warm.border,
-    alignSelf: 'center', marginBottom: 16,
-  },
-  sheetTopRow: { marginBottom: 16 },
-  sheetTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, lineHeight: 28,
-    color: warm.ink, marginBottom: 2,
-  },
-  sheetDate: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: warm.muted },
-  sheetLabel: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 11, lineHeight: 16,
-    color: warm.muted, textTransform: 'uppercase', letterSpacing: 0.8,
-    marginBottom: 8,
-  },
-
-  /* Duration stepper */
-  stepper: {
-    flexDirection: 'row', alignItems: 'center',
-    backgroundColor: warm.field, borderRadius: 20,
-    padding: 4, alignSelf: 'flex-start', gap: 12,
-  },
-  stepBtn: {
-    width: 42, height: 42, borderRadius: 21,
-    backgroundColor: warm.card, alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06, shadowRadius: 4, elevation: 2,
-  },
-  stepValue: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20,
-    color: warm.ink, minWidth: 80, textAlign: 'center',
-  },
-
-  /* Sheet action buttons */
-  sheetActions: { flexDirection: 'row', gap: 12, marginTop: 20 },
-  deleteBtn: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    borderWidth: 1.5, borderColor: '#F0D0D0', borderRadius: 9999,
-    paddingVertical: 12, paddingHorizontal: 16,
-  },
-  deleteBtnText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: '#C0392B' },
-  saveSheetBtn: {
-    flex: 1, backgroundColor: warm.orange, borderRadius: 9999,
-    paddingVertical: 12, alignItems: 'center',
-  },
-  saveSheetBtnText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: '#fff' },
 });
