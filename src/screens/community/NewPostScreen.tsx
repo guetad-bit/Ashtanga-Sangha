@@ -7,18 +7,23 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
+import { Ionicons } from '@expo/vector-icons';
+import { spacing, radius, typography } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
 
+/* ââ Warm palette (matches Home / Community) ââ */
+const warm = {
+  bg: '#FAF8F5', cardBg: '#FFFFFF', headerBg: '#FFFFFF',
+  ink: '#3D3229', inkMid: '#5C4F42', muted: '#8B7D6E', mutedLight: '#B5A899',
+  accent: '#C47B3F', accentLight: '#F0E0CC',
+  sage: '#7A8B5E', sageBg: '#E8EDDF',
+  orange: '#E8834A', orangeLight: '#FFF0E6',
+  divider: '#EDE5D8', white: '#FFFFFF',
+};
+
 const POPULAR_TAGS = [
-  '#morningpractice',
-  '#ashtangayoga',
-  '#primaryseries',
-  '#moonday',
-  '#mysore',
-  '#yogalife',
-  '#breathe',
-  '#onthemat',
+  '#morningpractice', '#ashtangayoga', '#primaryseries',
+  '#moonday', '#mysore', '#yogalife', '#breathe', '#onthemat',
 ];
 
 export default function NewPostScreen() {
@@ -76,7 +81,6 @@ export default function NewPostScreen() {
       return;
     }
     setPosting(true);
-    // TODO: upload image to Supabase Storage + insert into posts table
     addUserPost({
       id: `up-${Date.now()}`,
       userName: user?.name ?? 'Practitioner',
@@ -94,22 +98,24 @@ export default function NewPostScreen() {
   };
 
   const canPost = caption.trim().length > 0 || imageUri;
+  const firstName = user?.name?.split(' ')[0] || 'Yogi';
 
   return (
     <SafeAreaView style={s.safe}>
-      {/* Header */}
+      {/* ââ Header ââ */}
       <View style={s.header}>
-        <TouchableOpacity onPress={() => router.back()} hitSlop={12}>
-          <Text style={s.cancelText}>Cancel</Text>
+        <TouchableOpacity onPress={() => router.back()} style={s.backBtn} hitSlop={12}>
+          <Ionicons name="chevron-back" size={22} color={warm.ink} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>New Post</Text>
+        <Text style={s.headerTitle}>Share</Text>
         <TouchableOpacity
           onPress={handlePost}
           disabled={!canPost || posting}
           style={[s.postBtn, (!canPost || posting) && s.postBtnDisabled]}
+          activeOpacity={0.8}
         >
           <Text style={[s.postBtnText, (!canPost || posting) && s.postBtnTextDisabled]}>
-            {posting ? 'Posting...' : 'Post'}
+            {posting ? 'Postingâ¦' : 'Post'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -124,81 +130,92 @@ export default function NewPostScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* User info row */}
-          <View style={s.userRow}>
-            {user?.avatarUrl ? (
-              <Image source={{ uri: user.avatarUrl }} style={s.userAvatar} />
-            ) : (
-              <View style={[s.userAvatar, { backgroundColor: colors.skyDeep, alignItems: 'center', justifyContent: 'center' }]}>
-                <Text style={{ fontSize: 16, color: colors.white, fontWeight: '600' }}>
-                  {user?.name?.charAt(0) ?? '?'}
-                </Text>
+          {/* ââ Composer card ââ */}
+          <View style={s.composerCard}>
+            {/* User row */}
+            <View style={s.userRow}>
+              {user?.avatarUrl ? (
+                <Image source={{ uri: user.avatarUrl }} style={s.userAvatar} />
+              ) : (
+                <View style={[s.userAvatar, s.avatarFallback]}>
+                  <Text style={s.avatarInitial}>{firstName.charAt(0)}</Text>
+                </View>
+              )}
+              <View>
+                <Text style={s.userName}>{user?.name ?? 'Practitioner'}</Text>
+                <Text style={s.userHint}>What's on your mat today?</Text>
+              </View>
+            </View>
+
+            {/* Caption */}
+            <TextInput
+              style={s.captionInput}
+              placeholder="Share your practice, thoughts, or a momentâ¦"
+              placeholderTextColor={warm.mutedLight}
+              multiline
+              value={caption}
+              onChangeText={setCaption}
+              autoFocus
+            />
+
+            {/* Image preview */}
+            {imageUri && (
+              <View style={s.imagePreview}>
+                <Image source={{ uri: imageUri }} style={s.previewImage} />
+                <TouchableOpacity style={s.removeImageBtn} onPress={() => setImageUri(null)}>
+                  <Ionicons name="close" size={16} color="#fff" />
+                </TouchableOpacity>
               </View>
             )}
-            <Text style={s.userName}>{user?.name ?? 'Practitioner'}</Text>
           </View>
 
-          {/* Caption input */}
-          <TextInput
-            style={s.captionInput}
-            placeholder="Share your practice, thoughts, or a moment..."
-            placeholderTextColor={colors.mutedL}
-            multiline
-            value={caption}
-            onChangeText={setCaption}
-            autoFocus
-          />
+          {/* ââ Attachments ââ */}
+          <Text style={s.sectionLabel}>Add to your post</Text>
+          <View style={s.attachRow}>
+            <TouchableOpacity style={s.attachBtn} onPress={pickImage} activeOpacity={0.7}>
+              <View style={[s.attachIcon, { backgroundColor: warm.sageBg }]}>
+                <Ionicons name="image-outline" size={20} color={warm.sage} />
+              </View>
+              <Text style={s.attachText}>Gallery</Text>
+            </TouchableOpacity>
 
-          {/* Image preview */}
-          {imageUri && (
-            <View style={s.imagePreview}>
-              <Image source={{ uri: imageUri }} style={s.previewImage} />
-              <TouchableOpacity style={s.removeImageBtn} onPress={() => setImageUri(null)}>
-                <Text style={s.removeImageText}>✕</Text>
-              </TouchableOpacity>
+            <TouchableOpacity style={s.attachBtn} onPress={takePhoto} activeOpacity={0.7}>
+              <View style={[s.attachIcon, { backgroundColor: warm.orangeLight }]}>
+                <Ionicons name="camera-outline" size={20} color={warm.orange} />
+              </View>
+              <Text style={s.attachText}>Camera</Text>
+            </TouchableOpacity>
+
+            <View style={s.attachBtn}>
+              <View style={[s.attachIcon, { backgroundColor: warm.accentLight }]}>
+                <Ionicons name="location-outline" size={20} color={warm.accent} />
+              </View>
+              <TextInput
+                style={s.locationInline}
+                placeholder="Location"
+                placeholderTextColor={warm.mutedLight}
+                value={location}
+                onChangeText={setLocation}
+              />
             </View>
-          )}
-
-          {/* Photo buttons */}
-          <View style={s.photoRow}>
-            <TouchableOpacity style={s.photoBtn} onPress={pickImage}>
-              <Text style={s.photoBtnEmoji}>🖼️</Text>
-              <Text style={s.photoBtnText}>Gallery</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={s.photoBtn} onPress={takePhoto}>
-              <Text style={s.photoBtnEmoji}>📷</Text>
-              <Text style={s.photoBtnText}>Camera</Text>
-            </TouchableOpacity>
           </View>
 
-          {/* Location */}
-          <View style={s.locationRow}>
-            <Text style={s.locationIcon}>📍</Text>
-            <TextInput
-              style={s.locationInput}
-              placeholder="Add location (optional)"
-              placeholderTextColor={colors.mutedL}
-              value={location}
-              onChangeText={setLocation}
-            />
-          </View>
-
-          {/* Tags */}
-          <View style={s.tagsSection}>
-            <Text style={s.tagsLabel}>Tags</Text>
-            <View style={s.tagsWrap}>
-              {POPULAR_TAGS.map((tag) => (
+          {/* ââ Tags ââ */}
+          <Text style={s.sectionLabel}>Tags</Text>
+          <View style={s.tagsWrap}>
+            {POPULAR_TAGS.map((tag) => {
+              const active = selectedTags.includes(tag);
+              return (
                 <TouchableOpacity
                   key={tag}
-                  style={[s.tagChip, selectedTags.includes(tag) && s.tagChipActive]}
+                  style={[s.tagChip, active && s.tagChipActive]}
                   onPress={() => toggleTag(tag)}
+                  activeOpacity={0.7}
                 >
-                  <Text style={[s.tagText, selectedTags.includes(tag) && s.tagTextActive]}>
-                    {tag}
-                  </Text>
+                  <Text style={[s.tagText, active && s.tagTextActive]}>{tag}</Text>
                 </TouchableOpacity>
-              ))}
-            </View>
+              );
+            })}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -206,104 +223,126 @@ export default function NewPostScreen() {
   );
 }
 
+/* ââ Styles ââ */
 const s = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.page },
+  safe: { flex: 1, backgroundColor: warm.bg },
 
-  // Header
+  /* Header */
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl, paddingVertical: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.skyMid,
-    backgroundColor: colors.white,
+    paddingHorizontal: 16, paddingVertical: 10,
+    backgroundColor: warm.headerBg,
+    borderBottomWidth: 1, borderBottomColor: warm.divider,
   },
-  cancelText: { ...typography.labelLg, color: colors.muted },
-  headerTitle: { ...typography.headingLg, color: colors.ink },
+  backBtn: {
+    width: 36, height: 36, borderRadius: 18,
+    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: warm.bg,
+  },
+  headerTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20, color: warm.ink,
+  },
   postBtn: {
-    backgroundColor: colors.sage, borderRadius: radius.lg,
-    paddingHorizontal: spacing.xl, paddingVertical: spacing.sm,
+    backgroundColor: warm.orange, borderRadius: 20,
+    paddingHorizontal: 22, paddingVertical: 9,
+    shadowColor: warm.orange, shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25, shadowRadius: 8, elevation: 4,
   },
-  postBtnDisabled: { backgroundColor: colors.skyMid },
-  postBtnText: { ...typography.headingSm, color: '#fff' },
-  postBtnTextDisabled: { color: colors.mutedL },
+  postBtnDisabled: {
+    backgroundColor: warm.divider,
+    shadowOpacity: 0,
+  },
+  postBtnText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#fff' },
+  postBtnTextDisabled: { color: warm.mutedLight },
 
   scroll: { flex: 1 },
-  scrollContent: { padding: spacing.xl },
+  scrollContent: { padding: 16, paddingBottom: 40 },
 
-  // User row
+  /* Composer card */
+  composerCard: {
+    backgroundColor: warm.cardBg, borderRadius: 20,
+    padding: 18, marginBottom: 24,
+    borderWidth: 1, borderColor: warm.divider,
+  },
   userRow: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.md,
-    marginBottom: spacing.lg,
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    marginBottom: 16,
   },
-  userAvatar: { width: 40, height: 40, borderRadius: 20 },
-  userName: { ...typography.headingMd, color: colors.ink },
-
-  // Caption
+  userAvatar: { width: 46, height: 46, borderRadius: 23 },
+  avatarFallback: {
+    backgroundColor: warm.accentLight,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  avatarInitial: {
+    fontFamily: 'DMSans_600SemiBold', fontSize: 18, color: warm.accent,
+  },
+  userName: {
+    fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: warm.ink,
+  },
+  userHint: {
+    fontFamily: 'DMSans_400Regular', fontSize: 12, color: warm.muted, marginTop: 1,
+  },
   captionInput: {
-    ...typography.bodyLg, color: colors.ink,
-    minHeight: 100, textAlignVertical: 'top',
-    marginBottom: spacing.lg,
+    fontFamily: 'DMSans_400Regular', fontSize: 16, lineHeight: 24,
+    color: warm.ink, minHeight: 100, textAlignVertical: 'top',
   },
 
-  // Image preview
+  /* Image preview */
   imagePreview: {
-    marginBottom: spacing.lg, borderRadius: radius['2xl'],
-    overflow: 'hidden', position: 'relative',
+    marginTop: 14, borderRadius: 16, overflow: 'hidden', position: 'relative',
   },
   previewImage: {
-    width: '100%', height: 220, borderRadius: radius['2xl'],
+    width: '100%', height: 220, borderRadius: 16,
   },
   removeImageBtn: {
-    position: 'absolute', top: spacing.sm, right: spacing.sm,
-    width: 30, height: 30, borderRadius: 15,
+    position: 'absolute', top: 10, right: 10,
+    width: 28, height: 28, borderRadius: 14,
     backgroundColor: 'rgba(0,0,0,0.5)',
     alignItems: 'center', justifyContent: 'center',
   },
-  removeImageText: { color: '#fff', fontSize: 14, fontWeight: '700' },
 
-  // Photo buttons
-  photoRow: {
-    flexDirection: 'row', gap: spacing.md,
-    marginBottom: spacing.xl,
+  /* Attachments */
+  sectionLabel: {
+    fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: warm.muted,
+    textTransform: 'uppercase', letterSpacing: 0.8,
+    marginBottom: 10, marginLeft: 4,
   },
-  photoBtn: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
-    backgroundColor: colors.white, borderRadius: radius.lg,
-    paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    borderWidth: 1, borderColor: colors.skyMid,
+  attachRow: {
+    flexDirection: 'row', gap: 10, marginBottom: 24,
   },
-  photoBtnEmoji: { fontSize: 18 },
-  photoBtnText: { ...typography.labelMd, color: colors.ink },
+  attachBtn: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: warm.cardBg, borderRadius: 14,
+    paddingHorizontal: 12, paddingVertical: 12,
+    borderWidth: 1, borderColor: warm.divider,
+  },
+  attachIcon: {
+    width: 36, height: 36, borderRadius: 12,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  attachText: {
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.ink,
+  },
+  locationInline: {
+    fontFamily: 'DMSans_400Regular', fontSize: 13, color: warm.ink,
+    flex: 1, paddingVertical: 0,
+  },
 
-  // Location
-  locationRow: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
-    backgroundColor: colors.white, borderRadius: radius.lg,
-    paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    borderWidth: 1, borderColor: colors.skyMid,
-    marginBottom: spacing.xl,
-  },
-  locationIcon: { fontSize: 16 },
-  locationInput: {
-    ...typography.bodyMd, color: colors.ink, flex: 1,
-  },
-
-  // Tags
-  tagsSection: { marginBottom: spacing.xl },
-  tagsLabel: {
-    ...typography.headingSm, color: colors.ink,
-    marginBottom: spacing.md,
-  },
+  /* Tags */
   tagsWrap: {
-    flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm,
+    flexDirection: 'row', flexWrap: 'wrap', gap: 8,
+    marginBottom: 20,
   },
   tagChip: {
-    backgroundColor: colors.white, borderRadius: radius.full,
-    paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderWidth: 1, borderColor: colors.skyMid,
+    backgroundColor: warm.cardBg, borderRadius: 20,
+    paddingHorizontal: 14, paddingVertical: 8,
+    borderWidth: 1.5, borderColor: warm.divider,
   },
   tagChipActive: {
-    backgroundColor: colors.blueDeep, borderColor: colors.blueDeep,
+    backgroundColor: warm.sage, borderColor: warm.sage,
   },
-  tagText: { ...typography.labelSm, color: colors.inkMid },
+  tagText: {
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.inkMid,
+  },
   tagTextActive: { color: '#fff' },
 });
