@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
   StyleSheet, Image, Alert, ActivityIndicator, RefreshControl,
+  Platform, Modal, Pressable,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -13,7 +14,7 @@ import { useAppStore, Series, Level } from '@/store/useAppStore';
 import { upsertProfile, signOut, getProfile, uploadAvatar } from '@/lib/supabase';
 import AppLogo from '@/components/AppLogo';
 
-/* ââ Warm palette ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Warm palette Ã¢ÂÂÃ¢ÂÂ */
 const warm = {
   bg:      '#FAF6F0',
   card:    '#FFFFFF',
@@ -31,12 +32,12 @@ const warm = {
 };
 
 const SERIES_OPTIONS: { value: Series; label: string; emoji: string }[] = [
-  { value: 'sun_sals',     label: 'Sun Salutations', emoji: 'âï¸' },
-  { value: 'primary',      label: 'Primary',         emoji: 'ð§' },
-  { value: 'intermediate', label: 'Intermediate',    emoji: 'ð¥' },
-  { value: 'advanced_a',   label: 'Advanced A',      emoji: 'â¡' },
-  { value: 'advanced_b',   label: 'Advanced B',      emoji: 'ð' },
-  { value: 'short',        label: 'Short',           emoji: 'ð' },
+  { value: 'sun_sals',     label: 'Sun Salutations', emoji: 'Ã¢ÂÂÃ¯Â¸Â' },
+  { value: 'primary',      label: 'Primary',         emoji: 'Ã°ÂÂ§Â' },
+  { value: 'intermediate', label: 'Intermediate',    emoji: 'Ã°ÂÂÂ¥' },
+  { value: 'advanced_a',   label: 'Advanced A',      emoji: 'Ã¢ÂÂ¡' },
+  { value: 'advanced_b',   label: 'Advanced B',      emoji: 'Ã°ÂÂÂ' },
+  { value: 'short',        label: 'Short',           emoji: 'Ã°ÂÂÂ' },
 ];
 
 const LEVEL_OPTIONS: { value: Level; label: string }[] = [
@@ -59,6 +60,8 @@ export default function ProfileScreen() {
   const [saving, setSaving] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
 
   // Editable fields
   const [name, setName] = useState(user?.name ?? '');
@@ -129,13 +132,14 @@ export default function ProfileScreen() {
     setRefreshing(false);
   };
 
-  /* ââ Photo picker (always available) ââ */
+  /* Ã¢ÂÂÃ¢ÂÂ Photo picker (always available) Ã¢ÂÂÃ¢ÂÂ */
   const handlePickPhoto = () => {
-    Alert.alert('Profile Photo', 'Choose a photo source', [
-      { text: 'Camera', onPress: () => pickImage('camera') },
-      { text: 'Photo Library', onPress: () => pickImage('library') },
-      { text: 'Cancel', style: 'cancel' },
-    ]);
+    if (Platform.OS === 'web') {
+      // On web, Alert.alert with custom buttons doesn't work â go straight to library
+      pickImage('library');
+    } else {
+      setShowPhotoModal(true);
+    }
   };
 
   const pickImage = async (source: 'camera' | 'library') => {
@@ -195,10 +199,14 @@ export default function ProfileScreen() {
   };
 
   const handleSignOut = () => {
-    Alert.alert('Sign Out', 'Are you sure?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Sign Out', style: 'destructive', onPress: async () => { await signOut(); clearUser(); } },
-    ]);
+    if (Platform.OS === 'web') {
+      setShowSignOutModal(true);
+    } else {
+      Alert.alert('Sign Out', 'Are you sure?', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign Out', style: 'destructive', onPress: async () => { await signOut(); clearUser(); } },
+      ]);
+    }
   };
 
   const currentSeriesOpt = SERIES_OPTIONS.find((s) => s.value === (user?.series ?? 'primary'));
@@ -207,7 +215,7 @@ export default function ProfileScreen() {
   return (
     <View style={[st.root, { paddingTop: insets.top }]}>
 
-      {/* ââ Top bar ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Top bar Ã¢ÂÂÃ¢ÂÂ */}
       <View style={st.topbar}>
         <View style={st.topbarLeft}>
           <AppLogo size={34} />
@@ -236,14 +244,14 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={warm.orange} />}
       >
-        {/* ââ Hero gradient card ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Hero gradient card Ã¢ÂÂÃ¢ÂÂ */}
         <View style={st.heroCard}>
           <LinearGradient
             colors={['#D4A574', '#B87D4A', '#8B5E3C', '#5C3D28']}
             locations={[0, 0.35, 0.7, 1]}
             style={st.heroGradient}
           >
-            {/* Avatar â always tappable to change photo */}
+            {/* Avatar Ã¢ÂÂ always tappable to change photo */}
             <TouchableOpacity
               onPress={handlePickPhoto}
               activeOpacity={0.75}
@@ -299,7 +307,7 @@ export default function ProfileScreen() {
           </LinearGradient>
         </View>
 
-        {/* ââ Stats ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Stats Ã¢ÂÂÃ¢ÂÂ */}
         <View style={st.statsCard}>
           <View style={st.statItem}>
             <Text style={st.statNum}>{streak}</Text>
@@ -317,7 +325,7 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* ââ Weekly rhythm ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Weekly rhythm Ã¢ÂÂÃ¢ÂÂ */}
         <View style={st.card}>
           <Text style={st.cardTitle}>This Week</Text>
           <View style={st.rhythmRow}>
@@ -334,7 +342,7 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* ââ About ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ About Ã¢ÂÂÃ¢ÂÂ */}
         <View style={st.card}>
           <Text style={st.cardTitle}>About</Text>
           {editing ? (
@@ -355,7 +363,7 @@ export default function ProfileScreen() {
           )}
         </View>
 
-        {/* ââ Personal Details (view mode) ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Personal Details (view mode) Ã¢ÂÂÃ¢ÂÂ */}
         {!editing && (user?.location || user?.teacher || user?.practicingSince) && (
           <View style={st.card}>
             <Text style={st.cardTitle}>Details</Text>
@@ -380,7 +388,7 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        {/* ââ Personal Details (edit mode) ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Personal Details (edit mode) Ã¢ÂÂÃ¢ÂÂ */}
         {editing && (
           <View style={st.card}>
             <Text style={st.cardTitle}>Personal Details</Text>
@@ -416,7 +424,7 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        {/* ââ Series + Level (edit mode) ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Series + Level (edit mode) Ã¢ÂÂÃ¢ÂÂ */}
         {editing && (
           <View style={st.card}>
             <Text style={st.cardTitle}>Current Series</Text>
@@ -447,7 +455,7 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        {/* ââ Sign out ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Sign out Ã¢ÂÂÃ¢ÂÂ */}
         <TouchableOpacity style={st.signOutBtn} onPress={handleSignOut} activeOpacity={0.8}>
           <Ionicons name="log-out-outline" size={18} color="#C0392B" />
           <Text style={st.signOutText}>Sign Out</Text>
@@ -455,6 +463,43 @@ export default function ProfileScreen() {
 
         <Text style={st.version}>Ashtanga Sangha v1.0</Text>
       </ScrollView>
+
+      {/* ââ Photo picker modal (for native; web goes straight to library) ââ */}
+      <Modal visible={showPhotoModal} transparent animationType="fade" onRequestClose={() => setShowPhotoModal(false)}>
+        <Pressable style={st.modalOverlay} onPress={() => setShowPhotoModal(false)}>
+          <View style={st.modalCard}>
+            <Text style={st.modalTitle}>Profile Photo</Text>
+            <TouchableOpacity style={st.modalOption} onPress={() => { setShowPhotoModal(false); pickImage('camera'); }}>
+              <Ionicons name="camera-outline" size={20} color={warm.orange} />
+              <Text style={st.modalOptionText}>Camera</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={st.modalOption} onPress={() => { setShowPhotoModal(false); pickImage('library'); }}>
+              <Ionicons name="image-outline" size={20} color={warm.sage} />
+              <Text style={st.modalOptionText}>Photo Library</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[st.modalOption, { borderBottomWidth: 0 }]} onPress={() => setShowPhotoModal(false)}>
+              <Text style={[st.modalOptionText, { color: warm.muted }]}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* ââ Sign-out confirm modal (for web) ââ */}
+      <Modal visible={showSignOutModal} transparent animationType="fade" onRequestClose={() => setShowSignOutModal(false)}>
+        <Pressable style={st.modalOverlay} onPress={() => setShowSignOutModal(false)}>
+          <View style={st.modalCard}>
+            <Text style={st.modalTitle}>Sign Out</Text>
+            <Text style={{ fontSize: 14, color: warm.muted, textAlign: 'center', marginBottom: 16 }}>Are you sure you want to sign out?</Text>
+            <TouchableOpacity style={st.modalOption} onPress={async () => { setShowSignOutModal(false); await signOut(); clearUser(); }}>
+              <Ionicons name="log-out-outline" size={20} color="#C0392B" />
+              <Text style={[st.modalOptionText, { color: '#C0392B' }]}>Sign Out</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[st.modalOption, { borderBottomWidth: 0 }]} onPress={() => setShowSignOutModal(false)}>
+              <Text style={[st.modalOptionText, { color: warm.muted }]}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -462,7 +507,7 @@ export default function ProfileScreen() {
 const st = StyleSheet.create({
   root: { flex: 1, backgroundColor: warm.bg },
 
-  /* ââ Top bar ââ */
+  /* Ã¢ÂÂÃ¢ÂÂ Top bar Ã¢ÂÂÃ¢ÂÂ */
   topbar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingVertical: 12,
@@ -494,7 +539,7 @@ const st = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 48 },
 
-  /* ââ Hero card ââ */
+  /* Ã¢ÂÂÃ¢ÂÂ Hero card Ã¢ÂÂÃ¢ÂÂ */
   heroCard: {
     marginHorizontal: 16, marginBottom: 16,
     borderRadius: 24, overflow: 'hidden',
@@ -567,7 +612,7 @@ const st = StyleSheet.create({
     fontFamily: 'DMSans_400Regular', fontSize: 12, color: 'rgba(255,255,255,0.7)',
   },
 
-  /* ââ Stats ââ */
+  /* Ã¢ÂÂÃ¢ÂÂ Stats Ã¢ÂÂÃ¢ÂÂ */
   statsCard: {
     flexDirection: 'row',
     marginHorizontal: 16, marginBottom: 12,
@@ -586,7 +631,7 @@ const st = StyleSheet.create({
   },
   statDiv: { width: 1, backgroundColor: warm.border, marginVertical: 4 },
 
-  /* ââ Cards ââ */
+  /* Ã¢ÂÂÃ¢ÂÂ Cards Ã¢ÂÂÃ¢ÂÂ */
   card: {
     marginHorizontal: 16, marginBottom: 12,
     backgroundColor: warm.card, borderRadius: 20,
@@ -678,5 +723,28 @@ const st = StyleSheet.create({
     fontFamily: 'DMSans_400Regular', fontSize: 11,
     color: warm.mutedL, textAlign: 'center',
     marginTop: 20, marginBottom: 20,
+  },
+
+  /* Modals */
+  modalOverlay: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.35)',
+    justifyContent: 'center', alignItems: 'center',
+  },
+  modalCard: {
+    backgroundColor: warm.card, borderRadius: 20,
+    padding: 20, width: 280,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15, shadowRadius: 20, elevation: 10,
+  },
+  modalTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
+    color: warm.ink, textAlign: 'center', marginBottom: 16,
+  },
+  modalOption: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: warm.borderL,
+  },
+  modalOptionText: {
+    fontFamily: 'DMSans_500Medium', fontSize: 15, color: warm.ink,
   },
 });
