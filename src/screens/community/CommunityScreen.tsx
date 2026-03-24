@@ -11,7 +11,7 @@ import { useAppStore } from '@/store/useAppStore';
 import PostCard from '@/components/community/PostCard';
 import { getPracticingNow, getFeed, supabase } from '@/lib/supabase';
 
-/* ââ Warm palette (shared with HomeScreen) ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Warm palette (shared with HomeScreen) Ã¢ÂÂÃ¢ÂÂ */
 const warm = {
   bg: '#FAF8F5', cardBg: '#FFFFFF', headerBg: '#FFFFFF',
   ink: '#3D3229', inkMid: '#5C4F42', muted: '#8B7D6E', mutedLight: '#B5A899',
@@ -46,34 +46,16 @@ interface Member {
   location: string | null; bio: string | null;
 }
 
-/* ââ Mock data ââ */
-const DISCUSSIONS = [
-  { id: '1', title: 'Padmasana Tips', replies: 125, icon: 'leaf-outline' as const, color: warm.sage, bg: warm.sageBg },
-  { id: '2', title: 'Overcoming Injury', replies: 99, icon: 'heart-outline' as const, color: warm.gold, bg: warm.goldBg },
-  { id: '3', title: 'Morning Practice Wins', replies: 154, icon: 'sunny-outline' as const, color: warm.amber, bg: warm.amberBg },
-];
+/* Ã¢ÂÂÃ¢ÂÂ Mock data Ã¢ÂÂÃ¢ÂÂ */
+const DISCUSSIONS: { id: string; title: string; replies: number; icon: any; color: string; bg: string }[] = [];
 
-const MOCK_MEMBERS = [
-  { id: 'm1', name: 'Maya Cohen', avatar: 'https://i.pravatar.cc/80?img=5', series: 'Primary Series', streak: 42, location: 'Tel Aviv' },
-  { id: 'm2', name: 'Arjun Patel', avatar: 'https://i.pravatar.cc/80?img=33', series: 'Intermediate', streak: 28, location: 'Mumbai' },
-  { id: 'm3', name: 'Sarah Kim', avatar: 'https://i.pravatar.cc/80?img=9', series: 'Half Primary', streak: 15, location: 'Seoul' },
-  { id: 'm4', name: 'Liat Rosen', avatar: 'https://i.pravatar.cc/80?img=23', series: 'Primary Series', streak: 67, location: 'Haifa' },
-  { id: 'm5', name: 'David Meller', avatar: 'https://i.pravatar.cc/80?img=11', series: 'Sun Salutations', streak: 8, location: 'Berlin' },
-];
+const MOCK_MEMBERS: { id: string; name: string; avatar: string; series: string; streak: number; location: string }[] = [];
 
-const PRACTICING_MOCK = [
-  { id: 'p1', name: 'Maya', avatar: 'https://i.pravatar.cc/80?img=5', series: 'Primary Series', min: 42 },
-  { id: 'p2', name: 'Arjun', avatar: 'https://i.pravatar.cc/80?img=33', series: 'Half Primary', min: 18 },
-  { id: 'p3', name: 'Liat', avatar: 'https://i.pravatar.cc/80?img=23', series: 'Intermediate', min: 55 },
-];
+const PRACTICING_MOCK: { id: string; name: string; avatar: string; series: string; min: number }[] = [];
 
-const FEED_MOCK = [
-  { id: 'f1', name: 'David', avatar: 'https://i.pravatar.cc/80?img=11', caption: 'Beautiful sunrise practice today. Feeling grateful for this community.', time: '12 min ago', likes: 12, tags: ['morningpractice'] },
-  { id: 'f2', name: 'Sarah', avatar: 'https://i.pravatar.cc/80?img=9', caption: 'Finally got into Marichyasana D! Only took 2 years of trying.', time: '28 min ago', likes: 24, tags: ['primaryseries', 'progress'] },
-  { id: 'f3', name: 'Kobi', avatar: 'https://i.pravatar.cc/80?img=60', caption: 'Rest day but still did some gentle stretching. Listening to my body.', time: '1h ago', likes: 8, tags: ['restday'] },
-];
+const FEED_MOCK: { id: string; name: string; avatar: string; caption: string; time: string; likes: number; tags: string[] }[] = [];
 
-/* ââ Component ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Component Ã¢ÂÂÃ¢ÂÂ */
 export default function CommunityScreen() {
   const router = useRouter();
   const { user, userPosts } = useAppStore();
@@ -122,7 +104,7 @@ export default function CommunityScreen() {
     setRefreshing(false);
   }, []);
 
-  /* ââ Tabs ââ */
+  /* Ã¢ÂÂÃ¢ÂÂ Tabs Ã¢ÂÂÃ¢ÂÂ */
   const TABS: { key: Tab; label: string }[] = [
     { key: 'latest', label: 'Latest' },
     { key: 'people', label: 'People' },
@@ -131,7 +113,7 @@ export default function CommunityScreen() {
 
   return (
     <SafeAreaView style={st.safe} edges={['top']}>
-      {/* ââ Top Bar (matches homepage) ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Top Bar (matches homepage) Ã¢ÂÂÃ¢ÂÂ */}
       <View style={st.topBar}>
         <View style={st.topBarLeft}>
           <Ionicons name="people" size={24} color={warm.orange} />
@@ -153,7 +135,7 @@ export default function CommunityScreen() {
         </View>
       </View>
 
-      {/* ââ Search bar ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Search bar Ã¢ÂÂÃ¢ÂÂ */}
       <View style={st.searchWrap}>
         <View style={st.searchBar}>
           <Ionicons name="search-outline" size={16} color={warm.muted} />
@@ -167,7 +149,7 @@ export default function CommunityScreen() {
         </View>
       </View>
 
-      {/* ââ Pill tabs (matches homepage feed tabs style) ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Pill tabs (matches homepage feed tabs style) Ã¢ÂÂÃ¢ÂÂ */}
       <View style={st.tabRow}>
         {TABS.map((t) => (
           <TouchableOpacity
@@ -180,7 +162,7 @@ export default function CommunityScreen() {
         ))}
       </View>
 
-      {/* ââ Content ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Content Ã¢ÂÂÃ¢ÂÂ */}
       <ScrollView
         style={st.scroll}
         contentContainerStyle={st.scrollContent}
@@ -188,10 +170,10 @@ export default function CommunityScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={warm.accent} />}
       >
 
-        {/* âââââââ LATEST TAB âââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ LATEST TAB Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         {activeTab === 'latest' && (
           <>
-            {/* On the Mat Now â live strip */}
+            {/* On the Mat Now Ã¢ÂÂ live strip */}
             <View style={st.liveStrip}>
               <View style={st.liveStripHeader}>
                 <View style={st.liveStripDot} />
@@ -211,7 +193,7 @@ export default function CommunityScreen() {
               </ScrollView>
             </View>
 
-            {/* Popular Discussions â horizontal cards */}
+            {/* Popular Discussions Ã¢ÂÂ horizontal cards */}
             <Text style={st.sectionTitle}>Popular Discussions</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={st.discScroll}>
               {DISCUSSIONS.map((d) => (
@@ -285,7 +267,7 @@ export default function CommunityScreen() {
           </>
         )}
 
-        {/* âââââââ PEOPLE TAB âââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ PEOPLE TAB Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         {activeTab === 'people' && (
           <>
             {/* On the mat now */}
@@ -305,7 +287,7 @@ export default function CommunityScreen() {
                   </View>
                   <View style={st.memberInfo}>
                     <Text style={st.memberName}>{p.name}</Text>
-                    <Text style={st.memberMeta}>{p.series} Â· {p.min}m</Text>
+                    <Text style={st.memberMeta}>{p.series} ÃÂ· {p.min}m</Text>
                   </View>
                   <TouchableOpacity style={st.namasteBtn}>
                     <Text style={st.namasteBtnText}>Namaste</Text>
@@ -322,7 +304,7 @@ export default function CommunityScreen() {
                   <Image source={{ uri: m.avatar_url || m.avatar }} style={st.memberAvatar} />
                   <View style={st.memberInfo}>
                     <Text style={st.memberName}>{m.name}</Text>
-                    <Text style={st.memberMeta}>{m.series} Â· {m.location} Â· {m.streak}d streak</Text>
+                    <Text style={st.memberMeta}>{m.series} ÃÂ· {m.location} ÃÂ· {m.streak}d streak</Text>
                   </View>
                   <TouchableOpacity style={st.followBtn}>
                     <Text style={st.followBtnText}>Follow</Text>
@@ -333,7 +315,7 @@ export default function CommunityScreen() {
           </>
         )}
 
-        {/* âââââââ TOPICS TAB âââââââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ TOPICS TAB Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ */}
         {activeTab === 'topics' && (
           <>
             <Text style={st.sectionTitle}>Discussion Topics</Text>
@@ -344,7 +326,7 @@ export default function CommunityScreen() {
                 </View>
                 <View style={st.topicInfo}>
                   <Text style={st.topicTitle}>{d.title}</Text>
-                  <Text style={st.topicMeta}>{d.replies} replies Â· Active today</Text>
+                  <Text style={st.topicMeta}>{d.replies} replies ÃÂ· Active today</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={18} color={warm.mutedLight} />
               </TouchableOpacity>
@@ -362,7 +344,7 @@ export default function CommunityScreen() {
   );
 }
 
-/* ââ Styles ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Styles Ã¢ÂÂÃ¢ÂÂ */
 const st = StyleSheet.create({
   safe: { flex: 1, backgroundColor: warm.bg },
 
