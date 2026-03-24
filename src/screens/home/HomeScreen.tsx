@@ -14,7 +14,7 @@ import { getPracticeLogs, setPracticingNow, logPractice, getPracticingNow, getFe
 import AppLogo from '@/components/AppLogo';
 import { Ionicons } from '@expo/vector-icons';
 
-/* ââ Interfaces ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Interfaces Ã¢ÂÂÃ¢ÂÂ */
 interface PracticingUser {
   id: string; name: string; avatar_url: string | null;
   series: string; level: string; streak: number; practicing_since: string;
@@ -27,7 +27,7 @@ interface FeedPost {
   profiles: { name: string; avatar_url: string | null } | null;
 }
 
-/* ââ Warm palette ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Warm palette Ã¢ÂÂÃ¢ÂÂ */
 const warm = {
   bg: '#FAF8F5', cardBg: '#FFFFFF', headerBg: '#FFFFFF',
   ink: '#3D3229', inkMid: '#5C4F42', muted: '#8B7D6E', mutedLight: '#B5A899',
@@ -42,7 +42,7 @@ const warm = {
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-/* ââ Data ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Data Ã¢ÂÂÃ¢ÂÂ */
 const GURU_WISDOM = [
   { quote: 'Yoga is 99% practice, 1% theory.', guru: 'Sri K. Pattabhi Jois' },
   { quote: 'Do your practice and all is coming.', guru: 'Sri K. Pattabhi Jois' },
@@ -53,28 +53,11 @@ const GURU_WISDOM = [
   { quote: 'The rhythm of the body, the melody of the mind, and the harmony of the soul create the symphony of life.', guru: 'B.K.S. Iyengar' },
 ];
 
-const FAKE_AVATARS = [
-  'https://i.pravatar.cc/80?img=11',
-  'https://i.pravatar.cc/80?img=12',
-  'https://i.pravatar.cc/80?img=14',
-  'https://i.pravatar.cc/80?img=32',
-  'https://i.pravatar.cc/80?img=44',
-  'https://i.pravatar.cc/80?img=52',
-  'https://i.pravatar.cc/80?img=59',
-  'https://i.pravatar.cc/80?img=68',
-];
+const FAKE_AVATARS: string[] = [];
 
-const PRACTICING_NOW_MOCK: { name: string; series: string; avatar: string; min: number }[] = [
-  { name: 'Maya', series: 'Primary Series', avatar: 'https://i.pravatar.cc/80?img=5', min: 42 },
-  { name: 'Arjun', series: 'Half Primary', avatar: 'https://i.pravatar.cc/80?img=33', min: 18 },
-  { name: 'Liat', series: 'Intermediate', avatar: 'https://i.pravatar.cc/80?img=23', min: 55 },
-];
+const PRACTICING_NOW_MOCK: { name: string; series: string; avatar: string; min: number }[] = [];
 
-const FEED_MOCK: { name: string; avatar: string; series: string; time: string; hearts: number }[] = [
-  { name: 'David', avatar: 'https://i.pravatar.cc/80?img=11', series: 'Primary Series', time: '12 min ago', hearts: 4 },
-  { name: 'Sarah', avatar: 'https://i.pravatar.cc/80?img=9', series: 'Sun Salutations', time: '28 min ago', hearts: 2 },
-  { name: 'Kobi', avatar: 'https://i.pravatar.cc/80?img=60', series: 'Short Practice', time: '1h ago', hearts: 6 },
-];
+const FEED_MOCK: { name: string; avatar: string; series: string; time: string; hearts: number }[] = [];
 
 const SERIES_LABELS: Record<string, string> = {
   primary: 'Primary Series',
@@ -91,7 +74,7 @@ const MOODS: { ionicon: string; label: string; key: string }[] = [
   { ionicon: 'moon', label: 'Low energy', key: 'low' },
 ];
 
-/* ââ Component ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Component Ã¢ÂÂÃ¢ÂÂ */
 export default function HomeScreen() {
   const router = useRouter();
   const {
@@ -116,9 +99,9 @@ export default function HomeScreen() {
   const practiceCount = weekDays.filter(d => d.status === 'done').length;
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
   const guruWisdom = GURU_WISDOM[dayOfYear % GURU_WISDOM.length];
-  const practicingCount = practicingUsers.length || 13;
+  const practicingCount = practicingUsers.length;
 
-  /* ââ Timer ââ */
+  /* Ã¢ÂÂÃ¢ÂÂ Timer Ã¢ÂÂÃ¢ÂÂ */
   useEffect(() => {
     if (!isPracticing) { setElapsedSec(0); return; }
     const start = practicingStartedAt ? new Date(practicingStartedAt).getTime() : Date.now();
@@ -128,7 +111,7 @@ export default function HomeScreen() {
     return () => clearInterval(iv);
   }, [isPracticing, practicingStartedAt]);
 
-  /* ââ Pulse animation ââ */
+  /* Ã¢ÂÂÃ¢ÂÂ Pulse animation Ã¢ÂÂÃ¢ÂÂ */
   useEffect(() => {
     if (!isPracticing) return;
     const loop = Animated.loop(
@@ -147,7 +130,7 @@ export default function HomeScreen() {
     return `${m}:${sec.toString().padStart(2, '0')}`;
   };
 
-  /* ââ Data fetching ââ */
+  /* Ã¢ÂÂÃ¢ÂÂ Data fetching Ã¢ÂÂÃ¢ÂÂ */
   const fetchAll = useCallback(async () => {
     if (!user) return;
     try {
@@ -182,7 +165,7 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
-  /* ââ Actions ââ */
+  /* Ã¢ÂÂÃ¢ÂÂ Actions Ã¢ÂÂÃ¢ÂÂ */
   const handleToggleMat = async () => {
     if (isPracticing) {
       // Finish
@@ -218,10 +201,10 @@ export default function HomeScreen() {
     useAppStore.getState().clearUser();
   };
 
-  /* ââ Render ââ */
+  /* Ã¢ÂÂÃ¢ÂÂ Render Ã¢ÂÂÃ¢ÂÂ */
   return (
     <SafeAreaView style={st.safe}>
-      {/* ââ Top Bar ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Top Bar Ã¢ÂÂÃ¢ÂÂ */}
       <View style={st.topBar}>
         <View style={st.topBarLeft}>
           <AppLogo size={30} />
@@ -244,7 +227,7 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* ââ Menu Modal ââ */}
+      {/* Ã¢ÂÂÃ¢ÂÂ Menu Modal Ã¢ÂÂÃ¢ÂÂ */}
       <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
         <Pressable style={st.modalOverlay} onPress={() => setMenuOpen(false)}>
           <View style={st.menuCard}>
@@ -271,15 +254,17 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={warm.accent} />}
       >
-        {/* ââ Welcome ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Welcome Ã¢ÂÂÃ¢ÂÂ */}
         <View style={st.welcomeWrap}>
           <Text style={st.welcomeTitle}>Welcome back, {user?.name?.split(' ')[0] || 'Yogi'}</Text>
           <Text style={st.welcomeSub}>
-            <Text style={st.blueAccent}>{practicingCount} yogis</Text> are practicing right now
+            {practicingCount > 0
+              ? <><Text style={st.blueAccent}>{practicingCount} yogis</Text> are practicing right now</>
+              : 'Start your practice today'}
           </Text>
         </View>
 
-        {/* ââ Live Avatars ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Live Avatars Ã¢ÂÂÃ¢ÂÂ */}
         <View style={st.avatarRow}>
           {FAKE_AVATARS.map((uri, i) => (
             <View key={i} style={[
@@ -292,13 +277,13 @@ export default function HomeScreen() {
           ))}
         </View>
 
-        {/* ââ Guru Quote Banner ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Guru Quote Banner Ã¢ÂÂÃ¢ÂÂ */}
         <View style={st.guruBanner}>
           <Text style={st.guruQuote}>&ldquo;{guruWisdom.quote}&rdquo;</Text>
           <Text style={st.guruAttrib}>&#x2014; {guruWisdom.guru}</Text>
         </View>
 
-        {/* ââ CTA / Timer ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ CTA / Timer Ã¢ÂÂÃ¢ÂÂ */}
         {!isPracticing ? (
           <TouchableOpacity style={st.ctaButton} onPress={handleToggleMat} activeOpacity={0.85}>
             <Text style={st.ctaText}>I'M PRACTICING NOW</Text>
@@ -317,7 +302,7 @@ export default function HomeScreen() {
           </View>
         )}
 
-        {/* ââ Practice Rhythm ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Practice Rhythm Ã¢ÂÂÃ¢ÂÂ */}
         <View style={st.card}>
           <View style={st.cardHeader}>
             <Text style={st.cardTitle}>Practice Rhythm</Text>
@@ -346,7 +331,7 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* ââ Mood Check ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Mood Check Ã¢ÂÂÃ¢ÂÂ */}
         <View style={st.card}>
           <Text style={st.moodTitle}>How was your practice today?</Text>
           <View style={st.moodRow}>
@@ -367,7 +352,7 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* ââ Practice Feed ââ */}
+        {/* Ã¢ÂÂÃ¢ÂÂ Practice Feed Ã¢ÂÂÃ¢ÂÂ */}
         <View style={st.feedSection}>
           <View style={st.feedHeader}>
             <Text style={st.cardTitle}>Practice Feed</Text>
@@ -406,9 +391,11 @@ export default function HomeScreen() {
                   </TouchableOpacity>
                 </View>
               ))}
-              <View style={st.friendsBanner}>
-                <Text style={st.friendsBannerText}>6 friends practiced today</Text>
-              </View>
+              {PRACTICING_NOW_MOCK.length === 0 && (
+                <View style={st.friendsBanner}>
+                  <Text style={st.friendsBannerText}>No one is practicing right now</Text>
+                </View>
+              )}
             </View>
           ) : (
             <View>
@@ -437,7 +424,7 @@ export default function HomeScreen() {
   );
 }
 
-/* ââ Styles ââ */
+/* Ã¢ÂÂÃ¢ÂÂ Styles Ã¢ÂÂÃ¢ÂÂ */
 const st = StyleSheet.create({
   safe: { flex: 1, backgroundColor: warm.bg },
 
