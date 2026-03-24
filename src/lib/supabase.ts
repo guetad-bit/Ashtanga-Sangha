@@ -136,12 +136,21 @@ export async function upsertProfile(profile: {
 
 // ââ Avatar upload ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
-export async function uploadAvatar(userId: string, uri: string) {
-  // React Native: read the file as arraybuffer (blob doesn't work reliably)
+export async function uploadAvatar(userId: string, uri: string, mimeType?: string | null) {
+  // Fetch the image data as arraybuffer
   const response = await fetch(uri);
   const arrayBuffer = await response.arrayBuffer();
 
-  const fileExt = uri.split('.').pop()?.split('?')[0]?.toLowerCase() ?? 'jpg';
+  // Determine extension from mimeType (reliable on web), falling back to URI parsing
+  let fileExt = 'jpg';
+  if (mimeType) {
+    const extFromMime = mimeType.split('/').pop()?.toLowerCase();
+    if (extFromMime === 'jpeg') fileExt = 'jpg';
+    else if (extFromMime && /^[a-z]{2,4}$/.test(extFromMime)) fileExt = extFromMime;
+  } else {
+    const parsed = uri.split('.').pop()?.split('?')[0]?.toLowerCase();
+    if (parsed && /^[a-z]{2,4}$/.test(parsed)) fileExt = parsed;
+  }
   const filePath = `${userId}/avatar.${fileExt}`;
   const contentType = `image/${fileExt === 'jpg' ? 'jpeg' : fileExt}`;
 
