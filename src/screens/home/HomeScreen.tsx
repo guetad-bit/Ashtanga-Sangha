@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, Pressable, Modal,
-  StyleSheet, Image, RefreshControl, Dimensions, Animated,
+  StyleSheet, Image, RefreshControl, Dimensions, Animated, TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -14,7 +14,7 @@ import { getPracticeLogs, setPracticingNow, logPractice, getPracticingNow, getFe
 import AppLogo from '@/components/AppLogo';
 import { Ionicons } from '@expo/vector-icons';
 
-/* Ã¢ÂÂÃ¢ÂÂ Interfaces Ã¢ÂÂÃ¢ÂÂ */
+/* -- Interfaces -- */
 interface PracticingUser {
   id: string; name: string; avatar_url: string | null;
   series: string; level: string; streak: number; practicing_since: string;
@@ -27,7 +27,7 @@ interface FeedPost {
   profiles: { name: string; avatar_url: string | null } | null;
 }
 
-/* Ã¢ÂÂÃ¢ÂÂ Warm palette Ã¢ÂÂÃ¢ÂÂ */
+/* -- Warm palette -- */
 const warm = {
   bg: '#FAF8F5', cardBg: '#FFFFFF', headerBg: '#FFFFFF',
   ink: '#3D3229', inkMid: '#5C4F42', muted: '#8B7D6E', mutedLight: '#B5A899',
@@ -42,7 +42,7 @@ const warm = {
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-/* Ã¢ÂÂÃ¢ÂÂ Data Ã¢ÂÂÃ¢ÂÂ */
+/* -- Data -- */
 const GURU_WISDOM = [
   { quote: 'Yoga is 99% practice, 1% theory.', guru: 'Sri K. Pattabhi Jois' },
   { quote: 'Do your practice and all is coming.', guru: 'Sri K. Pattabhi Jois' },
@@ -53,11 +53,14 @@ const GURU_WISDOM = [
   { quote: 'The rhythm of the body, the melody of the mind, and the harmony of the soul create the symphony of life.', guru: 'B.K.S. Iyengar' },
 ];
 
-const FAKE_AVATARS: string[] = [];
-
-const PRACTICING_NOW_MOCK: { name: string; series: string; avatar: string; min: number }[] = [];
-
-const FEED_MOCK: { name: string; avatar: string; series: string; time: string; hearts: number }[] = [];
+const SERIES_OPTIONS: { key: string; label: string }[] = [
+  { key: 'primary', label: 'Primary Series' },
+  { key: 'intermediate', label: 'Intermediate' },
+  { key: 'advanced_a', label: 'Advanced A' },
+  { key: 'advanced_b', label: 'Advanced B' },
+  { key: 'sun_sals', label: 'Sun Salutations' },
+  { key: 'short', label: 'Short Practice' },
+];
 
 const SERIES_LABELS: Record<string, string> = {
   primary: 'Primary Series',
@@ -69,12 +72,13 @@ const SERIES_LABELS: Record<string, string> = {
 };
 
 const MOODS: { ionicon: string; label: string; key: string }[] = [
+  { ionicon: 'sunny', label: 'Great', key: 'great' },
   { ionicon: 'flame', label: 'Strong', key: 'strong' },
   { ionicon: 'water', label: 'Challenging', key: 'challenging' },
   { ionicon: 'moon', label: 'Low energy', key: 'low' },
 ];
 
-/* Ã¢ÂÂÃ¢ÂÂ Component Ã¢ÂÂÃ¢ÂÂ */
+/* -- Component -- */
 export default function HomeScreen() {
   const router = useRouter();
   const {
@@ -85,12 +89,17 @@ export default function HomeScreen() {
 
   const [refreshing, setRefreshing] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [mood, setMood] = useState<string | null>(null);
-  const [feedTab, setFeedTab] = useState<'live' | 'recent'>('live');
   const [practicingUsers, setPracticingUsers] = useState<PracticingUser[]>([]);
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>([]);
   const [elapsedSec, setElapsedSec] = useState(0);
   const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  // Post-practice questionnaire state
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
+  const [qSeries, setQSeries] = useState<string>(user?.series || 'primary');
+  const [qMood, setQMood] = useState<string | null>(null);
+  const [qWorkingOn, setQWorkingOn] = useState('');
+  const [finishedDuration, setFinishedDuration] = useState(0);
 
   // Derived
   const safeLogs = practiceLogs ?? [];
@@ -101,7 +110,7 @@ export default function HomeScreen() {
   const guruWisdom = GURU_WISDOM[dayOfYear % GURU_WISDOM.length];
   const practicingCount = practicingUsers.length;
 
-  /* Ã¢ÂÂÃ¢ÂÂ Timer Ã¢ÂÂÃ¢ÂÂ */
+  /* -- Timer -- */
   useEffect(() => {
     if (!isPracticing) { setElapsedSec(0); return; }
     const start = practicingStartedAt ? new Date(practicingStartedAt).getTime() : Date.now();
@@ -111,7 +120,7 @@ export default function HomeScreen() {
     return () => clearInterval(iv);
   }, [isPracticing, practicingStartedAt]);
 
-  /* Ã¢ÂÂÃ¢ÂÂ Pulse animation Ã¢ÂÂÃ¢ÂÂ */
+  /* -- Pulse animation -- */
   useEffect(() => {
     if (!isPracticing) return;
     const loop = Animated.loop(
@@ -130,7 +139,7 @@ export default function HomeScreen() {
     return `${m}:${sec.toString().padStart(2, '0')}`;
   };
 
-  /* Ã¢ÂÂÃ¢ÂÂ Data fetching Ã¢ÂÂÃ¢ÂÂ */
+  /* -- Data fetching -- */
   const fetchAll = useCallback(async () => {
     if (!user) return;
     try {
@@ -165,34 +174,48 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
-  /* Ã¢ÂÂÃ¢ÂÂ Actions Ã¢ÂÂÃ¢ÂÂ */
-  const handleToggleMat = async () => {
-    if (isPracticing) {
-      // Finish
-      const durationMin = Math.max(1, Math.round(elapsedSec / 60));
-      setIsPracticing(false);
-      if (user) {
-        try {
-          const { data, error } = await logPractice(user.id, user.series || 'primary', durationMin);
-          if (!error && data && Array.isArray(data) && data.length > 0) {
-            const row = data[0];
-            addPracticeLog({
-              id: row.id,
-              userId: row.user_id,
-              loggedAt: row.logged_at,
-              series: row.series,
-              durationMin: row.duration_min,
-            });
-          }
-        } catch (e) { console.log('log error', e); }
-      }
-    } else {
-      // Start
-      setIsPracticing(true);
-      if (user) {
-        try { await setPracticingNow(user.id); } catch (e) { console.log('set practicing error', e); }
-      }
+  /* -- Actions -- */
+  const handleStartPractice = async () => {
+    setIsPracticing(true);
+    if (user) {
+      try { await setPracticingNow(user.id, true); } catch (e) { console.log('set practicing error', e); }
     }
+  };
+
+  const handleFinishPractice = () => {
+    // Capture duration, then open questionnaire
+    const durationMin = Math.max(1, Math.round(elapsedSec / 60));
+    setFinishedDuration(durationMin);
+    setQSeries(user?.series || 'primary');
+    setQMood(null);
+    setQWorkingOn('');
+    setIsPracticing(false);
+    setShowQuestionnaire(true);
+  };
+
+  const handleSaveQuestionnaire = async () => {
+    setShowQuestionnaire(false);
+    if (!user) return;
+    try {
+      const notes = [
+        qMood ? `Mood: ${qMood}` : '',
+        qWorkingOn ? `Working on: ${qWorkingOn}` : '',
+      ].filter(Boolean).join(' | ');
+
+      const { data, error } = await logPractice(user.id, qSeries, finishedDuration, notes || undefined);
+      if (!error && data && Array.isArray(data) && data.length > 0) {
+        const row = data[0];
+        addPracticeLog({
+          id: row.id,
+          userId: row.user_id,
+          loggedAt: row.logged_at,
+          series: row.series,
+          durationMin: row.duration_min,
+        });
+      }
+      // Refresh the practicing users list
+      fetchAll();
+    } catch (e) { console.log('log error', e); }
   };
 
   const handleSignOut = async () => {
@@ -201,10 +224,19 @@ export default function HomeScreen() {
     useAppStore.getState().clearUser();
   };
 
-  /* Ã¢ÂÂÃ¢ÂÂ Render Ã¢ÂÂÃ¢ÂÂ */
+  const timeSince = (isoDate: string) => {
+    const diffMs = Date.now() - new Date(isoDate).getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1) return 'just now';
+    if (diffMin < 60) return `${diffMin}m ago`;
+    const diffHrs = Math.floor(diffMin / 60);
+    return `${diffHrs}h ago`;
+  };
+
+  /* -- Render -- */
   return (
     <SafeAreaView style={st.safe}>
-      {/* Ã¢ÂÂÃ¢ÂÂ Top Bar Ã¢ÂÂÃ¢ÂÂ */}
+      {/* -- Top Bar -- */}
       <View style={st.topBar}>
         <View style={st.topBarLeft}>
           <AppLogo size={30} />
@@ -227,7 +259,7 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Ã¢ÂÂÃ¢ÂÂ Menu Modal Ã¢ÂÂÃ¢ÂÂ */}
+      {/* -- Menu Modal -- */}
       <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
         <Pressable style={st.modalOverlay} onPress={() => setMenuOpen(false)}>
           <View style={st.menuCard}>
@@ -248,46 +280,133 @@ export default function HomeScreen() {
         </Pressable>
       </Modal>
 
+      {/* -- Post-Practice Questionnaire Modal -- */}
+      <Modal visible={showQuestionnaire} transparent animationType="slide" onRequestClose={() => setShowQuestionnaire(false)}>
+        <View style={st.qOverlay}>
+          <View style={st.qCard}>
+            <Text style={st.qTitle}>Practice Complete!</Text>
+            <Text style={st.qDuration}>{finishedDuration} min on the mat</Text>
+
+            {/* Series selector */}
+            <Text style={st.qSectionLabel}>What did you practice?</Text>
+            <View style={st.qSeriesRow}>
+              {SERIES_OPTIONS.map((s) => (
+                <TouchableOpacity
+                  key={s.key}
+                  style={[st.qSeriesChip, qSeries === s.key && st.qSeriesChipActive]}
+                  onPress={() => setQSeries(s.key)}
+                >
+                  <Text style={[st.qSeriesText, qSeries === s.key && st.qSeriesTextActive]}>
+                    {s.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            {/* Mood selector */}
+            <Text style={st.qSectionLabel}>How did you feel?</Text>
+            <View style={st.qMoodRow}>
+              {MOODS.map((m) => (
+                <TouchableOpacity
+                  key={m.key}
+                  style={[st.qMoodBtn, qMood === m.key && st.qMoodBtnActive]}
+                  onPress={() => setQMood(m.key)}
+                >
+                  <Ionicons
+                    name={m.ionicon as any}
+                    size={20}
+                    color={qMood === m.key ? warm.orange : warm.muted}
+                  />
+                  <Text style={[st.qMoodLabel, qMood === m.key && st.qMoodLabelActive]}>
+                    {m.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            {/* Working on */}
+            <Text style={st.qSectionLabel}>What are you working on?</Text>
+            <TextInput
+              style={st.qInput}
+              placeholder="e.g. Marichyasana D, backbends..."
+              placeholderTextColor={warm.mutedLight}
+              value={qWorkingOn}
+              onChangeText={setQWorkingOn}
+              multiline
+            />
+
+            {/* Save / Skip */}
+            <View style={st.qBtnRow}>
+              <TouchableOpacity
+                style={st.qSkipBtn}
+                onPress={() => {
+                  setShowQuestionnaire(false);
+                  // Log with defaults if skipped
+                  handleSaveQuestionnaire();
+                }}
+              >
+                <Text style={st.qSkipText}>Skip</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={st.qSaveBtn} onPress={handleSaveQuestionnaire}>
+                <Text style={st.qSaveText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       <ScrollView
         style={st.scroll}
         contentContainerStyle={st.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={warm.accent} />}
       >
-        {/* Ã¢ÂÂÃ¢ÂÂ Welcome Ã¢ÂÂÃ¢ÂÂ */}
+        {/* -- Welcome -- */}
         <View style={st.welcomeWrap}>
           <Text style={st.welcomeTitle}>Welcome back, {user?.name?.split(' ')[0] || 'Yogi'}</Text>
           <Text style={st.welcomeSub}>
             {practicingCount > 0
-              ? <><Text style={st.blueAccent}>{practicingCount} yogis</Text> are practicing right now</>
+              ? <><Text style={st.blueAccent}>{practicingCount} yogis</Text> on the mat today</>
               : 'Start your practice today'}
           </Text>
         </View>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Live Avatars Ã¢ÂÂÃ¢ÂÂ */}
-        <View style={st.avatarRow}>
-          {FAKE_AVATARS.map((uri, i) => (
-            <View key={i} style={[
-              st.avatarCircle,
-              { marginLeft: i > 0 ? -6 : 0 },
-              i < 3 && st.avatarActive,
-            ]}>
-              <Image source={{ uri }} style={st.avatarImg} />
-            </View>
-          ))}
-        </View>
+        {/* -- Live Avatars (from real practicing users) -- */}
+        {practicingUsers.length > 0 && (
+          <View style={st.avatarRow}>
+            {practicingUsers.slice(0, 8).map((pu, i) => (
+              <View key={pu.id} style={[
+                st.avatarCircle,
+                { marginLeft: i > 0 ? -6 : 0 },
+                st.avatarActive,
+              ]}>
+                {pu.avatar_url ? (
+                  <Image source={{ uri: pu.avatar_url }} style={st.avatarImg} />
+                ) : (
+                  <View style={[st.avatarImg, { backgroundColor: warm.accentLight, alignItems: 'center', justifyContent: 'center' }]}>
+                    <Text style={{ fontSize: 14, color: warm.accent, fontWeight: '700' }}>
+                      {pu.name?.charAt(0)?.toUpperCase() || '?'}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Guru Quote Banner Ã¢ÂÂÃ¢ÂÂ */}
+        {/* -- Guru Quote Banner -- */}
         <View style={st.guruBanner}>
-          <Text style={st.guruQuote}>&ldquo;{guruWisdom.quote}&rdquo;</Text>
-          <Text style={st.guruAttrib}>&#x2014; {guruWisdom.guru}</Text>
+          <Text style={st.guruQuote}>{'\u201C'}{guruWisdom.quote}{'\u201D'}</Text>
+          <Text style={st.guruAttrib}>{'\u2014'} {guruWisdom.guru}</Text>
         </View>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ CTA / Timer Ã¢ÂÂÃ¢ÂÂ */}
+        {/* -- CTA / Timer -- */}
         {!isPracticing ? (
-          <TouchableOpacity style={st.ctaButton} onPress={handleToggleMat} activeOpacity={0.85}>
+          <TouchableOpacity style={st.ctaButton} onPress={handleStartPractice} activeOpacity={0.85}>
             <Text style={st.ctaText}>I'M PRACTICING NOW</Text>
-            <Text style={st.ctaSub}>Join {practicingCount} yogis on the mat</Text>
+            <Text style={st.ctaSub}>
+              {practicingCount > 0 ? `Join ${practicingCount} yogis on the mat` : 'Step onto your mat'}
+            </Text>
           </TouchableOpacity>
         ) : (
           <View style={st.timerCard}>
@@ -296,13 +415,13 @@ export default function HomeScreen() {
               <Text style={st.timerLabel}>You're on the mat</Text>
             </View>
             <Text style={st.timerText}>{fmtTime(elapsedSec)}</Text>
-            <TouchableOpacity style={st.finishBtn} onPress={handleToggleMat}>
+            <TouchableOpacity style={st.finishBtn} onPress={handleFinishPractice}>
               <Text style={st.finishBtnText}>Finish Practice</Text>
             </TouchableOpacity>
           </View>
         )}
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Practice Rhythm Ã¢ÂÂÃ¢ÂÂ */}
+        {/* -- Practice Rhythm -- */}
         <View style={st.card}>
           <View style={st.cardHeader}>
             <Text style={st.cardTitle}>Practice Rhythm</Text>
@@ -331,89 +450,47 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ Mood Check Ã¢ÂÂÃ¢ÂÂ */}
-        <View style={st.card}>
-          <Text style={st.moodTitle}>How was your practice today?</Text>
-          <View style={st.moodRow}>
-            {MOODS.map((m) => (
-              <TouchableOpacity
-                key={m.key}
-                style={[st.moodBtn, mood === m.key && st.moodBtnActive]}
-                onPress={() => setMood(m.key)}
-              >
-                <Ionicons
-                  name={m.ionicon as any}
-                  size={16}
-                  color={mood === m.key ? warm.accent : warm.inkMid}
-                />
-                <Text style={[st.moodLabel, mood === m.key && st.moodLabelActive]}>{m.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Ã¢ÂÂÃ¢ÂÂ Practice Feed Ã¢ÂÂÃ¢ÂÂ */}
+        {/* -- On the mat today -- */}
         <View style={st.feedSection}>
           <View style={st.feedHeader}>
-            <Text style={st.cardTitle}>Practice Feed</Text>
-            <View style={st.feedTabs}>
-              <TouchableOpacity
-                style={[st.feedTab, feedTab === 'live' && st.feedTabActive]}
-                onPress={() => setFeedTab('live')}
-              >
-                <Text style={[st.feedTabText, feedTab === 'live' && st.feedTabTextActive]}>
-                  {'\u25CF'} Live
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[st.feedTab, feedTab === 'recent' && st.feedTabActive]}
-                onPress={() => setFeedTab('recent')}
-              >
-                <Text style={[st.feedTabText, feedTab === 'recent' && st.feedTabTextActive]}>Recent</Text>
-              </TouchableOpacity>
-            </View>
+            <Text style={st.cardTitle}>On the mat today</Text>
+            <Text style={st.feedCount}>{practicingCount}</Text>
           </View>
 
-          {feedTab === 'live' ? (
-            <View>
-              {PRACTICING_NOW_MOCK.map((p, i) => (
-                <View key={i} style={st.feedItem}>
-                  <View style={st.feedAvatarWrap}>
-                    <Image source={{ uri: p.avatar }} style={st.feedAvatar} />
-                    <View style={st.greenDot} />
-                  </View>
-                  <View style={st.feedInfo}>
-                    <Text style={st.feedName}>{p.name} <Text style={st.feedAction}>is on the mat</Text></Text>
-                    <Text style={st.feedMeta}>{p.series} {'\u00B7'} {p.min}m</Text>
-                  </View>
-                  <TouchableOpacity style={st.praySendBtn}>
-                    <Text style={st.praySendText}>Namaste</Text>
-                  </TouchableOpacity>
+          {practicingUsers.length > 0 ? (
+            practicingUsers.map((pu) => (
+              <View key={pu.id} style={st.feedItem}>
+                <View style={st.feedAvatarWrap}>
+                  {pu.avatar_url ? (
+                    <Image source={{ uri: pu.avatar_url }} style={st.feedAvatar} />
+                  ) : (
+                    <View style={[st.feedAvatar, { backgroundColor: warm.accentLight, alignItems: 'center', justifyContent: 'center' }]}>
+                      <Text style={{ fontSize: 16, color: warm.accent, fontWeight: '700' }}>
+                        {pu.name?.charAt(0)?.toUpperCase() || '?'}
+                      </Text>
+                    </View>
+                  )}
+                  <View style={st.greenDot} />
                 </View>
-              ))}
-              {PRACTICING_NOW_MOCK.length === 0 && (
-                <View style={st.friendsBanner}>
-                  <Text style={st.friendsBannerText}>No one is practicing right now</Text>
+                <View style={st.feedInfo}>
+                  <Text style={st.feedName}>
+                    {pu.name} <Text style={st.feedAction}>is on the mat</Text>
+                  </Text>
+                  <Text style={st.feedMeta}>
+                    {SERIES_LABELS[pu.series] || pu.series}
+                    {pu.practicing_since ? ` \u00B7 ${timeSince(pu.practicing_since)}` : ''}
+                    {pu.streak > 0 ? ` \u00B7 ${pu.streak} day streak` : ''}
+                  </Text>
                 </View>
-              )}
-            </View>
+                <TouchableOpacity style={st.praySendBtn}>
+                  <Text style={st.praySendText}>Namaste</Text>
+                </TouchableOpacity>
+              </View>
+            ))
           ) : (
-            <View>
-              {FEED_MOCK.map((f, i) => (
-                <View key={i} style={st.feedItem}>
-                  <Image source={{ uri: f.avatar }} style={st.feedAvatar} />
-                  <View style={st.feedInfo}>
-                    <Text style={st.feedName}>
-                      {f.name} <Text style={st.feedAction}>finished {f.series}</Text>
-                    </Text>
-                    <Text style={st.feedMeta}>{f.time}</Text>
-                  </View>
-                  <View style={st.heartWrap}>
-                    <Ionicons name="heart-outline" size={16} color={warm.muted} />
-                    <Text style={st.heartCount}>{f.hearts}</Text>
-                  </View>
-                </View>
-              ))}
+            <View style={st.friendsBanner}>
+              <Text style={st.friendsBannerText}>No one on the mat yet today</Text>
+              <Text style={[st.friendsBannerText, { fontWeight: '400', marginTop: 2 }]}>Be the first!</Text>
             </View>
           )}
         </View>
@@ -424,7 +501,7 @@ export default function HomeScreen() {
   );
 }
 
-/* Ã¢ÂÂÃ¢ÂÂ Styles Ã¢ÂÂÃ¢ÂÂ */
+/* -- Styles -- */
 const st = StyleSheet.create({
   safe: { flex: 1, backgroundColor: warm.bg },
 
@@ -455,6 +532,71 @@ const st = StyleSheet.create({
   menuItem: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12 },
   menuText: { fontSize: 15, color: warm.ink, fontWeight: '500' },
   menuDivider: { height: 1, backgroundColor: warm.divider, marginHorizontal: 8 },
+
+  /* Questionnaire modal */
+  qOverlay: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  qCard: {
+    backgroundColor: warm.white, borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    padding: 24, paddingBottom: 36,
+  },
+  qTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: warm.ink,
+    textAlign: 'center', marginBottom: 4,
+  },
+  qDuration: {
+    fontSize: 14, color: warm.muted, textAlign: 'center', marginBottom: 20,
+  },
+  qSectionLabel: {
+    fontSize: 14, fontWeight: '600', color: warm.ink, marginBottom: 10, marginTop: 4,
+  },
+  qSeriesRow: {
+    flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16,
+  },
+  qSeriesChip: {
+    paddingHorizontal: 14, paddingVertical: 8,
+    borderRadius: 20, borderWidth: 1.5, borderColor: warm.divider,
+    backgroundColor: warm.cardBg,
+  },
+  qSeriesChipActive: {
+    borderColor: warm.orange, backgroundColor: warm.orangeLight,
+  },
+  qSeriesText: { fontSize: 13, color: warm.inkMid },
+  qSeriesTextActive: { color: warm.orange, fontWeight: '600' },
+  qMoodRow: {
+    flexDirection: 'row', justifyContent: 'space-between', gap: 8, marginBottom: 16,
+  },
+  qMoodBtn: {
+    flex: 1, alignItems: 'center', paddingVertical: 12,
+    borderWidth: 1.5, borderColor: warm.divider, borderRadius: 14,
+    backgroundColor: warm.cardBg,
+  },
+  qMoodBtnActive: {
+    borderColor: warm.orange, backgroundColor: warm.orangeLight,
+  },
+  qMoodLabel: { fontSize: 11, color: warm.muted, marginTop: 4 },
+  qMoodLabelActive: { color: warm.orange, fontWeight: '600' },
+  qInput: {
+    borderWidth: 1.5, borderColor: warm.divider, borderRadius: 14,
+    padding: 14, fontSize: 14, color: warm.ink,
+    minHeight: 56, textAlignVertical: 'top', marginBottom: 20,
+    backgroundColor: warm.bg,
+  },
+  qBtnRow: {
+    flexDirection: 'row', gap: 12,
+  },
+  qSkipBtn: {
+    flex: 1, paddingVertical: 14, borderRadius: 14,
+    borderWidth: 1.5, borderColor: warm.divider, alignItems: 'center',
+  },
+  qSkipText: { fontSize: 15, fontWeight: '600', color: warm.muted },
+  qSaveBtn: {
+    flex: 2, paddingVertical: 14, borderRadius: 14,
+    backgroundColor: warm.orange, alignItems: 'center',
+  },
+  qSaveText: { fontSize: 15, fontWeight: '700', color: '#fff' },
 
   /* Scroll */
   scroll: { flex: 1 },
@@ -533,27 +675,14 @@ const st = StyleSheet.create({
   dayDotToday: { borderWidth: 2, borderColor: warm.orange, backgroundColor: warm.orangeLight },
   dayDotRest: { backgroundColor: warm.divider, borderWidth: 0 },
 
-  /* Mood */
-  moodTitle: { fontSize: 14, fontWeight: '600', color: warm.ink, textAlign: 'center', marginBottom: 10 },
-  moodRow: { flexDirection: 'row', justifyContent: 'center', gap: 8 },
-  moodBtn: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: 14, paddingVertical: 8,
-    borderWidth: 1.5, borderColor: warm.divider, borderRadius: 24,
-    backgroundColor: warm.cardBg,
-  },
-  moodBtnActive: { borderColor: warm.orange, backgroundColor: warm.orangeLight },
-  moodLabel: { fontSize: 13, color: warm.inkMid },
-  moodLabelActive: { color: warm.accent, fontWeight: '600' },
-
   /* Feed */
   feedSection: { marginHorizontal: 16, marginTop: 6 },
   feedHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  feedTabs: { flexDirection: 'row', backgroundColor: warm.divider, borderRadius: 10, padding: 2 },
-  feedTab: { paddingHorizontal: 14, paddingVertical: 5, borderRadius: 8 },
-  feedTabActive: { backgroundColor: warm.cardBg, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 3, elevation: 2 },
-  feedTabText: { fontSize: 12, fontWeight: '600', color: warm.muted },
-  feedTabTextActive: { color: warm.ink },
+  feedCount: {
+    fontSize: 13, fontWeight: '700', color: warm.white,
+    backgroundColor: warm.sage, borderRadius: 10,
+    paddingHorizontal: 8, paddingVertical: 2, overflow: 'hidden',
+  },
   feedItem: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     padding: 12, backgroundColor: warm.cardBg, borderRadius: 14,
@@ -576,10 +705,8 @@ const st = StyleSheet.create({
   },
   praySendText: { fontSize: 12, fontWeight: '600', color: warm.sage },
   friendsBanner: {
-    alignItems: 'center', padding: 10,
+    alignItems: 'center', padding: 14,
     backgroundColor: warm.orangeLight, borderRadius: 12, marginTop: 4,
   },
   friendsBannerText: { fontSize: 13, color: warm.accent, fontWeight: '500' },
-  heartWrap: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  heartCount: { fontSize: 13, color: warm.muted },
 });
