@@ -336,13 +336,14 @@ export async function setPracticingNow(userId: string, practicing: boolean) {
 }
 
 export async function getPracticingNow() {
-  // Only show people who started practicing within the last 1.5 hours
-  const cutoff = new Date(Date.now() - 90 * 60 * 1000).toISOString();
+  // Show everyone who practiced today (since midnight local time)
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
   return supabase
     .from('profiles')
     .select('id, name, avatar_url, series, level, streak, practicing_since')
     .eq('practicing_now', true)
-    .gte('practicing_since', cutoff)
+    .gte('practicing_since', todayStart.toISOString())
     .order('practicing_since', { ascending: false });
 }
 
