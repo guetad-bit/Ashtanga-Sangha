@@ -73,7 +73,7 @@ export default function PostCard({
           <Text style={s.userName}>{userName}</Text>
           {location ? (
             <View style={s.locationRow}>
-              <Ionicons name="location-outline" size={11} color={colors.muted} />
+              <Ionicons name="location-outline" size={11} color="#9B8CB8" />
               <Text style={s.location}>{location}</Text>
             </View>
           ) : null}
@@ -113,18 +113,18 @@ export default function PostCard({
           <Ionicons
             name={liked ? 'heart' : 'heart-outline'}
             size={20}
-            color={liked ? colors.orange : colors.muted}
+            color={liked ? '#F97316' : '#9B8CB8'}
           />
           <Text style={[s.actionLabel, liked && s.actionLabelActive]}>{likes}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={s.actionBtn} onPress={onComment} activeOpacity={0.7}>
-          <Ionicons name="chatbubble-outline" size={19} color={colors.muted} />
+          <Ionicons name="chatbubble-outline" size={19} color="#9B8CB8" />
           <Text style={s.actionLabel}>Comment</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={s.actionBtn} onPress={onShare} activeOpacity={0.7}>
-          <Ionicons name="paper-plane-outline" size={19} color={colors.muted} />
+          <Ionicons name="paper-plane-outline" size={19} color="#9B8CB8" />
           <Text style={s.actionLabel}>Share</Text>
         </TouchableOpacity>
       </View>
@@ -134,7 +134,7 @@ export default function PostCard({
 
 const s = StyleSheet.create({
   card: {
-    backgroundColor: colors.white,
+    backgroundColor: '#1A1432',
     borderRadius: radius['2xl'],
     marginHorizontal: spacing.lg,
     marginBottom: spacing.lg,
@@ -155,31 +155,31 @@ const s = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: colors.skyMid,
+    backgroundColor: '#231A3D',
   },
   avatarRing: {
     position: 'absolute',
     inset: -2,
     borderRadius: 24,
     borderWidth: 2,
-    borderColor: colors.sageL,
+    borderColor: '#7C3AED',
   },
   headerInfo: { flex: 1 },
-  userName: { ...typography.headingSm, color: colors.ink },
+  userName: { ...typography.headingSm, color: '#FFFFFF' },
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
     marginTop: 2,
   },
-  location: { ...typography.bodyXs, color: colors.muted },
-  time: { ...typography.bodyXs, color: colors.mutedL },
+  location: { ...typography.bodyXs, color: '#9B8CB8' },
+  time: { ...typography.bodyXs, color: '#6B5C82' },
 
   // Image — full-bleed, no horizontal margins
   postImage: {
     width: '100%',
     height: 230,
-    backgroundColor: colors.skyMid,
+    backgroundColor: '#231A3D',
   },
 
   // Caption
@@ -190,12 +190,12 @@ const s = StyleSheet.create({
   },
   caption: {
     ...typography.bodyMd,
-    color: colors.inkMid,
+    color: '#E8E0F0',
     lineHeight: 22,
   },
   captionName: {
     ...typography.headingSm,
-    color: colors.ink,
+    color: '#FFFFFF',
   },
 
   // Tags
@@ -206,21 +206,21 @@ const s = StyleSheet.create({
     marginTop: spacing.sm,
   },
   tagPill: {
-    backgroundColor: colors.sky,
+    backgroundColor: '#2D1A54',
     borderRadius: radius.full,
     paddingHorizontal: spacing.sm,
     paddingVertical: 3,
   },
   tagText: {
     ...typography.bodyXs,
-    color: colors.blueDeep,
+    color: '#A855F7',
   },
 
   // Actions
   actions: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderTopColor: colors.sky,
+    borderTopColor: '#231A3D',
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
   },
@@ -234,7 +234,7 @@ const s = StyleSheet.create({
   },
   actionLabel: {
     ...typography.labelSm,
-    color: colors.muted,
+    color: '#9B8CB8',
   },
-  actionLabelActive: { color: colors.orange },
+  actionLabelActive: { color: '#F97316' },
 });
