@@ -36,32 +36,32 @@ interface FeedPost {
   profiles: { name: string; avatar_url: string | null } | null;
 }
 
-/* ── Warm palette (matching Community page redesign) ──────────────────────── */
-const warm = {
-  bg:          '#FAF8F5',
-  cardBg:      '#FFFFFF',
-  headerBg:    '#FFFFFF',
-  ink:         '#3D3229',
-  inkMid:      '#5C4F42',
-  muted:       '#8B7D6E',
-  mutedLight:  '#B5A899',
-  accent:      '#C47B3F',
-  accentLight: '#F0E0CC',
-  sage:        '#7A8B5E',
-  sageBg:      '#E8EDDF',
-  gold:        '#B8944A',
-  goldBg:      '#F5EDD8',
-  amber:       '#C4874D',
-  amberBg:     '#F8E8D4',
-  terra:       '#A0704C',
-  divider:     '#EDE5D8',
-  orange:      '#E8834A',
-  orangeLight: '#FFF0E6',
+/* ── Bold Gradient dark purple palette ──────────────────────────────────────── */
+const bold = {
+  bg:          '#0F0B1E',
+  cardBg:      '#1A1432',
+  headerBg:    '#0F0B1E',
+  ink:         '#FFFFFF',
+  inkMid:      '#E8E0F0',
+  muted:       '#9B8CB8',
+  mutedLight:  '#6B5C82',
+  accent:      '#A855F7',
+  accentLight: '#2D1A54',
+  sage:        '#34D399',
+  sageBg:      '#1A3D2F',
+  gold:        '#FBBF24',
+  goldBg:      '#2D2A0F',
+  amber:       '#F97316',
+  amberBg:     '#2D1A0F',
+  terra:       '#A855F7',
+  divider:     '#231A3D',
+  orange:      '#F97316',
+  orangeLight: '#2D1A0F',
   white:       '#FFFFFF',
-  ring:        '#D4A76A',
-  heartRed:    '#E05555',
-  blue:        '#5B8DB8',
-  blueBg:      '#E8F0F8',
+  ring:        '#7C3AED',
+  heartRed:    '#EF4444',
+  blue:        '#A855F7',
+  blueBg:      '#2D1A54',
 };
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -220,10 +220,10 @@ export default function HomeScreen() {
 
   // Dot color for rhythm
   const dotColor = (status: string) => {
-    if (status === 'done') return warm.orange;
-    if (status === 'today') return warm.blue;
-    if (status === 'rest') return warm.mutedLight;
-    return '#D9D3CA';
+    if (status === 'done') return bold.accent;
+    if (status === 'today') return bold.orange;
+    if (status === 'rest') return bold.divider;
+    return bold.divider;
   };
 
   // ── Render ──
@@ -237,7 +237,7 @@ export default function HomeScreen() {
         </View>
         <View style={s.topbarRight}>
           <TouchableOpacity style={s.notifBtn} activeOpacity={0.7}>
-            <Ionicons name="chatbubble-ellipses" size={22} color={warm.accent} />
+            <Ionicons name="chatbubble-ellipses" size={22} color={bold.accent} />
             <View style={s.notifBadge}>
               <Text style={s.notifBadgeText}>3</Text>
             </View>
@@ -277,7 +277,7 @@ export default function HomeScreen() {
               onPress={() => { setMenuOpen(false); router.push('/(tabs)/profile'); }}
               activeOpacity={0.7}
             >
-              <Ionicons name="person-outline" size={18} color={warm.ink} />
+              <Ionicons name="person-outline" size={18} color={bold.ink} />
               <Text style={s.menuItemText}>My Profile</Text>
             </TouchableOpacity>
             <View style={s.menuDivider} />
@@ -293,7 +293,7 @@ export default function HomeScreen() {
         style={s.scroll}
         contentContainerStyle={s.scrollContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={warm.accent} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={bold.accent} />}
       >
         {/* ── Welcome ── */}
         <Text style={s.welcome}>Welcome back, {user?.name?.split(' ')[0] ?? 'Yogi'}</Text>
@@ -436,31 +436,31 @@ export default function HomeScreen() {
 /* ═══════════════════════════════════════════════════════════════════════════════ */
 
 const s = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: warm.bg },
+  safe: { flex: 1, backgroundColor: bold.bg },
 
   /* ── Top bar ───────────────────────────────────────────────────────────────── */
   topbar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: spacing.xl, paddingVertical: spacing.md,
-    backgroundColor: warm.bg,
+    backgroundColor: bold.bg,
   },
   topbarLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   topbarRight: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   appTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: warm.ink, lineHeight: 22,
+    color: bold.ink, lineHeight: 22,
   },
   notifBtn: { position: 'relative' as any },
   notifBadge: {
     position: 'absolute' as any, top: -4, right: -6,
-    backgroundColor: warm.orange, borderRadius: 8,
+    backgroundColor: bold.orange, borderRadius: 8,
     width: 16, height: 16, alignItems: 'center' as any, justifyContent: 'center' as any,
-    borderWidth: 1.5, borderColor: warm.bg,
+    borderWidth: 1.5, borderColor: bold.bg,
   },
   notifBadgeText: { fontSize: 9, fontWeight: '700' as any, color: '#fff' },
-  avatar: { width: 38, height: 38, borderRadius: 19, borderWidth: 2, borderColor: warm.ring },
+  avatar: { width: 38, height: 38, borderRadius: 19, borderWidth: 2, borderColor: bold.ring },
   avatarPlaceholder: {
-    backgroundColor: warm.accent, alignItems: 'center' as any, justifyContent: 'center' as any,
+    backgroundColor: bold.accent, alignItems: 'center' as any, justifyContent: 'center' as any,
   },
   avatarLetter: { fontSize: 16, color: '#fff', fontWeight: '600' as any },
   avatarLetterSm: { fontSize: 14, color: '#fff', fontWeight: '600' as any },
@@ -472,7 +472,7 @@ const s = StyleSheet.create({
     paddingTop: 95, paddingRight: spacing.lg,
   },
   menuContainer: {
-    backgroundColor: '#fff', borderRadius: radius.xl,
+    backgroundColor: bold.cardBg, borderRadius: radius.xl,
     width: 240, ...shadows.lg, overflow: 'hidden' as any,
   },
   menuHeader: {
@@ -482,15 +482,15 @@ const s = StyleSheet.create({
   menuAvatar: { width: 40, height: 40, borderRadius: 20 },
   menuName: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 16, lineHeight: 20,
-    color: warm.ink,
+    color: bold.ink,
   },
-  menuEmail: { ...typography.bodyXs, color: warm.muted, marginTop: 1 },
-  menuDivider: { height: 1, backgroundColor: warm.divider },
+  menuEmail: { ...typography.bodyXs, color: bold.muted, marginTop: 1 },
+  menuDivider: { height: 1, backgroundColor: bold.divider },
   menuItem: {
     flexDirection: 'row' as any, alignItems: 'center' as any, gap: spacing.md,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
   },
-  menuItemText: { ...typography.bodyMd, color: warm.ink },
+  menuItemText: { ...typography.bodyMd, color: bold.ink },
 
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
@@ -498,7 +498,7 @@ const s = StyleSheet.create({
   /* ── Welcome ───────────────────────────────────────────────────────────────── */
   welcome: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, lineHeight: 28,
-    color: warm.ink, textAlign: 'center' as any,
+    color: bold.ink, textAlign: 'center' as any,
     paddingVertical: spacing.md,
   },
 
@@ -509,20 +509,20 @@ const s = StyleSheet.create({
     marginBottom: spacing.md,
   },
   yogisCountText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 15, color: warm.ink,
+    fontFamily: 'DMSans_400Regular', fontSize: 15, color: bold.ink,
     marginBottom: 10,
   },
   yogisCountBold: {
-    fontFamily: 'DMSans_700Bold', fontSize: 15, color: '#3B6FC0',
+    fontFamily: 'DMSans_700Bold', fontSize: 15, color: bold.accent,
   },
   yogisAvatarRow: {
     flexDirection: 'row' as any, justifyContent: 'center' as any,
   },
   yogisAvatarWrap: {
     width: 44, height: 44, borderRadius: 22,
-    borderWidth: 2.5, borderColor: '#fff',
+    borderWidth: 2.5, borderColor: bold.cardBg,
     overflow: 'hidden' as any,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 4,
+    shadowColor: bold.accent, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 4,
     elevation: 3,
   },
   yogisAvatar: {
@@ -547,7 +547,7 @@ const s = StyleSheet.create({
     justifyContent: 'center' as any,
     alignItems: 'center' as any,
     paddingHorizontal: 24,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(15,11,30,0.85)',
     borderRadius: 20,
   },
   heroTitle: {
@@ -574,13 +574,13 @@ const s = StyleSheet.create({
     alignItems: 'center' as any, justifyContent: 'center' as any,
   },
   heroBtnDefault: {
-    backgroundColor: '#3B6FC0',
-    shadowColor: 'rgba(59,111,192,0.4)',
+    backgroundColor: '#A855F7',
+    shadowColor: 'rgba(168,85,247,0.4)',
     shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 16,
   },
   heroBtnOnMat: {
-    backgroundColor: '#E8834A',
-    shadowColor: 'rgba(232,131,74,0.4)',
+    backgroundColor: '#F97316',
+    shadowColor: 'rgba(249,115,22,0.4)',
     shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 16,
   },
   heroBtnText: {
@@ -591,14 +591,14 @@ const s = StyleSheet.create({
   /* ── Rhythm card ───────────────────────────────────────────────────────────── */
   rhythmCard: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
-    backgroundColor: warm.cardBg, borderRadius: 20,
+    backgroundColor: bold.cardBg, borderRadius: 20,
     padding: spacing.xl,
     ...shadows.sm,
-    borderWidth: 1, borderColor: warm.divider,
+    borderWidth: 1, borderColor: bold.divider,
   },
   rhythmTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: warm.ink, marginBottom: spacing.lg,
+    color: bold.ink, marginBottom: spacing.lg,
   },
   rhythmRow: {
     flexDirection: 'row' as any, justifyContent: 'space-between' as any,
@@ -606,26 +606,26 @@ const s = StyleSheet.create({
   },
   rhythmCol: { alignItems: 'center' as any, gap: 6 },
   rhythmLabel: {
-    fontFamily: 'DMSans_500Medium', fontSize: 12, color: warm.muted,
+    fontFamily: 'DMSans_500Medium', fontSize: 12, color: bold.muted,
   },
   rhythmDot: { width: 10, height: 10, borderRadius: 5 },
   rhythmDivider: {
-    height: 1, backgroundColor: warm.divider, marginVertical: spacing.md,
+    height: 1, backgroundColor: bold.divider, marginVertical: spacing.md,
   },
   rhythmStats: {
     flexDirection: 'row' as any, alignItems: 'center' as any,
     justifyContent: 'center' as any, gap: spacing.md,
   },
   rhythmStatText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.inkMid,
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: bold.inkMid,
     textAlign: 'center' as any,
   },
   streakBadge: {
-    backgroundColor: warm.orangeLight, borderRadius: radius.full,
+    backgroundColor: bold.amberBg, borderRadius: radius.full,
     paddingHorizontal: spacing.md, paddingVertical: 3,
   },
   streakText: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: warm.orange,
+    fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: bold.orange,
   },
   moonRow: {
     flexDirection: 'row' as any, alignItems: 'center' as any,
@@ -633,7 +633,7 @@ const s = StyleSheet.create({
   },
   moonIcon: { fontSize: 16 },
   moonText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: warm.muted,
+    fontFamily: 'DMSans_400Regular', fontSize: 13, color: bold.muted,
   },
 
   /* ── Live Practice Feed ────────────────────────────────────────────────────── */
@@ -642,11 +642,11 @@ const s = StyleSheet.create({
   },
   feedTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20,
-    color: warm.ink, marginBottom: 14,
+    color: bold.ink, marginBottom: 14,
   },
   feedCard: {
-    backgroundColor: warm.cardBg, borderRadius: 16,
-    borderWidth: 1, borderColor: warm.divider,
+    backgroundColor: bold.cardBg, borderRadius: 16,
+    borderWidth: 1, borderColor: bold.divider,
     marginBottom: 12, overflow: 'hidden' as any,
   },
   feedCardInner: {
@@ -662,22 +662,22 @@ const s = StyleSheet.create({
     width: 40, height: 40, borderRadius: 20,
   },
   feedUserName: {
-    fontFamily: 'DMSans_700Bold', fontSize: 15, color: warm.ink,
+    fontFamily: 'DMSans_700Bold', fontSize: 15, color: bold.ink,
   },
   feedTimeAgo: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: warm.muted,
+    fontFamily: 'DMSans_400Regular', fontSize: 13, color: bold.muted,
   },
   feedCaption: {
-    fontFamily: 'DMSans_400Regular', fontSize: 15, color: warm.ink, marginBottom: 10,
+    fontFamily: 'DMSans_400Regular', fontSize: 15, color: bold.ink, marginBottom: 10,
   },
   feedStats: {
     flexDirection: 'row' as any, gap: 14, alignItems: 'center' as any,
   },
   feedHeart: {
-    fontFamily: 'DMSans_500Medium', fontSize: 14, color: '#E05A5A',
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: bold.heartRed,
   },
   feedComment: {
-    fontFamily: 'DMSans_500Medium', fontSize: 14, color: warm.muted,
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: bold.muted,
   },
   feedCardImage: {
     width: 130, height: 'auto' as any, minHeight: 120,
