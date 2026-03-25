@@ -1,4 +1,254 @@
-', '#5C3D28']}
+// src/screens/profile/ProfileScreen.tsx
+import React, { useState, useEffect } from 'react';
+import {
+  View, Text, ScrollView, TouchableOpacity, TextInput,
+  StyleSheet, Image, Alert, ActivityIndicator, RefreshControl,
+  Platform, Modal, Pressable,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { spacing } from '@/styles/tokens';
+import { useAppStore, Series, Level } from '@/store/useAppStore';
+import { upsertProfile, signOut, getProfile, uploadAvatar } from '@/lib/supabase';
+import AppLogo from '@/components/AppLogo';
+
+/* ── Warm palette ── */
+const warm = {
+  bg:      '#FAF6F0',
+  card:    '#FFFFFF',
+  ink:     '#3D3229',
+  inkMid:  '#5C4D3C',
+  orange:  '#E8834A',
+  orangeL: '#F0A070',
+  sage:    '#7A8B5E',
+  sageL:   '#9BAA7E',
+  muted:   '#8B7D6E',
+  mutedL:  '#B5A899',
+  border:  '#E8DDD0',
+  borderL: '#F0E8DD',
+  field:   '#F5F0EA',
+};
+
+const SERIES_OPTIONS: { value: Series; label: string; emoji: string }[] = [
+  { value: 'sun_sals',     label: 'Sun Salutations', emoji: '☀️' },
+  { value: 'primary',      label: 'Primary',         emoji: '🧘' },
+  { value: 'intermediate', label: 'Intermediate',    emoji: '🔥' },
+  { value: 'advanced_a',   label: 'Advanced A',      emoji: '⚡' },
+  { value: 'advanced_b',   label: 'Advanced B',      emoji: '🌟' },
+  { value: 'short',        label: 'Short',           emoji: '🕐' },
+];
+
+const LEVEL_OPTIONS: { value: Level; label: string }[] = [
+  { value: 'beginner',     label: 'Beginner' },
+  { value: 'regular',      label: 'Regular' },
+  { value: 'intermediate', label: 'Intermediate' },
+  { value: 'advanced',     label: 'Advanced' },
+  { value: 'teacher',      label: 'Teacher' },
+];
+
+const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+const currentYear = new Date().getFullYear();
+
+export default function ProfileScreen() {
+  const insets = useSafeAreaInsets();
+  const { user, setUser, clearUser, practiceLogs } = useAppStore();
+
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [refreshing, setRefreshing] 4 useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
+
+  // Editable fields
+  const [name, setName] = useState(user?.name ?? '');
+  const [bio, setBio] = useState(user?.bio ?? '');
+  const [location, setLocation] = useState(user?.location ?? '');
+  const [series, setSeries] = useState<Series>(user?.series ?? 'primary');
+  const [level, setLevel] = useState<Level>(user?.level ?? 'beginner');
+  const [teacher, setTeacher] = useState(user?.teacher ?? '');
+  const [practicingSince, setPracticingSince] = useState(user?.practicingSince?.toString() ?? '');
+
+  const streak = practiceLogs.length > 0
+    ? (() => {
+        const td = new Date();
+        td.setHours(0, 0, 0, 0);
+        let count = 0;
+        for (let i = 0; i < 365; i++) {
+          const d = new Date(td);
+          d.setDate(td.getDate() - i);
+          const key = d.toISOString().split('T')[0];
+          if (practiceLogs.some((l) => l.loggedAt.split('T')[0] === key)) count++;
+          else if (i > 0) break;
+        }
+        return count;
+      })()
+    : 0;
+  const totalPractices = practiceLogs.length;
+  const totalHours = Math.round(practiceLogs.reduce((sum, l) => sum + l.durationMin, 0) / 60);
+
+  // Last 7 days rhythm
+  const today = new Date();
+  const last7 = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() - (6 - i));
+    const key = d.toISOString().split('T')[0];
+    const practiced = practiceLogs.some((l) => l.loggedAt.split('T')[0] === key);
+    return { label: DAY_LABELS[d.getDay()], practiced, isToday: i === 6 };
+  });
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+      setBio(user.bio ?? '');
+      setLocation(user.location ?? '');
+      setSeries(user.series);
+      setLevel(user.level);
+      setTeacher(user.teacher ?? '');
+      setPracticingSince(user.practicingSince?.toString() ?? '');
+    }
+  }, [user]);
+
+  const onRefresh = async () => {
+    if (!user) return;
+    setRefreshing(true);
+    const { data } = await getProfile(user.id);
+    if (data) {
+      setUser({
+        ...user,
+        name: data.name ?? user.name,
+        bio: data.bio ?? '',
+        location: data.location ?? '',
+        series: (data.series as Series) ?? user.series,
+        level: (data.level as Level) ?? user.level,
+        avatarUrl: data.avatar_url ?? user.avatarUrl,
+        teacher: data.teacher ?? '',
+        practicingSince: data.practicing_since ?? undefined,
+      });
+    }
+    setRefreshing(false);
+  };
+
+  /* ── Photo picker (always available) ── */
+  const handlePickPhoto = () => {
+    if (Platform.OS === 'web') {
+      // On web, Alert.alert with custom buttons doesn't work — go straight to library
+      pickImage('library');
+    } else {
+      setShowPhotoModal(true);
+    }
+  };
+
+  const pickImage = async (source: 'camera' | 'library') => {
+    if (!user) return;
+    if (source === 'camera') {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') { Alert.alert('Permission needed', 'Camera access required.'); return; }
+    } else {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') { Alert.alert('Permission needed', 'Photo library access required.'); return; }
+    }
+    const result = source === 'camera'
+      ? await ImagePicker.launchCameraAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.7 })
+      : await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.7 });
+    if (result.canceled || !result.assets?.[0]) return;
+    setUploadingPhoto(true);
+    const asset = result.assets[0];
+    const { url, error } = await uploadAvatar(user.id, asset.uri, asset.mimeType);
+    if (error) { Alert.alert('Upload failed', error.message); }
+    else if (url) { setUser({ ...user, avatarUrl: url }); }
+    setUploadingPhoto(false);
+  };
+
+  const handleSave = async () => {
+    if (!user) return;
+    if (!name.trim()) { Alert.alert('Name required', 'Please enter your name.'); return; }
+    setSaving(true);
+    const yearNum = practicingSince ? parseInt(practicingSince, 10) : undefined;
+    const validYear = yearNum && yearNum >= 1950 && yearNum <= currentYear ? yearNum : undefined;
+    const { error } = await upsertProfile({
+      id: user.id, name: name.trim(), series, level,
+      location: location.trim() || undefined,
+      bio: bio.trim() || undefined,
+      teacher: teacher.trim() || undefined,
+      practicing_since: validYear,
+    });
+    if (error) { Alert.alert('Error', error.message); setSaving(false); return; }
+    setUser({
+      ...user,
+      name: name.trim(), bio: bio.trim(), series, level,
+      location: location.trim(),
+      teacher: teacher.trim(),
+      practicingSince: validYear,
+    });
+    setEditing(false);
+    setSaving(false);
+  };
+
+  const handleCancel = () => {
+    setName(user?.name ?? '');
+    setBio(user?.bio ?? '');
+    setLocation(user?.location ?? '');
+    setSeries(user?.series ?? 'primary');
+    setLevel(user?.level ?? 'beginner');
+    setTeacher(user?.teacher ?? '');
+    setPracticingSince(user?.practicingSince?.toString() ?? '');
+    setEditing(false);
+  };
+
+  const handleSignOut = () => {
+    if (Platform.OS === 'web') {
+      setShowSignOutModal(true);
+    } else {
+      Alert.alert('Sign Out', 'Are you sure?', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign Out', style: 'destructive', onPress: async () => { await signOut(); clearUser(); } },
+      ]);
+    }
+  };
+
+  const currentSeriesOpt = SERIES_OPTIONS.find((s) => s.value === (user?.series ?? 'primary'));
+  const currentLevelOpt  = LEVEL_OPTIONS.find((l) => l.value === (user?.level ?? 'beginner'));
+
+  return (
+    <View style={[st.root, { paddingTop: insets.top }]}>
+
+      {/* ── Top bar ── */}
+      <View style={st.topbar}>
+        <View style={st.topbarLeft}>
+          <AppLogo size={34} />
+          <Text style={st.appTitle}>Ashtanga Sangha</Text>
+        </View>
+        {editing ? (
+          <View style={st.topbarActions}>
+            <TouchableOpacity onPress={handleCancel} style={st.cancelBtn}>
+              <Text style={st.cancelText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleSave} disabled={saving} style={st.saveBtn}>
+              {saving ? <ActivityIndicator color="#fff" size="small" /> : <Text style={st.saveBtnText}>Save</Text>}
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity onPress={() => setEditing(true)} style={st.editBtn} activeOpacity={0.7}>
+            <Ionicons name="pencil" size={14} color={warm.ink} />
+            <Text style={st.editBtnText}>Edit</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      <ScrollView
+        style={st.scroll}
+        contentContainerStyle={st.scrollContent}
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={warm.orange} />}
+      >
+        {/* ── Hero gradient card ── */}
+        <View style={st.heroCard}>
+          <LinearGradient
+            colors={['#D4A574', '#B87D4A', '#8B5E3C', '#5C3D28']}
             locations={[0, 0.35, 0.7, 1]}
             style={st.heroGradient}
           >
@@ -308,7 +558,7 @@ const st = StyleSheet.create({
   },
 
   /* Avatar */
-  XeatarWrap: { position: 'relative', marginBottom: 12 },
+  avatarWrap: { position: 'relative', marginBottom: 12 },
   avatar: {
     width: 96, height: 96, borderRadius: 48,
     backgroundColor: warm.orange,
@@ -398,7 +648,7 @@ const st = StyleSheet.create({
   },
 
   /* Weekly rhythm */
- &HethmRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  rhythmRow: { flexDirection: 'row', justifyContent: 'space-between' },
   rhythmDay: { alignItems: 'center', gap: 6 },
   rhythmDot: {
     width: 30, height: 30, borderRadius: 15,
