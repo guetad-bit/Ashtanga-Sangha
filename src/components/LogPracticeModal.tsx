@@ -31,22 +31,22 @@ const DURATION_OPTIONS = [30, 45, 60, 75, 90, 120];
 // Three modal steps
 type ModalStep = 'select_series' | 'on_the_mat' | 'questionnaire';
 
-/* ── warm palette ──────────────────────────────────────────────────────────── */
-const warm = {
-  bg: '#FAF8F5',
-  cardBg: '#FFFFFF',
-  ink: '#3D3229',
-  inkMid: '#5C4F42',
-  muted: '#8B7D6E',
-  accent: '#C47B3F',
-  sage: '#7A8B5E',
-  sageBg: '#E8EDDF',
-  orange: '#E8834A',
-  orangeLight: '#FFF0E6',
-  divider: '#EDE5D8',
-  blue: '#5B8DB8',
-  blueBg: '#E8F0F8',
-  white: '#FFFFFF',
+/* ── bold palette ──────────────────────────────────────────────────────────── */
+const bold = {
+  bg: '#0F0B1E',
+  cardBg: '#1A1432',
+  ink: '#FFFFFF',
+  inkMid: '#E8E0F0',
+  muted: '#9B8CB8',
+  accent: '#A855F7',
+  sage: '#34D399',
+  sageBg: '#1A3D2F',
+  orange: '#F97316',
+  orangeLight: '#2D1A0F',
+  divider: '#231A3D',
+  blue: '#A855F7',
+  blueBg: '#2D1A54',
+  white: '#1A1432',
 };
 
 export default function LogPracticeModal() {
@@ -341,7 +341,7 @@ export default function LogPracticeModal() {
               <TextInput
                 style={styles.input}
                 placeholder="e.g. Navasana, Marichyasana C..."
-                placeholderTextColor={warm.muted}
+                placeholderTextColor={bold.muted}
                 value={stoppedAt}
                 onChangeText={setStoppedAt}
               />
@@ -351,7 +351,7 @@ export default function LogPracticeModal() {
               <TextInput
                 style={styles.input}
                 placeholder="e.g. Jump-backs, deeper twists..."
-                placeholderTextColor={warm.muted}
+                placeholderTextColor={bold.muted}
                 value={workingOn}
                 onChangeText={setWorkingOn}
               />
@@ -361,7 +361,7 @@ export default function LogPracticeModal() {
               <TextInput
                 style={[styles.input, styles.textArea]}
                 placeholder="Notes about your practice..."
-                placeholderTextColor={warm.muted}
+                placeholderTextColor={bold.muted}
                 value={notes}
                 onChangeText={setNotes}
                 multiline
@@ -390,52 +390,52 @@ export default function LogPracticeModal() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: warm.bg },
+  container: { flex: 1, backgroundColor: bold.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: warm.divider, backgroundColor: warm.white,
+    borderBottomWidth: 1, borderBottomColor: bold.divider, backgroundColor: bold.cardBg,
   },
   closeBtn: { width: 60 },
-  closeBtnText: { ...typography.labelLg, color: warm.blue },
+  closeBtnText: { ...typography.labelLg, color: bold.accent },
   headerTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: warm.ink,
+    color: bold.ink,
   },
   scroll: { flex: 1 },
   scrollContent: { padding: spacing.xl, paddingBottom: spacing['4xl'] },
 
   // Date card
   dateCard: {
-    alignItems: 'center', backgroundColor: warm.white,
+    alignItems: 'center', backgroundColor: bold.cardBg,
     borderRadius: radius['2xl'], padding: spacing.xl,
     marginBottom: spacing['2xl'], ...shadows.sm,
-    borderWidth: 1, borderColor: warm.divider,
+    borderWidth: 1, borderColor: bold.divider,
   },
   dateEmoji: { fontSize: 32, marginBottom: spacing.sm },
   dateText: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: warm.ink,
+    color: bold.ink,
   },
 
   // Active practicing card (Step 2)
   activeCard: {
-    alignItems: 'center', backgroundColor: warm.white,
+    alignItems: 'center', backgroundColor: bold.cardBg,
     borderRadius: radius['2xl'], padding: spacing['2xl'],
     marginBottom: spacing['2xl'], ...shadows.sm,
-    borderWidth: 2, borderColor: warm.sage,
+    borderWidth: 2, borderColor: bold.sage,
   },
   activeEmoji: { fontSize: 48, marginBottom: spacing.md },
   activeTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22,
-    color: warm.sage, marginBottom: spacing.sm,
+    color: bold.sage, marginBottom: spacing.sm,
   },
-  activeSub: { ...typography.bodySm, color: warm.muted, textAlign: 'center', lineHeight: 20 },
+  activeSub: { ...typography.bodySm, color: bold.muted, textAlign: 'center', lineHeight: 20 },
 
   // Section labels
   sectionLabel: {
     fontFamily: 'DMSans_600SemiBold', fontSize: 16,
-    color: warm.ink, marginBottom: spacing.md,
+    color: bold.ink, marginBottom: spacing.md,
   },
 
   // Series grid
@@ -444,36 +444,36 @@ const styles = StyleSheet.create({
     gap: spacing.md, marginBottom: spacing['2xl'],
   },
   seriesCard: {
-    width: '47%', backgroundColor: warm.white,
+    width: '47%', backgroundColor: bold.cardBg,
     borderRadius: radius.xl, padding: spacing.lg,
-    borderWidth: 2, borderColor: warm.divider, position: 'relative',
+    borderWidth: 2, borderColor: bold.divider, position: 'relative',
   },
   seriesCardSmall: {
-    width: '47%', backgroundColor: warm.white,
+    width: '47%', backgroundColor: bold.cardBg,
     borderRadius: radius.lg, paddingVertical: spacing.md, paddingHorizontal: spacing.md,
-    borderWidth: 2, borderColor: warm.divider,
+    borderWidth: 2, borderColor: bold.divider,
     flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
   },
-  seriesCardSelected: { borderColor: warm.blue, backgroundColor: warm.blueBg },
+  seriesCardSelected: { borderColor: bold.accent, backgroundColor: bold.blueBg },
   seriesEmoji: { fontSize: 24, marginBottom: spacing.sm },
   seriesEmojiSmall: { fontSize: 18 },
   seriesLabel: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: warm.ink,
+    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: bold.ink,
   },
   seriesLabelSmall: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.ink, flex: 1,
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: bold.ink, flex: 1,
   },
-  seriesLabelSelected: { color: warm.blue },
+  seriesLabelSelected: { color: bold.accent },
   checkMark: {
     position: 'absolute', top: spacing.sm, right: spacing.sm,
     width: 22, height: 22, borderRadius: 11,
-    backgroundColor: warm.blue, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: bold.accent, alignItems: 'center', justifyContent: 'center',
   },
   checkMarkText: { color: '#fff', fontSize: 13, fontWeight: '700' },
 
   // Go on mat button (Step 1)
   goBtn: {
-    backgroundColor: warm.sage, borderRadius: radius['2xl'],
+    backgroundColor: bold.accent, borderRadius: radius['2xl'],
     paddingVertical: spacing.xl, alignItems: 'center', ...shadows.md,
   },
   goBtnText: {
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
 
   // Finish practice button (Step 2)
   finishBtn: {
-    backgroundColor: warm.orange, borderRadius: radius['2xl'],
+    backgroundColor: bold.orange, borderRadius: radius['2xl'],
     paddingVertical: spacing.xl, alignItems: 'center', ...shadows.md,
   },
   finishBtnText: {
@@ -496,17 +496,17 @@ const styles = StyleSheet.create({
   },
   questionnaireEmoji: { fontSize: 36, marginBottom: spacing.sm },
   questionnaireTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: warm.ink,
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: bold.ink,
     marginBottom: 4,
   },
   questionnaireSub: {
-    ...typography.bodySm, color: warm.muted, textAlign: 'center',
+    ...typography.bodySm, color: bold.muted, textAlign: 'center',
   },
 
   // Question labels
   qLabel: {
     fontFamily: 'DMSans_600SemiBold', fontSize: 15,
-    color: warm.ink, marginBottom: spacing.sm, marginTop: spacing.lg,
+    color: bold.ink, marginBottom: spacing.sm, marginTop: spacing.lg,
   },
 
   // Mood chips
@@ -516,18 +516,18 @@ const styles = StyleSheet.create({
   },
   moodChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: warm.white, borderRadius: radius.full,
+    backgroundColor: bold.cardBg, borderRadius: radius.full,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderWidth: 1.5, borderColor: warm.divider,
+    borderWidth: 1.5, borderColor: bold.divider,
   },
   moodChipSelected: {
-    borderColor: warm.orange, backgroundColor: warm.orangeLight,
+    borderColor: bold.orange, backgroundColor: bold.orangeLight,
   },
   moodEmoji: { fontSize: 16 },
   moodLabel: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.ink,
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: bold.ink,
   },
-  moodLabelSelected: { color: warm.orange },
+  moodLabelSelected: { color: bold.orange },
 
   // Duration chips
   durationRow: {
@@ -535,24 +535,24 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   durationChip: {
-    backgroundColor: warm.white, borderRadius: radius.full,
+    backgroundColor: bold.cardBg, borderRadius: radius.full,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderWidth: 1.5, borderColor: warm.divider,
+    borderWidth: 1.5, borderColor: bold.divider,
   },
   durationChipSelected: {
-    borderColor: warm.sage, backgroundColor: warm.sageBg,
+    borderColor: bold.accent, backgroundColor: bold.blueBg,
   },
   durationText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.ink,
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: bold.ink,
   },
-  durationTextSelected: { color: warm.sage },
+  durationTextSelected: { color: bold.accent },
 
   // Text inputs
   input: {
-    backgroundColor: warm.white, borderRadius: radius.lg,
-    borderWidth: 1.5, borderColor: warm.divider,
+    backgroundColor: bold.cardBg, borderRadius: radius.lg,
+    borderWidth: 1.5, borderColor: bold.divider,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    ...typography.bodyMd, color: warm.ink,
+    ...typography.bodyMd, color: bold.ink,
     marginBottom: spacing.sm,
   },
   textArea: {
@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
 
   // Save button (Step 3)
   saveBtn: {
-    backgroundColor: warm.sage, borderRadius: radius['2xl'],
+    backgroundColor: bold.accent, borderRadius: radius['2xl'],
     paddingVertical: spacing.xl, alignItems: 'center',
     marginTop: spacing.xl, ...shadows.md,
   },
