@@ -13,8 +13,8 @@ export default function TabLayout() {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: colors.ink,
-          tabBarInactiveTintColor: colors.mutedL,
+          tabBarActiveTintColor: '#A855F7',
+          tabBarInactiveTintColor: '#6B5C82',
           tabBarStyle: styles.tabBar,
           tabBarLabelStyle: styles.tabLabel,
         }}
@@ -47,22 +47,22 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="profile"
+          name="library"
           options={{
-            title: 'Profile',
+            title: 'Library',
             tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? 'person' : 'person-outline'} size={22} color={color} />
+              <Ionicons name={focused ? 'book' : 'book-outline'} size={22} color={color} />
             ),
           }}
         />
         <Tabs.Screen
-          name="library"
+          name="gatherings"
           options={{
             href: null,
           }}
         />
         <Tabs.Screen
-          name="gatherings"
+          name="profile"
           options={{
             href: null,
           }}
@@ -75,8 +75,8 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: colors.white,
-    borderTopColor: colors.skyMid,
+    backgroundColor: '#0F0B1E',
+    borderTopColor: '#231A3D',
     borderTopWidth: 1,
     paddingTop: 6,
     height: Platform.OS === 'web' ? 65 : 85,
