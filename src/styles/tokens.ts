@@ -2,46 +2,46 @@
 // Single source of truth for all design tokens
 
 export const colors = {
-  // Sky palette — backgrounds, subtle fills
-  sky: '#EEF4FB',
-  skyMid: '#DDEAF6',
-  skyDeep: '#B8D4EE',
+  // Sky palette — backgrounds, subtle fills (dark purple theme)
+  sky: '#0F0B1E',
+  skyMid: '#1A1432',
+  skyDeep: '#231A3D',
 
-  // Blue palette — primary actions, links, focus
-  blue: '#4A90C4',
-  blueL: '#6AABD8',
-  blueDeep: '#2C6A96',
+  // Blue palette → Purple gradient (primary actions, links, focus)
+  blue: '#A855F7',
+  blueL: '#7C3AED',
+  blueDeep: '#5B21B6',
 
-  // Sand palette — moon days, rest states
-  sand: '#F7F0E6',
-  sandMid: '#EDE3D4',
-  sandDeep: '#C8B49A',
+  // Sand palette → Emerald/success (rest states, nature accents)
+  sand: '#34D399',
+  sandMid: '#6EE7B7',
+  sandDeep: '#1A3D2F',
 
-  // Sage palette — success, nature accents
-  sage: '#6B8F71',
-  sageL: '#9DB8A0',
-  sagePale: '#E8F0E9',
+  // Sage palette → Emerald (success, nature accents)
+  sage: '#34D399',
+  sageL: '#6EE7B7',
+  sagePale: '#1A3D2F',
 
-  // Orange palette — streaks, urgent, FAB
-  orange: '#E8834A',
-  orangeL: '#F0A070',
-  orangePale: '#FDF0E8',
+  // Orange palette — streaks, urgent, FAB (stays warm)
+  orange: '#F97316',
+  orangeL: '#FDBA74',
+  orangePale: '#2D1A0F',
 
-  // Ink palette — text
-  ink: '#1C2B3A',
-  inkMid: '#3A4F63',
+  // Ink palette → White/light text
+  ink: '#FFFFFF',
+  inkMid: '#E8E0F0',
 
-  // Muted — secondary text, placeholders
-  muted: '#7A8E9E',
-  mutedL: '#A8BBCA',
+  // Muted — secondary text, placeholders (faded purple)
+  muted: '#9B8CB8',
+  mutedL: '#6B5C82',
 
-  // Base
-  white: '#FFFFFF',
-  page: '#F3F7FB',
+  // Base (glass and white-ish)
+  white: '#1A1432',
+  page: '#0F0B1E',
 
-  // Onboarding dark backgrounds
-  obDark: '#0D1922',
-  obDarkMid: '#152435',
+  // Dark backgrounds (already dark, adjusted for consistency)
+  obDark: '#0F0B1E',
+  obDarkMid: '#1A1432',
 } as const;
 
 export const spacing = {
