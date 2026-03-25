@@ -1,7 +1,7 @@
 // src/components/LogPracticeModal.tsx
 import React, { useState } from 'react';
 import {
-  View, Text, Modal, TouchableOpacity,
+  View, Text, Modal, TouchableOpacity, TextInput,
   StyleSheet, ScrollView, ActivityIndicator, Alert,
   KeyboardAvoidingView, Platform,
 } from 'react-native';
@@ -18,7 +18,36 @@ const SERIES_OPTIONS = [
   { value: 'short', label: 'Short Practice', emoji: '🕐' },
 ] as const;
 
-const PRACTICE_DURATION = 90; // 1.5 hours in minutes
+const MOOD_OPTIONS = [
+  { value: 'strong', label: 'Strong', emoji: '🔥' },
+  { value: 'steady', label: 'Steady', emoji: '🧘' },
+  { value: 'challenging', label: 'Challenging', emoji: '💧' },
+  { value: 'low_energy', label: 'Low Energy', emoji: '🌙' },
+  { value: 'blissful', label: 'Blissful', emoji: '✨' },
+] as const;
+
+const DURATION_OPTIONS = [30, 45, 60, 75, 90, 120];
+
+// Three modal steps
+type ModalStep = 'select_series' | 'on_the_mat' | 'questionnaire';
+
+/* ── warm palette ──────────────────────────────────────────────────────────── */
+const warm = {
+  bg: '#FAF8F5',
+  cardBg: '#FFFFFF',
+  ink: '#3D3229',
+  inkMid: '#5C4F42',
+  muted: '#8B7D6E',
+  accent: '#C47B3F',
+  sage: '#7A8B5E',
+  sageBg: '#E8EDDF',
+  orange: '#E8834A',
+  orangeLight: '#FFF0E6',
+  divider: '#EDE5D8',
+  blue: '#5B8DB8',
+  blueBg: '#E8F0F8',
+  white: '#FFFFFF',
+};
 
 export default function LogPracticeModal() {
   const {
@@ -27,13 +56,34 @@ export default function LogPracticeModal() {
     isPracticing, setIsPracticing,
   } = useAppStore();
 
+  const [step, setStep] = useState<ModalStep>('select_series');
   const [selectedSeries, setSelectedSeries] = useState('primary');
   const [saving, setSaving] = useState(false);
 
-  const handleClose = () => {
-    setLogModalOpen(false);
+  // Questionnaire state
+  const [mood, setMood] = useState('');
+  const [duration, setDuration] = useState(90);
+  const [stoppedAt, setStoppedAt] = useState('');
+  const [notes, setNotes] = useState('');
+  const [workingOn, setWorkingOn] = useState('');
+
+  const resetForm = () => {
+    setStep('select_series');
+    setSelectedSeries('primary');
+    setMood('');
+    setDuration(90);
+    setStoppedAt('');
+    setNotes('');
+    setWorkingOn('');
   };
 
+  const handleClose = () => {
+    setLogModalOpen(false);
+    // Don't reset step if currently on the mat — preserve state
+    if (!isPracticing) resetForm();
+  };
+
+  // Step 1 → Step 2: Go on the mat
   const handleGoOnMat = async () => {
     if (!user) {
       Alert.alert('Not signed in', 'Please sign in first.');
@@ -43,8 +93,32 @@ export default function LogPracticeModal() {
     try {
       await setPracticingNow(user.id, true);
       setIsPracticing(true);
+      setStep('on_the_mat');
+    } catch {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
-      const { error } = await logPractice(user.id, selectedSeries, PRACTICE_DURATION);
+  // Step 2 → Step 3: Finish practice → open questionnaire
+  const handleFinishPractice = () => {
+    setStep('questionnaire');
+  };
+
+  // Step 3: Save the practice log
+  const handleSaveLog = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      const fullNotes = [
+        mood && `Feeling: ${MOOD_OPTIONS.find(m => m.value === mood)?.label ?? mood}`,
+        stoppedAt && `Stopped at: ${stoppedAt}`,
+        notes && notes,
+        workingOn && `Working on: ${workingOn}`,
+      ].filter(Boolean).join('\n');
+
+      const { error } = await logPractice(user.id, selectedSeries, duration, fullNotes || undefined);
       if (error) {
         Alert.alert('Error', error.message);
         setSaving(false);
@@ -56,10 +130,12 @@ export default function LogPracticeModal() {
         userId: user.id,
         loggedAt: new Date().toISOString(),
         series: selectedSeries,
-        durationMin: PRACTICE_DURATION,
+        durationMin: duration,
       });
 
+      // Keep practicing_now true — user stays visible all day
       setLogModalOpen(false);
+      resetForm();
     } catch {
       Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
@@ -67,19 +143,12 @@ export default function LogPracticeModal() {
     }
   };
 
-  const handleStopPracticing = async () => {
-    if (!user) return;
-    setSaving(true);
-    try {
-      await setPracticingNow(user.id, false);
-      setIsPracticing(false);
-      setLogModalOpen(false);
-    } catch {
-      Alert.alert('Error', 'Could not update status.');
-    } finally {
-      setSaving(false);
+  // When modal opens and user is already practicing, jump to on_the_mat
+  React.useEffect(() => {
+    if (isLogModalOpen && isPracticing && step === 'select_series') {
+      setStep('on_the_mat');
     }
-  };
+  }, [isLogModalOpen]);
 
   if (!isLogModalOpen) return null;
 
@@ -97,9 +166,15 @@ export default function LogPracticeModal() {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={handleClose} style={styles.closeBtn}>
-            <Text style={styles.closeBtnText}>Cancel</Text>
+            <Text style={styles.closeBtnText}>
+              {step === 'questionnaire' ? 'Skip' : 'Cancel'}
+            </Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>On the Mat</Text>
+          <Text style={styles.headerTitle}>
+            {step === 'select_series' ? 'Start Practice' :
+             step === 'on_the_mat' ? 'On the Mat' :
+             'How Was Your Practice?'}
+          </Text>
           <View style={{ width: 60 }} />
         </View>
 
@@ -107,32 +182,10 @@ export default function LogPracticeModal() {
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          {isPracticing ? (
-            <>
-              <View style={styles.activeCard}>
-                <Text style={styles.activeEmoji}>🧘</Text>
-                <Text style={styles.activeTitle}>You're on the mat!</Text>
-                <Text style={styles.activeSub}>
-                  Your sangha can see you're practicing.{'\n'}
-                  You'll automatically go off the mat after 1.5 hours.
-                </Text>
-              </View>
-
-              <TouchableOpacity
-                style={[styles.stopBtn, saving && styles.btnDisabled]}
-                onPress={handleStopPracticing}
-                disabled={saving}
-                activeOpacity={0.85}
-              >
-                {saving ? (
-                  <ActivityIndicator color={colors.ink} />
-                ) : (
-                  <Text style={styles.stopBtnText}>I'm done — leave the mat</Text>
-                )}
-              </TouchableOpacity>
-            </>
-          ) : (
+          {/* ═══ STEP 1: Select series & go on the mat ═══ */}
+          {step === 'select_series' && (
             <>
               <View style={styles.dateCard}>
                 <Text style={styles.dateEmoji}>🙏</Text>
@@ -187,6 +240,149 @@ export default function LogPracticeModal() {
               </TouchableOpacity>
             </>
           )}
+
+          {/* ═══ STEP 2: You're on the mat ═══ */}
+          {step === 'on_the_mat' && (
+            <>
+              <View style={styles.activeCard}>
+                <Text style={styles.activeEmoji}>🧘</Text>
+                <Text style={styles.activeTitle}>You're on the mat!</Text>
+                <Text style={styles.activeSub}>
+                  Your sangha can see you're practicing.{'\n'}
+                  Take your time — enjoy your practice.
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.finishBtn}
+                onPress={handleFinishPractice}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.finishBtnText}>Finish Practice</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          {/* ═══ STEP 3: Post-practice questionnaire ═══ */}
+          {step === 'questionnaire' && (
+            <>
+              <View style={styles.questionnaireHeader}>
+                <Text style={styles.questionnaireEmoji}>🙏</Text>
+                <Text style={styles.questionnaireTitle}>Great practice!</Text>
+                <Text style={styles.questionnaireSub}>
+                  Tell us a bit about how it went.
+                </Text>
+              </View>
+
+              {/* What did I practice? */}
+              <Text style={styles.qLabel}>What did you practice?</Text>
+              <View style={styles.seriesGrid}>
+                {SERIES_OPTIONS.map((series) => {
+                  const isSelected = selectedSeries === series.value;
+                  return (
+                    <TouchableOpacity
+                      key={series.value}
+                      style={[styles.seriesCardSmall, isSelected && styles.seriesCardSelected]}
+                      onPress={() => setSelectedSeries(series.value)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={styles.seriesEmojiSmall}>{series.emoji}</Text>
+                      <Text style={[styles.seriesLabelSmall, isSelected && styles.seriesLabelSelected]}>
+                        {series.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              {/* How did I feel? */}
+              <Text style={styles.qLabel}>How did you feel?</Text>
+              <View style={styles.moodRow}>
+                {MOOD_OPTIONS.map((m) => {
+                  const isSelected = mood === m.value;
+                  return (
+                    <TouchableOpacity
+                      key={m.value}
+                      style={[styles.moodChip, isSelected && styles.moodChipSelected]}
+                      onPress={() => setMood(m.value)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={styles.moodEmoji}>{m.emoji}</Text>
+                      <Text style={[styles.moodLabel, isSelected && styles.moodLabelSelected]}>
+                        {m.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              {/* Duration */}
+              <Text style={styles.qLabel}>How long? (minutes)</Text>
+              <View style={styles.durationRow}>
+                {DURATION_OPTIONS.map((d) => {
+                  const isSelected = duration === d;
+                  return (
+                    <TouchableOpacity
+                      key={d}
+                      style={[styles.durationChip, isSelected && styles.durationChipSelected]}
+                      onPress={() => setDuration(d)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[styles.durationText, isSelected && styles.durationTextSelected]}>
+                        {d}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              {/* Stopped at */}
+              <Text style={styles.qLabel}>Stopped at (posture)</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="e.g. Navasana, Marichyasana C..."
+                placeholderTextColor={warm.muted}
+                value={stoppedAt}
+                onChangeText={setStoppedAt}
+              />
+
+              {/* What am I working on */}
+              <Text style={styles.qLabel}>What are you working on?</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="e.g. Jump-backs, deeper twists..."
+                placeholderTextColor={warm.muted}
+                value={workingOn}
+                onChangeText={setWorkingOn}
+              />
+
+              {/* Notes */}
+              <Text style={styles.qLabel}>Anything else?</Text>
+              <TextInput
+                style={[styles.input, styles.textArea]}
+                placeholder="Notes about your practice..."
+                placeholderTextColor={warm.muted}
+                value={notes}
+                onChangeText={setNotes}
+                multiline
+                textAlignVertical="top"
+              />
+
+              {/* Save button */}
+              <TouchableOpacity
+                style={[styles.saveBtn, saving && styles.btnDisabled]}
+                onPress={handleSaveLog}
+                disabled={saving}
+                activeOpacity={0.85}
+              >
+                {saving ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.saveBtnText}>Save Practice</Text>
+                )}
+              </TouchableOpacity>
+            </>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </Modal>
@@ -194,40 +390,53 @@ export default function LogPracticeModal() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.page },
+  container: { flex: 1, backgroundColor: warm.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.skyMid, backgroundColor: colors.white,
+    borderBottomWidth: 1, borderBottomColor: warm.divider, backgroundColor: warm.white,
   },
   closeBtn: { width: 60 },
-  closeBtnText: { ...typography.labelLg, color: colors.blue },
-  headerTitle: { ...typography.headingLg, color: colors.ink },
+  closeBtnText: { ...typography.labelLg, color: warm.blue },
+  headerTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
+    color: warm.ink,
+  },
   scroll: { flex: 1 },
   scrollContent: { padding: spacing.xl, paddingBottom: spacing['4xl'] },
 
   // Date card
   dateCard: {
-    alignItems: 'center', backgroundColor: colors.white,
+    alignItems: 'center', backgroundColor: warm.white,
     borderRadius: radius['2xl'], padding: spacing.xl,
     marginBottom: spacing['2xl'], ...shadows.sm,
+    borderWidth: 1, borderColor: warm.divider,
   },
   dateEmoji: { fontSize: 32, marginBottom: spacing.sm },
-  dateText: { ...typography.headingLg, color: colors.ink },
+  dateText: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
+    color: warm.ink,
+  },
 
-  // Active practicing card
+  // Active practicing card (Step 2)
   activeCard: {
-    alignItems: 'center', backgroundColor: colors.white,
+    alignItems: 'center', backgroundColor: warm.white,
     borderRadius: radius['2xl'], padding: spacing['2xl'],
     marginBottom: spacing['2xl'], ...shadows.sm,
-    borderWidth: 2, borderColor: colors.sage,
+    borderWidth: 2, borderColor: warm.sage,
   },
   activeEmoji: { fontSize: 48, marginBottom: spacing.md },
-  activeTitle: { ...typography.headingLg, color: colors.sage, fontSize: 22, marginBottom: spacing.sm },
-  activeSub: { ...typography.bodySm, color: colors.muted, textAlign: 'center', lineHeight: 20 },
+  activeTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22,
+    color: warm.sage, marginBottom: spacing.sm,
+  },
+  activeSub: { ...typography.bodySm, color: warm.muted, textAlign: 'center', lineHeight: 20 },
 
   // Section labels
-  sectionLabel: { ...typography.headingMd, color: colors.ink, marginBottom: spacing.md },
+  sectionLabel: {
+    fontFamily: 'DMSans_600SemiBold', fontSize: 16,
+    color: warm.ink, marginBottom: spacing.md,
+  },
 
   // Series grid
   seriesGrid: {
@@ -235,35 +444,130 @@ const styles = StyleSheet.create({
     gap: spacing.md, marginBottom: spacing['2xl'],
   },
   seriesCard: {
-    width: '47%', backgroundColor: colors.white,
+    width: '47%', backgroundColor: warm.white,
     borderRadius: radius.xl, padding: spacing.lg,
-    borderWidth: 2, borderColor: colors.skyMid, position: 'relative',
+    borderWidth: 2, borderColor: warm.divider, position: 'relative',
   },
-  seriesCardSelected: { borderColor: colors.blue, backgroundColor: colors.sky },
+  seriesCardSmall: {
+    width: '47%', backgroundColor: warm.white,
+    borderRadius: radius.lg, paddingVertical: spacing.md, paddingHorizontal: spacing.md,
+    borderWidth: 2, borderColor: warm.divider,
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
+  },
+  seriesCardSelected: { borderColor: warm.blue, backgroundColor: warm.blueBg },
   seriesEmoji: { fontSize: 24, marginBottom: spacing.sm },
-  seriesLabel: { ...typography.headingSm, color: colors.ink },
-  seriesLabelSelected: { color: colors.blueDeep },
+  seriesEmojiSmall: { fontSize: 18 },
+  seriesLabel: {
+    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: warm.ink,
+  },
+  seriesLabelSmall: {
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.ink, flex: 1,
+  },
+  seriesLabelSelected: { color: warm.blue },
   checkMark: {
     position: 'absolute', top: spacing.sm, right: spacing.sm,
     width: 22, height: 22, borderRadius: 11,
-    backgroundColor: colors.blue, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: warm.blue, alignItems: 'center', justifyContent: 'center',
   },
   checkMarkText: { color: '#fff', fontSize: 13, fontWeight: '700' },
 
-  // Go on mat button
+  // Go on mat button (Step 1)
   goBtn: {
-    backgroundColor: colors.sage, borderRadius: radius['2xl'],
+    backgroundColor: warm.sage, borderRadius: radius['2xl'],
     paddingVertical: spacing.xl, alignItems: 'center', ...shadows.md,
   },
-  goBtnText: { ...typography.headingLg, color: '#fff', fontSize: 20 },
+  goBtnText: {
+    fontFamily: 'DMSans_700Bold', fontSize: 20, color: '#fff',
+  },
   goBtnSub: { ...typography.bodyXs, color: 'rgba(255,255,255,0.8)', marginTop: 4 },
 
-  // Stop button
-  stopBtn: {
-    borderWidth: 2, borderColor: colors.skyMid, borderRadius: radius['2xl'],
-    paddingVertical: spacing.lg, alignItems: 'center', backgroundColor: colors.white,
+  // Finish practice button (Step 2)
+  finishBtn: {
+    backgroundColor: warm.orange, borderRadius: radius['2xl'],
+    paddingVertical: spacing.xl, alignItems: 'center', ...shadows.md,
   },
-  stopBtnText: { ...typography.headingMd, color: colors.inkMid },
+  finishBtnText: {
+    fontFamily: 'DMSans_700Bold', fontSize: 18, color: '#fff',
+  },
+
+  // Questionnaire header (Step 3)
+  questionnaireHeader: {
+    alignItems: 'center', marginBottom: spacing.xl,
+  },
+  questionnaireEmoji: { fontSize: 36, marginBottom: spacing.sm },
+  questionnaireTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: warm.ink,
+    marginBottom: 4,
+  },
+  questionnaireSub: {
+    ...typography.bodySm, color: warm.muted, textAlign: 'center',
+  },
+
+  // Question labels
+  qLabel: {
+    fontFamily: 'DMSans_600SemiBold', fontSize: 15,
+    color: warm.ink, marginBottom: spacing.sm, marginTop: spacing.lg,
+  },
+
+  // Mood chips
+  moodRow: {
+    flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  moodChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    backgroundColor: warm.white, borderRadius: radius.full,
+    paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
+    borderWidth: 1.5, borderColor: warm.divider,
+  },
+  moodChipSelected: {
+    borderColor: warm.orange, backgroundColor: warm.orangeLight,
+  },
+  moodEmoji: { fontSize: 16 },
+  moodLabel: {
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.ink,
+  },
+  moodLabelSelected: { color: warm.orange },
+
+  // Duration chips
+  durationRow: {
+    flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  durationChip: {
+    backgroundColor: warm.white, borderRadius: radius.full,
+    paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
+    borderWidth: 1.5, borderColor: warm.divider,
+  },
+  durationChipSelected: {
+    borderColor: warm.sage, backgroundColor: warm.sageBg,
+  },
+  durationText: {
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.ink,
+  },
+  durationTextSelected: { color: warm.sage },
+
+  // Text inputs
+  input: {
+    backgroundColor: warm.white, borderRadius: radius.lg,
+    borderWidth: 1.5, borderColor: warm.divider,
+    paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
+    ...typography.bodyMd, color: warm.ink,
+    marginBottom: spacing.sm,
+  },
+  textArea: {
+    height: 80, paddingTop: spacing.md,
+  },
+
+  // Save button (Step 3)
+  saveBtn: {
+    backgroundColor: warm.sage, borderRadius: radius['2xl'],
+    paddingVertical: spacing.xl, alignItems: 'center',
+    marginTop: spacing.xl, ...shadows.md,
+  },
+  saveBtnText: {
+    fontFamily: 'DMSans_700Bold', fontSize: 18, color: '#fff',
+  },
 
   btnDisabled: { opacity: 0.6 },
 });
