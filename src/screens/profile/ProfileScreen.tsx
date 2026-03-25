@@ -58,7 +58,7 @@ export default function ProfileScreen() {
 
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [refreshing, setRefreshing] 4 useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
