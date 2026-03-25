@@ -16,13 +16,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     flowType: 'pkce',
     detectSessionInUrl: false,
     lock: async (name: string, acquireTimeout: number, fn: () => Promise<any>) => {
-      // Skip locking in React Native â this prevents hangs
+      // Skip locking in React Native — this prevents hangs
       return fn();
     },
   },
 });
 
-// ââ Auth helpers âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Auth helpers ─────────────────────────────────────────────────────────────
 
 export async function signUpWithEmail(email: string, password: string, name: string) {
   const { data, error } = await supabase.auth.signUp({
@@ -110,7 +110,7 @@ export async function signOut() {
   return supabase.auth.signOut();
 }
 
-// ââ Profile ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Profile ──────────────────────────────────────────────────────────────────
 
 export async function getProfile(userId: string) {
   return supabase
@@ -128,29 +128,18 @@ export async function upsertProfile(profile: {
   location?: string;
   bio?: string;
   avatar_url?: string;
-  practicing_since?: number;
-  teacher?: string;
 }) {
   return supabase.from('profiles').upsert(profile);
 }
 
-// ââ Avatar upload ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Avatar upload ────────────────────────────────────────────────────────────
 
-export async function uploadAvatar(userId: string, uri: string, mimeType?: string | null) {
-  // Fetch the image data as arraybuffer
+export async function uploadAvatar(userId: string, uri: string) {
+  // React Native: read the file as arraybuffer (blob doesn't work reliably)
   const response = await fetch(uri);
   const arrayBuffer = await response.arrayBuffer();
 
-  // Determine extension from mimeType (reliable on web), falling back to URI parsing
-  let fileExt = 'jpg';
-  if (mimeType) {
-    const extFromMime = mimeType.split('/').pop()?.toLowerCase();
-    if (extFromMime === 'jpeg') fileExt = 'jpg';
-    else if (extFromMime && /^[a-z]{2,4}$/.test(extFromMime)) fileExt = extFromMime;
-  } else {
-    const parsed = uri.split('.').pop()?.split('?')[0]?.toLowerCase();
-    if (parsed && /^[a-z]{2,4}$/.test(parsed)) fileExt = parsed;
-  }
+  const fileExt = uri.split('.').pop()?.split('?')[0]?.toLowerCase() ?? 'jpg';
   const filePath = `${userId}/avatar.${fileExt}`;
   const contentType = `image/${fileExt === 'jpg' ? 'jpeg' : fileExt}`;
 
@@ -174,7 +163,7 @@ export async function uploadAvatar(userId: string, uri: string, mimeType?: strin
   return { url: publicUrl, error: null };
 }
 
-// ââ Practice logs âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Practice logs ─────────────────────────────────────────────────────────────
 
 export async function logPractice(userId: string, series: string, durationMin: number, notes?: string) {
   return supabase.from('practice_logs').insert({
@@ -183,22 +172,7 @@ export async function logPractice(userId: string, series: string, durationMin: n
     duration_min: durationMin,
     notes,
     logged_at: new Date().toISOString(),
-  }).select();
-}
-
-export async function deletePracticeLog(logId: string) {
-  return supabase.from('practice_logs').delete().eq('id', logId);
-}
-
-export async function updatePracticeLog(
-  logId: string,
-  changes: { series?: string; duration_min?: number; notes?: string }
-) {
-  return supabase
-    .from('practice_logs')
-    .update(changes)
-    .eq('id', logId)
-    .select();
+  });
 }
 
 export async function getPracticeLogs(userId: string, limit = 30) {
@@ -210,7 +184,7 @@ export async function getPracticeLogs(userId: string, limit = 30) {
     .limit(limit);
 }
 
-// ââ Gatherings ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Gatherings ────────────────────────────────────────────────────────────────
 
 export async function getGatherings() {
   return supabase
@@ -265,7 +239,7 @@ export async function cancelBooking(gatheringId: string, userId: string) {
   }
 }
 
-// ââ Social ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Social ────────────────────────────────────────────────────────────────────
 
 export async function getFeed(userId: string) {
   // Posts from people you follow
@@ -295,7 +269,7 @@ export async function getUserLikes(userId: string) {
     .eq('user_id', userId);
 }
 
-// ââ Follows ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Follows ──────────────────────────────────────────────────────────────────
 
 export async function followUser(followerId: string, followingId: string) {
   return supabase.from('follows').insert({
@@ -326,7 +300,7 @@ export async function getFollowers(userId: string) {
     .eq('following_id', userId);
 }
 
-// ââ Practicing status ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Practicing status ────────────────────────────────────────────────────────
 
 export async function setPracticingNow(userId: string, practicing: boolean) {
   return supabase.from('profiles').update({
@@ -336,18 +310,18 @@ export async function setPracticingNow(userId: string, practicing: boolean) {
 }
 
 export async function getPracticingNow() {
-  // Show everyone who practiced today (since midnight local time)
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
+  // Show everyone who started practicing today (all-day window)
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
   return supabase
     .from('profiles')
     .select('id, name, avatar_url, series, level, streak, practicing_since')
     .eq('practicing_now', true)
-    .gte('practicing_since', todayStart.toISOString())
+    .gte('practicing_since', startOfDay)
     .order('practicing_since', { ascending: false });
 }
 
-// ââ Community: who's practicing ââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Community: who's practicing ──────────────────────────────────────────────
 
 export async function getRecentPractitioners(limit = 20) {
   const yesterday = new Date();
@@ -360,7 +334,7 @@ export async function getRecentPractitioners(limit = 20) {
     .limit(limit);
 }
 
-// ââ Posts (enhanced) âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Posts (enhanced) ─────────────────────────────────────────────────────────
 
 export async function createPost(userId: string, caption: string, imageUrl?: string, location?: string) {
   return supabase.from('posts').insert({
