@@ -13,8 +13,8 @@ export default function TabLayout() {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: '#405DE6',
-          tabBarInactiveTintColor: '#B0BDD0',
+          tabBarActiveTintColor: '#8A9E78',
+          tabBarInactiveTintColor: '#C4B8A8',
           tabBarStyle: styles.tabBar,
           tabBarLabelStyle: styles.tabLabel,
         }}
@@ -68,6 +68,7 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
+
       <LogPracticeModal />
     </>
   );
@@ -76,7 +77,7 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: '#FFFFFF',
-    borderTopColor: '#DDE4F0',
+    borderTopColor: '#E8E0D4',
     borderTopWidth: 1,
     paddingTop: 6,
     height: Platform.OS === 'web' ? 65 : 85,
