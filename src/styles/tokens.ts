@@ -1,47 +1,47 @@
 // src/styles/tokens.ts
-// Single source of truth for all design tokens
+// Single source of truth for all design tokens — Insta Ocean theme
 
 export const colors = {
-  // Sky palette — backgrounds, subtle fills (dark purple theme)
-  sky: '#0F0B1E',
-  skyMid: '#1A1432',
-  skyDeep: '#231A3D',
+  // Sky palette — backgrounds, subtle fills (light blue-white)
+  sky: '#F0F4FF',
+  skyMid: '#FFFFFF',
+  skyDeep: '#DDE4F0',
 
-  // Blue palette → Purple gradient (primary actions, links, focus)
-  blue: '#A855F7',
-  blueL: '#7C3AED',
-  blueDeep: '#5B21B6',
+  // Blue palette → Ocean blue (primary actions, links, focus)
+  blue: '#405DE6',
+  blueL: '#5B8DEF',
+  blueDeep: '#2A3EB1',
 
   // Sand palette → Emerald/success (rest states, nature accents)
   sand: '#34D399',
   sandMid: '#6EE7B7',
-  sandDeep: '#1A3D2F',
+  sandDeep: '#E0FFF0',
 
   // Sage palette → Emerald (success, nature accents)
   sage: '#34D399',
   sageL: '#6EE7B7',
-  sagePale: '#1A3D2F',
+  sagePale: '#E0FFF0',
 
-  // Orange palette — streaks, urgent, FAB (stays warm)
-  orange: '#F97316',
-  orangeL: '#FDBA74',
-  orangePale: '#2D1A0F',
+  // Orange palette → Coral (streaks, urgent, FAB)
+  orange: '#FF6B6B',
+  orangeL: '#FFA0A0',
+  orangePale: '#FFF0F0',
 
-  // Ink palette → White/light text
-  ink: '#FFFFFF',
-  inkMid: '#E8E0F0',
+  // Ink palette → Dark text
+  ink: '#1A2744',
+  inkMid: '#3D5070',
 
-  // Muted — secondary text, placeholders (faded purple)
-  muted: '#9B8CB8',
-  mutedL: '#6B5C82',
+  // Muted — secondary text, placeholders
+  muted: '#7B8FAD',
+  mutedL: '#B0BDD0',
 
-  // Base (glass and white-ish)
-  white: '#1A1432',
-  page: '#0F0B1E',
+  // Base (card and page)
+  white: '#FFFFFF',
+  page: '#F0F4FF',
 
-  // Dark backgrounds (already dark, adjusted for consistency)
-  obDark: '#0F0B1E',
-  obDarkMid: '#1A1432',
+  // Light backgrounds
+  obDark: '#F0F4FF',
+  obDarkMid: '#FFFFFF',
 } as const;
 
 export const spacing = {
@@ -61,28 +61,29 @@ export const radius = {
   lg: 16,
   xl: 20,
   '2xl': 24,
+  '3xl': 28,
   full: 9999,
 } as const;
 
 export const shadows = {
   sm: {
-    shadowColor: colors.ink,
+    shadowColor: '#1A2744',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.04,
     shadowRadius: 4,
     elevation: 2,
   },
   md: {
-    shadowColor: colors.blue,
+    shadowColor: '#405DE6',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 4,
   },
   lg: {
-    shadowColor: colors.blue,
+    shadowColor: '#405DE6',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
+    shadowOpacity: 0.1,
     shadowRadius: 24,
     elevation: 8,
   },
