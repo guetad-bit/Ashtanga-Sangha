@@ -13,19 +13,18 @@ import { signInWithEmail, signInWithGoogle } from '@/lib/supabase';
 import { useAppStore } from '@/store/useAppStore';
 import AppLogo from '@/components/AppLogo';
 
-// ── Bold Gradient dark purple palette ──────────────────
-const bold = {
-  bg: '#0F0B1E',
-  ink: '#FFFFFF',
-  inkMid: '#E8E0F0',
-  muted: '#9B8CB8',
-  accent: '#A855F7',
-  sage: '#34D399',
-  gold: '#FBBF24',
-  terra: '#7C3AED',
-  orange: '#F97316',
-  divider: '#231A3D',
-  cardBg: '#1A1432',
+// ── Insta Ocean palette ──────────────────
+const ocean = {
+  bg: '#F0F4FF',
+  ink: '#1A2744',
+  inkMid: '#3D5070',
+  muted: '#7B8FAD',
+  accent: '#405DE6',
+  sky: '#5B8DEF',
+  lavender: '#8B5CF6',
+  coral: '#FF6B6B',
+  divider: '#DDE4F0',
+  cardBg: '#FFFFFF',
 };
 
 interface LoginScreenProps {
@@ -74,9 +73,9 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
       <StatusBar barStyle="light-content" />
       <LinearGradient
         colors={[
-          'rgba(15,11,30,0.08)',
-          'rgba(27,15,59,0.60)',
-          'rgba(15,11,30,0.97)',
+          'rgba(64,93,230,0.08)',
+          'rgba(91,141,239,0.55)',
+          'rgba(64,93,230,0.95)',
         ]}
         locations={[0, 0.4, 1]}
         style={StyleSheet.absoluteFill}
@@ -189,7 +188,7 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
 }
 
 const s = StyleSheet.create({
-  bg: { flex: 1, backgroundColor: '#0F0B1E' },
+  bg: { flex: 1, backgroundColor: '#1A2744' },
   bgImage: { left: -80 },
   flex: { flex: 1 },
 
@@ -203,7 +202,7 @@ const s = StyleSheet.create({
   appName: {
     fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 17,
-    color: bold.inkMid,
+    color: 'rgba(255,255,255,0.85)',
   },
 
   scroll: {
@@ -215,7 +214,7 @@ const s = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'DMSans_600SemiBold',
     letterSpacing: 2,
-    color: bold.accent,
+    color: '#5B8DEF',
     marginBottom: spacing.sm,
   },
   title: {
@@ -245,9 +244,9 @@ const s = StyleSheet.create({
   inputWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(168,85,247,0.08)',
+    backgroundColor: 'rgba(64,93,230,0.12)',
     borderWidth: 1,
-    borderColor: 'rgba(168,85,247,0.18)',
+    borderColor: 'rgba(91,141,239,0.25)',
     borderRadius: radius.lg,
     paddingHorizontal: spacing.md,
   },
@@ -267,7 +266,7 @@ const s = StyleSheet.create({
   },
 
   primaryBtn: {
-    backgroundColor: bold.accent,
+    backgroundColor: ocean.accent,
     borderRadius: radius.xl,
     paddingVertical: spacing.lg,
     alignItems: 'center',
@@ -292,12 +291,12 @@ const s = StyleSheet.create({
 
   googleBtn: {
     borderWidth: 1.5,
-    borderColor: 'rgba(168,85,247,0.3)',
+    borderColor: 'rgba(91,141,239,0.35)',
     borderRadius: radius.xl,
     paddingVertical: spacing.lg,
     alignItems: 'center',
     marginBottom: spacing['2xl'],
-    backgroundColor: 'rgba(168,85,247,0.08)',
+    backgroundColor: 'rgba(64,93,230,0.1)',
   },
   googleBtnText: {
     fontFamily: 'DMSans_600SemiBold',
@@ -314,7 +313,7 @@ const s = StyleSheet.create({
     textAlign: 'center',
   },
   footerLink: {
-    color: bold.accent,
+    color: '#5B8DEF',
     fontFamily: 'DMSans_600SemiBold',
   },
 });
