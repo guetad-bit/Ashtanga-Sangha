@@ -20,6 +20,6 @@ export default function AppLogo({ size = 44 }: AppLogoProps) {
 
 const styles = StyleSheet.create({
   logo: {
-    backgroundColor: '#0F0B1E',
+    backgroundColor: '#F0F4FF',
   },
 });
