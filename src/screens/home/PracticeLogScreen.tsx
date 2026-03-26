@@ -29,7 +29,6 @@ export default function PracticeLogScreen() {
   const handleSave = async () => {
     if (!user || saving) return;
     setSaving(true);
-
     const fullNotes = [
       location && `📍 ${location}`,
       stoppedAt && `Stopped at: ${stoppedAt}`,
@@ -47,7 +46,6 @@ export default function PracticeLogScreen() {
         durationMin: duration,
       });
     }
-
     setSaving(false);
     router.back();
   };
@@ -108,7 +106,7 @@ export default function PracticeLogScreen() {
           </ScrollView>
 
           {/* Duration */}
-          <Text style={s.label}>Duration (min)</Text>
+          <Text style={s.label}>About how long?</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipsRow}>
             {DURATION_OPTIONS.map((d) => (
               <TouchableOpacity
@@ -116,7 +114,7 @@ export default function PracticeLogScreen() {
                 style={[s.chip, duration === d && s.chipActive]}
                 onPress={() => setDuration(d)}
               >
-                <Text style={[s.chipText, duration === d && s.chipTextActive]}>{d}</Text>
+                <Text style={[s.chipText, duration === d && s.chipTextActive]}>{d} min</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -126,7 +124,7 @@ export default function PracticeLogScreen() {
           <TextInput
             style={s.input}
             placeholder="e.g. Navasana, Marichyasana C..."
-            placeholderTextColor="#B0BDD0"
+            placeholderTextColor="#C4B8A8"
             value={stoppedAt}
             onChangeText={setStoppedAt}
           />
@@ -136,23 +134,22 @@ export default function PracticeLogScreen() {
           <TextInput
             style={[s.input, s.textArea]}
             placeholder="How was your practice today?"
-            placeholderTextColor="#B0BDD0"
+            placeholderTextColor="#C4B8A8"
             value={notes}
             onChangeText={setNotes}
             multiline
             textAlignVertical="top"
           />
 
-          {/* Work on next time */}
+          {/* Work on next */}
           <Text style={s.label}>🎯 Work on next time</Text>
           <TextInput
             style={s.input}
             placeholder="e.g. Jump-backs, deeper twist in Mari C..."
-            placeholderTextColor="#B0BDD0"
+            placeholderTextColor="#C4B8A8"
             value={workOnNext}
             onChangeText={setWorkOnNext}
           />
-
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -160,47 +157,59 @@ export default function PracticeLogScreen() {
 }
 
 const s = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#F0F4FF' },
-
+  safe: { flex: 1, backgroundColor: '#F6F2EC' },
   header: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl, paddingVertical: spacing.lg,
-    borderBottomWidth: 1, borderBottomColor: '#DDE4F0',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E8E0D4',
     backgroundColor: '#FFFFFF',
   },
   headerTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18, color: '#1A2744',
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 18,
+    color: '#3B3228',
   },
-  cancelBtn: { ...typography.bodyMd, color: '#7B8FAD' },
-  saveBtn: { ...typography.headingMd, color: '#405DE6' },
-
+  cancelBtn: { ...typography.bodyMd, color: '#9B8E7E' },
+  saveBtn: { ...typography.headingMd, color: '#8A9E78' },
   scroll: { flex: 1 },
   scrollContent: { padding: spacing.xl, paddingBottom: spacing['4xl'] },
-
   label: {
-    ...typography.headingSm, color: '#1A2744',
-    marginBottom: spacing.sm, marginTop: spacing.lg,
+    ...typography.headingSm,
+    color: '#3B3228',
+    marginBottom: spacing.sm,
+    marginTop: spacing.lg,
   },
-
   chipsRow: { gap: spacing.sm },
   chip: {
-    backgroundColor: '#FFFFFF', borderRadius: radius.full,
-    paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderWidth: 1.5, borderColor: '#DDE4F0',
+    backgroundColor: '#FFFFFF',
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderWidth: 1.5,
+    borderColor: '#E8E0D4',
   },
   chipActive: {
-    backgroundColor: '#405DE6', borderColor: '#405DE6',
+    backgroundColor: '#8A9E78',
+    borderColor: '#8A9E78',
   },
-  chipText: { ...typography.labelMd, color: '#3D5070' },
+  chipText: { ...typography.labelMd, color: '#5E5245' },
   chipTextActive: { color: '#FFFFFF' },
-
   input: {
-    backgroundColor: '#FFFFFF', borderRadius: radius.lg,
-    borderWidth: 1.5, borderColor: '#DDE4F0',
-    paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    ...typography.bodyMd, color: '#1A2744',
+    backgroundColor: '#FFFFFF',
+    borderRadius: radius.lg,
+    borderWidth: 1.5,
+    borderColor: '#E8E0D4',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    ...typography.bodyMd,
+    color: '#3B3228',
   },
   textArea: {
-    height: 100, paddingTop: spacing.md,
+    height: 100,
+    paddingTop: spacing.md,
   },
 });
