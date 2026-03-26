@@ -3,41 +3,28 @@ import React, { useState, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
   StyleSheet, Image, Alert, ActivityIndicator, RefreshControl,
-  Platform, Modal, Pressable,
+  ImageBackground, Modal, Pressable,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import type { PracticeLog } from '@/utils/practiceStreak';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { spacing } from '@/styles/tokens';
+import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore, Series, Level } from '@/store/useAppStore';
 import { upsertProfile, signOut, getProfile, uploadAvatar } from '@/lib/supabase';
+import { calculateStreak } from '@/utils/practiceStreak';
 import AppLogo from '@/components/AppLogo';
 
-/* ── Warm palette ── */
-const warm = {
-  bg:      '#FAF6F0',
-  card:    '#FFFFFF',
-  ink:     '#3D3229',
-  inkMid:  '#5C4D3C',
-  orange:  '#E8834A',
-  orangeL: '#F0A070',
-  sage:    '#7A8B5E',
-  sageL:   '#9BAA7E',
-  muted:   '#8B7D6E',
-  mutedL:  '#B5A899',
-  border:  '#E8DDD0',
-  borderL: '#F0E8DD',
-  field:   '#F5F0EA',
-};
+const HERO_BG = require('../../../assets/onboard-1.png');
 
 const SERIES_OPTIONS: { value: Series; label: string; emoji: string }[] = [
-  { value: 'sun_sals',     label: 'Sun Salutations', emoji: '☀️' },
-  { value: 'primary',      label: 'Primary',         emoji: '🧘' },
-  { value: 'intermediate', label: 'Intermediate',    emoji: '🔥' },
-  { value: 'advanced_a',   label: 'Advanced A',      emoji: '⚡' },
-  { value: 'advanced_b',   label: 'Advanced B',      emoji: '🌟' },
-  { value: 'short',        label: 'Short',           emoji: '🕐' },
+  { value: 'sun_sals', label: 'Sun Salutations', emoji: '☀️' },
+  { value: 'primary',  label: 'Primary',         emoji: '🧘' },
+  { value: 'intermediate', label: 'Intermediate', emoji: '🔥' },
+  { value: 'advanced_a',   label: 'Advanced A',   emoji: '⚡' },
+  { value: 'advanced_b',   label: 'Advanced B',   emoji: '🌟' },
+  { value: 'short',        label: 'Short',        emoji: '🔐' },
 ];
 
 const LEVEL_OPTIONS: { value: Level; label: string }[] = [
@@ -50,18 +37,39 @@ const LEVEL_OPTIONS: { value: Level; label: string }[] = [
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const currentYear = new Date().getFullYear();
-
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { user, setUser, clearUser, practiceLogs } = useAppStore();
+  const { user, setUser, clearUser, practiceLogs, updatePracticeLog, removePracticeLog } = useAppStore();
 
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [showPhotoModal, setShowPhotoModal] = useState(false);
-  const [showSignOutModal, setShowSignOutModal] = useState(false);
+
+  // Practice log editing
+  const [editingLog, setEditingLog] = useState<PracticeLog | null>(null);
+  const [editLogSeries, setEditLogSeries] = useState<string>('primary');
+  const [editLogDuration, setEditLogDuration] = useState<number>(90);
+
+  const openLogEdit = (log: PracticeLog) => {
+    setEditingLog(log);
+    setEditLogSeries(log.series);
+    setEditLogDuration(log.durationMin);
+  };
+
+  const saveLogEdit = () => {
+    if (!editingLog) return;
+    updatePracticeLog(editingLog.id, { series: editLogSeries, durationMin: editLogDuration });
+    setEditingLog(null);
+  };
+
+  const deleteLog = () => {
+    if (!editingLog) return;
+    Alert.alert('Delete Practice', 'Remove this practice from your log?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Delete', style: 'destructive', onPress: () => { removePracticeLog(editingLog.id); setEditingLog(null); } },
+    ]);
+  };
 
   // Editable fields
   const [name, setName] = useState(user?.name ?? '');
@@ -69,24 +77,8 @@ export default function ProfileScreen() {
   const [location, setLocation] = useState(user?.location ?? '');
   const [series, setSeries] = useState<Series>(user?.series ?? 'primary');
   const [level, setLevel] = useState<Level>(user?.level ?? 'beginner');
-  const [teacher, setTeacher] = useState(user?.teacher ?? '');
-  const [practicingSince, setPracticingSince] = useState(user?.practicingSince?.toString() ?? '');
 
-  const streak = practiceLogs.length > 0
-    ? (() => {
-        const td = new Date();
-        td.setHours(0, 0, 0, 0);
-        let count = 0;
-        for (let i = 0; i < 365; i++) {
-          const d = new Date(td);
-          d.setDate(td.getDate() - i);
-          const key = d.toISOString().split('T')[0];
-          if (practiceLogs.some((l) => l.loggedAt.split('T')[0] === key)) count++;
-          else if (i > 0) break;
-        }
-        return count;
-      })()
-    : 0;
+  const streak = calculateStreak(practiceLogs);
   const totalPractices = practiceLogs.length;
   const totalHours = Math.round(practiceLogs.reduce((sum, l) => sum + l.durationMin, 0) / 60);
 
@@ -100,6 +92,9 @@ export default function ProfileScreen() {
     return { label: DAY_LABELS[d.getDay()], practiced, isToday: i === 6 };
   });
 
+  // Recent logs (up to 5)
+  const recentLogs = practiceLogs.slice(0, 5);
+
   useEffect(() => {
     if (user) {
       setName(user.name);
@@ -107,8 +102,6 @@ export default function ProfileScreen() {
       setLocation(user.location ?? '');
       setSeries(user.series);
       setLevel(user.level);
-      setTeacher(user.teacher ?? '');
-      setPracticingSince(user.practicingSince?.toString() ?? '');
     }
   }, [user]);
 
@@ -125,21 +118,17 @@ export default function ProfileScreen() {
         series: (data.series as Series) ?? user.series,
         level: (data.level as Level) ?? user.level,
         avatarUrl: data.avatar_url ?? user.avatarUrl,
-        teacher: data.teacher ?? '',
-        practicingSince: data.practicing_since ?? undefined,
       });
     }
     setRefreshing(false);
   };
 
-  /* ── Photo picker (always available) ── */
   const handlePickPhoto = () => {
-    if (Platform.OS === 'web') {
-      // On web, Alert.alert with custom buttons doesn't work — go straight to library
-      pickImage('library');
-    } else {
-      setShowPhotoModal(true);
-    }
+    Alert.alert('Profile Photo', 'Choose a photo source', [
+      { text: 'Camera', onPress: () => pickImage('camera') },
+      { text: 'Photo Library', onPress: () => pickImage('library') },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
   };
 
   const pickImage = async (source: 'camera' | 'library') => {
@@ -156,8 +145,7 @@ export default function ProfileScreen() {
       : await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.7 });
     if (result.canceled || !result.assets?.[0]) return;
     setUploadingPhoto(true);
-    const asset = result.assets[0];
-    const { url, error } = await uploadAvatar(user.id, asset.uri, asset.mimeType);
+    const { url, error } = await uploadAvatar(user.id, result.assets[0].uri);
     if (error) { Alert.alert('Upload failed', error.message); }
     else if (url) { setUser({ ...user, avatarUrl: url }); }
     setUploadingPhoto(false);
@@ -167,23 +155,13 @@ export default function ProfileScreen() {
     if (!user) return;
     if (!name.trim()) { Alert.alert('Name required', 'Please enter your name.'); return; }
     setSaving(true);
-    const yearNum = practicingSince ? parseInt(practicingSince, 10) : undefined;
-    const validYear = yearNum && yearNum >= 1950 && yearNum <= currentYear ? yearNum : undefined;
     const { error } = await upsertProfile({
       id: user.id, name: name.trim(), series, level,
       location: location.trim() || undefined,
       bio: bio.trim() || undefined,
-      teacher: teacher.trim() || undefined,
-      practicing_since: validYear,
     });
     if (error) { Alert.alert('Error', error.message); setSaving(false); return; }
-    setUser({
-      ...user,
-      name: name.trim(), bio: bio.trim(), series, level,
-      location: location.trim(),
-      teacher: teacher.trim(),
-      practicingSince: validYear,
-    });
+    setUser({ ...user, name: name.trim(), bio: bio.trim(), series, level, location: location.trim() });
     setEditing(false);
     setSaving(false);
   };
@@ -194,558 +172,623 @@ export default function ProfileScreen() {
     setLocation(user?.location ?? '');
     setSeries(user?.series ?? 'primary');
     setLevel(user?.level ?? 'beginner');
-    setTeacher(user?.teacher ?? '');
-    setPracticingSince(user?.practicingSince?.toString() ?? '');
     setEditing(false);
   };
 
   const handleSignOut = () => {
-    if (Platform.OS === 'web') {
-      setShowSignOutModal(true);
-    } else {
-      Alert.alert('Sign Out', 'Are you sure?', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign Out', style: 'destructive', onPress: async () => { await signOut(); clearUser(); } },
-      ]);
-    }
+    Alert.alert('Sign Out', 'Are you sure?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Sign Out', style: 'destructive', onPress: async () => { await signOut(); clearUser(); } },
+    ]);
   };
 
   const currentSeriesOpt = SERIES_OPTIONS.find((s) => s.value === (user?.series ?? 'primary'));
   const currentLevelOpt  = LEVEL_OPTIONS.find((l) => l.value === (user?.level ?? 'beginner'));
 
   return (
-    <View style={[st.root, { paddingTop: insets.top }]}>
+    <SafeAreaView style={s.safe} edges={['top']}>
 
       {/* ── Top bar ── */}
-      <View style={st.topbar}>
-        <View style={st.topbarLeft}>
-          <AppLogo size={34} />
-          <Text style={st.appTitle}>Ashtanga Sangha</Text>
+      <View style={s.topbar}>
+        <View style={s.topbarLeft}>
+          <AppLogo size={36} />
+          <Text style={s.appTitle}>Ashtanga Sangha</Text>
         </View>
         {editing ? (
-          <View style={st.topbarActions}>
-            <TouchableOpacity onPress={handleCancel} style={st.cancelBtn}>
-              <Text style={st.cancelText}>Cancel</Text>
+          <View style={s.topbarActions}>
+            <TouchableOpacity onPress={handleCancel} style={s.cancelBtn}>
+              <Text style={s.cancelText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleSave} disabled={saving} style={st.saveBtn}>
-              {saving ? <ActivityIndicator color="#fff" size="small" /> : <Text style={st.saveBtnText}>Save</Text>}
+            <TouchableOpacity onPress={handleSave} disabled={saving} style={s.saveBtn}>
+              {saving ? <ActivityIndicator color="#fff" size="small" /> : <Text style={s.saveBtnText}>Save</Text>}
             </TouchableOpacity>
           </View>
         ) : (
-          <TouchableOpacity onPress={() => setEditing(true)} style={st.editBtn} activeOpacity={0.7}>
-            <Ionicons name="pencil" size={14} color={warm.ink} />
-            <Text style={st.editBtnText}>Edit</Text>
+          <TouchableOpacity onPress={() => setEditing(true)} style={s.editBtn} activeOpacity={0.7}>
+            <Ionicons name="pencil" size={15} color="#1A2744" />
+            <Text style={s.editBtnText}>Edit</Text>
           </TouchableOpacity>
         )}
       </View>
 
       <ScrollView
-        style={st.scroll}
-        contentContainerStyle={st.scrollContent}
+        style={s.scroll}
+        contentContainerStyle={s.scrollContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={warm.orange} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        {/* ── Hero gradient card ── */}
-        <View style={st.heroCard}>
-          <LinearGradient
-            colors={['#D4A574', '#B87D4A', '#8B5E3C', '#5C3D28']}
-            locations={[0, 0.35, 0.7, 1]}
-            style={st.heroGradient}
-          >
-            {/* Avatar – always tappable to change photo */}
-            <TouchableOpacity
-              onPress={handlePickPhoto}
-              activeOpacity={0.75}
-              style={st.avatarWrap}
+        {/* ── Hero ── */}
+        <View style={s.heroCard}>
+          <ImageBackground source={HERO_BG} style={s.heroBg} imageStyle={s.heroBgImage}>
+            <LinearGradient
+              colors={['rgba(64,93,230,0.6)', 'rgba(91,141,239,0.9)']}
+              style={s.heroGradient}
             >
-              {user?.avatarUrl ? (
-                <Image source={{ uri: user.avatarUrl }} style={st.avatar} />
+              {/* Avatar */}
+              <TouchableOpacity
+                onPress={editing ? handlePickPhoto : undefined}
+                activeOpacity={editing ? 0.75 : 1}
+                style={s.avatarWrap}
+              >
+                {user?.avatarUrl ? (
+                  <Image source={{ uri: user.avatarUrl }} style={s.avatar} />
+                ) : (
+                  <View style={[s.avatar, s.avatarFallback]}>
+                    <Text style={s.avatarInitial}>{(user?.name ?? 'P')[0].toUpperCase()}</Text>
+                  </View>
+                )}
+                <View style={s.avatarRing} />
+                {editing && (
+                  <View style={s.avatarEditOverlay}>
+                    {uploadingPhoto
+                      ? <ActivityIndicator color="#fff" />
+                      : <Ionicons name="camera" size={22} color="#fff" />}
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              {/* Name */}
+              {editing ? (
+                <TextInput
+                  style={s.nameInput}
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="Your name"
+                  placeholderTextColor="rgba(255,255,255,0.4)"
+                  autoFocus
+                />
               ) : (
-                <View style={[st.avatar, st.avatarFallback]}>
-                  <Text style={st.avatarInitial}>{(user?.name ?? 'P')[0].toUpperCase()}</Text>
-                </View>
+                <Text style={s.heroName}>{user?.name ?? 'Practitioner'}</Text>
               )}
-              <View style={st.avatarRing} />
-              <View style={st.avatarEditOverlay}>
-                {uploadingPhoto
-                  ? <ActivityIndicator color="#fff" size="small" />
-                  : <Ionicons name="camera" size={16} color="rgba(255,255,255,0.9)" />}
-              </View>
-            </TouchableOpacity>
 
-            {/* Name */}
-            {editing ? (
-              <TextInput
-                style={st.nameInput}
-                value={name}
-                onChangeText={setName}
-                placeholder="Your name"
-                placeholderTextColor="rgba(255,255,255,0.4)"
-                autoFocus
-              />
-            ) : (
-              <Text style={st.heroName}>{user?.name ?? 'Practitioner'}</Text>
-            )}
-
-            {/* Level badge + series */}
-            <View style={st.heroBadgeRow}>
-              <View style={st.levelBadge}>
-                <Text style={st.levelBadgeText}>{currentLevelOpt?.label ?? 'Practitioner'}</Text>
-              </View>
-              {currentSeriesOpt && (
-                <View style={[st.levelBadge, st.seriesBadge]}>
-                  <Text style={st.levelBadgeText}>{currentSeriesOpt.emoji} {currentSeriesOpt.label}</Text>
+              {/* Level badge + email */}
+              <View style={s.heroBadgeRow}>
+                <View style={s.levelBadge}>
+                  <Text style={s.levelBadgeText}>{currentLevelOpt?.label ?? 'Practitioner'}</Text>
                 </View>
-              )}
-            </View>
-
-            {user?.location ? (
-              <View style={st.heroLocation}>
-                <Ionicons name="location-outline" size={13} color="rgba(255,255,255,0.7)" />
-                <Text style={st.heroLocationText}>{user.location}</Text>
+                {currentSeriesOpt && (
+                  <View style={[s.levelBadge, s.seriesBadge]}>
+                    <Text style={s.levelBadgeText}>{currentSeriesOpt.emoji} {currentSeriesOpt.label}</Text>
+                  </View>
+                )}
               </View>
-            ) : null}
-          </LinearGradient>
+
+              {user?.location ? (
+                <View style={s.heroLocation}>
+                  <Ionicons name="location-outline" size={13} color="rgba(255,255,255,0.7)" />
+                  <Text style={s.heroLocationText}>{user.location}</Text>
+                </View>
+              ) : null}
+            </LinearGradient>
+          </ImageBackground>
         </View>
 
         {/* ── Stats ── */}
-        <View style={st.statsCard}>
-          <View style={st.statItem}>
-            <Text style={st.statNum}>{streak}</Text>
-            <Text style={st.statLabel}>Streak</Text>
+        <View style={s.statsCard}>
+          <View style={s.statItem}>
+            <Text style={s.statNum}>{streak}</Text>
+            <Text style={s.statLabel}>🔥 Streak</Text>
           </View>
-          <View style={st.statDiv} />
-          <View style={st.statItem}>
-            <Text style={st.statNum}>{totalPractices}</Text>
-            <Text style={st.statLabel}>Practices</Text>
+          <View style={s.statDiv} />
+          <View style={s.statItem}>
+            <Text style={s.statNum}>{totalPractices}</Text>
+            <Text style={s.statLabel}>Practices</Text>
           </View>
-          <View style={st.statDiv} />
-          <View style={st.statItem}>
-            <Text style={st.statNum}>{totalHours}</Text>
-            <Text style={st.statLabel}>Hours</Text>
+          <View style={s.statDiv} />
+          <View style={s.statItem}>
+            <Text style={s.statNum}>{totalHours}</Text>
+            <Text style={s.statLabel}>Hours</Text>
           </View>
         </View>
 
         {/* ── Weekly rhythm ── */}
-        <View style={st.card}>
-          <Text style={st.cardTitle}>This Week</Text>
-          <View style={st.rhythmRow}>
+        <View style={s.card}>
+          <Text style={s.cardTitle}>This Week</Text>
+          <View style={s.rhythmRow}>
             {last7.map((day, i) => (
-              <View key={i} style={st.rhythmDay}>
+              <View key={i} style={s.rhythmDay}>
                 <View style={[
-                  st.rhythmDot,
-                  day.practiced && st.rhythmDotDone,
-                  day.isToday && !day.practiced && st.rhythmDotToday,
+                  s.rhythmDot,
+                  day.practiced && s.rhythmDotDone,
+                  day.isToday && !day.practiced && s.rhythmDotToday,
                 ]} />
-                <Text style={[st.rhythmLabel, day.isToday && st.rhythmLabelToday]}>{day.label}</Text>
+                <Text style={[s.rhythmLabel, day.isToday && s.rhythmLabelToday]}>{day.label}</Text>
               </View>
             ))}
           </View>
         </View>
 
         {/* ── About ── */}
-        <View style={st.card}>
-          <Text style={st.cardTitle}>About</Text>
+        <View style={s.card}>
+          <Text style={s.cardTitle}>About</Text>
           {editing ? (
             <TextInput
-              style={st.bioInput}
+              style={s.bioInput}
               value={bio}
               onChangeText={setBio}
               placeholder="Share your practice journey..."
-              placeholderTextColor={warm.mutedL}
+              placeholderTextColor="#7B8FAD"
               multiline
               numberOfLines={3}
               textAlignVertical="top"
             />
           ) : (
-            <Text style={st.bioText}>
+            <Text style={s.bioText}>
               {user?.bio || 'No bio yet. Tap Edit to add one.'}
             </Text>
           )}
         </View>
 
-        {/* ── Personal Details (view mode) ── */}
-        {!editing && (user?.location || user?.teacher || user?.practicingSince) && (
-          <View style={st.card}>
-            <Text style={st.cardTitle}>Details</Text>
-            {user?.location ? (
-              <View style={st.detailRow}>
-                <Ionicons name="location-outline" size={16} color={warm.muted} />
-                <Text style={st.detailText}>{user.location}</Text>
-              </View>
-            ) : null}
-            {user?.teacher ? (
-              <View style={st.detailRow}>
-                <Ionicons name="person-outline" size={16} color={warm.muted} />
-                <Text style={st.detailText}>{user.teacher}</Text>
-              </View>
-            ) : null}
-            {user?.practicingSince ? (
-              <View style={[st.detailRow, { borderBottomWidth: 0 }]}>
-                <Ionicons name="calendar-outline" size={16} color={warm.muted} />
-                <Text style={st.detailText}>Practicing since {user.practicingSince}</Text>
-              </View>
-            ) : null}
-          </View>
-        )}
-
-        {/* ── Personal Details (edit mode) ── */}
+        {/* ── Location (edit only) ── */}
         {editing && (
-          <View style={st.card}>
-            <Text style={st.cardTitle}>Personal Details</Text>
-
-            <Text style={st.fieldLabel}>Location</Text>
+          <View style={s.card}>
+            <Text style={s.cardTitle}>Location</Text>
             <TextInput
-              style={st.fieldInput}
+              style={s.fieldInput}
               value={location}
               onChangeText={setLocation}
               placeholder="e.g. Mysore, India"
-              placeholderTextColor={warm.mutedL}
-            />
-
-            <Text style={[st.fieldLabel, { marginTop: 16 }]}>Teacher / Shala</Text>
-            <TextInput
-              style={st.fieldInput}
-              value={teacher}
-              onChangeText={setTeacher}
-              placeholder="e.g. Sharath Jois, KPJAYI"
-              placeholderTextColor={warm.mutedL}
-            />
-
-            <Text style={[st.fieldLabel, { marginTop: 16 }]}>Practicing Since</Text>
-            <TextInput
-              style={st.fieldInput}
-              value={practicingSince}
-              onChangeText={(t) => setPracticingSince(t.replace(/[^0-9]/g, '').slice(0, 4))}
-              placeholder="e.g. 2018"
-              placeholderTextColor={warm.mutedL}
-              keyboardType="number-pad"
-              maxLength={4}
+              placeholderTextColor="#7B8FAD"
             />
           </View>
         )}
 
         {/* ── Series + Level (edit mode) ── */}
         {editing && (
-          <View style={st.card}>
-            <Text style={st.cardTitle}>Current Series</Text>
-            <View style={st.chipRow}>
+          <View style={s.card}>
+            <Text style={s.cardTitle}>Current Series</Text>
+            <View style={s.chipRow}>
               {SERIES_OPTIONS.map((opt) => (
                 <TouchableOpacity
                   key={opt.value}
-                  style={[st.chip, series === opt.value && st.chipActive]}
+                  style={[s.chip, series === opt.value && s.chipActive]}
                   onPress={() => setSeries(opt.value)}
                 >
-                  <Text style={st.chipEmoji}>{opt.emoji}</Text>
-                  <Text style={[st.chipText, series === opt.value && st.chipTextActive]}>{opt.label}</Text>
+                  <Text style={s.chipEmoji}>{opt.emoji}</Text>
+                  <Text style={[s.chipText, series === opt.value && s.chipTextActive]}>{opt.label}</Text>
                 </TouchableOpacity>
               ))}
             </View>
-            <Text style={[st.cardTitle, { marginTop: spacing.lg }]}>Level</Text>
-            <View style={st.chipRow}>
+            <Text style={[s.cardTitle, { marginTop: spacing.lg }]}>Level</Text>
+            <View style={s.chipRow}>
               {LEVEL_OPTIONS.map((opt) => (
                 <TouchableOpacity
                   key={opt.value}
-                  style={[st.chip, level === opt.value && st.chipActive]}
+                  style={[s.chip, level === opt.value && s.chipActive]}
                   onPress={() => setLevel(opt.value)}
                 >
-                  <Text style={[st.chipText, level === opt.value && st.chipTextActive]}>{opt.label}</Text>
+                  <Text style={[s.chipText, level === opt.value && s.chipTextActive]}>{opt.label}</Text>
                 </TouchableOpacity>
               ))}
             </View>
           </View>
         )}
 
+        {/* ── Recent practices ── */}
+        {recentLogs.length > 0 && (
+          <View style={s.card}>
+            <Text style={s.cardTitle}>Recent Practices</Text>
+            {recentLogs.map((log, i) => {
+              const d = new Date(log.loggedAt);
+              const label = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+              const seriesOpt = SERIES_OPTIONS.find((o) => o.value === log.series);
+              return (
+                <TouchableOpacity
+                  key={log.id}
+                  style={[s.logRow, i < recentLogs.length - 1 && s.logRowDivider]}
+                  onPress={() => openLogEdit(log)}
+                  activeOpacity={0.7}
+                >
+                  <View style={s.logDot} />
+                  <View style={s.logInfo}>
+                    <Text style={s.logSeries}>{seriesOpt?.emoji ?? '🧘'} {seriesOpt?.label ?? log.series}</Text>
+                    <Text style={s.logDate}>{label}</Text>
+                  </View>
+                  <View style={s.logRight}>
+                    <Text style={s.logDuration}>{log.durationMin} min</Text>
+                    <Ionicons name="pencil" size={13} color="#7B8FAD" />
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
+
         {/* ── Sign out ── */}
-        <TouchableOpacity style={st.signOutBtn} onPress={handleSignOut} activeOpacity={0.8}>
-          <Ionicons name="log-out-outline" size={18} color="#C0392B" />
-          <Text style={st.signOutText}>Sign Out</Text>
+        <TouchableOpacity style={s.signOutBtn} onPress={handleSignOut} activeOpacity={0.8}>
+          <Ionicons name="log-out-outline" size={18} color="#ED4956" />
+          <Text style={s.signOutText}>Sign Out</Text>
         </TouchableOpacity>
 
-        <Text style={st.version}>Ashtanga Sangha v1.0</Text>
+        <Text style={s.version}>Ashtanga Sangha v1.0</Text>
       </ScrollView>
 
-      {/* ── Photo picker modal (for native; web goes straight to library) ── */}
-      <Modal visible={showPhotoModal} transparent animationType="fade" onRequestClose={() => setShowPhotoModal(false)}>
-        <Pressable style={st.modalOverlay} onPress={() => setShowPhotoModal(false)}>
-          <View style={st.modalCard}>
-            <Text style={st.modalTitle}>Profile Photo</Text>
-            <TouchableOpacity style={st.modalOption} onPress={() => { setShowPhotoModal(false); pickImage('camera'); }}>
-              <Ionicons name="camera-outline" size={20} color={warm.orange} />
-              <Text style={st.modalOptionText}>Camera</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={st.modalOption} onPress={() => { setShowPhotoModal(false); pickImage('library'); }}>
-              <Ionicons name="image-outline" size={20} color={warm.sage} />
-              <Text style={st.modalOptionText}>Photo Library</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[st.modalOption, { borderBottomWidth: 0 }]} onPress={() => setShowPhotoModal(false)}>
-              <Text style={[st.modalOptionText, { color: warm.muted }]}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </Pressable>
-      </Modal>
+      {/* ── Edit Practice Log Sheet ── */}
+      <Modal
+        visible={!!editingLog}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setEditingLog(null)}
+      >
+        <Pressable style={s.sheetBackdrop} onPress={() => setEditingLog(null)}>
+          <Pressable style={s.sheetBox} onPress={() => {}}>
+            {editingLog && (
+              <>
+                <View style={s.sheetHandle} />
 
-      {/* ── Sign-out confirm modal (for web) ── */}
-      <Modal visible={showSignOutModal} transparent animationType="fade" onRequestClose={() => setShowSignOutModal(false)}>
-        <Pressable style={st.modalOverlay} onPress={() => setShowSignOutModal(false)}>
-          <View style={st.modalCard}>
-            <Text style={st.modalTitle}>Sign Out</Text>
-            <Text style={{ fontSize: 14, color: warm.muted, textAlign: 'center', marginBottom: 16 }}>Are you sure you want to sign out?</Text>
-            <TouchableOpacity style={st.modalOption} onPress={async () => { setShowSignOutModal(false); await signOut(); clearUser(); }}>
-              <Ionicons name="log-out-outline" size={20} color="#C0392B" />
-              <Text style={[st.modalOptionText, { color: '#C0392B' }]}>Sign Out</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[st.modalOption, { borderBottomWidth: 0 }]} onPress={() => setShowSignOutModal(false)}>
-              <Text style={[st.modalOptionText, { color: warm.muted }]}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
+                <View style={s.sheetTopRow}>
+                  <Text style={s.sheetTitle}>Edit Practice</Text>
+                  <Text style={s.sheetDate}>
+                    {new Date(editingLog.loggedAt).toLocaleDateString('en-US', {
+                      weekday: 'long', month: 'long', day: 'numeric',
+                    })}
+                  </Text>
+                </View>
+
+                {/* Series picker */}
+                <Text style={s.sheetLabel}>Series</Text>
+                <View style={s.chipRow}>
+                  {SERIES_OPTIONS.map((opt) => (
+                    <TouchableOpacity
+                      key={opt.value}
+                      style={[s.chip, editLogSeries === opt.value && s.chipActive]}
+                      onPress={() => setEditLogSeries(opt.value)}
+                    >
+                      <Text style={s.chipEmoji}>{opt.emoji}</Text>
+                      <Text style={[s.chipText, editLogSeries === opt.value && s.chipTextActive]}>
+                        {opt.label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                {/* Duration stepper */}
+                <Text style={[s.sheetLabel, { marginTop: spacing.lg }]}>Duration</Text>
+                <View style={s.stepper}>
+                  <TouchableOpacity
+                    style={s.stepBtn}
+                    onPress={() => setEditLogDuration((v) => Math.max(10, v - 15))}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name="remove" size={20} color="#FFFFFF" />
+                  </TouchableOpacity>
+                  <Text style={s.stepValue}>{editLogDuration} min</Text>
+                  <TouchableOpacity
+                    style={s.stepBtn}
+                    onPress={() => setEditLogDuration((v) => Math.min(300, v + 15))}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name="add" size={20} color="#FFFFFF" />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Actions */}
+                <View style={s.sheetActions}>
+                  <TouchableOpacity style={s.deleteBtn} onPress={deleteLog} activeOpacity={0.8}>
+                    <Ionicons name="trash-outline" size={16} color="#ED4956" />
+                    <Text style={s.deleteBtnText}>Delete</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={s.saveSheetBtn} onPress={saveLogEdit} activeOpacity={0.8}>
+                    <Text style={s.saveSheetBtnText}>Save Changes</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+          </Pressable>
         </Pressable>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 
-const st = StyleSheet.create({
-  root: { flex: 1, backgroundColor: warm.bg },
+const s = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: '#F0F4FF' },
 
-  /* ── Top bar ── */
+  // ── Top bar ──
   topbar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 20, paddingVertical: 12,
+    paddingHorizontal: spacing.xl, paddingVertical: spacing.md,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1, borderBottomColor: '#DDE4F0',
   },
-  topbarLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  topbarLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   appTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: warm.ink, lineHeight: 22,
+    color: '#1A2744', lineHeight: 22,
   },
-  topbarActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  topbarActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   editBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
-    backgroundColor: warm.card, borderRadius: 9999,
-    paddingHorizontal: 12, paddingVertical: 6,
-    borderWidth: 1, borderColor: warm.border,
+    backgroundColor: 'transparent', borderRadius: radius.full,
+    paddingHorizontal: spacing.md, paddingVertical: spacing.xs,
+    borderWidth: 1, borderColor: '#405DE6',
   },
-  editBtnText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 12, lineHeight: 16, color: warm.ink,
+  editBtnText: { ...typography.labelSm, color: '#1A2744' },
+  cancelBtn: {
+    paddingHorizontal: spacing.md, paddingVertical: spacing.xs,
   },
-  cancelBtn: { paddingHorizontal: 12, paddingVertical: 6 },
-  cancelText: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.muted },
+  cancelText: { ...typography.labelMd, color: '#7B8FAD' },
   saveBtn: {
-    backgroundColor: warm.orange, borderRadius: 9999,
-    paddingHorizontal: 16, paddingVertical: 8,
+    backgroundColor: '#405DE6', borderRadius: radius.full,
+    paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
     minWidth: 64, alignItems: 'center',
   },
-  saveBtnText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: '#fff' },
+  saveBtnText: { ...typography.headingSm, color: '#fff' },
 
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 48 },
 
-  /* ── Hero card ── */
+  // ── Hero card ──
   heroCard: {
-    marginHorizontal: 16, marginBottom: 16,
-    borderRadius: 24, overflow: 'hidden',
-    shadowColor: '#8B5E3C',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
-    elevation: 6,
+    marginHorizontal: spacing.lg, marginBottom: spacing.lg,
+    borderRadius: radius['2xl'], overflow: 'hidden',
+    ...shadows.md,
   },
+  heroBg: { width: '100%' },
+  heroBgImage: { borderRadius: radius['2xl'] },
   heroGradient: {
     alignItems: 'center',
-    paddingTop: 28,
-    paddingBottom: 24,
-    paddingHorizontal: 16,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.xl,
+    paddingHorizontal: spacing.lg,
   },
 
-  /* Avatar */
-  avatarWrap: { position: 'relative', marginBottom: 12 },
+  // Avatar
+  avatarWrap: {
+    position: 'relative',
+    marginBottom: spacing.md,
+  },
   avatar: {
     width: 96, height: 96, borderRadius: 48,
-    backgroundColor: warm.orange,
+    backgroundColor: '#405DE6',
   },
-  avatarFallback: { alignItems: 'center', justifyContent: 'center' },
+  avatarFallback: {
+    alignItems: 'center', justifyContent: 'center',
+  },
   avatarInitial: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 38, color: '#fff',
   },
   avatarRing: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: 52, borderWidth: 3,
-    borderColor: 'rgba(255,255,255,0.45)',
+    borderRadius: 52,
+    borderWidth: 3,
+    borderColor: '#5B8DEF',
     margin: -3,
   },
   avatarEditOverlay: {
-    position: 'absolute', bottom: 0, right: 0,
-    width: 32, height: 32, borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 48,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     alignItems: 'center', justifyContent: 'center',
-    borderWidth: 2, borderColor: 'rgba(255,255,255,0.6)',
   },
 
   heroName: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 26, lineHeight: 32,
-    color: '#fff', marginBottom: 8,
-    textShadowColor: 'rgba(0,0,0,0.15)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
+    color: '#fff', marginBottom: spacing.sm,
   },
   nameInput: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 24, color: '#fff',
     textAlign: 'center', borderBottomWidth: 1.5,
     borderBottomColor: 'rgba(255,255,255,0.5)',
-    paddingBottom: 4, marginBottom: 8, minWidth: 200,
+    paddingBottom: 4, marginBottom: spacing.sm, minWidth: 200,
   },
-  heroBadgeRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
+  heroBadgeRow: {
+    flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm,
+  },
   levelBadge: {
-    backgroundColor: 'rgba(255,255,255,0.18)',
-    borderRadius: 9999,
-    paddingHorizontal: 12, paddingVertical: 4,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.28)',
+    backgroundColor: 'rgba(64,93,230,0.2)',
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md, paddingVertical: 4,
+    borderWidth: 1, borderColor: 'rgba(64,93,230,0.4)',
   },
   seriesBadge: {
-    backgroundColor: 'rgba(122,139,94,0.35)',
-    borderColor: 'rgba(122,139,94,0.5)',
+    backgroundColor: 'rgba(52,211,153,0.2)',
+    borderColor: 'rgba(52,211,153,0.4)',
   },
   levelBadgeText: {
     fontSize: 12, color: 'rgba(255,255,255,0.92)', fontWeight: '600', letterSpacing: 0.4,
   },
-  heroLocation: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
+  heroLocation: {
+    flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4,
+  },
   heroLocationText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 12, color: 'rgba(255,255,255,0.7)',
+    ...typography.bodyXs, color: 'rgba(255,255,255,0.7)',
   },
 
-  /* ── Stats ── */
+  // ── Stats ──
   statsCard: {
     flexDirection: 'row',
-    marginHorizontal: 16, marginBottom: 12,
-    backgroundColor: warm.card, borderRadius: 20,
-    paddingVertical: 16,
-    borderWidth: 1, borderColor: warm.borderL,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04, shadowRadius: 4, elevation: 2,
+    marginHorizontal: spacing.lg, marginBottom: spacing.md,
+    backgroundColor: '#FFFFFF', borderRadius: radius['2xl'],
+    paddingVertical: spacing.lg, ...shadows.sm,
+    borderWidth: 1, borderColor: '#DDE4F0',
   },
   statItem: { flex: 1, alignItems: 'center' },
   statNum: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 26, color: warm.orange,
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 26, color: '#405DE6',
   },
-  statLabel: {
-    fontFamily: 'DMSans_400Regular', fontSize: 11, color: warm.muted, marginTop: 2,
-  },
-  statDiv: { width: 1, backgroundColor: warm.border, marginVertical: 4 },
+  statLabel: { ...typography.bodyXs, color: '#7B8FAD', marginTop: 2 },
+  statDiv: { width: 1, backgroundColor: '#DDE4F0', marginVertical: spacing.xs },
 
-  /* ── Cards ── */
+  // ── Cards ──
   card: {
-    marginHorizontal: 16, marginBottom: 12,
-    backgroundColor: warm.card, borderRadius: 20,
-    padding: 16,
-    borderWidth: 1, borderColor: warm.borderL,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04, shadowRadius: 4, elevation: 2,
+    marginHorizontal: spacing.lg, marginBottom: spacing.md,
+    backgroundColor: '#FFFFFF', borderRadius: radius.xl,
+    padding: spacing.lg, ...shadows.sm,
+    borderWidth: 1, borderColor: '#DDE4F0',
   },
   cardTitle: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 11, lineHeight: 16,
-    color: warm.muted, textTransform: 'uppercase', letterSpacing: 0.8,
-    marginBottom: 12,
+    ...typography.headingXs, color: '#7B8FAD',
+    textTransform: 'uppercase', letterSpacing: 0.8,
+    marginBottom: spacing.md,
   },
 
-  /* Weekly rhythm */
-  rhythmRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  // Weekly rhythm
+  rhythmRow: {
+    flexDirection: 'row', justifyContent: 'space-between',
+  },
   rhythmDay: { alignItems: 'center', gap: 6 },
   rhythmDot: {
     width: 30, height: 30, borderRadius: 15,
-    backgroundColor: warm.field,
-    borderWidth: 1.5, borderColor: warm.border,
+    backgroundColor: '#F0F4FF',
+    borderWidth: 1.5, borderColor: '#DDE4F0',
   },
   rhythmDotDone: {
-    backgroundColor: warm.sage, borderColor: warm.sage,
+    backgroundColor: '#405DE6', borderColor: '#405DE6',
   },
   rhythmDotToday: {
-    borderColor: warm.orange, borderWidth: 2,
+    borderColor: '#FF6B6B', borderWidth: 2,
   },
-  rhythmLabel: { fontFamily: 'DMSans_400Regular', fontSize: 11, color: warm.muted },
-  rhythmLabelToday: { color: warm.orange, fontWeight: '700' },
+  rhythmLabel: { ...typography.bodyXs, color: '#7B8FAD' },
+  rhythmLabelToday: { color: '#FF6B6B', fontWeight: '700' },
 
-  /* Bio / fields */
-  bioText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 14, lineHeight: 22, color: warm.inkMid,
-  },
+  // Bio / fields
+  bioText: { ...typography.bodyMd, color: '#3D5070', lineHeight: 22 },
   bioInput: {
-    fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.ink,
-    borderWidth: 1, borderColor: warm.border, borderRadius: 12,
-    padding: 12, minHeight: 80, textAlignVertical: 'top',
-    backgroundColor: warm.field,
-  },
-  fieldLabel: {
-    fontFamily: 'DMSans_500Medium', fontSize: 12, color: warm.muted,
-    marginBottom: 6,
+    ...typography.bodyMd, color: '#3D5070',
+    borderWidth: 1, borderColor: '#405DE6', borderRadius: radius.md,
+    padding: spacing.md, minHeight: 80, textAlignVertical: 'top',
+    backgroundColor: '#F0F4FF',
   },
   fieldInput: {
-    fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.ink,
-    borderWidth: 1, borderColor: warm.border, borderRadius: 12,
-    padding: 12, backgroundColor: warm.field,
+    ...typography.bodyMd, color: '#3D5070',
+    borderWidth: 1, borderColor: '#405DE6', borderRadius: radius.md,
+    padding: spacing.md,
+    backgroundColor: '#F0F4FF',
   },
 
-  /* Detail rows (view mode) */
-  detailRow: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    paddingVertical: 8,
-    borderBottomWidth: 1, borderBottomColor: warm.borderL,
-  },
-  detailText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.inkMid,
-    flex: 1,
-  },
-
-  /* Chips */
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  // Chips
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   chip: {
-    flexDirection: 'row', alignItems: 'center', gap: 4,
-    paddingVertical: 8, paddingHorizontal: 12,
-    borderRadius: 9999, borderWidth: 1.5, borderColor: warm.border,
-    backgroundColor: warm.field,
+    flexDirection: 'row', alignItems: 'center', gap: spacing.xs,
+    paddingVertical: spacing.sm, paddingHorizontal: spacing.md,
+    borderRadius: radius.full, borderWidth: 1.5, borderColor: '#DDE4F0',
+    backgroundColor: '#F0F4FF',
   },
-  chipActive: { borderColor: warm.orange, backgroundColor: 'rgba(232,131,74,0.08)' },
+  chipActive: { borderColor: '#405DE6', backgroundColor: 'rgba(64,93,230,0.12)' },
   chipEmoji: { fontSize: 13 },
-  chipText: { fontFamily: 'DMSans_500Medium', fontSize: 11, lineHeight: 16, color: warm.inkMid },
-  chipTextActive: { color: warm.orange, fontWeight: '700' },
+  chipText: { ...typography.labelSm, color: '#3D5070' },
+  chipTextActive: { color: '#405DE6', fontWeight: '700' },
 
-  /* Sign out */
-  signOutBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-    marginHorizontal: 16, marginTop: 8,
-    paddingVertical: 16,
-    backgroundColor: warm.card, borderRadius: 20,
-    borderWidth: 1, borderColor: '#F0E0E0',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04, shadowRadius: 4, elevation: 2,
+  // Recent practices
+  logRow: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.md,
+    paddingVertical: spacing.sm,
   },
-  signOutText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: '#C0392B' },
+  logRowDivider: {
+    borderBottomWidth: 1, borderBottomColor: '#DDE4F0',
+  },
+  logDot: {
+    width: 8, height: 8, borderRadius: 4,
+    backgroundColor: '#405DE6',
+  },
+  logInfo: { flex: 1 },
+  logSeries: { ...typography.headingXs, color: '#1A2744' },
+  logDate: { ...typography.bodyXs, color: '#7B8FAD', marginTop: 1 },
+  logDuration: { ...typography.bodyXs, color: '#7B8FAD' },
+
+  // Sign out
+  signOutBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm,
+    marginHorizontal: spacing.lg, marginTop: spacing.sm,
+    paddingVertical: spacing.lg,
+    backgroundColor: '#FFFFFF', borderRadius: radius.xl,
+    borderWidth: 1, borderColor: '#DDE4F0',
+    ...shadows.sm,
+  },
+  signOutText: { ...typography.headingSm, color: '#ED4956' },
 
   version: {
-    fontFamily: 'DMSans_400Regular', fontSize: 11,
-    color: warm.mutedL, textAlign: 'center',
-    marginTop: 20, marginBottom: 20,
+    ...typography.bodyXs, color: '#B0BDD0',
+    textAlign: 'center', marginTop: spacing.xl, marginBottom: spacing.xl,
   },
 
-  /* Modals */
-  modalOverlay: {
-    flex: 1, backgroundColor: 'rgba(0,0,0,0.35)',
-    justifyContent: 'center', alignItems: 'center',
+  // Log row — tappable with pencil hint
+  logRight: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
   },
-  modalCard: {
-    backgroundColor: warm.card, borderRadius: 20,
-    padding: 20, width: 280,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15, shadowRadius: 20, elevation: 10,
+
+  // ── Edit log sheet ──
+  sheetBackdrop: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end',
   },
-  modalTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: warm.ink, textAlign: 'center', marginBottom: 16,
+  sheetBox: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: radius['3xl'],
+    borderTopRightRadius: radius['3xl'],
+    paddingHorizontal: spacing.xl,
+    paddingBottom: 40,
+    paddingTop: spacing.md,
+    ...shadows.lg,
+    borderTopWidth: 1, borderTopColor: '#DDE4F0',
   },
-  modalOption: {
-    flexDirection: 'row', alignItems: 'center', gap: 12,
-    paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: warm.borderL,
+  sheetHandle: {
+    width: 40, height: 4, borderRadius: 2,
+    backgroundColor: '#DDE4F0',
+    alignSelf: 'center', marginBottom: spacing.lg,
   },
-  modalOptionText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 15, color: warm.ink,
+  sheetTopRow: { marginBottom: spacing.lg },
+  sheetTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, lineHeight: 28,
+    color: '#1A2744', marginBottom: 2,
   },
+  sheetDate: { ...typography.bodySm, color: '#7B8FAD' },
+  sheetLabel: {
+    ...typography.headingXs, color: '#7B8FAD',
+    textTransform: 'uppercase', letterSpacing: 0.8,
+    marginBottom: spacing.sm,
+  },
+
+  // Duration stepper
+  stepper: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: '#F0F4FF', borderRadius: radius.xl,
+    padding: spacing.xs, alignSelf: 'flex-start',
+    gap: spacing.md,
+  },
+  stepBtn: {
+    width: 42, height: 42, borderRadius: 21,
+    backgroundColor: '#DDE4F0', alignItems: 'center', justifyContent: 'center',
+    ...shadows.sm,
+  },
+  stepValue: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20,
+    color: '#1A2744', minWidth: 80, textAlign: 'center',
+  },
+
+  // Sheet action buttons
+  sheetActions: {
+    flexDirection: 'row', gap: spacing.md, marginTop: spacing.xl,
+  },
+  deleteBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    borderWidth: 1.5, borderColor: '#FFF0F0', borderRadius: radius.full,
+    paddingVertical: spacing.md, paddingHorizontal: spacing.lg,
+  },
+  deleteBtnText: { ...typography.headingSm, color: '#ED4956' },
+  saveSheetBtn: {
+    flex: 1, backgroundColor: '#405DE6', borderRadius: radius.full,
+    paddingVertical: spacing.md, alignItems: 'center',
+  },
+  saveSheetBtnText: { ...typography.headingSm, color: '#fff' },
 });
