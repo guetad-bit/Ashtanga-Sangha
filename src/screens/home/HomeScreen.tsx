@@ -36,32 +36,32 @@ interface FeedPost {
   profiles: { name: string; avatar_url: string | null } | null;
 }
 
-/* ── Bold Gradient dark purple palette ──────────────────────────────────────── */
-const bold = {
-  bg:          '#0F0B1E',
-  cardBg:      '#1A1432',
-  headerBg:    '#0F0B1E',
-  ink:         '#FFFFFF',
-  inkMid:      '#E8E0F0',
-  muted:       '#9B8CB8',
-  mutedLight:  '#6B5C82',
-  accent:      '#A855F7',
-  accentLight: '#2D1A54',
+/* ── Insta Ocean light palette ─────────────────────────────────────────── */
+const ocean = {
+  bg:          '#F0F4FF',
+  cardBg:      '#FFFFFF',
+  headerBg:    '#FFFFFF',
+  ink:         '#1A2744',
+  inkMid:      '#3D5070',
+  muted:       '#7B8FAD',
+  mutedLight:  '#B0BDD0',
+  accent:      '#405DE6',
+  accentLight: '#E8EEFF',
   sage:        '#34D399',
-  sageBg:      '#1A3D2F',
-  gold:        '#FBBF24',
-  goldBg:      '#2D2A0F',
-  amber:       '#F97316',
-  amberBg:     '#2D1A0F',
-  terra:       '#A855F7',
-  divider:     '#231A3D',
-  orange:      '#F97316',
-  orangeLight: '#2D1A0F',
+  sageBg:      '#E0FFF0',
+  gold:        '#FFB347',
+  goldBg:      '#FFF8E8',
+  amber:       '#FF6B6B',
+  amberBg:     '#FFF0F0',
+  terra:       '#8B5CF6',
+  divider:     '#DDE4F0',
+  orange:      '#FF6B6B',
+  orangeLight: '#FFF0F0',
   white:       '#FFFFFF',
-  ring:        '#7C3AED',
-  heartRed:    '#EF4444',
-  blue:        '#A855F7',
-  blueBg:      '#2D1A54',
+  ring:        '#5B8DEF',
+  heartRed:    '#ED4956',
+  blue:        '#405DE6',
+  blueBg:      '#E8EEFF',
 };
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -220,10 +220,10 @@ export default function HomeScreen() {
 
   // Dot color for rhythm
   const dotColor = (status: string) => {
-    if (status === 'done') return bold.accent;
-    if (status === 'today') return bold.orange;
-    if (status === 'rest') return bold.divider;
-    return bold.divider;
+    if (status === 'done') return ocean.accent;
+    if (status === 'today') return ocean.orange;
+    if (status === 'rest') return ocean.divider;
+    return ocean.divider;
   };
 
   // ── Render ──
@@ -237,7 +237,7 @@ export default function HomeScreen() {
         </View>
         <View style={s.topbarRight}>
           <TouchableOpacity style={s.notifBtn} activeOpacity={0.7}>
-            <Ionicons name="chatbubble-ellipses" size={22} color={bold.accent} />
+            <Ionicons name="chatbubble-ellipses" size={22} color={ocean.accent} />
             <View style={s.notifBadge}>
               <Text style={s.notifBadgeText}>3</Text>
             </View>
@@ -277,7 +277,7 @@ export default function HomeScreen() {
               onPress={() => { setMenuOpen(false); router.push('/(tabs)/profile'); }}
               activeOpacity={0.7}
             >
-              <Ionicons name="person-outline" size={18} color={bold.ink} />
+              <Ionicons name="person-outline" size={18} color={ocean.ink} />
               <Text style={s.menuItemText}>My Profile</Text>
             </TouchableOpacity>
             <View style={s.menuDivider} />
@@ -293,7 +293,7 @@ export default function HomeScreen() {
         style={s.scroll}
         contentContainerStyle={s.scrollContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={bold.accent} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={ocean.accent} />}
       >
         {/* ── Welcome ── */}
         <Text style={s.welcome}>Welcome back, {user?.name?.split(' ')[0] ?? 'Yogi'}</Text>
@@ -436,31 +436,31 @@ export default function HomeScreen() {
 /* ═══════════════════════════════════════════════════════════════════════════════ */
 
 const s = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: bold.bg },
+  safe: { flex: 1, backgroundColor: ocean.bg },
 
   /* ── Top bar ───────────────────────────────────────────────────────────────── */
   topbar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: spacing.xl, paddingVertical: spacing.md,
-    backgroundColor: bold.bg,
+    backgroundColor: ocean.bg,
   },
   topbarLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   topbarRight: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   appTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: bold.ink, lineHeight: 22,
+    color: ocean.ink, lineHeight: 22,
   },
   notifBtn: { position: 'relative' as any },
   notifBadge: {
     position: 'absolute' as any, top: -4, right: -6,
-    backgroundColor: bold.orange, borderRadius: 8,
+    backgroundColor: ocean.orange, borderRadius: 8,
     width: 16, height: 16, alignItems: 'center' as any, justifyContent: 'center' as any,
-    borderWidth: 1.5, borderColor: bold.bg,
+    borderWidth: 1.5, borderColor: ocean.bg,
   },
   notifBadgeText: { fontSize: 9, fontWeight: '700' as any, color: '#fff' },
-  avatar: { width: 38, height: 38, borderRadius: 19, borderWidth: 2, borderColor: bold.ring },
+  avatar: { width: 38, height: 38, borderRadius: 19, borderWidth: 2, borderColor: ocean.ring },
   avatarPlaceholder: {
-    backgroundColor: bold.accent, alignItems: 'center' as any, justifyContent: 'center' as any,
+    backgroundColor: ocean.accent, alignItems: 'center' as any, justifyContent: 'center' as any,
   },
   avatarLetter: { fontSize: 16, color: '#fff', fontWeight: '600' as any },
   avatarLetterSm: { fontSize: 14, color: '#fff', fontWeight: '600' as any },
@@ -472,8 +472,9 @@ const s = StyleSheet.create({
     paddingTop: 95, paddingRight: spacing.lg,
   },
   menuContainer: {
-    backgroundColor: bold.cardBg, borderRadius: radius.xl,
+    backgroundColor: ocean.cardBg, borderRadius: radius.xl,
     width: 240, ...shadows.lg, overflow: 'hidden' as any,
+    borderWidth: 1, borderColor: ocean.divider,
   },
   menuHeader: {
     flexDirection: 'row' as any, alignItems: 'center' as any, gap: spacing.md,
@@ -482,15 +483,15 @@ const s = StyleSheet.create({
   menuAvatar: { width: 40, height: 40, borderRadius: 20 },
   menuName: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 16, lineHeight: 20,
-    color: bold.ink,
+    color: ocean.ink,
   },
-  menuEmail: { ...typography.bodyXs, color: bold.muted, marginTop: 1 },
-  menuDivider: { height: 1, backgroundColor: bold.divider },
+  menuEmail: { ...typography.bodyXs, color: ocean.muted, marginTop: 1 },
+  menuDivider: { height: 1, backgroundColor: ocean.divider },
   menuItem: {
     flexDirection: 'row' as any, alignItems: 'center' as any, gap: spacing.md,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
   },
-  menuItemText: { ...typography.bodyMd, color: bold.ink },
+  menuItemText: { ...typography.bodyMd, color: ocean.ink },
 
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
@@ -498,7 +499,7 @@ const s = StyleSheet.create({
   /* ── Welcome ───────────────────────────────────────────────────────────────── */
   welcome: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, lineHeight: 28,
-    color: bold.ink, textAlign: 'center' as any,
+    color: ocean.ink, textAlign: 'center' as any,
     paddingVertical: spacing.md,
   },
 
@@ -509,27 +510,27 @@ const s = StyleSheet.create({
     marginBottom: spacing.md,
   },
   yogisCountText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 15, color: bold.ink,
+    fontFamily: 'DMSans_400Regular', fontSize: 15, color: ocean.ink,
     marginBottom: 10,
   },
   yogisCountBold: {
-    fontFamily: 'DMSans_700Bold', fontSize: 15, color: bold.accent,
+    fontFamily: 'DMSans_700Bold', fontSize: 15, color: ocean.accent,
   },
   yogisAvatarRow: {
     flexDirection: 'row' as any, justifyContent: 'center' as any,
   },
   yogisAvatarWrap: {
     width: 44, height: 44, borderRadius: 22,
-    borderWidth: 2.5, borderColor: bold.cardBg,
+    borderWidth: 2.5, borderColor: ocean.cardBg,
     overflow: 'hidden' as any,
-    shadowColor: bold.accent, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 4,
+    shadowColor: ocean.accent, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 4,
     elevation: 3,
   },
   yogisAvatar: {
     width: '100%' as any, height: '100%' as any, borderRadius: 22,
   },
 
-  /* ── Hero card ─────────────────────────────────────────────────────────────── */
+  /* ── Hero card ────────────────────────────────────────────────────────────── */
   heroCard: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
     borderRadius: 20, overflow: 'hidden' as any,
@@ -547,7 +548,7 @@ const s = StyleSheet.create({
     justifyContent: 'center' as any,
     alignItems: 'center' as any,
     paddingHorizontal: 24,
-    backgroundColor: 'rgba(15,11,30,0.85)',
+    backgroundColor: 'rgba(64,93,230,0.75)',
     borderRadius: 20,
   },
   heroTitle: {
@@ -574,13 +575,13 @@ const s = StyleSheet.create({
     alignItems: 'center' as any, justifyContent: 'center' as any,
   },
   heroBtnDefault: {
-    backgroundColor: '#A855F7',
-    shadowColor: 'rgba(168,85,247,0.4)',
+    backgroundColor: '#405DE6',
+    shadowColor: 'rgba(64,93,230,0.4)',
     shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 16,
   },
   heroBtnOnMat: {
-    backgroundColor: '#F97316',
-    shadowColor: 'rgba(249,115,22,0.4)',
+    backgroundColor: '#FF6B6B',
+    shadowColor: 'rgba(255,107,107,0.4)',
     shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 16,
   },
   heroBtnText: {
@@ -591,14 +592,14 @@ const s = StyleSheet.create({
   /* ── Rhythm card ───────────────────────────────────────────────────────────── */
   rhythmCard: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
-    backgroundColor: bold.cardBg, borderRadius: 20,
+    backgroundColor: ocean.cardBg, borderRadius: 20,
     padding: spacing.xl,
     ...shadows.sm,
-    borderWidth: 1, borderColor: bold.divider,
+    borderWidth: 1, borderColor: ocean.divider,
   },
   rhythmTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: bold.ink, marginBottom: spacing.lg,
+    color: ocean.ink, marginBottom: spacing.lg,
   },
   rhythmRow: {
     flexDirection: 'row' as any, justifyContent: 'space-between' as any,
@@ -606,26 +607,26 @@ const s = StyleSheet.create({
   },
   rhythmCol: { alignItems: 'center' as any, gap: 6 },
   rhythmLabel: {
-    fontFamily: 'DMSans_500Medium', fontSize: 12, color: bold.muted,
+    fontFamily: 'DMSans_500Medium', fontSize: 12, color: ocean.muted,
   },
   rhythmDot: { width: 10, height: 10, borderRadius: 5 },
   rhythmDivider: {
-    height: 1, backgroundColor: bold.divider, marginVertical: spacing.md,
+    height: 1, backgroundColor: ocean.divider, marginVertical: spacing.md,
   },
   rhythmStats: {
     flexDirection: 'row' as any, alignItems: 'center' as any,
     justifyContent: 'center' as any, gap: spacing.md,
   },
   rhythmStatText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: bold.inkMid,
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: ocean.inkMid,
     textAlign: 'center' as any,
   },
   streakBadge: {
-    backgroundColor: bold.amberBg, borderRadius: radius.full,
+    backgroundColor: ocean.amberBg, borderRadius: radius.full,
     paddingHorizontal: spacing.md, paddingVertical: 3,
   },
   streakText: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: bold.orange,
+    fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: ocean.orange,
   },
   moonRow: {
     flexDirection: 'row' as any, alignItems: 'center' as any,
@@ -633,20 +634,20 @@ const s = StyleSheet.create({
   },
   moonIcon: { fontSize: 16 },
   moonText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: bold.muted,
+    fontFamily: 'DMSans_400Regular', fontSize: 13, color: ocean.muted,
   },
 
-  /* ── Live Practice Feed ────────────────────────────────────────────────────── */
+  /* ── Live Practice Feed ───────────────────────────────────────────────────── */
   feedSection: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
   },
   feedTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20,
-    color: bold.ink, marginBottom: 14,
+    color: ocean.ink, marginBottom: 14,
   },
   feedCard: {
-    backgroundColor: bold.cardBg, borderRadius: 16,
-    borderWidth: 1, borderColor: bold.divider,
+    backgroundColor: ocean.cardBg, borderRadius: 16,
+    borderWidth: 1, borderColor: ocean.divider,
     marginBottom: 12, overflow: 'hidden' as any,
   },
   feedCardInner: {
@@ -662,22 +663,22 @@ const s = StyleSheet.create({
     width: 40, height: 40, borderRadius: 20,
   },
   feedUserName: {
-    fontFamily: 'DMSans_700Bold', fontSize: 15, color: bold.ink,
+    fontFamily: 'DMSans_700Bold', fontSize: 15, color: ocean.ink,
   },
   feedTimeAgo: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: bold.muted,
+    fontFamily: 'DMSans_400Regular', fontSize: 13, color: ocean.muted,
   },
   feedCaption: {
-    fontFamily: 'DMSans_400Regular', fontSize: 15, color: bold.ink, marginBottom: 10,
+    fontFamily: 'DMSans_400Regular', fontSize: 15, color: ocean.ink, marginBottom: 10,
   },
   feedStats: {
     flexDirection: 'row' as any, gap: 14, alignItems: 'center' as any,
   },
   feedHeart: {
-    fontFamily: 'DMSans_500Medium', fontSize: 14, color: bold.heartRed,
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: ocean.heartRed,
   },
   feedComment: {
-    fontFamily: 'DMSans_500Medium', fontSize: 14, color: bold.muted,
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: ocean.muted,
   },
   feedCardImage: {
     width: 130, height: 'auto' as any, minHeight: 120,
