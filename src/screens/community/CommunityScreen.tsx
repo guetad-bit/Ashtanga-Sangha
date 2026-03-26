@@ -12,34 +12,34 @@ import { useAppStore } from '@/store/useAppStore';
 import PostCard from '@/components/community/PostCard';
 import { getPracticingNow, getFeed, supabase } from '@/lib/supabase';
 
-/* ── Bold Gradient dark purple palette ──────────────────────────────────── */
-const bold = {
-  headerBg:    '#1B0F3B',
-  headerText:  '#FFFFFF',
-  pageBg:      '#0F0B1E',
-  cardBg:      '#1A1432',
-  searchBg:    '#231A3D',
-  searchBorder:'#2D1A54',
-  searchText:  '#9B8CB8',
-  ink:         '#FFFFFF',
-  inkMid:      '#E8E0F0',
-  muted:       '#9B8CB8',
-  mutedLight:  '#6B5C82',
-  accent:      '#A855F7',
-  accentLight: '#2D1A54',
+/* ── Insta Ocean light palette ──────────────────────────────────────── */
+const ocean = {
+  headerBg:    '#FFFFFF',
+  headerText:  '#1A2744',
+  pageBg:      '#F0F4FF',
+  cardBg:      '#FFFFFF',
+  searchBg:    '#E8EEFF',
+  searchBorder:'#DDE4F0',
+  searchText:  '#7B8FAD',
+  ink:         '#1A2744',
+  inkMid:      '#3D5070',
+  muted:       '#7B8FAD',
+  mutedLight:  '#B0BDD0',
+  accent:      '#405DE6',
+  accentLight: '#E8EEFF',
   sage:        '#34D399',
-  sageBg:      '#1A3D2F',
-  gold:        '#FBBF24',
-  goldBg:      '#2D2A0F',
-  amber:       '#F97316',
-  amberBg:     '#2D1A0F',
-  terra:       '#7C3AED',
-  terraBg:     '#2D1A54',
-  divider:     '#231A3D',
+  sageBg:      '#E0FFF0',
+  gold:        '#FFB347',
+  goldBg:      '#FFF8E8',
+  amber:       '#FF6B6B',
+  amberBg:     '#FFF0F0',
+  terra:       '#8B5CF6',
+  terraBg:     '#F0E4FF',
+  divider:     '#DDE4F0',
   greenBadge:  '#34D399',
-  heartRed:    '#EF4444',
+  heartRed:    '#ED4956',
   white:       '#FFFFFF',
-  ring:        '#7C3AED',
+  ring:        '#5B8DEF',
 };
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -65,25 +65,11 @@ interface FeedPost {
   location: string | null;
   likes_count: number;
   created_at: string;
-  profiles: { name: string; avatar_url: string | null } | null;
-}
-
-interface Member {
-  id: string;
-  name: string;
-  avatar_url: string | null;
-  series: string;
-  level: string;
-  streak: number;
-  location: string | null;
-  bio: string | null;
-}
-
-/* ── Mock discussion topics ─────────────────────────────────────────────── */
+  profiopics ─────────────────────────────────────────────── */
 const DISCUSSIONS = [
-  { id: '1', title: 'Padmasana Tips',    replies: 125, color: bold.sage,  bg: bold.sageBg  },
-  { id: '2', title: 'Overcoming Injury', replies: 99,  color: bold.gold,  bg: bold.goldBg  },
-  { id: '3', title: 'Morning Practice Wins', replies: 154, color: bold.amber, bg: bold.amberBg },
+  { id: '1', title: 'Padmasana Tips',    replies: 125, color: ocean.sage,  bg: ocean.sageBg  },
+  { id: '2', title: 'Overcoming Injury', replies: 99,  color: ocean.gold,  bg: ocean.goldBg  },
+  { id: '3', title: 'Morning Practice Wins', replies: 154, color: ocean.amber, bg: ocean.amberBg },
 ];
 
 export default function CommunityScreen() {
@@ -157,8 +143,8 @@ export default function CommunityScreen() {
         {p.avatarUrl ? (
           <Image source={{ uri: p.avatarUrl }} style={s.partnerAvatar} />
         ) : (
-          <View style={[s.partnerAvatar, { backgroundColor: bold.accent, alignItems: 'center', justifyContent: 'center' }]}>
-            <Text style={{ fontSize: 22, color: bold.white, fontWeight: '600' }}>
+          <View style={[s.partnerAvatar, { backgroundColor: ocean.accent, alignItems: 'center', justifyContent: 'center' }]}>
+            <Text style={{ fontSize: 22, color: ocean.white, fontWeight: '600' }}>
               {p.name.charAt(0)}
             </Text>
           </View>
@@ -178,22 +164,22 @@ export default function CommunityScreen() {
 
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
-      {/* ── Bold header ── */}
+      {/* ── Light header ── */}
       <View style={s.header}>
         <TouchableOpacity activeOpacity={0.7}>
-          <Ionicons name="menu" size={26} color={bold.headerText} />
+          <Ionicons name="menu" size={26} color={ocean.headerText} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>Community</Text>
         <View style={s.headerRight}>
           <TouchableOpacity activeOpacity={0.7} style={s.headerIcon}>
-            <Ionicons name="chatbubble-ellipses-outline" size={22} color={bold.headerText} />
+            <Ionicons name="chatbubble-ellipses-outline" size={22} color={ocean.headerText} />
             <View style={s.notifDot} />
           </TouchableOpacity>
           <TouchableOpacity activeOpacity={0.7} onPress={() => router.push('/(tabs)/profile')}>
             {user?.avatarUrl ? (
               <Image source={{ uri: user.avatarUrl }} style={s.headerAvatar} />
             ) : (
-              <Ionicons name="person" size={22} color={bold.headerText} />
+              <Ionicons name="person" size={22} color={ocean.headerText} />
             )}
           </TouchableOpacity>
         </View>
@@ -202,11 +188,11 @@ export default function CommunityScreen() {
       {/* ── Search bar ── */}
       <View style={s.searchWrap}>
         <View style={s.searchBar}>
-          <Ionicons name="search-outline" size={18} color={bold.muted} />
+          <Ionicons name="search-outline" size={18} color={ocean.muted} />
           <TextInput
             style={s.searchInput}
             placeholder="Search members..."
-            placeholderTextColor={bold.muted}
+            placeholderTextColor={ocean.muted}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -234,7 +220,7 @@ export default function CommunityScreen() {
         style={s.scroll}
         contentContainerStyle={s.scrollContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={bold.accent} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={ocean.accent} />}
       >
 
         {/* ═══════════ LATEST TAB ═══════════ */}
@@ -255,9 +241,9 @@ export default function CommunityScreen() {
                     {allPeople.slice(0, 4).map((p, i) => renderPartnerAvatar(p, i))}
                     {allPeople.length > 4 && (
                       <TouchableOpacity style={s.partnerItem} activeOpacity={0.7}>
-                        <View style={[s.partnerAvatarRing, { borderColor: bold.greenBadge }]}>
-                          <View style={[s.partnerAvatar, { backgroundColor: bold.greenBadge, alignItems: 'center', justifyContent: 'center' }]}>
-                            <Text style={{ color: bold.white, fontFamily: 'DMSans_600SemiBold', fontSize: 12 }}>More</Text>
+                        <View style={[s.partnerAvatarRing, { borderColor: ocean.greenBadge }]}>
+                          <View style={[s.partnerAvatar, { backgroundColor: ocean.greenBadge, alignItems: 'center', justifyContent: 'center' }]}>
+                            <Text style={{ color: ocean.white, fontFamily: 'DMSans_600SemiBold', fontSize: 12 }}>More</Text>
                           </View>
                         </View>
                         <Text style={s.partnerName}>+ More</Text>
@@ -266,13 +252,13 @@ export default function CommunityScreen() {
                   </>
                 ) : (
                   <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.xl }}>
-                    <Text style={{ color: bold.muted, fontSize: 14 }}>No practitioners yet</Text>
+                    <Text style={{ color: ocean.muted, fontSize: 14 }}>No practitioners yet</Text>
                   </View>
                 )}
                 {/* Arrow indicator */}
                 {allPeople.length > 3 && (
                   <View style={s.arrowWrap}>
-                    <Ionicons name="chevron-forward" size={20} color={bold.mutedLight} />
+                    <Ionicons name="chevron-forward" size={20} color={ocean.mutedLight} />
                   </View>
                 )}
               </ScrollView>
@@ -332,7 +318,7 @@ export default function CommunityScreen() {
               ))
             ) : (
               <View style={s.emptyState}>
-                <Ionicons name="chatbubbles-outline" size={40} color={bold.mutedLight} />
+                <Ionicons name="chatbubbles-outline" size={40} color={ocean.mutedLight} />
                 <Text style={s.emptyText}>No posts yet</Text>
               </View>
             )}
@@ -359,8 +345,8 @@ export default function CommunityScreen() {
                         {p.avatar_url ? (
                           <Image source={{ uri: p.avatar_url }} style={s.personAvatar} />
                         ) : (
-                          <View style={[s.personAvatar, { backgroundColor: bold.accent, alignItems: 'center', justifyContent: 'center' }]}>
-                            <Text style={{ fontSize: 16, color: bold.white, fontWeight: '600' }}>{p.name.charAt(0)}</Text>
+                          <View style={[s.personAvatar, { backgroundColor: ocean.accent, alignItems: 'center', justifyContent: 'center' }]}>
+                            <Text style={{ fontSize: 16, color: ocean.white, fontWeight: '600' }}>{p.name.charAt(0)}</Text>
                           </View>
                         )}
                         <View style={s.onlineDot} />
@@ -390,8 +376,8 @@ export default function CommunityScreen() {
                       {m.avatar_url ? (
                         <Image source={{ uri: m.avatar_url }} style={s.personAvatar} />
                       ) : (
-                        <View style={[s.personAvatar, { backgroundColor: bold.terra, alignItems: 'center', justifyContent: 'center' }]}>
-                          <Text style={{ fontSize: 16, color: bold.white, fontWeight: '600' }}>{m.name.charAt(0)}</Text>
+                        <View style={[s.personAvatar, { backgroundColor: ocean.terra, alignItems: 'center', justifyContent: 'center' }]}>
+                          <Text style={{ fontSize: 16, color: ocean.white, fontWeight: '600' }}>{m.name.charAt(0)}</Text>
                         </View>
                       )}
                     </View>
@@ -409,7 +395,7 @@ export default function CommunityScreen() {
               </View>
             ) : (
               <View style={s.emptyState}>
-                <Ionicons name="people-outline" size={40} color={bold.mutedLight} />
+                <Ionicons name="people-outline" size={40} color={ocean.mutedLight} />
                 <Text style={s.emptyText}>No members found yet</Text>
               </View>
             )}
@@ -428,7 +414,7 @@ export default function CommunityScreen() {
                   <Text style={s.topicTitle}>{d.title}</Text>
                   <Text style={s.topicMeta}>{d.replies} replies · Active today</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={18} color={bold.mutedLight} />
+                <Ionicons name="chevron-forward" size={18} color={ocean.mutedLight} />
               </TouchableOpacity>
             ))}
             <View style={s.emptyState}>
@@ -446,21 +432,21 @@ export default function CommunityScreen() {
 /* ═══════════════════════════════════════════════════════════════════════════ */
 
 const s = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: bold.pageBg },
+  safe: { flex: 1, backgroundColor: ocean.pageBg },
 
   /* ── Header ─────────────────────────────────────────────────────────────── */
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: bold.headerBg,
+    backgroundColor: ocean.headerBg,
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.md + 2,
   },
   headerTitle: {
     fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 22,
-    color: bold.headerText,
+    color: ocean.headerText,
   },
   headerRight: {
     flexDirection: 'row',
@@ -476,42 +462,42 @@ const s = StyleSheet.create({
     width: 9,
     height: 9,
     borderRadius: 4.5,
-    backgroundColor: bold.heartRed,
+    backgroundColor: ocean.heartRed,
     borderWidth: 1.5,
-    borderColor: bold.headerBg,
+    borderColor: ocean.headerBg,
   },
 
   /* ── Search ─────────────────────────────────────────────────────────────── */
   searchWrap: {
-    backgroundColor: bold.headerBg,
+    backgroundColor: ocean.headerBg,
     paddingHorizontal: spacing.xl,
     paddingBottom: spacing.md,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: bold.searchBg,
+    backgroundColor: ocean.searchBg,
     borderRadius: radius.lg,
     paddingHorizontal: spacing.lg,
     paddingVertical: 10,
     gap: spacing.sm,
     borderWidth: 1,
-    borderColor: bold.searchBorder,
+    borderColor: ocean.searchBorder,
   },
   searchInput: {
     flex: 1,
     fontFamily: 'DMSans_400Regular',
     fontSize: 14,
-    color: bold.ink,
+    color: ocean.ink,
     padding: 0,
   },
 
   /* ── Tabs (underline style) ─────────────────────────────────────────────── */
   tabRow: {
     flexDirection: 'row',
-    backgroundColor: bold.pageBg,
+    backgroundColor: ocean.pageBg,
     borderBottomWidth: 1,
-    borderBottomColor: bold.divider,
+    borderBottomColor: ocean.divider,
     paddingHorizontal: spacing.xl,
   },
   tab: {
@@ -522,16 +508,16 @@ const s = StyleSheet.create({
     borderBottomColor: 'transparent',
   },
   tabActive: {
-    borderBottomColor: bold.accent,
+    borderBottomColor: ocean.accent,
   },
   tabText: {
     fontFamily: 'DMSans_500Medium',
     fontSize: 15,
-    color: bold.mutedLight,
+    color: ocean.mutedLight,
   },
   tabTextActive: {
     fontFamily: 'DMSans_600SemiBold',
-    color: bold.ink,
+    color: ocean.ink,
   },
 
   /* ── Scroll ─────────────────────────────────────────────────────────────── */
@@ -550,25 +536,27 @@ const s = StyleSheet.create({
   sectionTitle: {
     fontFamily: 'DMSans_600SemiBold',
     fontSize: 17,
-    color: bold.ink,
+    color: ocean.ink,
   },
   sectionLink: {
     fontFamily: 'DMSans_500Medium',
     fontSize: 13,
-    color: bold.accent,
+    color: ocean.accent,
   },
 
   /* ── Find Practicing Partners ───────────────────────────────────────────── */
   partnersCard: {
     marginHorizontal: spacing.lg,
-    backgroundColor: bold.cardBg,
+    backgroundColor: ocean.cardBg,
     borderRadius: radius['2xl'],
     overflow: 'hidden',
-    shadowColor: '#A855F7',
+    borderWidth: 1,
+    borderColor: ocean.divider,
+    shadowColor: '#405DE6',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 3,
+    elevation: 2,
   },
   partnersScroll: {
     paddingHorizontal: spacing.lg,
@@ -581,7 +569,7 @@ const s = StyleSheet.create({
     height: 64,
     borderRadius: 32,
     borderWidth: 2.5,
-    borderColor: bold.ring,
+    borderColor: ocean.ring,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.xs,
@@ -590,13 +578,13 @@ const s = StyleSheet.create({
   partnerName: {
     fontFamily: 'DMSans_600SemiBold',
     fontSize: 12,
-    color: bold.ink,
+    color: ocean.ink,
     textAlign: 'center',
   },
   partnerLocation: {
     fontFamily: 'DMSans_400Regular',
     fontSize: 10,
-    color: bold.muted,
+    color: ocean.muted,
     textAlign: 'center',
     marginTop: 1,
   },
@@ -616,6 +604,8 @@ const s = StyleSheet.create({
     padding: spacing.lg,
     minHeight: 90,
     justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: ocean.divider,
   },
   discussionTitle: {
     fontFamily: 'DMSans_600SemiBold',
@@ -633,7 +623,7 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: bold.sageBg,
+    backgroundColor: ocean.sageBg,
     borderRadius: radius.full,
     paddingHorizontal: spacing.md,
     paddingVertical: 3,
@@ -642,23 +632,25 @@ const s = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 3.5,
-    backgroundColor: bold.sage,
+    backgroundColor: ocean.sage,
   },
   liveText: {
     fontFamily: 'DMSans_500Medium',
     fontSize: 11,
-    color: bold.sage,
+    color: ocean.sage,
   },
   peopleCard: {
     marginHorizontal: spacing.lg,
-    backgroundColor: bold.cardBg,
+    backgroundColor: ocean.cardBg,
     borderRadius: radius['2xl'],
     overflow: 'hidden',
-    shadowColor: '#A855F7',
+    borderWidth: 1,
+    borderColor: ocean.divider,
+    shadowColor: '#405DE6',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 3,
+    elevation: 2,
   },
   personRow: {
     flexDirection: 'row',
@@ -667,14 +659,14 @@ const s = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     gap: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: bold.divider,
+    borderBottomColor: ocean.divider,
   },
   personAvatarWrap: { position: 'relative' },
   personAvatar: {
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: bold.accentLight,
+    backgroundColor: ocean.accentLight,
   },
   onlineDot: {
     position: 'absolute',
@@ -683,46 +675,46 @@ const s = StyleSheet.create({
     width: 13,
     height: 13,
     borderRadius: 6.5,
-    backgroundColor: bold.greenBadge,
+    backgroundColor: ocean.greenBadge,
     borderWidth: 2,
-    borderColor: bold.cardBg,
+    borderColor: ocean.cardBg,
   },
   personInfo: { flex: 1 },
   personName: {
     fontFamily: 'DMSans_600SemiBold',
     fontSize: 14,
-    color: bold.ink,
+    color: ocean.ink,
   },
   personMeta: {
     fontFamily: 'DMSans_400Regular',
     fontSize: 11,
-    color: bold.muted,
+    color: ocean.muted,
     marginTop: 2,
   },
   followBtn: {
     borderRadius: radius.full,
     borderWidth: 1.5,
-    borderColor: bold.accent,
+    borderColor: ocean.accent,
     paddingHorizontal: spacing.lg,
     paddingVertical: 5,
   },
   followText: {
     fontFamily: 'DMSans_600SemiBold',
     fontSize: 11,
-    color: bold.accent,
+    color: ocean.accent,
   },
   followBtnActive: {
     borderRadius: radius.full,
-    backgroundColor: bold.accentLight,
+    backgroundColor: ocean.accentLight,
     borderWidth: 1.5,
-    borderColor: bold.accent,
+    borderColor: ocean.accent,
     paddingHorizontal: spacing.lg,
     paddingVertical: 5,
   },
   followTextActive: {
     fontFamily: 'DMSans_600SemiBold',
     fontSize: 11,
-    color: bold.accent,
+    color: ocean.accent,
   },
 
   /* ── Topics tab ─────────────────────────────────────────────────────────── */
@@ -731,26 +723,28 @@ const s = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: spacing.lg,
     marginBottom: spacing.md,
-    backgroundColor: bold.cardBg,
+    backgroundColor: ocean.cardBg,
     borderRadius: radius.xl,
     padding: spacing.lg,
     borderLeftWidth: 4,
-    shadowColor: '#A855F7',
+    borderWidth: 1,
+    borderColor: ocean.divider,
+    shadowColor: '#405DE6',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 1,
   },
   topicTitle: {
     fontFamily: 'DMSans_600SemiBold',
     fontSize: 15,
-    color: bold.ink,
+    color: ocean.ink,
     marginBottom: 3,
   },
   topicMeta: {
     fontFamily: 'DMSans_400Regular',
     fontSize: 12,
-    color: bold.muted,
+    color: ocean.muted,
   },
 
   /* ── Empty state ────────────────────────────────────────────────────────── */
@@ -762,6 +756,6 @@ const s = StyleSheet.create({
   emptyText: {
     fontFamily: 'DMSans_400Regular',
     fontSize: 14,
-    color: bold.mutedLight,
+    color: ocean.mutedLight,
   },
 });
