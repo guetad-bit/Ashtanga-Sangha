@@ -1,46 +1,46 @@
 // src/styles/tokens.ts
-// Single source of truth for all design tokens — Insta Ocean theme
+// Single source of truth for all design tokens — Stone & Moss theme
 
 export const colors = {
-  // Sky palette — backgrounds, subtle fills (light blue-white)
-  sky: '#F0F4FF',
+  // Beige palette — backgrounds, subtle fills (warm parchment)
+  sky: '#F6F2EC',
   skyMid: '#FFFFFF',
-  skyDeep: '#DDE4F0',
+  skyDeep: '#E8E0D4',
 
-  // Blue palette → Ocean blue (primary actions, links, focus)
-  blue: '#405DE6',
-  blueL: '#5B8DEF',
-  blueDeep: '#2A3EB1',
+  // Olive palette → (primary actions, links, focus)
+  blue: '#8A9E78',
+  blueL: '#6E8A5C',
+  blueDeep: '#5A7B4A',
 
-  // Sand palette → Emerald/success (rest states, nature accents)
-  sand: '#34D399',
-  sandMid: '#6EE7B7',
-  sandDeep: '#E0FFF0',
+  // Wood palette → (warm accents, secondary fills)
+  sand: '#D4C4AB',
+  sandMid: '#B8A88E',
+  sandDeep: '#EDE6DA',
 
-  // Sage palette → Emerald (success, nature accents)
-  sage: '#34D399',
-  sageL: '#6EE7B7',
-  sagePale: '#E0FFF0',
+  // Sage palette → (success, nature accents)
+  sage: '#8A9E78',
+  sageL: '#DCE8D3',
+  sagePale: '#F0F5EB',
 
-  // Orange palette → Coral (streaks, urgent, FAB)
-  orange: '#FF6B6B',
-  orangeL: '#FFA0A0',
-  orangePale: '#FFF0F0',
+  // Orange palette → (soft amber for CTAs, gentle emphasis)
+  orange: '#C4956A',
+  orangeL: '#DDB892',
+  orangePale: '#FFF5EC',
 
-  // Ink palette → Dark text
-  ink: '#1A2744',
-  inkMid: '#3D5070',
+  // Ink palette → Dark text (warm brown-black)
+  ink: '#3B3228',
+  inkMid: '#5E5245',
 
   // Muted — secondary text, placeholders
-  muted: '#7B8FAD',
-  mutedL: '#B0BDD0',
+  muted: '#9B8E7E',
+  mutedL: '#C4B8A8',
 
   // Base (card and page)
   white: '#FFFFFF',
-  page: '#F0F4FF',
+  page: '#F6F2EC',
 
   // Light backgrounds
-  obDark: '#F0F4FF',
+  obDark: '#F6F2EC',
   obDarkMid: '#FFFFFF',
 } as const;
 
@@ -67,21 +67,21 @@ export const radius = {
 
 export const shadows = {
   sm: {
-    shadowColor: '#1A2744',
+    shadowColor: '#3B3228',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 4,
     elevation: 2,
   },
   md: {
-    shadowColor: '#405DE6',
+    shadowColor: '#8A9E78',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 4,
   },
   lg: {
-    shadowColor: '#405DE6',
+    shadowColor: '#8A9E78',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.1,
     shadowRadius: 24,
