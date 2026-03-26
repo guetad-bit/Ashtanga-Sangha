@@ -31,22 +31,22 @@ const DURATION_OPTIONS = [30, 45, 60, 75, 90, 120];
 // Three modal steps
 type ModalStep = 'select_series' | 'on_the_mat' | 'questionnaire';
 
-/* ── bold palette ──────────────────────────────────────────────────────────── */
-const bold = {
-  bg: '#0F0B1E',
-  cardBg: '#1A1432',
-  ink: '#FFFFFF',
-  inkMid: '#E8E0F0',
-  muted: '#9B8CB8',
-  accent: '#A855F7',
+/* ── Insta Ocean palette ──────────────────────────────────────────────────── */
+const ocean = {
+  bg: '#F0F4FF',
+  cardBg: '#FFFFFF',
+  ink: '#1A2744',
+  inkMid: '#3D5070',
+  muted: '#7B8FAD',
+  accent: '#405DE6',
   sage: '#34D399',
-  sageBg: '#1A3D2F',
-  orange: '#F97316',
-  orangeLight: '#2D1A0F',
-  divider: '#231A3D',
-  blue: '#A855F7',
-  blueBg: '#2D1A54',
-  white: '#1A1432',
+  sageBg: '#E0FFF0',
+  coral: '#FF6B6B',
+  coralLight: '#FFF0F0',
+  divider: '#DDE4F0',
+  sky: '#5B8DEF',
+  accentBg: '#E8EEFF',
+  white: '#FFFFFF',
 };
 
 export default function LogPracticeModal() {
@@ -79,11 +79,9 @@ export default function LogPracticeModal() {
 
   const handleClose = () => {
     setLogModalOpen(false);
-    // Don't reset step if currently on the mat — preserve state
     if (!isPracticing) resetForm();
   };
 
-  // Step 1 → Step 2: Go on the mat
   const handleGoOnMat = async () => {
     if (!user) {
       Alert.alert('Not signed in', 'Please sign in first.');
@@ -101,12 +99,10 @@ export default function LogPracticeModal() {
     }
   };
 
-  // Step 2 → Step 3: Finish practice → open questionnaire
   const handleFinishPractice = () => {
     setStep('questionnaire');
   };
 
-  // Step 3: Save the practice log
   const handleSaveLog = async () => {
     if (!user) return;
     setSaving(true);
@@ -133,7 +129,6 @@ export default function LogPracticeModal() {
         durationMin: duration,
       });
 
-      // Keep practicing_now true — user stays visible all day
       setLogModalOpen(false);
       resetForm();
     } catch {
@@ -143,7 +138,6 @@ export default function LogPracticeModal() {
     }
   };
 
-  // When modal opens and user is already practicing, jump to on_the_mat
   React.useEffect(() => {
     if (isLogModalOpen && isPracticing && step === 'select_series') {
       setStep('on_the_mat');
@@ -274,7 +268,6 @@ export default function LogPracticeModal() {
                 </Text>
               </View>
 
-              {/* What did I practice? */}
               <Text style={styles.qLabel}>What did you practice?</Text>
               <View style={styles.seriesGrid}>
                 {SERIES_OPTIONS.map((series) => {
@@ -295,7 +288,6 @@ export default function LogPracticeModal() {
                 })}
               </View>
 
-              {/* How did I feel? */}
               <Text style={styles.qLabel}>How did you feel?</Text>
               <View style={styles.moodRow}>
                 {MOOD_OPTIONS.map((m) => {
@@ -316,7 +308,6 @@ export default function LogPracticeModal() {
                 })}
               </View>
 
-              {/* Duration */}
               <Text style={styles.qLabel}>How long? (minutes)</Text>
               <View style={styles.durationRow}>
                 {DURATION_OPTIONS.map((d) => {
@@ -336,39 +327,35 @@ export default function LogPracticeModal() {
                 })}
               </View>
 
-              {/* Stopped at */}
               <Text style={styles.qLabel}>Stopped at (posture)</Text>
               <TextInput
                 style={styles.input}
                 placeholder="e.g. Navasana, Marichyasana C..."
-                placeholderTextColor={bold.muted}
+                placeholderTextColor={ocean.muted}
                 value={stoppedAt}
                 onChangeText={setStoppedAt}
               />
 
-              {/* What am I working on */}
               <Text style={styles.qLabel}>What are you working on?</Text>
               <TextInput
                 style={styles.input}
                 placeholder="e.g. Jump-backs, deeper twists..."
-                placeholderTextColor={bold.muted}
+                placeholderTextColor={ocean.muted}
                 value={workingOn}
                 onChangeText={setWorkingOn}
               />
 
-              {/* Notes */}
               <Text style={styles.qLabel}>Anything else?</Text>
               <TextInput
                 style={[styles.input, styles.textArea]}
                 placeholder="Notes about your practice..."
-                placeholderTextColor={bold.muted}
+                placeholderTextColor={ocean.muted}
                 value={notes}
                 onChangeText={setNotes}
                 multiline
                 textAlignVertical="top"
               />
 
-              {/* Save button */}
               <TouchableOpacity
                 style={[styles.saveBtn, saving && styles.btnDisabled]}
                 onPress={handleSaveLog}
@@ -390,90 +377,85 @@ export default function LogPracticeModal() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: bold.bg },
+  container: { flex: 1, backgroundColor: ocean.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: bold.divider, backgroundColor: bold.cardBg,
+    borderBottomWidth: 1, borderBottomColor: ocean.divider, backgroundColor: ocean.cardBg,
   },
   closeBtn: { width: 60 },
-  closeBtnText: { ...typography.labelLg, color: bold.accent },
+  closeBtnText: { ...typography.labelLg, color: ocean.accent },
   headerTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: bold.ink,
+    color: ocean.ink,
   },
   scroll: { flex: 1 },
   scrollContent: { padding: spacing.xl, paddingBottom: spacing['4xl'] },
 
-  // Date card
   dateCard: {
-    alignItems: 'center', backgroundColor: bold.cardBg,
+    alignItems: 'center', backgroundColor: ocean.cardBg,
     borderRadius: radius['2xl'], padding: spacing.xl,
     marginBottom: spacing['2xl'], ...shadows.sm,
-    borderWidth: 1, borderColor: bold.divider,
+    borderWidth: 1, borderColor: ocean.divider,
   },
   dateEmoji: { fontSize: 32, marginBottom: spacing.sm },
   dateText: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: bold.ink,
+    color: ocean.ink,
   },
 
-  // Active practicing card (Step 2)
   activeCard: {
-    alignItems: 'center', backgroundColor: bold.cardBg,
+    alignItems: 'center', backgroundColor: ocean.cardBg,
     borderRadius: radius['2xl'], padding: spacing['2xl'],
     marginBottom: spacing['2xl'], ...shadows.sm,
-    borderWidth: 2, borderColor: bold.sage,
+    borderWidth: 2, borderColor: ocean.sage,
   },
   activeEmoji: { fontSize: 48, marginBottom: spacing.md },
   activeTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22,
-    color: bold.sage, marginBottom: spacing.sm,
+    color: ocean.sage, marginBottom: spacing.sm,
   },
-  activeSub: { ...typography.bodySm, color: bold.muted, textAlign: 'center', lineHeight: 20 },
+  activeSub: { ...typography.bodySm, color: ocean.muted, textAlign: 'center', lineHeight: 20 },
 
-  // Section labels
   sectionLabel: {
     fontFamily: 'DMSans_600SemiBold', fontSize: 16,
-    color: bold.ink, marginBottom: spacing.md,
+    color: ocean.ink, marginBottom: spacing.md,
   },
 
-  // Series grid
   seriesGrid: {
     flexDirection: 'row', flexWrap: 'wrap',
     gap: spacing.md, marginBottom: spacing['2xl'],
   },
   seriesCard: {
-    width: '47%', backgroundColor: bold.cardBg,
+    width: '47%', backgroundColor: ocean.cardBg,
     borderRadius: radius.xl, padding: spacing.lg,
-    borderWidth: 2, borderColor: bold.divider, position: 'relative',
+    borderWidth: 2, borderColor: ocean.divider, position: 'relative',
   },
   seriesCardSmall: {
-    width: '47%', backgroundColor: bold.cardBg,
+    width: '47%', backgroundColor: ocean.cardBg,
     borderRadius: radius.lg, paddingVertical: spacing.md, paddingHorizontal: spacing.md,
-    borderWidth: 2, borderColor: bold.divider,
+    borderWidth: 2, borderColor: ocean.divider,
     flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
   },
-  seriesCardSelected: { borderColor: bold.accent, backgroundColor: bold.blueBg },
+  seriesCardSelected: { borderColor: ocean.accent, backgroundColor: ocean.accentBg },
   seriesEmoji: { fontSize: 24, marginBottom: spacing.sm },
   seriesEmojiSmall: { fontSize: 18 },
   seriesLabel: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: bold.ink,
+    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: ocean.ink,
   },
   seriesLabelSmall: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: bold.ink, flex: 1,
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: ocean.ink, flex: 1,
   },
-  seriesLabelSelected: { color: bold.accent },
+  seriesLabelSelected: { color: ocean.accent },
   checkMark: {
     position: 'absolute', top: spacing.sm, right: spacing.sm,
     width: 22, height: 22, borderRadius: 11,
-    backgroundColor: bold.accent, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: ocean.accent, alignItems: 'center', justifyContent: 'center',
   },
   checkMarkText: { color: '#fff', fontSize: 13, fontWeight: '700' },
 
-  // Go on mat button (Step 1)
   goBtn: {
-    backgroundColor: bold.accent, borderRadius: radius['2xl'],
+    backgroundColor: ocean.accent, borderRadius: radius['2xl'],
     paddingVertical: spacing.xl, alignItems: 'center', ...shadows.md,
   },
   goBtnText: {
@@ -481,87 +463,80 @@ const styles = StyleSheet.create({
   },
   goBtnSub: { ...typography.bodyXs, color: 'rgba(255,255,255,0.8)', marginTop: 4 },
 
-  // Finish practice button (Step 2)
   finishBtn: {
-    backgroundColor: bold.orange, borderRadius: radius['2xl'],
+    backgroundColor: ocean.coral, borderRadius: radius['2xl'],
     paddingVertical: spacing.xl, alignItems: 'center', ...shadows.md,
   },
   finishBtnText: {
     fontFamily: 'DMSans_700Bold', fontSize: 18, color: '#fff',
   },
 
-  // Questionnaire header (Step 3)
   questionnaireHeader: {
     alignItems: 'center', marginBottom: spacing.xl,
   },
   questionnaireEmoji: { fontSize: 36, marginBottom: spacing.sm },
   questionnaireTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: bold.ink,
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: ocean.ink,
     marginBottom: 4,
   },
   questionnaireSub: {
-    ...typography.bodySm, color: bold.muted, textAlign: 'center',
+    ...typography.bodySm, color: ocean.muted, textAlign: 'center',
   },
 
-  // Question labels
   qLabel: {
     fontFamily: 'DMSans_600SemiBold', fontSize: 15,
-    color: bold.ink, marginBottom: spacing.sm, marginTop: spacing.lg,
+    color: ocean.ink, marginBottom: spacing.sm, marginTop: spacing.lg,
   },
 
-  // Mood chips
   moodRow: {
     flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm,
     marginBottom: spacing.md,
   },
   moodChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: bold.cardBg, borderRadius: radius.full,
+    backgroundColor: ocean.cardBg, borderRadius: radius.full,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderWidth: 1.5, borderColor: bold.divider,
+    borderWidth: 1.5, borderColor: ocean.divider,
   },
   moodChipSelected: {
-    borderColor: bold.orange, backgroundColor: bold.orangeLight,
+    borderColor: ocean.coral, backgroundColor: ocean.coralLight,
   },
   moodEmoji: { fontSize: 16 },
   moodLabel: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: bold.ink,
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: ocean.ink,
   },
-  moodLabelSelected: { color: bold.orange },
+  moodLabelSelected: { color: ocean.coral },
 
-  // Duration chips
   durationRow: {
     flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm,
     marginBottom: spacing.md,
   },
   durationChip: {
-    backgroundColor: bold.cardBg, borderRadius: radius.full,
+    backgroundColor: ocean.cardBg, borderRadius: radius.full,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderWidth: 1.5, borderColor: bold.divider,
+    borderWidth: 1.5, borderColor: ocean.divider,
   },
   durationChipSelected: {
-    borderColor: bold.accent, backgroundColor: bold.blueBg,
+    borderColor: ocean.accent, backgroundColor: ocean.accentBg,
   },
   durationText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: bold.ink,
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: ocean.ink,
   },
-  durationTextSelected: { color: bold.accent },
+  durationTextSelected: { color: ocean.accent },
 
-  // Text inputs
   input: {
-    backgroundColor: bold.cardBg, borderRadius: radius.lg,
-    borderWidth: 1.5, borderColor: bold.divider,
+    backgroundColor: ocean.cardBg, borderRadius: radius.lg,
+    borderWidth: 1.5, borderColor: ocean.divider,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    ...typography.bodyMd, color: bold.ink,
+    ...typography.bodyMd, color: ocean.ink,
     marginBottom: spacing.sm,
   },
   textArea: {
     height: 80, paddingTop: spacing.md,
   },
 
-  // Save button (Step 3)
   saveBtn: {
-    backgroundColor: bold.accent, borderRadius: radius['2xl'],
+    backgroundColor: ocean.accent, borderRadius: radius['2xl'],
     paddingVertical: spacing.xl, alignItems: 'center',
     marginTop: spacing.xl, ...shadows.md,
   },
