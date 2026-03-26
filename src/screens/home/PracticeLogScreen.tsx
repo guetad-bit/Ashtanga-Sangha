@@ -126,7 +126,7 @@ export default function PracticeLogScreen() {
           <TextInput
             style={s.input}
             placeholder="e.g. Navasana, Marichyasana C..."
-            placeholderTextColor="#6B5C82"
+            placeholderTextColor="#B0BDD0"
             value={stoppedAt}
             onChangeText={setStoppedAt}
           />
@@ -136,7 +136,7 @@ export default function PracticeLogScreen() {
           <TextInput
             style={[s.input, s.textArea]}
             placeholder="How was your practice today?"
-            placeholderTextColor="#6B5C82"
+            placeholderTextColor="#B0BDD0"
             value={notes}
             onChangeText={setNotes}
             multiline
@@ -148,7 +148,7 @@ export default function PracticeLogScreen() {
           <TextInput
             style={s.input}
             placeholder="e.g. Jump-backs, deeper twist in Mari C..."
-            placeholderTextColor="#6B5C82"
+            placeholderTextColor="#B0BDD0"
             value={workOnNext}
             onChangeText={setWorkOnNext}
           />
@@ -160,45 +160,45 @@ export default function PracticeLogScreen() {
 }
 
 const s = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#0F0B1E' },
+  safe: { flex: 1, backgroundColor: '#F0F4FF' },
 
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: spacing.xl, paddingVertical: spacing.lg,
-    borderBottomWidth: 1, borderBottomColor: '#231A3D',
-    backgroundColor: '#0F0B1E',
+    borderBottomWidth: 1, borderBottomColor: '#DDE4F0',
+    backgroundColor: '#FFFFFF',
   },
   headerTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18, color: '#FFFFFF',
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18, color: '#1A2744',
   },
-  cancelBtn: { ...typography.bodyMd, color: '#9B8CB8' },
-  saveBtn: { ...typography.headingMd, color: '#A855F7' },
+  cancelBtn: { ...typography.bodyMd, color: '#7B8FAD' },
+  saveBtn: { ...typography.headingMd, color: '#405DE6' },
 
   scroll: { flex: 1 },
   scrollContent: { padding: spacing.xl, paddingBottom: spacing['4xl'] },
 
   label: {
-    ...typography.headingSm, color: '#FFFFFF',
+    ...typography.headingSm, color: '#1A2744',
     marginBottom: spacing.sm, marginTop: spacing.lg,
   },
 
   chipsRow: { gap: spacing.sm },
   chip: {
-    backgroundColor: '#1A1432', borderRadius: radius.full,
+    backgroundColor: '#FFFFFF', borderRadius: radius.full,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderWidth: 1.5, borderColor: '#231A3D',
+    borderWidth: 1.5, borderColor: '#DDE4F0',
   },
   chipActive: {
-    backgroundColor: '#A855F7', borderColor: '#A855F7',
+    backgroundColor: '#405DE6', borderColor: '#405DE6',
   },
-  chipText: { ...typography.labelMd, color: '#E8E0F0' },
+  chipText: { ...typography.labelMd, color: '#3D5070' },
   chipTextActive: { color: '#FFFFFF' },
 
   input: {
-    backgroundColor: '#1A1432', borderRadius: radius.lg,
-    borderWidth: 1.5, borderColor: '#231A3D',
+    backgroundColor: '#FFFFFF', borderRadius: radius.lg,
+    borderWidth: 1.5, borderColor: '#DDE4F0',
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    ...typography.bodyMd, color: '#FFFFFF',
+    ...typography.bodyMd, color: '#1A2744',
   },
   textArea: {
     height: 100, paddingTop: spacing.md,
