@@ -31,21 +31,21 @@ const DURATION_OPTIONS = [30, 45, 60, 75, 90, 120];
 // Three modal steps
 type ModalStep = 'select_series' | 'on_the_mat' | 'questionnaire';
 
-/* ── Insta Ocean palette ──────────────────────────────────────────────────── */
-const ocean = {
-  bg: '#F0F4FF',
+/* ── Stone & Moss palette ──────────────────────────────────────────────────── */
+const moss = {
+  bg: '#F6F2EC',
   cardBg: '#FFFFFF',
-  ink: '#1A2744',
-  inkMid: '#3D5070',
-  muted: '#7B8FAD',
-  accent: '#405DE6',
-  sage: '#34D399',
-  sageBg: '#E0FFF0',
-  coral: '#FF6B6B',
-  coralLight: '#FFF0F0',
-  divider: '#DDE4F0',
-  sky: '#5B8DEF',
-  accentBg: '#E8EEFF',
+  ink: '#3B3228',
+  inkMid: '#5E5245',
+  muted: '#9B8E7E',
+  accent: '#8A9E78',
+  sage: '#8A9E78',
+  sageBg: '#DCE8D3',
+  coral: '#C4956A',
+  coralLight: '#FFF5EC',
+  divider: '#E8E0D4',
+  sky: '#6E8A5C',
+  accentBg: '#DCE8D3',
   white: '#FFFFFF',
 };
 
@@ -227,7 +227,7 @@ export default function LogPracticeModal() {
                   <ActivityIndicator color="#fff" />
                 ) : (
                   <>
-                    <Text style={styles.goBtnText}>I'm on the mat</Text>
+                    <Text style={styles.goBtnText}>I'm on the mat 🧘</Text>
                     <Text style={styles.goBtnSub}>Your sangha will see you're practicing</Text>
                   </>
                 )}
@@ -243,7 +243,7 @@ export default function LogPracticeModal() {
                 <Text style={styles.activeTitle}>You're on the mat!</Text>
                 <Text style={styles.activeSub}>
                   Your sangha can see you're practicing.{'\n'}
-                  Take your time — enjoy your practice.
+                  Take your time.
                 </Text>
               </View>
 
@@ -308,7 +308,7 @@ export default function LogPracticeModal() {
                 })}
               </View>
 
-              <Text style={styles.qLabel}>How long? (minutes)</Text>
+              <Text style={styles.qLabel}>About how long?</Text>
               <View style={styles.durationRow}>
                 {DURATION_OPTIONS.map((d) => {
                   const isSelected = duration === d;
@@ -331,7 +331,7 @@ export default function LogPracticeModal() {
               <TextInput
                 style={styles.input}
                 placeholder="e.g. Navasana, Marichyasana C..."
-                placeholderTextColor={ocean.muted}
+                placeholderTextColor={moss.muted}
                 value={stoppedAt}
                 onChangeText={setStoppedAt}
               />
@@ -340,7 +340,7 @@ export default function LogPracticeModal() {
               <TextInput
                 style={styles.input}
                 placeholder="e.g. Jump-backs, deeper twists..."
-                placeholderTextColor={ocean.muted}
+                placeholderTextColor={moss.muted}
                 value={workingOn}
                 onChangeText={setWorkingOn}
               />
@@ -349,7 +349,7 @@ export default function LogPracticeModal() {
               <TextInput
                 style={[styles.input, styles.textArea]}
                 placeholder="Notes about your practice..."
-                placeholderTextColor={ocean.muted}
+                placeholderTextColor={moss.muted}
                 value={notes}
                 onChangeText={setNotes}
                 multiline
@@ -377,49 +377,49 @@ export default function LogPracticeModal() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: ocean.bg },
+  container: { flex: 1, backgroundColor: moss.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md,
-    borderBottomWidth: 1, borderBottomColor: ocean.divider, backgroundColor: ocean.cardBg,
+    borderBottomWidth: 1, borderBottomColor: moss.divider, backgroundColor: moss.cardBg,
   },
   closeBtn: { width: 60 },
-  closeBtnText: { ...typography.labelLg, color: ocean.accent },
+  closeBtnText: { ...typography.labelLg, color: moss.accent },
   headerTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: ocean.ink,
+    color: moss.ink,
   },
   scroll: { flex: 1 },
   scrollContent: { padding: spacing.xl, paddingBottom: spacing['4xl'] },
 
   dateCard: {
-    alignItems: 'center', backgroundColor: ocean.cardBg,
+    alignItems: 'center', backgroundColor: moss.cardBg,
     borderRadius: radius['2xl'], padding: spacing.xl,
     marginBottom: spacing['2xl'], ...shadows.sm,
-    borderWidth: 1, borderColor: ocean.divider,
+    borderWidth: 1, borderColor: moss.divider,
   },
   dateEmoji: { fontSize: 32, marginBottom: spacing.sm },
   dateText: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: ocean.ink,
+    color: moss.ink,
   },
 
   activeCard: {
-    alignItems: 'center', backgroundColor: ocean.cardBg,
+    alignItems: 'center', backgroundColor: moss.cardBg,
     borderRadius: radius['2xl'], padding: spacing['2xl'],
     marginBottom: spacing['2xl'], ...shadows.sm,
-    borderWidth: 2, borderColor: ocean.sage,
+    borderWidth: 2, borderColor: moss.sage,
   },
   activeEmoji: { fontSize: 48, marginBottom: spacing.md },
   activeTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22,
-    color: ocean.sage, marginBottom: spacing.sm,
+    color: moss.sage, marginBottom: spacing.sm,
   },
-  activeSub: { ...typography.bodySm, color: ocean.muted, textAlign: 'center', lineHeight: 20 },
+  activeSub: { ...typography.bodySm, color: moss.muted, textAlign: 'center', lineHeight: 20 },
 
   sectionLabel: {
     fontFamily: 'DMSans_600SemiBold', fontSize: 16,
-    color: ocean.ink, marginBottom: spacing.md,
+    color: moss.ink, marginBottom: spacing.md,
   },
 
   seriesGrid: {
@@ -427,35 +427,35 @@ const styles = StyleSheet.create({
     gap: spacing.md, marginBottom: spacing['2xl'],
   },
   seriesCard: {
-    width: '47%', backgroundColor: ocean.cardBg,
+    width: '47%', backgroundColor: moss.cardBg,
     borderRadius: radius.xl, padding: spacing.lg,
-    borderWidth: 2, borderColor: ocean.divider, position: 'relative',
+    borderWidth: 2, borderColor: moss.divider, position: 'relative',
   },
   seriesCardSmall: {
-    width: '47%', backgroundColor: ocean.cardBg,
+    width: '47%', backgroundColor: moss.cardBg,
     borderRadius: radius.lg, paddingVertical: spacing.md, paddingHorizontal: spacing.md,
-    borderWidth: 2, borderColor: ocean.divider,
+    borderWidth: 2, borderColor: moss.divider,
     flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
   },
-  seriesCardSelected: { borderColor: ocean.accent, backgroundColor: ocean.accentBg },
+  seriesCardSelected: { borderColor: moss.accent, backgroundColor: moss.accentBg },
   seriesEmoji: { fontSize: 24, marginBottom: spacing.sm },
   seriesEmojiSmall: { fontSize: 18 },
   seriesLabel: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: ocean.ink,
+    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: moss.ink,
   },
   seriesLabelSmall: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: ocean.ink, flex: 1,
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.ink, flex: 1,
   },
-  seriesLabelSelected: { color: ocean.accent },
+  seriesLabelSelected: { color: moss.accent },
   checkMark: {
     position: 'absolute', top: spacing.sm, right: spacing.sm,
     width: 22, height: 22, borderRadius: 11,
-    backgroundColor: ocean.accent, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center',
   },
   checkMarkText: { color: '#fff', fontSize: 13, fontWeight: '700' },
 
   goBtn: {
-    backgroundColor: ocean.accent, borderRadius: radius['2xl'],
+    backgroundColor: moss.accent, borderRadius: radius['2xl'],
     paddingVertical: spacing.xl, alignItems: 'center', ...shadows.md,
   },
   goBtnText: {
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
   goBtnSub: { ...typography.bodyXs, color: 'rgba(255,255,255,0.8)', marginTop: 4 },
 
   finishBtn: {
-    backgroundColor: ocean.coral, borderRadius: radius['2xl'],
+    backgroundColor: moss.coral, borderRadius: radius['2xl'],
     paddingVertical: spacing.xl, alignItems: 'center', ...shadows.md,
   },
   finishBtnText: {
@@ -476,16 +476,16 @@ const styles = StyleSheet.create({
   },
   questionnaireEmoji: { fontSize: 36, marginBottom: spacing.sm },
   questionnaireTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: ocean.ink,
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: moss.ink,
     marginBottom: 4,
   },
   questionnaireSub: {
-    ...typography.bodySm, color: ocean.muted, textAlign: 'center',
+    ...typography.bodySm, color: moss.muted, textAlign: 'center',
   },
 
   qLabel: {
     fontFamily: 'DMSans_600SemiBold', fontSize: 15,
-    color: ocean.ink, marginBottom: spacing.sm, marginTop: spacing.lg,
+    color: moss.ink, marginBottom: spacing.sm, marginTop: spacing.lg,
   },
 
   moodRow: {
@@ -494,41 +494,41 @@ const styles = StyleSheet.create({
   },
   moodChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: ocean.cardBg, borderRadius: radius.full,
+    backgroundColor: moss.cardBg, borderRadius: radius.full,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderWidth: 1.5, borderColor: ocean.divider,
+    borderWidth: 1.5, borderColor: moss.divider,
   },
   moodChipSelected: {
-    borderColor: ocean.coral, backgroundColor: ocean.coralLight,
+    borderColor: moss.coral, backgroundColor: moss.coralLight,
   },
   moodEmoji: { fontSize: 16 },
   moodLabel: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: ocean.ink,
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.ink,
   },
-  moodLabelSelected: { color: ocean.coral },
+  moodLabelSelected: { color: moss.coral },
 
   durationRow: {
     flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm,
     marginBottom: spacing.md,
   },
   durationChip: {
-    backgroundColor: ocean.cardBg, borderRadius: radius.full,
+    backgroundColor: moss.cardBg, borderRadius: radius.full,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderWidth: 1.5, borderColor: ocean.divider,
+    borderWidth: 1.5, borderColor: moss.divider,
   },
   durationChipSelected: {
-    borderColor: ocean.accent, backgroundColor: ocean.accentBg,
+    borderColor: moss.accent, backgroundColor: moss.accentBg,
   },
   durationText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: ocean.ink,
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.ink,
   },
-  durationTextSelected: { color: ocean.accent },
+  durationTextSelected: { color: moss.accent },
 
   input: {
-    backgroundColor: ocean.cardBg, borderRadius: radius.lg,
-    borderWidth: 1.5, borderColor: ocean.divider,
+    backgroundColor: moss.cardBg, borderRadius: radius.lg,
+    borderWidth: 1.5, borderColor: moss.divider,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
-    ...typography.bodyMd, color: ocean.ink,
+    ...typography.bodyMd, color: moss.ink,
     marginBottom: spacing.sm,
   },
   textArea: {
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
   },
 
   saveBtn: {
-    backgroundColor: ocean.accent, borderRadius: radius['2xl'],
+    backgroundColor: moss.accent, borderRadius: radius['2xl'],
     paddingVertical: spacing.xl, alignItems: 'center',
     marginTop: spacing.xl, ...shadows.md,
   },
