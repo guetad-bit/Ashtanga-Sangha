@@ -167,14 +167,14 @@ const WEEK_DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const ASANAS = [
   {
     name: 'Marichyasana C', subtitle: 'Pose Dedicated to the Sage Marichi',
-    series: 'Primary Series', image: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=600&q=80',
+    series: 'Primary Series', image: 'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=600&q=80',
     benefits: ['Spinal twist', 'Digestion', 'Shoulder opening', 'Hip flexibility'],
     tips: 'Ground through both sit bones. Lengthen the spine before twisting. Use the exhale to deepen the rotation. Keep the bound shoulder relaxed.',
     breaths: 5, sides: 'Both', difficulty: 'Int.',
   },
   {
     name: 'Utthita Trikonasana', subtitle: 'Extended Triangle Pose',
-    series: 'Primary Series', image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80',
+    series: 'Primary Series', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80',
     benefits: ['Hamstrings', 'Balance', 'Core strength', 'Spine length'],
     tips: 'Press into the outer edge of the back foot. Extend through the crown of the head. Keep the chest open and rotate from the thoracic spine.',
     breaths: 5, sides: 'Both', difficulty: 'Beg.',
@@ -304,7 +304,7 @@ export default function HomeScreen() {
           <Text style={s.appTitle}>Ashtanga Sangha</Text>
         </View>
         <View style={s.topbarRight}>
-          <TouchableOpacity style={s.notifBtn} activeOpacity={0.7}>
+          <TouchableOpacity style={s.notifBtn} activeOpacity={0.7} onPress={() => router.push('/(tabs)/community')}>
             <Ionicons name="chatbubble-ellipses" size={22} color={moss.accent} />
             <View style={s.notifBadge}>
               <Text style={s.notifBadgeText}>3</Text>
@@ -403,7 +403,7 @@ export default function HomeScreen() {
                 activeOpacity={0.85}
               >
                 <Text style={s.heroBtnText}>
-                  {isPracticing ? "You're on the mat!" : "Start your practice 🧘"}
+                  {isPracticing ? "On the mat 🧘‍♀️" : "Start Practice 🧘‍♀️"}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -412,40 +412,38 @@ export default function HomeScreen() {
 
         {/* ═══ 2. THIS WEEK + GOAL ═══ */}
         <View style={s.weekCard}>
-          <View style={s.weekRow}>
-            {/* Left: This Week checkmarks */}
-            <View style={s.weekLeft}>
-              <Text style={s.weekTitle}>This Week</Text>
-              <View style={s.weekDays}>
-                {WEEK_DAYS.map((label, i) => (
-                  <View key={i} style={s.weekDayCol}>
-                    <Text style={s.weekDayLabel}>{label}</Text>
-                    <View style={[s.weekDayCircle, { backgroundColor: weekChecks[i] ? moss.accent : moss.beige }]}>
-                      {weekChecks[i] && (
-                        <Ionicons name="checkmark" size={14} color="#fff" />
-                      )}
-                    </View>
+          {/* Top: This Week title and day circles */}
+          <View>
+            <Text style={s.weekTitle}>This Week</Text>
+            <View style={s.weekDays}>
+              {WEEK_DAYS.map((label, i) => (
+                <View key={i} style={s.weekDayCol}>
+                  <Text style={s.weekDayLabel}>{label}</Text>
+                  <View style={[s.weekDayCircle, { backgroundColor: weekChecks[i] ? moss.accent : moss.beige }]}>
+                    {weekChecks[i] && (
+                      <Ionicons name="checkmark" size={14} color="#fff" />
+                    )}
                   </View>
-                ))}
-              </View>
+                </View>
+              ))}
             </View>
-            {/* Right: Goal progress */}
-            <View style={s.weekRight}>
-              <View style={s.goalNumbers}>
-                <Text style={s.goalBig}>{practicesThisWeek}</Text>
-                <Text style={s.goalSlash}> / </Text>
-                <Text style={s.goalSmall}>{weeklyGoal}</Text>
-                <Text style={s.goalLabel}> practices</Text>
-              </View>
-              <View style={s.progressBar}>
-                <View style={[s.progressFill, { width: `${Math.min(100, (practicesThisWeek / weeklyGoal) * 100)}%` as any }]} />
-              </View>
-              <Text style={s.goalHint}>
-                {practicesThisWeek >= weeklyGoal
-                  ? 'Goal reached! 🎉'
-                  : `You're ${weeklyGoal - practicesThisWeek} away from your goal!`}
-              </Text>
+          </View>
+          {/* Bottom: Goal progress */}
+          <View style={s.weekGoalSection}>
+            <View style={s.goalNumbers}>
+              <Text style={s.goalBig}>{practicesThisWeek}</Text>
+              <Text style={s.goalSlash}> / </Text>
+              <Text style={s.goalSmall}>{weeklyGoal}</Text>
+              <Text style={s.goalLabel}> practices</Text>
             </View>
+            <View style={s.progressBar}>
+              <View style={[s.progressFill, { width: `${Math.min(100, (practicesThisWeek / weeklyGoal) * 100)}%` as any }]} />
+            </View>
+            <Text style={s.goalHint}>
+              {practicesThisWeek >= weeklyGoal
+                ? 'Goal reached! 🎉'
+                : `You're ${weeklyGoal - practicesThisWeek} away from your goal!`}
+            </Text>
           </View>
         </View>
 
@@ -486,7 +484,7 @@ export default function HomeScreen() {
         {/* ═══ 4. SANGHA FEED ═══ */}
         <View style={s.feedSection}>
           <Text style={s.feedTitle}>Sangha Feed</Text>
-          {FAKE_USERS.map((u) => (
+          {FAKE_USERS.slice(0, 2).map((u) => (
             <View key={u.id} style={s.feedCard}>
               <View style={s.feedCardInner}>
                 <View style={s.feedCardLeft}>
@@ -507,6 +505,9 @@ export default function HomeScreen() {
               </View>
             </View>
           ))}
+          <TouchableOpacity onPress={() => router.push('/(tabs)/community')} activeOpacity={0.7}>
+            <Text style={s.feedSeeAll}>See all in Community →</Text>
+          </TouchableOpacity>
         </View>
 
         {/* ═══ 5. ASANA OF THE DAY ═══ */}
@@ -720,8 +721,8 @@ const s = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 16,
   },
   heroBtnOnMat: {
-    backgroundColor: '#8A9E78',
-    shadowColor: 'rgba(138,158,120,0.4)',
+    backgroundColor: '#C4956A',
+    shadowColor: 'rgba(196,149,106,0.45)',
     shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 16,
   },
   heroBtnText: {
@@ -737,21 +738,19 @@ const s = StyleSheet.create({
     ...shadows.sm,
     borderWidth: 1, borderColor: moss.divider,
   },
-  weekRow: { flexDirection: 'row' as any, gap: 20 },
-  weekLeft: { flex: 1 },
   weekTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 16,
-    color: moss.ink, marginBottom: 12, fontWeight: '600' as any,
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
+    color: moss.ink, marginBottom: 16, fontWeight: '600' as any,
   },
-  weekDays: { flexDirection: 'row' as any, justifyContent: 'space-between' as any },
-  weekDayCol: { alignItems: 'center' as any, gap: 6 },
+  weekDays: { flexDirection: 'row' as any, justifyContent: 'space-around' as any, marginBottom: 24 },
+  weekDayCol: { alignItems: 'center' as any, gap: 8 },
   weekDayLabel: { fontFamily: 'DMSans_500Medium', fontSize: 12, color: moss.muted },
   weekDayCircle: {
-    width: 28, height: 28, borderRadius: 14,
+    width: 36, height: 36, borderRadius: 18,
     alignItems: 'center' as any, justifyContent: 'center' as any,
   },
-  weekRight: { flex: 1, justifyContent: 'center' as any },
-  goalNumbers: { flexDirection: 'row' as any, alignItems: 'baseline' as any, marginBottom: 8 },
+  weekGoalSection: {},
+  goalNumbers: { flexDirection: 'row' as any, alignItems: 'baseline' as any, marginBottom: 12 },
   goalBig: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 28,
     fontWeight: '700' as any, color: moss.ink, lineHeight: 32,
@@ -761,7 +760,7 @@ const s = StyleSheet.create({
   goalLabel: { fontSize: 15, color: moss.ink, fontWeight: '500' as any },
   progressBar: {
     width: '100%' as any, height: 8, borderRadius: 4,
-    backgroundColor: moss.beige, overflow: 'hidden' as any, marginBottom: 8,
+    backgroundColor: moss.beige, overflow: 'hidden' as any, marginBottom: 10,
   },
   progressFill: {
     height: '100%' as any, borderRadius: 4,
@@ -832,6 +831,7 @@ const s = StyleSheet.create({
   feedHeart: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.heartRed },
   feedComment: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.muted },
   feedCardImage: { width: 130, height: 'auto' as any, minHeight: 120 },
+  feedSeeAll: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: moss.muted, marginTop: 12, marginBottom: 4 },
 
   /* ── Asana of the Day ── */
   asanaCard: {
