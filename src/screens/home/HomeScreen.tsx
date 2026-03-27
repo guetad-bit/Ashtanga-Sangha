@@ -345,7 +345,7 @@ export default function HomeScreen() {
                 activeOpacity={0.85}
               >
                 <Text style={s.heroBtnText}>
-                  {isPracticing ? "You're on the mat!" : "I'm on the mat 🧘"}
+                  {isPracticing ? "You're on the mat!" : "Start your practice 🧘"}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -584,7 +584,7 @@ const s = StyleSheet.create({
     letterSpacing: 1.5, textTransform: 'uppercase' as any,
   },
 
-  /* ── Rhythm card ───────────────────────────────────────────────────────────── */
+  /* ── Rhythm card ─────────────────────────────────────────────────────────────── */
   rhythmCard: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
     backgroundColor: moss.cardBg, borderRadius: 20,
