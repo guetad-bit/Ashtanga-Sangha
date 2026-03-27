@@ -81,6 +81,7 @@ export default function ProfileScreen() {
   const streak = calculateStreak(practiceLogs);
   const totalPractices = practiceLogs.length;
   const totalHours = Math.round(practiceLogs.reduce((sum, l) => sum + l.durationMin, 0) / 60);
+  const totalCheers = Math.max(0, Math.floor(totalPractices * 0.5)); // Calculate sangha cheers
 
   // Last 7 days rhythm
   const today = new Date();
@@ -205,7 +206,7 @@ export default function ProfileScreen() {
           </View>
         ) : (
           <TouchableOpacity onPress={() => setEditing(true)} style={s.editBtn} activeOpacity={0.7}>
-            <Ionicons name="pencil" size={15} color="#1A2744" />
+            <Ionicons name="pencil" size={15} color="#3B3228" />
             <Text style={s.editBtnText}>Edit</Text>
           </TouchableOpacity>
         )}
@@ -221,7 +222,7 @@ export default function ProfileScreen() {
         <View style={s.heroCard}>
           <ImageBackground source={HERO_BG} style={s.heroBg} imageStyle={s.heroBgImage}>
             <LinearGradient
-              colors={['rgba(64,93,230,0.6)', 'rgba(91,141,239,0.9)']}
+              colors={['rgba(138,158,120,0.6)', 'rgba(110,138,92,0.9)']}
               style={s.heroGradient}
             >
               {/* Avatar */}
@@ -287,7 +288,7 @@ export default function ProfileScreen() {
         <View style={s.statsCard}>
           <View style={s.statItem}>
             <Text style={s.statNum}>{streak}</Text>
-            <Text style={s.statLabel}>🔥 Streak</Text>
+            <Text style={s.statLabel}>Days on mat</Text>
           </View>
           <View style={s.statDiv} />
           <View style={s.statItem}>
@@ -296,8 +297,8 @@ export default function ProfileScreen() {
           </View>
           <View style={s.statDiv} />
           <View style={s.statItem}>
-            <Text style={s.statNum}>{totalHours}</Text>
-            <Text style={s.statLabel}>Hours</Text>
+            <Text style={s.statNum}>{totalCheers}</Text>
+            <Text style={s.statLabel}>Sangha cheers</Text>
           </View>
         </View>
 
@@ -327,7 +328,7 @@ export default function ProfileScreen() {
               value={bio}
               onChangeText={setBio}
               placeholder="Share your practice journey..."
-              placeholderTextColor="#7B8FAD"
+              placeholderTextColor="#9B8E7E"
               multiline
               numberOfLines={3}
               textAlignVertical="top"
@@ -348,7 +349,7 @@ export default function ProfileScreen() {
               value={location}
               onChangeText={setLocation}
               placeholder="e.g. Mysore, India"
-              placeholderTextColor="#7B8FAD"
+              placeholderTextColor="#9B8E7E"
             />
           </View>
         )}
@@ -416,7 +417,7 @@ export default function ProfileScreen() {
 
         {/* ── Sign out ── */}
         <TouchableOpacity style={s.signOutBtn} onPress={handleSignOut} activeOpacity={0.8}>
-          <Ionicons name="log-out-outline" size={18} color="#ED4956" />
+          <Ionicons name="log-out-outline" size={18} color="#C4956A" />
           <Text style={s.signOutText}>Sign Out</Text>
         </TouchableOpacity>
 
@@ -485,7 +486,7 @@ export default function ProfileScreen() {
                 {/* Actions */}
                 <View style={s.sheetActions}>
                   <TouchableOpacity style={s.deleteBtn} onPress={deleteLog} activeOpacity={0.8}>
-                    <Ionicons name="trash-outline" size={16} color="#ED4956" />
+                    <Ionicons name="trash-outline" size={16} color="#C4956A" />
                     <Text style={s.deleteBtnText}>Delete</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={s.saveSheetBtn} onPress={saveLogEdit} activeOpacity={0.8}>
@@ -502,34 +503,34 @@ export default function ProfileScreen() {
 }
 
 const s = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#F0F4FF' },
+  safe: { flex: 1, backgroundColor: '#F6F2EC' },
 
   // ── Top bar ──
   topbar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: spacing.xl, paddingVertical: spacing.md,
     backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1, borderBottomColor: '#DDE4F0',
+    borderBottomWidth: 1, borderBottomColor: '#E8E0D4',
   },
   topbarLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   appTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: '#1A2744', lineHeight: 22,
+    color: '#3B3228', lineHeight: 22,
   },
   topbarActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   editBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     backgroundColor: 'transparent', borderRadius: radius.full,
     paddingHorizontal: spacing.md, paddingVertical: spacing.xs,
-    borderWidth: 1, borderColor: '#405DE6',
+    borderWidth: 1, borderColor: '#8A9E78',
   },
-  editBtnText: { ...typography.labelSm, color: '#1A2744' },
+  editBtnText: { ...typography.labelSm, color: '#3B3228' },
   cancelBtn: {
     paddingHorizontal: spacing.md, paddingVertical: spacing.xs,
   },
-  cancelText: { ...typography.labelMd, color: '#7B8FAD' },
+  cancelText: { ...typography.labelMd, color: '#9B8E7E' },
   saveBtn: {
-    backgroundColor: '#405DE6', borderRadius: radius.full,
+    backgroundColor: '#8A9E78', borderRadius: radius.full,
     paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
     minWidth: 64, alignItems: 'center',
   },
@@ -560,7 +561,7 @@ const s = StyleSheet.create({
   },
   avatar: {
     width: 96, height: 96, borderRadius: 48,
-    backgroundColor: '#405DE6',
+    backgroundColor: '#8A9E78',
   },
   avatarFallback: {
     alignItems: 'center', justifyContent: 'center',
@@ -572,7 +573,7 @@ const s = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     borderRadius: 52,
     borderWidth: 3,
-    borderColor: '#5B8DEF',
+    borderColor: '#8A9E78',
     margin: -3,
   },
   avatarEditOverlay: {
@@ -596,10 +597,10 @@ const s = StyleSheet.create({
     flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm,
   },
   levelBadge: {
-    backgroundColor: 'rgba(64,93,230,0.2)',
+    backgroundColor: 'rgba(138,158,120,0.2)',
     borderRadius: radius.full,
     paddingHorizontal: spacing.md, paddingVertical: 4,
-    borderWidth: 1, borderColor: 'rgba(64,93,230,0.4)',
+    borderWidth: 1, borderColor: 'rgba(138,158,120,0.4)',
   },
   seriesBadge: {
     backgroundColor: 'rgba(52,211,153,0.2)',
@@ -621,24 +622,24 @@ const s = StyleSheet.create({
     marginHorizontal: spacing.lg, marginBottom: spacing.md,
     backgroundColor: '#FFFFFF', borderRadius: radius['2xl'],
     paddingVertical: spacing.lg, ...shadows.sm,
-    borderWidth: 1, borderColor: '#DDE4F0',
+    borderWidth: 1, borderColor: '#E8E0D4',
   },
   statItem: { flex: 1, alignItems: 'center' },
   statNum: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 26, color: '#405DE6',
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 26, color: '#8A9E78',
   },
-  statLabel: { ...typography.bodyXs, color: '#7B8FAD', marginTop: 2 },
-  statDiv: { width: 1, backgroundColor: '#DDE4F0', marginVertical: spacing.xs },
+  statLabel: { ...typography.bodyXs, color: '#9B8E7E', marginTop: 2 },
+  statDiv: { width: 1, backgroundColor: '#E8E0D4', marginVertical: spacing.xs },
 
   // ── Cards ──
   card: {
     marginHorizontal: spacing.lg, marginBottom: spacing.md,
     backgroundColor: '#FFFFFF', borderRadius: radius.xl,
     padding: spacing.lg, ...shadows.sm,
-    borderWidth: 1, borderColor: '#DDE4F0',
+    borderWidth: 1, borderColor: '#E8E0D4',
   },
   cardTitle: {
-    ...typography.headingXs, color: '#7B8FAD',
+    ...typography.headingXs, color: '#9B8E7E',
     textTransform: 'uppercase', letterSpacing: 0.8,
     marginBottom: spacing.md,
   },
@@ -650,31 +651,31 @@ const s = StyleSheet.create({
   rhythmDay: { alignItems: 'center', gap: 6 },
   rhythmDot: {
     width: 30, height: 30, borderRadius: 15,
-    backgroundColor: '#F0F4FF',
-    borderWidth: 1.5, borderColor: '#DDE4F0',
+    backgroundColor: '#F6F2EC',
+    borderWidth: 1.5, borderColor: '#E8E0D4',
   },
   rhythmDotDone: {
-    backgroundColor: '#405DE6', borderColor: '#405DE6',
+    backgroundColor: '#8A9E78', borderColor: '#8A9E78',
   },
   rhythmDotToday: {
-    borderColor: '#FF6B6B', borderWidth: 2,
+    borderColor: '#C4B8A8', borderWidth: 2,
   },
-  rhythmLabel: { ...typography.bodyXs, color: '#7B8FAD' },
-  rhythmLabelToday: { color: '#FF6B6B', fontWeight: '700' },
+  rhythmLabel: { ...typography.bodyXs, color: '#9B8E7E' },
+  rhythmLabelToday: { color: '#C4B8A8', fontWeight: '700' },
 
   // Bio / fields
-  bioText: { ...typography.bodyMd, color: '#3D5070', lineHeight: 22 },
+  bioText: { ...typography.bodyMd, color: '#5E5245', lineHeight: 22 },
   bioInput: {
-    ...typography.bodyMd, color: '#3D5070',
-    borderWidth: 1, borderColor: '#405DE6', borderRadius: radius.md,
+    ...typography.bodyMd, color: '#5E5245',
+    borderWidth: 1, borderColor: '#8A9E78', borderRadius: radius.md,
     padding: spacing.md, minHeight: 80, textAlignVertical: 'top',
-    backgroundColor: '#F0F4FF',
+    backgroundColor: '#F6F2EC',
   },
   fieldInput: {
-    ...typography.bodyMd, color: '#3D5070',
-    borderWidth: 1, borderColor: '#405DE6', borderRadius: radius.md,
+    ...typography.bodyMd, color: '#5E5245',
+    borderWidth: 1, borderColor: '#8A9E78', borderRadius: radius.md,
     padding: spacing.md,
-    backgroundColor: '#F0F4FF',
+    backgroundColor: '#F6F2EC',
   },
 
   // Chips
@@ -682,13 +683,13 @@ const s = StyleSheet.create({
   chip: {
     flexDirection: 'row', alignItems: 'center', gap: spacing.xs,
     paddingVertical: spacing.sm, paddingHorizontal: spacing.md,
-    borderRadius: radius.full, borderWidth: 1.5, borderColor: '#DDE4F0',
-    backgroundColor: '#F0F4FF',
+    borderRadius: radius.full, borderWidth: 1.5, borderColor: '#E8E0D4',
+    backgroundColor: '#F6F2EC',
   },
-  chipActive: { borderColor: '#405DE6', backgroundColor: 'rgba(64,93,230,0.12)' },
+  chipActive: { borderColor: '#8A9E78', backgroundColor: 'rgba(138,158,120,0.12)' },
   chipEmoji: { fontSize: 13 },
-  chipText: { ...typography.labelSm, color: '#3D5070' },
-  chipTextActive: { color: '#405DE6', fontWeight: '700' },
+  chipText: { ...typography.labelSm, color: '#5E5245' },
+  chipTextActive: { color: '#8A9E78', fontWeight: '700' },
 
   // Recent practices
   logRow: {
@@ -696,16 +697,16 @@ const s = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   logRowDivider: {
-    borderBottomWidth: 1, borderBottomColor: '#DDE4F0',
+    borderBottomWidth: 1, borderBottomColor: '#E8E0D4',
   },
   logDot: {
     width: 8, height: 8, borderRadius: 4,
-    backgroundColor: '#405DE6',
+    backgroundColor: '#8A9E78',
   },
   logInfo: { flex: 1 },
-  logSeries: { ...typography.headingXs, color: '#1A2744' },
-  logDate: { ...typography.bodyXs, color: '#7B8FAD', marginTop: 1 },
-  logDuration: { ...typography.bodyXs, color: '#7B8FAD' },
+  logSeries: { ...typography.headingXs, color: '#3B3228' },
+  logDate: { ...typography.bodyXs, color: '#9B8E7E', marginTop: 1 },
+  logDuration: { ...typography.bodyXs, color: '#9B8E7E' },
 
   // Sign out
   signOutBtn: {
@@ -713,13 +714,13 @@ const s = StyleSheet.create({
     marginHorizontal: spacing.lg, marginTop: spacing.sm,
     paddingVertical: spacing.lg,
     backgroundColor: '#FFFFFF', borderRadius: radius.xl,
-    borderWidth: 1, borderColor: '#DDE4F0',
+    borderWidth: 1, borderColor: '#E8E0D4',
     ...shadows.sm,
   },
-  signOutText: { ...typography.headingSm, color: '#ED4956' },
+  signOutText: { ...typography.headingSm, color: '#C4956A' },
 
   version: {
-    ...typography.bodyXs, color: '#B0BDD0',
+    ...typography.bodyXs, color: '#C4B8A8',
     textAlign: 'center', marginTop: spacing.xl, marginBottom: spacing.xl,
   },
 
@@ -740,21 +741,21 @@ const s = StyleSheet.create({
     paddingBottom: 40,
     paddingTop: spacing.md,
     ...shadows.lg,
-    borderTopWidth: 1, borderTopColor: '#DDE4F0',
+    borderTopWidth: 1, borderTopColor: '#E8E0D4',
   },
   sheetHandle: {
     width: 40, height: 4, borderRadius: 2,
-    backgroundColor: '#DDE4F0',
+    backgroundColor: '#E8E0D4',
     alignSelf: 'center', marginBottom: spacing.lg,
   },
   sheetTopRow: { marginBottom: spacing.lg },
   sheetTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, lineHeight: 28,
-    color: '#1A2744', marginBottom: 2,
+    color: '#3B3228', marginBottom: 2,
   },
-  sheetDate: { ...typography.bodySm, color: '#7B8FAD' },
+  sheetDate: { ...typography.bodySm, color: '#9B8E7E' },
   sheetLabel: {
-    ...typography.headingXs, color: '#7B8FAD',
+    ...typography.headingXs, color: '#9B8E7E',
     textTransform: 'uppercase', letterSpacing: 0.8,
     marginBottom: spacing.sm,
   },
@@ -762,18 +763,18 @@ const s = StyleSheet.create({
   // Duration stepper
   stepper: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#F0F4FF', borderRadius: radius.xl,
+    backgroundColor: '#F6F2EC', borderRadius: radius.xl,
     padding: spacing.xs, alignSelf: 'flex-start',
     gap: spacing.md,
   },
   stepBtn: {
     width: 42, height: 42, borderRadius: 21,
-    backgroundColor: '#DDE4F0', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#8A9E78', alignItems: 'center', justifyContent: 'center',
     ...shadows.sm,
   },
   stepValue: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20,
-    color: '#1A2744', minWidth: 80, textAlign: 'center',
+    color: '#3B3228', minWidth: 80, textAlign: 'center',
   },
 
   // Sheet action buttons
@@ -782,12 +783,12 @@ const s = StyleSheet.create({
   },
   deleteBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    borderWidth: 1.5, borderColor: '#FFF0F0', borderRadius: radius.full,
+    borderWidth: 1.5, borderColor: '#FFF5EC', borderRadius: radius.full,
     paddingVertical: spacing.md, paddingHorizontal: spacing.lg,
   },
-  deleteBtnText: { ...typography.headingSm, color: '#ED4956' },
+  deleteBtnText: { ...typography.headingSm, color: '#C4956A' },
   saveSheetBtn: {
-    flex: 1, backgroundColor: '#405DE6', borderRadius: radius.full,
+    flex: 1, backgroundColor: '#8A9E78', borderRadius: radius.full,
     paddingVertical: spacing.md, alignItems: 'center',
   },
   saveSheetBtnText: { ...typography.headingSm, color: '#fff' },
