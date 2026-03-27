@@ -136,7 +136,7 @@ export default function HomeScreen() {
   const {
     user, practiceLogs, setPracticeLogs,
     isPracticing, setIsPracticing,
-    userPosts, setLogModalOpen,
+    userPosts, setLogModalOpen, clearUser,
   } = useAppStore();
 
   const router = useRouter();
@@ -183,6 +183,7 @@ export default function HomeScreen() {
   const handleSignOut = async () => {
     setMenuOpen(false);
     await signOut();
+    clearUser();
   };
 
   // ── Data fetching ──
@@ -584,7 +585,7 @@ const s = StyleSheet.create({
     letterSpacing: 1.5, textTransform: 'uppercase' as any,
   },
 
-  /* ── Rhythm card ─────────────────────────────────────────────────────────────── */
+  /* ── Rhythm card ───────────────────────────────────────────────────────────── */
   rhythmCard: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
     backgroundColor: moss.cardBg, borderRadius: 20,
