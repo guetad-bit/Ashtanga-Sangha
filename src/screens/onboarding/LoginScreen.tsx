@@ -70,14 +70,14 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
       imageStyle={s.bgImage}
       resizeMode="cover"
     >
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" />
       <LinearGradient
         colors={[
-          'rgba(138,158,120,0.08)',
-          'rgba(110,138,92,0.55)',
-          'rgba(90,123,74,0.95)',
+          'rgba(246,242,236,0.3)',
+          'rgba(246,242,236,0.75)',
+          'rgba(246,242,236,0.95)',
         ]}
-        locations={[0, 0.4, 1]}
+        locations={[0, 0.3, 1]}
         style={StyleSheet.absoluteFill}
       />
 
@@ -105,11 +105,11 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
           <View style={s.field}>
             <Text style={s.label}>Email</Text>
             <View style={s.inputWrap}>
-              <Ionicons name="mail-outline" size={17} color="rgba(255,255,255,0.45)" style={s.inputIcon} />
+              <Ionicons name="mail-outline" size={17} color={moss.muted} style={s.inputIcon} />
               <TextInput
                 style={s.input}
                 placeholder="you@example.com"
-                placeholderTextColor="rgba(255,255,255,0.35)"
+                placeholderTextColor={moss.muted}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -123,11 +123,11 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
           <View style={s.field}>
             <Text style={s.label}>Password</Text>
             <View style={s.inputWrap}>
-              <Ionicons name="lock-closed-outline" size={17} color="rgba(255,255,255,0.45)" style={s.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={17} color={moss.muted} style={s.inputIcon} />
               <TextInput
                 style={[s.input, s.inputPw]}
                 placeholder="Your password"
-                placeholderTextColor="rgba(255,255,255,0.35)"
+                placeholderTextColor={moss.muted}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPw}
@@ -137,7 +137,7 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
                 <Ionicons
                   name={showPw ? 'eye-off-outline' : 'eye-outline'}
                   size={18}
-                  color="rgba(255,255,255,0.5)"
+                  color={moss.muted}
                 />
               </TouchableOpacity>
             </View>
@@ -202,7 +202,7 @@ const s = StyleSheet.create({
   appName: {
     fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 17,
-    color: 'rgba(255,255,255,0.85)',
+    color: moss.ink,
   },
 
   scroll: {
@@ -214,21 +214,21 @@ const s = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'DMSans_600SemiBold',
     letterSpacing: 2,
-    color: '#DCE8D3',
+    color: moss.accent,
     marginBottom: spacing.sm,
   },
   title: {
     fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 40,
     lineHeight: 48,
-    color: '#fff',
+    color: moss.ink,
     marginBottom: spacing.sm,
   },
   sub: {
     fontFamily: 'DMSans_400Regular',
     fontSize: 16,
     lineHeight: 24,
-    color: 'rgba(255,255,255,0.75)',
+    color: moss.inkMid,
     marginBottom: spacing['2xl'],
   },
 
@@ -237,16 +237,16 @@ const s = StyleSheet.create({
     fontFamily: 'DMSans_600SemiBold',
     fontSize: 14,
     lineHeight: 20,
-    color: 'rgba(255,255,255,0.85)',
+    color: moss.ink,
     letterSpacing: 0.4,
     marginBottom: spacing.xs,
   },
   inputWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(138,158,120,0.12)',
+    backgroundColor: 'rgba(138,158,120,0.08)',
     borderWidth: 1,
-    borderColor: 'rgba(138,158,120,0.25)',
+    borderColor: moss.divider,
     borderRadius: radius.lg,
     paddingHorizontal: spacing.md,
   },
@@ -256,7 +256,7 @@ const s = StyleSheet.create({
     paddingVertical: spacing.md,
     fontSize: 16,
     fontFamily: 'DMSans_500Medium',
-    color: '#fff',
+    color: moss.ink,
   },
   inputPw: { paddingRight: 36 },
   eyeBtn: {
@@ -286,34 +286,34 @@ const s = StyleSheet.create({
     gap: spacing.md,
     marginBottom: spacing.xl,
   },
-  dividerLine: { flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.15)' },
-  dividerText: { fontFamily: 'DMSans_500Medium', fontSize: 14, lineHeight: 20, color: 'rgba(255,255,255,0.55)' },
+  dividerLine: { flex: 1, height: 1, backgroundColor: moss.divider },
+  dividerText: { fontFamily: 'DMSans_500Medium', fontSize: 14, lineHeight: 20, color: moss.muted },
 
   googleBtn: {
     borderWidth: 1.5,
-    borderColor: 'rgba(138,158,120,0.35)',
+    borderColor: moss.divider,
     borderRadius: radius.xl,
     paddingVertical: spacing.lg,
     alignItems: 'center',
     marginBottom: spacing['2xl'],
-    backgroundColor: 'rgba(138,158,120,0.1)',
+    backgroundColor: moss.cardBg,
   },
   googleBtnText: {
     fontFamily: 'DMSans_600SemiBold',
     fontSize: 16,
     lineHeight: 24,
-    color: '#fff',
+    color: moss.ink,
   },
 
   footer: {
     fontFamily: 'DMSans_400Regular',
     fontSize: 15,
     lineHeight: 22,
-    color: 'rgba(255,255,255,0.65)',
+    color: moss.muted,
     textAlign: 'center',
   },
   footerLink: {
-    color: '#DCE8D3',
+    color: moss.accent,
     fontFamily: 'DMSans_600SemiBold',
   },
 });
