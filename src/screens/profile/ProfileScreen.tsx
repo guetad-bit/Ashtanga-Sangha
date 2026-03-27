@@ -227,8 +227,8 @@ export default function ProfileScreen() {
             >
               {/* Avatar */}
               <TouchableOpacity
-                onPress={editing ? handlePickPhoto : undefined}
-                activeOpacity={editing ? 0.75 : 1}
+                onPress={handlePickPhoto}
+                activeOpacity={0.75}
                 style={s.avatarWrap}
               >
                 {user?.avatarUrl ? (
@@ -239,13 +239,11 @@ export default function ProfileScreen() {
                   </View>
                 )}
                 <View style={s.avatarRing} />
-                {editing && (
-                  <View style={s.avatarEditOverlay}>
-                    {uploadingPhoto
-                      ? <ActivityIndicator color="#fff" />
-                      : <Ionicons name="camera" size={22} color="#fff" />}
-                  </View>
-                )}
+                <View style={s.avatarEditOverlay}>
+                  {uploadingPhoto
+                    ? <ActivityIndicator color="#fff" />
+                    : <Ionicons name="camera" size={22} color="#fff" />}
+                </View>
               </TouchableOpacity>
 
               {/* Name */}
