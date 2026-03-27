@@ -78,9 +78,6 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-
 // Guru wisdom
 const GURU_WISDOM = [
   { guru: 'Sri K. Pattabhi Jois', quote: 'Practice, and all is coming.' },
@@ -95,7 +92,7 @@ const GURU_WISDOM = [
   { guru: 'T. Krishnamacharya', quote: 'Where is the delusion when truth is known?' },
 ];
 
-// Practice hero images — before practice
+// Practice hero images
 const PRACTICE_IMAGES = [
   'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80',
   'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
@@ -103,21 +100,85 @@ const PRACTICE_IMAGES = [
   'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=800&q=80',
 ];
 
+// ── 7 Fake Users (circle members, on-mat yogis, feed authors) ──
+const FAKE_USERS = [
+  {
+    id: 'f1', name: 'Liat', avatarUrl: 'https://i.pravatar.cc/200?img=5',
+    series: 'primary', streak: 12, practicedToday: true,
+    badge: 'practiced' as const, badgeText: 'Practiced today',
+    feedCaption: 'Morning Mysore done — feeling so grateful for this practice 🙏',
+    feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80',
+    feedTime: '4 min ago', feedLikes: 3, feedComments: 1,
+  },
+  {
+    id: 'f2', name: 'David', avatarUrl: 'https://i.pravatar.cc/200?img=11',
+    series: 'intermediate', streak: 5, practicedToday: true,
+    badge: 'streak' as const, badgeText: '5-day streak',
+    feedCaption: 'Working on my dropbacks! Finally catching my ankles 🔥',
+    feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80',
+    feedTime: '15 min ago', feedLikes: 5, feedComments: 2,
+  },
+  {
+    id: 'f3', name: 'Emma', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80',
+    series: 'primary', streak: 8, practicedToday: true,
+    badge: 'series' as const, badgeText: 'Primary',
+    feedCaption: 'Supta Kurmasana breakthrough today — never give up! 🐢',
+    feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=80',
+    feedTime: '22 min ago', feedLikes: 7, feedComments: 3,
+  },
+  {
+    id: 'f4', name: 'Noah', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80',
+    series: 'primary', streak: 3, practicedToday: true,
+    badge: 'practiced' as const, badgeText: 'Practiced today',
+    feedCaption: 'Led class this morning was intense. Love the energy of practicing together 🧘',
+    feedImage: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=300&q=80',
+    feedTime: '35 min ago', feedLikes: 4, feedComments: 1,
+  },
+  {
+    id: 'f5', name: 'Priya', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80',
+    series: 'intermediate', streak: 3, practicedToday: true,
+    badge: 'streak' as const, badgeText: '3-day streak',
+    feedCaption: 'Kapotasana progress — patience is the real practice 💪',
+    feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80',
+    feedTime: '1 hr ago', feedLikes: 9, feedComments: 4,
+  },
+  {
+    id: 'f6', name: 'Marco', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80',
+    series: 'primary', streak: 21, practicedToday: true,
+    badge: 'streak' as const, badgeText: '21-day streak',
+    feedCaption: 'Three weeks straight — the mat is my medicine 🌿',
+    feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80',
+    feedTime: '1 hr ago', feedLikes: 12, feedComments: 5,
+  },
+  {
+    id: 'f7', name: 'Yuki', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80',
+    series: 'primary', streak: 7, practicedToday: true,
+    badge: 'practiced' as const, badgeText: 'Practiced today',
+    feedCaption: 'Beautiful sunrise practice at the shala today 🌅',
+    feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=80',
+    feedTime: '2 hr ago', feedLikes: 6, feedComments: 2,
+  },
+];
 
-// Fake yogis for Yogis on the mat
-const FAKE_YOGIS = [
-  { id: 'f1', name: 'Priya Sharma', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80' },
-  { id: 'f2', name: 'Marco Rossi', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80' },
-  { id: 'f3', name: 'Yuki Tanaka', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80' },
-  { id: 'f4', name: 'Amit Patel', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80' },
-  { id: 'f5', name: 'Sofia Costa', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80' },
-  { id: 'f6', name: 'Daniel Kim', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80' },
-  { id: 'f7', name: 'Lena Weber', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&q=80' },
-  { id: 'f8', name: 'Ravi Kumar', avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80' },
-  { id: 'f9', name: 'Mia Chen', avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80' },
-  { id: 'f10', name: 'Lucas Silva', avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&q=80' },
-  { id: 'f11', name: 'Anika Berg', avatarUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80' },
-  { id: 'f12', name: 'Omar Hassan', avatarUrl: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=200&q=80' },
+// Week day checkmarks
+const WEEK_DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+// Asana of the day data
+const ASANAS = [
+  {
+    name: 'Marichyasana C', subtitle: 'Pose Dedicated to the Sage Marichi',
+    series: 'Primary Series', image: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=600&q=80',
+    benefits: ['Spinal twist', 'Digestion', 'Shoulder opening', 'Hip flexibility'],
+    tips: 'Ground through both sit bones. Lengthen the spine before twisting. Use the exhale to deepen the rotation. Keep the bound shoulder relaxed.',
+    breaths: 5, sides: 'Both', difficulty: 'Int.',
+  },
+  {
+    name: 'Utthita Trikonasana', subtitle: 'Extended Triangle Pose',
+    series: 'Primary Series', image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80',
+    benefits: ['Hamstrings', 'Balance', 'Core strength', 'Spine length'],
+    tips: 'Press into the outer edge of the back foot. Extend through the crown of the head. Keep the chest open and rotate from the thoracic spine.',
+    breaths: 5, sides: 'Both', difficulty: 'Beg.',
+  },
 ];
 
 // Series display names
@@ -149,34 +210,31 @@ export default function HomeScreen() {
   // Computed
   const now = new Date();
   const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
+  const todayDow = now.getDay(); // 0=Sun
   const guruWisdom = GURU_WISDOM[dayOfYear % GURU_WISDOM.length];
   const practicedToday = loggedSeries !== null;
   const practiceImage = PRACTICE_IMAGES[dayOfYear % PRACTICE_IMAGES.length];
   const rhythm = getWeeklyRhythm(practiceLogs);
   const streak = calculateStreak(practiceLogs);
-  const moonDaysUntil = daysUntilNextMoonDay();
   const practicesThisWeek = rhythm.filter((d) => d.status === 'done').length;
+  const weeklyGoal = 5;
+  const asana = ASANAS[dayOfYear % ASANAS.length];
 
-  // Next moon day date string
-  const nextMoonDate = (() => {
-    const d = new Date();
-    d.setDate(d.getDate() + moonDaysUntil);
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  })();
+  // Build week checkmarks from rhythm data
+  const weekChecks = rhythm.map((d) => d.status === 'done');
 
-  // Yogis on mat
+  // Yogis on mat — combine real + fake
   const othersOnMat = livePractitioners
     .filter((p) => p.id !== user?.id)
     .map((p) => ({ id: p.id, name: p.name ?? 'Practitioner', avatarUrl: p.avatar_url }));
   const meOnMat = (isPracticing || practicedToday) && user
     ? [{ id: user.id, name: 'You', avatarUrl: user.avatarUrl ?? null }]
     : [];
-  const sanghaOnMat = [...meOnMat, ...othersOnMat, ...FAKE_YOGIS];
-
+  const fakeOnMat = FAKE_USERS.filter(u => u.practicedToday).map(u => ({ id: u.id, name: u.name, avatarUrl: u.avatarUrl }));
+  const sanghaOnMat = [...meOnMat, ...othersOnMat, ...fakeOnMat];
 
   // ── Actions ──
   const handlePracticeButton = () => {
-    // Always open the modal — it handles the step logic internally
     setLogModalOpen(true);
   };
 
@@ -229,12 +287,11 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
-  // Dot color for rhythm
-  const dotColor = (status: string) => {
-    if (status === 'done') return moss.olive;
-    if (status === 'today') return moss.orange;
-    if (status === 'rest') return moss.divider;
-    return moss.divider;
+  // Badge color helper
+  const badgeColor = (badge: string) => {
+    if (badge === 'practiced') return { bg: moss.accentLight, text: moss.accent, ring: moss.accent };
+    if (badge === 'streak') return { bg: moss.amberBg, text: moss.amber, ring: moss.amber };
+    return { bg: moss.blueBg, text: moss.inkMid, ring: moss.wood };
   };
 
   // ── Render ──
@@ -353,74 +410,161 @@ export default function HomeScreen() {
           </ImageBackground>
         </View>
 
-
-        {/* ═══ 2. PRACTICE RHYTHM — Separate Card ═══ */}
-        <View style={s.rhythmCard}>
-          <Text style={s.rhythmTitle}>Practice Rhythm</Text>
-
-          {/* Day dots */}
-          <View style={s.rhythmRow}>
-            {rhythm.map((day, i) => (
-              <View key={i} style={s.rhythmCol}>
-                <Text style={s.rhythmLabel}>{day.label}</Text>
-                <View style={[s.rhythmDot, { backgroundColor: dotColor(day.status) }]} />
+        {/* ═══ 2. THIS WEEK + GOAL ═══ */}
+        <View style={s.weekCard}>
+          <View style={s.weekRow}>
+            {/* Left: This Week checkmarks */}
+            <View style={s.weekLeft}>
+              <Text style={s.weekTitle}>This Week</Text>
+              <View style={s.weekDays}>
+                {WEEK_DAYS.map((label, i) => (
+                  <View key={i} style={s.weekDayCol}>
+                    <Text style={s.weekDayLabel}>{label}</Text>
+                    <View style={[s.weekDayCircle, { backgroundColor: weekChecks[i] ? moss.accent : moss.beige }]}>
+                      {weekChecks[i] && (
+                        <Ionicons name="checkmark" size={14} color="#fff" />
+                      )}
+                    </View>
+                  </View>
+                ))}
               </View>
-            ))}
+            </View>
+            {/* Right: Goal progress */}
+            <View style={s.weekRight}>
+              <View style={s.goalNumbers}>
+                <Text style={s.goalBig}>{practicesThisWeek}</Text>
+                <Text style={s.goalSlash}> / </Text>
+                <Text style={s.goalSmall}>{weeklyGoal}</Text>
+                <Text style={s.goalLabel}> practices</Text>
+              </View>
+              <View style={s.progressBar}>
+                <View style={[s.progressFill, { width: `${Math.min(100, (practicesThisWeek / weeklyGoal) * 100)}%` as any }]} />
+              </View>
+              <Text style={s.goalHint}>
+                {practicesThisWeek >= weeklyGoal
+                  ? 'Goal reached! 🎉'
+                  : `You're ${weeklyGoal - practicesThisWeek} away from your goal!`}
+              </Text>
+            </View>
           </View>
-
-          {/* Stats row */}
-          <View style={s.rhythmDivider} />
-
         </View>
 
-        {/* ═══ 3. SANGHA FEED ═══ */}
+        {/* ═══ 3. YOUR CIRCLE ═══ */}
+        <View style={s.circleSection}>
+          <View style={s.circleHeader}>
+            <View>
+              <Text style={s.circleTitle}>Your Circle</Text>
+              <Text style={s.circleSubtitle}>Practice together, stay motivated</Text>
+            </View>
+            <TouchableOpacity activeOpacity={0.7}>
+              <Text style={s.circleViewAll}>View all →</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.circleScroll}>
+            {FAKE_USERS.map((m) => {
+              const bc = badgeColor(m.badge);
+              return (
+                <View key={m.id} style={s.circleMember}>
+                  <View style={s.circleMemberAvatarWrap}>
+                    <View style={[s.circleMemberRing, { borderColor: bc.ring }]}>
+                      <Image source={{ uri: m.avatarUrl }} style={s.circleMemberAvatar} />
+                    </View>
+                    <View style={[s.circleBadge, { backgroundColor: bc.bg }]}>
+                      {m.badge === 'practiced' && <Ionicons name="checkmark" size={9} color={moss.accent} />}
+                      {m.badge === 'streak' && <Text style={{ fontSize: 8 }}>🔥</Text>}
+                      {m.badge === 'series' && <Text style={{ fontSize: 8 }}>🧘</Text>}
+                      <Text style={[s.circleBadgeText, { color: bc.text }]}>{m.badgeText}</Text>
+                    </View>
+                  </View>
+                  <Text style={s.circleMemberName}>{m.name}</Text>
+                </View>
+              );
+            })}
+          </ScrollView>
+        </View>
+
+        {/* ═══ 4. SANGHA FEED ═══ */}
         <View style={s.feedSection}>
           <Text style={s.feedTitle}>Sangha Feed</Text>
-
-          {/* Feed Card - example 1 */}
-          <View style={s.feedCard}>
-            <View style={s.feedCardInner}>
-              <View style={s.feedCardLeft}>
-                <View style={s.feedUserRow}>
-                  <Image source={{ uri: 'https://i.pravatar.cc/100?img=5' }} style={s.feedAvatar} />
-                  <View>
-                    <Text style={s.feedUserName}>Liat</Text>
-                    <Text style={s.feedTimeAgo}>4 min ago</Text>
+          {FAKE_USERS.map((u) => (
+            <View key={u.id} style={s.feedCard}>
+              <View style={s.feedCardInner}>
+                <View style={s.feedCardLeft}>
+                  <View style={s.feedUserRow}>
+                    <Image source={{ uri: u.avatarUrl }} style={s.feedAvatar} />
+                    <View>
+                      <Text style={s.feedUserName}>{u.name}</Text>
+                      <Text style={s.feedTimeAgo}>{u.feedTime}</Text>
+                    </View>
+                  </View>
+                  <Text style={s.feedCaption}>{u.feedCaption}</Text>
+                  <View style={s.feedStats}>
+                    <Text style={s.feedHeart}>🙏 {u.feedLikes}</Text>
+                    <Text style={s.feedComment}>💬 {u.feedComments}</Text>
                   </View>
                 </View>
-                <Text style={s.feedCaption}>Just finished practice 🙏</Text>
-                <View style={s.feedStats}>
-                  <Text style={s.feedHeart}>🙏 1</Text>
-                  <Text style={s.feedComment}>💬 1</Text>
-                </View>
+                <Image source={{ uri: u.feedImage }} style={s.feedCardImage} />
               </View>
-              <Image source={{ uri: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80' }} style={s.feedCardImage} />
+            </View>
+          ))}
+        </View>
+
+        {/* ═══ 5. ASANA OF THE DAY ═══ */}
+        <View style={s.asanaCard}>
+          <View style={s.asanaHeader}>
+            <View style={s.asanaHeaderTop}>
+              <Text style={s.asanaTitle}>Asana of the Day</Text>
+              <View style={s.asanaSeriesBadge}>
+                <Text style={s.asanaSeriesText}>{asana.series}</Text>
+              </View>
+            </View>
+            <Text style={s.asanaHint}>Focus on this posture during today's practice</Text>
+          </View>
+
+          {/* Asana image */}
+          <View style={s.asanaImageWrap}>
+            <Image source={{ uri: asana.image }} style={s.asanaImage} />
+            <View style={s.asanaImageOverlay} />
+            <View style={s.asanaImageText}>
+              <Text style={s.asanaName}>{asana.name}</Text>
+              <Text style={s.asanaSubtitle}>{asana.subtitle}</Text>
             </View>
           </View>
 
-          {/* Feed Card - example 2 */}
-          <View style={s.feedCard}>
-            <View style={s.feedCardInner}>
-              <View style={s.feedCardLeft}>
-                <View style={s.feedUserRow}>
-                  <Image source={{ uri: 'https://i.pravatar.cc/100?img=11' }} style={s.feedAvatar} />
-                  <View>
-                    <Text style={s.feedUserName}>David</Text>
-                    <Text style={s.feedTimeAgo}>15 min ago</Text>
-                  </View>
+          {/* Details */}
+          <View style={s.asanaDetails}>
+            {/* Benefit tags */}
+            <View style={s.asanaTags}>
+              {asana.benefits.map((tag) => (
+                <View key={tag} style={s.asanaTag}>
+                  <Text style={s.asanaTagText}>{tag}</Text>
                 </View>
-                <Text style={s.feedCaption}>Working on my dropbacks!</Text>
-                <View style={s.feedStats}>
-                  <Text style={s.feedHeart}>🙏 1</Text>
-                  <Text style={s.feedComment}>💬 1</Text>
-                </View>
+              ))}
+            </View>
+
+            {/* Key tips */}
+            <View style={s.asanaTips}>
+              <Text style={s.asanaTipsTitle}>Key tips</Text>
+              <Text style={s.asanaTipsBody}>{asana.tips}</Text>
+            </View>
+
+            {/* Stats row */}
+            <View style={s.asanaStatsRow}>
+              <View style={s.asanaStat}>
+                <Text style={s.asanaStatNum}>{asana.breaths}</Text>
+                <Text style={s.asanaStatLabel}>breaths</Text>
               </View>
-              <Image source={{ uri: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80' }} style={s.feedCardImage} />
+              <View style={s.asanaStat}>
+                <Text style={s.asanaStatNum}>{asana.sides}</Text>
+                <Text style={s.asanaStatLabel}>sides</Text>
+              </View>
+              <View style={[s.asanaStat, { backgroundColor: moss.amberBg }]}>
+                <Text style={[s.asanaStatNum, { color: moss.amber }]}>{asana.difficulty}</Text>
+                <Text style={s.asanaStatLabel}>difficulty</Text>
+              </View>
             </View>
           </View>
         </View>
-
-
 
       </ScrollView>
     </SafeAreaView>
@@ -434,7 +578,7 @@ export default function HomeScreen() {
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: moss.bg },
 
-  /* ── Top bar ───────────────────────────────────────────────────────────────── */
+  /* ── Top bar ── */
   topbar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: spacing.xl, paddingVertical: spacing.md,
@@ -461,7 +605,7 @@ const s = StyleSheet.create({
   avatarLetter: { fontSize: 16, color: '#fff', fontWeight: '600' as any },
   avatarLetterSm: { fontSize: 14, color: '#fff', fontWeight: '600' as any },
 
-  /* ── Menu ───────────────────────────────────────────────────────────────────── */
+  /* ── Menu ── */
   menuBackdrop: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.25)',
     justifyContent: 'flex-start' as any, alignItems: 'flex-end' as any,
@@ -492,14 +636,14 @@ const s = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
 
-  /* ── Welcome ───────────────────────────────────────────────────────────────── */
+  /* ── Welcome ── */
   welcome: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, lineHeight: 28,
     color: moss.ink, textAlign: 'center' as any,
     paddingVertical: spacing.md,
   },
 
-  /* ── Yogis on mat ──────────────────────────────────────────────────────────── */
+  /* ── Yogis on mat ── */
   yogisOnMat: {
     alignItems: 'center' as any,
     paddingHorizontal: spacing.xl,
@@ -526,11 +670,11 @@ const s = StyleSheet.create({
     width: '100%' as any, height: '100%' as any, borderRadius: 22,
   },
 
-  /* ── Hero card ────────────────────────────────────────────────────────────── */
+  /* ── Hero card (10% shorter = 288) ── */
   heroCard: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
     borderRadius: 20, overflow: 'hidden' as any,
-    height: 320,
+    height: 288,
     ...shadows.lg,
   },
   heroImage: { flex: 1, justifyContent: 'center' as any, alignItems: 'center' as any },
@@ -571,13 +715,13 @@ const s = StyleSheet.create({
     alignItems: 'center' as any, justifyContent: 'center' as any,
   },
   heroBtnDefault: {
-    backgroundColor: '#8A9E78',
-    shadowColor: 'rgba(138,158,120,0.4)',
+    backgroundColor: '#C4956A',
+    shadowColor: 'rgba(196,149,106,0.45)',
     shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 16,
   },
   heroBtnOnMat: {
-    backgroundColor: '#C4956A',
-    shadowColor: 'rgba(196,149,106,0.4)',
+    backgroundColor: '#8A9E78',
+    shadowColor: 'rgba(138,158,120,0.4)',
     shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 16,
   },
   heroBtnText: {
@@ -585,55 +729,84 @@ const s = StyleSheet.create({
     letterSpacing: 1.5, textTransform: 'uppercase' as any,
   },
 
-  /* ── Rhythm card ───────────────────────────────────────────────────────────── */
-  rhythmCard: {
+  /* ── This Week + Goal card ── */
+  weekCard: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
     backgroundColor: moss.cardBg, borderRadius: 20,
     padding: spacing.xl,
     ...shadows.sm,
     borderWidth: 1, borderColor: moss.divider,
   },
-  rhythmTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: moss.ink, marginBottom: spacing.lg,
+  weekRow: { flexDirection: 'row' as any, gap: 20 },
+  weekLeft: { flex: 1 },
+  weekTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 16,
+    color: moss.ink, marginBottom: 12, fontWeight: '600' as any,
   },
-  rhythmRow: {
-    flexDirection: 'row' as any, justifyContent: 'space-between' as any,
-    alignItems: 'center' as any,
+  weekDays: { flexDirection: 'row' as any, justifyContent: 'space-between' as any },
+  weekDayCol: { alignItems: 'center' as any, gap: 6 },
+  weekDayLabel: { fontFamily: 'DMSans_500Medium', fontSize: 12, color: moss.muted },
+  weekDayCircle: {
+    width: 28, height: 28, borderRadius: 14,
+    alignItems: 'center' as any, justifyContent: 'center' as any,
   },
-  rhythmCol: { alignItems: 'center' as any, gap: 6 },
-  rhythmLabel: {
-    fontFamily: 'DMSans_500Medium', fontSize: 12, color: moss.muted,
+  weekRight: { flex: 1, justifyContent: 'center' as any },
+  goalNumbers: { flexDirection: 'row' as any, alignItems: 'baseline' as any, marginBottom: 8 },
+  goalBig: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 28,
+    fontWeight: '700' as any, color: moss.ink, lineHeight: 32,
   },
-  rhythmDot: { width: 10, height: 10, borderRadius: 5 },
-  rhythmDivider: {
-    height: 1, backgroundColor: moss.divider, marginVertical: spacing.md,
+  goalSlash: { fontSize: 16, color: moss.muted },
+  goalSmall: { fontSize: 16, color: moss.muted },
+  goalLabel: { fontSize: 15, color: moss.ink, fontWeight: '500' as any },
+  progressBar: {
+    width: '100%' as any, height: 8, borderRadius: 4,
+    backgroundColor: moss.beige, overflow: 'hidden' as any, marginBottom: 8,
   },
-  rhythmStats: {
-    flexDirection: 'row' as any, alignItems: 'center' as any,
-    justifyContent: 'center' as any, gap: spacing.md,
+  progressFill: {
+    height: '100%' as any, borderRadius: 4,
+    backgroundColor: moss.accent,
   },
-  rhythmStatText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.inkMid,
-    textAlign: 'center' as any,
-  },
-  streakBadge: {
-    backgroundColor: moss.amberBg, borderRadius: radius.full,
-    paddingHorizontal: spacing.md, paddingVertical: 3,
-  },
-  streakText: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: moss.orange,
-  },
-  moonRow: {
-    flexDirection: 'row' as any, alignItems: 'center' as any,
-    justifyContent: 'center' as any, gap: 6, marginTop: spacing.md,
-  },
-  moonIcon: { fontSize: 16 },
-  moonText: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted,
-  },
+  goalHint: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted },
 
-  /* ── Live Practice Feed ───────────────────────────────────────────────────── */
+  /* ── Your Circle ── */
+  circleSection: {
+    marginHorizontal: spacing.lg, marginBottom: spacing.lg,
+  },
+  circleHeader: {
+    flexDirection: 'row' as any, justifyContent: 'space-between' as any,
+    alignItems: 'flex-start' as any, marginBottom: 4,
+  },
+  circleTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20,
+    color: moss.ink, lineHeight: 26,
+  },
+  circleSubtitle: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted, marginTop: 2 },
+  circleViewAll: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.muted, marginTop: 4 },
+  circleScroll: { paddingTop: 12, paddingBottom: 4, gap: 6 },
+  circleMember: {
+    alignItems: 'center' as any,
+    width: 76,
+  },
+  circleMemberAvatarWrap: { position: 'relative' as any, marginBottom: 4 },
+  circleMemberRing: {
+    width: 64, height: 64, borderRadius: 32,
+    borderWidth: 2.5, overflow: 'hidden' as any,
+  },
+  circleMemberAvatar: { width: '100%' as any, height: '100%' as any, borderRadius: 32 },
+  circleBadge: {
+    position: 'absolute' as any, bottom: -4,
+    alignSelf: 'center' as any, left: '50%' as any,
+    transform: [{ translateX: -30 }],
+    borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2,
+    flexDirection: 'row' as any, alignItems: 'center' as any, gap: 2,
+    borderWidth: 1, borderColor: moss.cardBg,
+    minWidth: 60, justifyContent: 'center' as any,
+  },
+  circleBadgeText: { fontSize: 8, fontWeight: '600' as any },
+  circleMemberName: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.ink },
+
+  /* ── Sangha Feed ── */
   feedSection: {
     marginHorizontal: spacing.lg, marginBottom: spacing.lg,
   },
@@ -646,38 +819,79 @@ const s = StyleSheet.create({
     borderWidth: 1, borderColor: moss.divider,
     marginBottom: 12, overflow: 'hidden' as any,
   },
-  feedCardInner: {
-    flexDirection: 'row' as any,
-  },
-  feedCardLeft: {
-    flex: 1, padding: 16,
-  },
+  feedCardInner: { flexDirection: 'row' as any },
+  feedCardLeft: { flex: 1, padding: 16 },
   feedUserRow: {
     flexDirection: 'row' as any, alignItems: 'center' as any, gap: 10, marginBottom: 8,
   },
-  feedAvatar: {
-    width: 40, height: 40, borderRadius: 20,
-  },
-  feedUserName: {
-    fontFamily: 'DMSans_700Bold', fontSize: 15, color: moss.ink,
-  },
-  feedTimeAgo: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted,
-  },
-  feedCaption: {
-    fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.ink, marginBottom: 10,
-  },
-  feedStats: {
-    flexDirection: 'row' as any, gap: 14, alignItems: 'center' as any,
-  },
-  feedHeart: {
-    fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.heartRed,
-  },
-  feedComment: {
-    fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.muted,
-  },
-  feedCardImage: {
-    width: 130, height: 'auto' as any, minHeight: 120,
-  },
+  feedAvatar: { width: 40, height: 40, borderRadius: 20 },
+  feedUserName: { fontFamily: 'DMSans_700Bold', fontSize: 15, color: moss.ink },
+  feedTimeAgo: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted },
+  feedCaption: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.ink, marginBottom: 10 },
+  feedStats: { flexDirection: 'row' as any, gap: 14, alignItems: 'center' as any },
+  feedHeart: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.heartRed },
+  feedComment: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.muted },
+  feedCardImage: { width: 130, height: 'auto' as any, minHeight: 120 },
 
+  /* ── Asana of the Day ── */
+  asanaCard: {
+    marginHorizontal: spacing.lg, marginBottom: spacing.lg,
+    backgroundColor: moss.cardBg, borderRadius: 20,
+    overflow: 'hidden' as any,
+    borderWidth: 1, borderColor: moss.divider,
+    ...shadows.sm,
+  },
+  asanaHeader: { padding: 18, paddingBottom: 14 },
+  asanaHeaderTop: {
+    flexDirection: 'row' as any, justifyContent: 'space-between' as any,
+    alignItems: 'center' as any, marginBottom: 4,
+  },
+  asanaTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18, color: moss.ink,
+  },
+  asanaSeriesBadge: {
+    backgroundColor: moss.accentFaint, borderRadius: 999,
+    paddingHorizontal: 10, paddingVertical: 3,
+  },
+  asanaSeriesText: { fontSize: 11, fontWeight: '600' as any, color: moss.accent },
+  asanaHint: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted },
+  asanaImageWrap: { position: 'relative' as any, height: 180 },
+  asanaImage: { width: '100%' as any, height: '100%' as any, opacity: 0.85 },
+  asanaImageOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(59,50,40,0.35)',
+  },
+  asanaImageText: {
+    position: 'absolute' as any, bottom: 14, left: 20, right: 20,
+  },
+  asanaName: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: '#fff',
+    lineHeight: 26, textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 8,
+  },
+  asanaSubtitle: {
+    fontFamily: 'DMSans_400Regular', fontSize: 13, color: 'rgba(255,255,255,0.85)',
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
+  },
+  asanaDetails: { padding: 16, paddingTop: 14 },
+  asanaTags: { flexDirection: 'row' as any, flexWrap: 'wrap' as any, gap: 8, marginBottom: 14 },
+  asanaTag: {
+    backgroundColor: moss.beige, borderRadius: 999,
+    paddingHorizontal: 10, paddingVertical: 4,
+  },
+  asanaTagText: { fontSize: 11, fontWeight: '500' as any, color: moss.inkMid },
+  asanaTips: {
+    backgroundColor: moss.accentFaint, borderRadius: 12,
+    padding: 14, marginBottom: 14,
+  },
+  asanaTipsTitle: { fontSize: 12, fontWeight: '600' as any, color: moss.accent, marginBottom: 6 },
+  asanaTipsBody: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.inkMid, lineHeight: 18 },
+  asanaStatsRow: { flexDirection: 'row' as any, gap: 12 },
+  asanaStat: {
+    flex: 1, backgroundColor: moss.beige, borderRadius: 12,
+    paddingVertical: 10, paddingHorizontal: 14, alignItems: 'center' as any,
+  },
+  asanaStatNum: { fontSize: 20, fontWeight: '700' as any, color: moss.ink },
+  asanaStatLabel: { fontSize: 11, color: moss.muted, fontWeight: '500' as any },
 });
