@@ -85,6 +85,17 @@ const DISCUSSIONS = [
   { id: '3', title: 'Morning Practice Wins', replies: 154, color: moss.amber, bg: moss.amberBg },
 ];
 
+// Fake users for demo feed
+const FAKE_USERS_FEED = [
+  { id: 'f1', name: 'Liat', avatarUrl: 'https://i.pravatar.cc/200?img=5', feedCaption: 'Morning Mysore done — feeling so grateful for this practice 🙏', feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80', feedTime: '4 min ago', feedLikes: 3, feedComments: 1 },
+  { id: 'f2', name: 'David', avatarUrl: 'https://i.pravatar.cc/200?img=11', feedCaption: 'Working on my dropbacks! Finally catching my ankles 🔥', feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80', feedTime: '15 min ago', feedLikes: 5, feedComments: 2 },
+  { id: 'f3', name: 'Emma', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80', feedCaption: 'Supta Kurmasana breakthrough today — never give up! 🐢', feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=80', feedTime: '22 min ago', feedLikes: 7, feedComments: 3 },
+  { id: 'f4', name: 'Noah', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80', feedCaption: 'Led class this morning was intense. Love the energy of practicing together 🧘', feedImage: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=300&q=80', feedTime: '35 min ago', feedLikes: 4, feedComments: 1 },
+  { id: 'f5', name: 'Priya', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80', feedCaption: 'Kapotasana progress — patience is the real practice 💪', feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80', feedTime: '1 hr ago', feedLikes: 9, feedComments: 4 },
+  { id: 'f6', name: 'Marco', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80', feedCaption: 'Three weeks straight — the mat is my medicine 🌿', feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80', feedTime: '1 hr ago', feedLikes: 12, feedComments: 5 },
+  { id: 'f7', name: 'Yuki', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80', feedCaption: 'Beautiful sunrise practice at the shala today 🌅', feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=80', feedTime: '2 hr ago', feedLikes: 6, feedComments: 2 },
+];
+
 export default function CommunityScreen() {
   const router = useRouter();
   const { user, userPosts } = useAppStore();
@@ -330,10 +341,27 @@ export default function CommunityScreen() {
                 />
               ))
             ) : (
-              <View style={s.emptyState}>
-                <Ionicons name="chatbubbles-outline" size={40} color={moss.mutedLight} />
-                <Text style={s.emptyText}>No posts yet</Text>
-              </View>
+              FAKE_USERS_FEED.map((u) => (
+                <View key={u.id} style={{ backgroundColor: moss.cardBg, borderRadius: 16, borderWidth: 1, borderColor: moss.divider, marginHorizontal: spacing.lg, marginBottom: 12, overflow: 'hidden' }}>
+                  <View style={{ flexDirection: 'row' }}>
+                    <View style={{ flex: 1, padding: 16 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                        <Image source={{ uri: u.avatarUrl }} style={{ width: 40, height: 40, borderRadius: 20 }} />
+                        <View>
+                          <Text style={{ fontFamily: 'DMSans_700Bold', fontSize: 15, color: moss.ink }}>{u.name}</Text>
+                          <Text style={{ fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted }}>{u.feedTime}</Text>
+                        </View>
+                      </View>
+                      <Text style={{ fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.ink, marginBottom: 10 }}>{u.feedCaption}</Text>
+                      <View style={{ flexDirection: 'row', gap: 14 }}>
+                        <Text style={{ fontSize: 14, color: moss.heartRed?? moss.amber }}>🙏 {u.feedLikes}</Text>
+                        <Text style={{ fontSize: 14, color: moss.muted }}>💬 {u.feedComments}</Text>
+                      </View>
+                    </View>
+                    <Image source={{ uri: u.feedImage }} style={{ width: 130, minHeight: 120 }} />
+                  </View>
+                </View>
+              ))
             )}
           </>
         )}
@@ -366,7 +394,7 @@ export default function CommunityScreen() {
                       </View>
                       <View style={s.personInfo}>
                         <Text style={s.personName}>{p.name}</Text>
-                        <Text style={s.personMeta}>{p.series} {p.streak > 0 ? `· On the mat` : ''}</Text>
+                                     <Text style={s.personMeta}>{p.series} {p.streak > 0 ? `· On the mat` : ''}</Text>
                       </View>
                       <View style={s.followBtnActive}>
                         <Text style={s.followTextActive}>Following</Text>
@@ -442,7 +470,7 @@ export default function CommunityScreen() {
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /* STYLES                                                                     */
-/* ══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════════ */
 
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: moss.pageBg },
