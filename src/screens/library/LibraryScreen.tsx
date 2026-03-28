@@ -9,32 +9,77 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import AppHeader from '@/components/AppHeader';
-import { PRIMARY_POSE_SEQUENCE, type AsanaPose } from '@/data/asanaPoses';
+import { ImageSourcePropType } from 'react-native';
 
-// Build a lookup: lowercase english name → image source
-const POSE_IMAGE_MAP = new Map<string, AsanaPose['image']>();
-PRIMARY_POSE_SEQUENCE.forEach((pose) => {
-  POSE_IMAGE_MAP.set(pose.english.toLowerCase(), pose.image);
-  // Also map by sanskrit (without diacritics-ish match — just lowercase)
-  POSE_IMAGE_MAP.set(pose.sanskrit.toLowerCase(), pose.image);
-});
+// ── Explicit image map: Library asana english name → pose image ──────────────
+// This avoids fuzzy matching issues with diacritics, grouped names (A–D), etc.
+const ASANA_IMAGE_MAP: Record<string, ImageSourcePropType> = {
+  // Opening
+  'Sun Salutation A': require('@/../assets/asana_poses/ekam_arms_up.png'),
+  'Sun Salutation B': require('@/../assets/asana_poses/virabhadrasana_a.png'),
+  // Standing
+  'Big Toe Pose': require('@/../assets/asana_poses/padangusthasana.png'),
+  'Hand Under Foot Pose': require('@/../assets/asana_poses/padahastasana.png'),
+  'Extended Triangle': require('@/../assets/asana_poses/utthita_trikonasana.png'),
+  'Revolved Triangle': require('@/../assets/asana_poses/parivrtta_trikonasana.png'),
+  'Extended Side Angle': require('@/../assets/asana_poses/utthita_parsvakonasana.png'),
+  'Revolved Side Angle': require('@/../assets/asana_poses/parivrtta_parsvakonasana.png'),
+  'Wide-Legged Forward Fold': require('@/../assets/asana_poses/prasarita_padottanasana_a.png'),
+  'Intense Side Stretch': require('@/../assets/asana_poses/parsvottanasana.png'),
+  'Hand-to-Big-Toe Pose': require('@/../assets/asana_poses/utthita_hasta_padangusthasana_a.png'),
+  'Half Bound Lotus Forward Fold': require('@/../assets/asana_poses/ardha_baddha_padmottanasana.png'),
+  'Chair Pose': require('@/../assets/asana_poses/utkatasana.png'),
+  'Warrior I & II': require('@/../assets/asana_poses/virabhadrasana_b.png'),
+  // Primary Seated
+  'Staff Pose': require('@/../assets/asana_poses/dandasana.png'),
+  'Western Intense Stretch': require('@/../assets/asana_poses/paschimottanasana_a.png'),
+  'Eastern Intense Stretch': require('@/../assets/asana_poses/purvottanasana.png'),
+  'Half Bound Lotus Forward Fold (seated)': require('@/../assets/asana_poses/ardha_baddha_padma_paschimottanasana.png'),
+  'Three-Limbed Forward Fold': require('@/../assets/asana_poses/triang_mukhaikapada_paschimottanasana.png'),
+  'Head-to-Knee Pose': require('@/../assets/asana_poses/janu_sirsasana_a.png'),
+  "Sage Marichi's Pose A": require('@/../assets/asana_poses/marichyasana_a.png'),
+  "Sage Marichi's Pose B": require('@/../assets/asana_poses/marichyasana_b.png'),
+  "Sage Marichi's Twist C": require('@/../assets/asana_poses/marichyasana_c.png'),
+  "Sage Marichi's Twist D": require('@/../assets/asana_poses/marichyasana_d.png'),
+  'Boat Pose': require('@/../assets/asana_poses/navasana.png'),
+  'Shoulder Pressing Pose': require('@/../assets/asana_poses/bhujapidasana.png'),
+  'Tortoise Pose': require('@/../assets/asana_poses/kurmasana.png'),
+  'Sleeping Tortoise': require('@/../assets/asana_poses/supta_kurmasana.png'),
+  'Embryo in the Womb': require('@/../assets/asana_poses/garbha_pindasana.png'),
+  'Rooster Pose': require('@/../assets/asana_poses/kukkutasana.png'),
+  'Bound Angle Pose': require('@/../assets/asana_poses/baddha_konasana_a.png'),
+  'Seated Wide Angle': require('@/../assets/asana_poses/upavistha_konasana_a.png'),
+  'Reclining Angle Pose': require('@/../assets/asana_poses/supta_konasana.png'),
+  'Reclining Hand-to-Big-Toe': require('@/../assets/asana_poses/supta_padangusthasana.png'),
+  'Both Big Toes Pose': require('@/../assets/asana_poses/ubhaya_padangusthasana_a.png'),
+  'Upward Facing Forward Fold': require('@/../assets/asana_poses/urdhva_mukha_paschimottanasana.png'),
+  'Bridge Pose': require('@/../assets/asana_poses/setu_bandhasana.png'),
+  // Finishing
+  'Upward Bow / Wheel': require('@/../assets/asana_poses/urdhva_dhanurasana.png'),
+  'Seated Forward Fold (closing)': require('@/../assets/asana_poses/paschimottanasana_b.png'),
+  'Shoulderstand': require('@/../assets/asana_poses/sarvangasana.png'),
+  'Plow Pose': require('@/../assets/asana_poses/halasana.png'),
+  'Ear Pressure Pose': require('@/../assets/asana_poses/karnapidasana.png'),
+  'Upward Lotus': require('@/../assets/asana_poses/urdhva_padmasana.png'),
+  'Embryo Pose': require('@/../assets/asana_poses/pindasana.png'),
+  'Embryo Pose (inverted)': require('@/../assets/asana_poses/pindasana.png'),
+  'Scale Pose': require('@/../assets/asana_poses/utpluthih.png'),
+  'Fish Pose': require('@/../assets/asana_poses/matsyasana.png'),
+  'Extended Leg Pose': require('@/../assets/asana_poses/uttana_padasana.png'),
+  'Headstand': require('@/../assets/asana_poses/sirsasana_a.png'),
+  'Bound Lotus': require('@/../assets/asana_poses/baddha_padmasana.png'),
+  'Yoga Seal': require('@/../assets/asana_poses/yoga_mudra.png'),
+  'Lotus Pose': require('@/../assets/asana_poses/padmasana.png'),
+  'Sprung Up': require('@/../assets/asana_poses/utpluthih.png'),
+};
 
-// Helper: find best image match for a Library asana
-function findPoseImage(sanskrit: string, english: string): AsanaPose['image'] | null {
-  // Direct english match
-  const directEng = POSE_IMAGE_MAP.get(english.toLowerCase());
-  if (directEng) return directEng;
-  // Direct sanskrit match
-  const directSan = POSE_IMAGE_MAP.get(sanskrit.toLowerCase());
-  if (directSan) return directSan;
-  // Partial match: find any key that starts with or is contained in the name
-  const engLower = english.toLowerCase();
-  const sanLower = sanskrit.toLowerCase();
-  for (const [key, img] of POSE_IMAGE_MAP.entries()) {
-    if (key.includes(engLower) || engLower.includes(key)) return img;
-    if (key.includes(sanLower) || sanLower.includes(key)) return img;
-  }
-  return null;
+// Also map by Sanskrit name for duplicates (e.g. two "Half Bound Lotus Forward Fold")
+const ASANA_IMAGE_MAP_SANSKRIT: Record<string, ImageSourcePropType> = {
+  'Ardha Baddha Padma Paschimottanasana': require('@/../assets/asana_poses/ardha_baddha_padma_paschimottanasana.png'),
+};
+
+function findPoseImage(sanskrit: string, english: string): ImageSourcePropType | null {
+  return ASANA_IMAGE_MAP[english] ?? ASANA_IMAGE_MAP_SANSKRIT[sanskrit] ?? null;
 }
 
 // ── Types ────────────────────────────────────────────────────────────────────
