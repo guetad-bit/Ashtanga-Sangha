@@ -12,6 +12,7 @@ import { getWeeklyRhythm, calculateStreak } from '@/utils/practiceStreak';
 import { daysUntilNextMoonDay } from '@/utils/moonDay';
 import { getPracticeLogs, getPracticingNow, getFeed, signOut, logPractice } from '@/lib/supabase';
 import AppLogo from '@/components/AppLogo';
+import AppHeader from '@/components/AppHeader';
 import { Ionicons } from '@expo/vector-icons';
 import { getAsanaOfTheDay, getSeriesColor, type AsanaPose } from '@/data/asanaPoses';
 
@@ -212,7 +213,6 @@ export default function HomeScreen() {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const [livePractitioners, setLivePractitioners] = useState<PracticingUser[]>([]);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [loggedSeries, setLoggedSeries] = useState<string | null>(null);
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>([]);
   const [showLogModal, setShowLogModal] = useState(false);
@@ -309,11 +309,6 @@ export default function HomeScreen() {
     setLogNotes('');
   };
 
-  const handleSignOut = async () => {
-    setMenuOpen(false);
-    await signOut();
-    clearUser();
-  };
 
   // ── Data fetching ──
   const fetchLogs = async () => {
@@ -370,59 +365,7 @@ export default function HomeScreen() {
   // ── Render ──
   return (
     <SafeAreaView style={s.safe}>
-      {/* ── Top bar ── */}
-      <View style={s.topbar}>
-        <View style={s.topbarLeft}>
-          <AppLogo size={36} />
-          <Text style={s.appTitle}>Ashtanga Sangha</Text>
-        </View>
-        <View style={s.topbarRight}>
-          <TouchableOpacity onPress={() => setMenuOpen(true)} activeOpacity={0.75}>
-            {user?.avatarUrl ? (
-              <Image source={{ uri: user.avatarUrl }} style={s.avatar} />
-            ) : (
-              <View style={[s.avatar, s.avatarPlaceholder]}>
-                <Text style={s.avatarLetter}>{user?.name?.charAt(0) ?? '?'}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* ── Avatar dropdown menu ── */}
-      <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
-        <Pressable style={s.menuBackdrop} onPress={() => setMenuOpen(false)}>
-          <View style={s.menuContainer}>
-            <View style={s.menuHeader}>
-              {user?.avatarUrl ? (
-                <Image source={{ uri: user.avatarUrl }} style={s.menuAvatar} />
-              ) : (
-                <View style={[s.menuAvatar, s.avatarPlaceholder]}>
-                  <Text style={s.avatarLetter}>{user?.name?.charAt(0) ?? '?'}</Text>
-                </View>
-              )}
-              <View style={{ flex: 1 }}>
-                <Text style={s.menuName}>{user?.name ?? 'Yogi'}</Text>
-                <Text style={s.menuEmail}>{user?.email ?? ''}</Text>
-              </View>
-            </View>
-            <View style={s.menuDivider} />
-            <TouchableOpacity
-              style={s.menuItem}
-              onPress={() => { setMenuOpen(false); router.push('/(tabs)/profile'); }}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="person-outline" size={18} color={moss.ink} />
-              <Text style={s.menuItemText}>My Profile</Text>
-            </TouchableOpacity>
-            <View style={s.menuDivider} />
-            <TouchableOpacity style={s.menuItem} onPress={handleSignOut} activeOpacity={0.7}>
-              <Ionicons name="log-out-outline" size={18} color="#C0392B" />
-              <Text style={[s.menuItemText, { color: '#C0392B' }]}>Sign Out</Text>
-            </TouchableOpacity>
-          </View>
-        </Pressable>
-      </Modal>
+      <AppHeader />
 
       <ScrollView
         style={s.scroll}

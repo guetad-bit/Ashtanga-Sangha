@@ -11,6 +11,7 @@ import { useRouter } from 'expo-router';
 import { getPracticeLogs, deletePracticeLog, updatePracticeLog } from '@/lib/supabase';
 import { calculateStreak } from '@/utils/practiceStreak';
 import type { PracticeLog } from '@/utils/practiceStreak';
+import AppHeader from '@/components/AppHeader';
 
 /* ââ Warm palette (shared with HomeScreen / CommunityScreen) ââ */
 const warm = {
@@ -253,27 +254,13 @@ export default function MyLogScreen() {
 
   return (
     <SafeAreaView style={st.safe} edges={['top']}>
-      {/* ââ Top Bar (matches homepage / community) ââ */}
-      <View style={st.topBar}>
-        <View style={st.topBarLeft}>
-          <Ionicons name="journal" size={22} color={warm.orange} />
-          <Text style={st.brandText}>My Log</Text>
-        </View>
-        <View style={st.topBarRight}>
-          <View style={st.statsPill}>
-            <Text style={st.statsPillText}>{totalPractices} sessions</Text>
-            <View style={st.statsPillDot} />
-            <Text style={st.statsPillText}>{totalHours}h</Text>
-          </View>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/profile')}>
-            {user?.avatarUrl ? (
-              <Image source={{ uri: user.avatarUrl }} style={st.topAvatar} />
-            ) : (
-              <View style={[st.topAvatar, { backgroundColor: warm.accent, alignItems: 'center' as any, justifyContent: 'center' as any }]}>
-                <Text style={{ fontSize: 18, color: '#fff', fontWeight: '600' as any }}>{user?.name?.charAt(0) ?? '?'}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
+      <AppHeader />
+      {/* Stats row */}
+      <View style={st.statsRow}>
+        <View style={st.statsPill}>
+          <Text style={st.statsPillText}>{totalPractices} sessions</Text>
+          <View style={st.statsPillDot} />
+          <Text style={st.statsPillText}>{totalHours}h</Text>
         </View>
       </View>
 
@@ -519,6 +506,10 @@ const st = StyleSheet.create({
   topBarLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   topBarRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   brandText: { fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18, color: warm.ink },
+  statsRow: {
+    flexDirection: 'row', justifyContent: 'flex-end',
+    paddingHorizontal: 20, paddingBottom: 8,
+  },
   statsPill: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     backgroundColor: warm.orangeLight, borderRadius: 20,

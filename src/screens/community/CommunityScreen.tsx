@@ -9,6 +9,7 @@ import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '@/store/useAppStore';
 import PostCard from '@/components/community/PostCard';
+import AppHeader from '@/components/AppHeader';
 import { getPracticingNow, getFeed, supabase } from '@/lib/supabase';
 
 /* ── Stone & Moss light palette ──────────────────────────────────────── */
@@ -172,24 +173,7 @@ export default function CommunityScreen() {
 
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
-      {/* ── Light header ── */}
-      <View style={s.header}>
-        <TouchableOpacity activeOpacity={0.7}>
-          <Ionicons name="menu" size={26} color={moss.headerText} />
-        </TouchableOpacity>
-        <Text style={s.headerTitle}>Community</Text>
-        <View style={s.headerRight}>
-          <TouchableOpacity activeOpacity={0.7} onPress={() => router.push('/(tabs)/profile')}>
-            {user?.avatarUrl ? (
-              <Image source={{ uri: user.avatarUrl }} style={s.headerAvatar} />
-            ) : (
-              <View style={[s.headerAvatar, { backgroundColor: moss.accent, alignItems: 'center' as any, justifyContent: 'center' as any }]}>
-                <Text style={{ fontSize: 16, color: moss.white, fontWeight: '600' as any }}>{user?.name?.charAt(0) ?? '?'}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
+      <AppHeader />
 
       {/* ── Search bar ── */}
       <View style={s.searchWrap}>
