@@ -18,7 +18,7 @@ export interface AsanaPose {
 }
 
 // Static require map — React Native needs these at compile time
-const images: Record<string, ImageSourcePropType> = {
+export const images: Record<string, ImageSourcePropType> = {
   samasthitih: require('@/../assets/asana_poses/samasthitih.png'),
   ekam_arms_up: require('@/../assets/asana_poses/ekam_arms_up.png'),
   uttanasana: require('@/../assets/asana_poses/uttanasana.png'),
