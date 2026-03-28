@@ -114,7 +114,7 @@ const ONMAT_IMAGES = [
 const FAKE_USERS = [
   {
     id: 'f1', name: 'Liat', avatarUrl: 'https://i.pravatar.cc/200?img=5',
-    series: 'primary', streak: 12, practicedToday: true,
+    series: 'primary', streak: 12, practicedToday: true, bio: 'Practicing Ashtanga for 3 years. Love the morning Mysore routine.',
     badge: 'practiced' as const, badgeText: 'Practiced today',
     feedCaption: 'Morning Mysore done — feeling so grateful for this practice.',
     feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80',
@@ -122,7 +122,7 @@ const FAKE_USERS = [
   },
   {
     id: 'f2', name: 'David', avatarUrl: 'https://i.pravatar.cc/200?img=11',
-    series: 'intermediate', streak: 5, practicedToday: true,
+    series: 'intermediate', streak: 5, practicedToday: true, bio: 'Working through Intermediate series. Dropbacks are my current edge.',
     badge: 'streak' as const, badgeText: '5-day streak',
     feedCaption: 'Working on my dropbacks! Finally catching my ankles.',
     feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80',
@@ -130,7 +130,7 @@ const FAKE_USERS = [
   },
   {
     id: 'f3', name: 'Emma', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80',
-    series: 'primary', streak: 8, practicedToday: true,
+    series: 'primary', streak: 8, practicedToday: true, bio: 'Dedicated to the practice. Supta Kurmasana is my ongoing journey.',
     badge: 'series' as const, badgeText: 'Primary',
     feedCaption: 'Supta Kurmasana breakthrough today — never give up!',
     feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=80',
@@ -138,7 +138,7 @@ const FAKE_USERS = [
   },
   {
     id: 'f4', name: 'Noah', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80',
-    series: 'primary', streak: 3, practicedToday: true,
+    series: 'primary', streak: 3, practicedToday: true, bio: 'New to Ashtanga. Enjoying the discipline and community.',
     badge: 'practiced' as const, badgeText: 'Practiced today',
     feedCaption: 'Led class this morning was intense. Love the energy of practicing together.',
     feedImage: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=300&q=80',
@@ -146,7 +146,7 @@ const FAKE_USERS = [
   },
   {
     id: 'f5', name: 'Priya', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80',
-    series: 'intermediate', streak: 3, practicedToday: true,
+    series: 'intermediate', streak: 3, practicedToday: true, bio: 'Kapotasana warrior. Patience is everything.',
     badge: 'streak' as const, badgeText: '3-day streak',
     feedCaption: 'Kapotasana progress — patience is the real practice.',
     feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80',
@@ -154,7 +154,7 @@ const FAKE_USERS = [
   },
   {
     id: 'f6', name: 'Marco', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80',
-    series: 'primary', streak: 21, practicedToday: true,
+    series: 'primary', streak: 21, practicedToday: true, bio: 'The mat is my medicine. 6 days a week, rain or shine.',
     badge: 'streak' as const, badgeText: '21-day streak',
     feedCaption: 'Three weeks straight — the mat is my medicine.',
     feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80',
@@ -162,7 +162,7 @@ const FAKE_USERS = [
   },
   {
     id: 'f7', name: 'Yuki', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80',
-    series: 'primary', streak: 7, practicedToday: true,
+    series: 'primary', streak: 7, practicedToday: true, bio: 'Finding peace through practice. One breath at a time.',
     badge: 'practiced' as const, badgeText: 'Practiced today',
     feedCaption: 'Beautiful sunrise practice at the shala today.',
     feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=80',
@@ -219,6 +219,15 @@ export default function HomeScreen() {
   const [logSeries, setLogSeries] = useState('Primary');
   const [logDuration, setLogDuration] = useState(75);
   const [logNotes, setLogNotes] = useState('');
+  const [profileCard, setProfileCard] = useState<{ name: string; avatarUrl: string; series: string; streak: number; bio: string } | null>(null);
+
+  const openProfile = (name: string) => {
+    const fakeUser = FAKE_USERS.find((u) => u.name === name);
+    if (fakeUser) {
+      const seriesLabel = SERIES_LABELS[fakeUser.series] ?? fakeUser.series;
+      setProfileCard({ name: fakeUser.name, avatarUrl: fakeUser.avatarUrl, series: seriesLabel, streak: fakeUser.streak, bio: fakeUser.bio });
+    }
+  };
 
   // Computed
   const now = new Date();
@@ -383,7 +392,7 @@ export default function HomeScreen() {
           </Text>
           <View style={s.yogisAvatarRow}>
             {sanghaOnMat.slice(0, 7).map((u, i) => (
-              <View key={u.id} style={[s.yogisAvatarWrap, { marginLeft: i === 0 ? 0 : -10, zIndex: 7 - i }]}>
+              <TouchableOpacity key={u.id} style={[s.yogisAvatarWrap, { marginLeft: i === 0 ? 0 : -10, zIndex: 7 - i }]} activeOpacity={0.7} onPress={() => openProfile(u.name)}>
                 {u.avatarUrl ? (
                   <Image source={{ uri: u.avatarUrl }} style={s.yogisAvatar} />
                 ) : (
@@ -391,7 +400,7 @@ export default function HomeScreen() {
                     <Text style={s.avatarLetterSm}>{u.name.charAt(0)}</Text>
                   </View>
                 )}
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -492,7 +501,7 @@ export default function HomeScreen() {
             {FAKE_USERS.map((m) => {
               const bc = badgeColor(m.badge);
               return (
-                <View key={m.id} style={s.circleMember}>
+                <TouchableOpacity key={m.id} style={s.circleMember} activeOpacity={0.7} onPress={() => openProfile(m.name)}>
                   <View style={s.circleMemberAvatarWrap}>
                     <View style={[s.circleMemberRing, { borderColor: bc.ring }]}>
                       <Image source={{ uri: m.avatarUrl }} style={s.circleMemberAvatar} />
@@ -505,7 +514,7 @@ export default function HomeScreen() {
                     </View>
                   </View>
                   <Text style={s.circleMemberName}>{m.name}</Text>
-                </View>
+                </TouchableOpacity>
               );
             })}
           </ScrollView>
@@ -663,6 +672,36 @@ export default function HomeScreen() {
               <Text style={s.logSaveBtnText}>Save Practice</Text>
             </TouchableOpacity>
           </Pressable>
+        </Pressable>
+      </Modal>
+
+      {/* ── Profile card modal ── */}
+      <Modal visible={!!profileCard} transparent animationType="fade" onRequestClose={() => setProfileCard(null)}>
+        <Pressable style={s.profileBackdrop} onPress={() => setProfileCard(null)}>
+          <View style={s.profileCard}>
+            {profileCard && (
+              <>
+                <Image source={{ uri: profileCard.avatarUrl }} style={s.profileAvatar} />
+                <Text style={s.profileName}>{profileCard.name}</Text>
+                <View style={s.profileBadgeRow}>
+                  <View style={s.profileBadge}>
+                    <Ionicons name="leaf-outline" size={13} color={moss.accent} />
+                    <Text style={s.profileBadgeText}>{profileCard.series}</Text>
+                  </View>
+                  {profileCard.streak > 0 && (
+                    <View style={[s.profileBadge, { backgroundColor: moss.amberBg }]}>
+                      <Ionicons name="flame-outline" size={13} color={moss.amber} />
+                      <Text style={[s.profileBadgeText, { color: moss.amber }]}>{profileCard.streak}-day streak</Text>
+                    </View>
+                  )}
+                </View>
+                <Text style={s.profileBio}>{profileCard.bio}</Text>
+                <TouchableOpacity style={s.profileCloseBtn} onPress={() => setProfileCard(null)} activeOpacity={0.7}>
+                  <Text style={s.profileCloseBtnText}>Close</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
         </Pressable>
       </Modal>
 
@@ -1058,5 +1097,54 @@ const s = StyleSheet.create({
   logSaveBtnText: {
     fontFamily: 'DMSans_700Bold', fontSize: 17, color: '#fff',
     letterSpacing: 0.5,
+  },
+
+  /* ── Profile card modal ── */
+  profileBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center' as any,
+    alignItems: 'center' as any,
+    padding: 24,
+  },
+  profileCard: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    padding: 28,
+    alignItems: 'center' as any,
+    width: '100%' as any,
+    maxWidth: 320,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24,
+    elevation: 8,
+  },
+  profileAvatar: {
+    width: 80, height: 80, borderRadius: 40,
+    borderWidth: 3, borderColor: moss.accent,
+    marginBottom: 14,
+  },
+  profileName: {
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 22, color: moss.ink, marginBottom: 10,
+  },
+  profileBadgeRow: {
+    flexDirection: 'row' as any, gap: 8, marginBottom: 14,
+  },
+  profileBadge: {
+    flexDirection: 'row' as any, alignItems: 'center' as any, gap: 5,
+    backgroundColor: moss.accentLight, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 14,
+  },
+  profileBadgeText: {
+    fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: moss.accent,
+  },
+  profileBio: {
+    fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.inkMid,
+    textAlign: 'center' as any, lineHeight: 20, marginBottom: 18,
+  },
+  profileCloseBtn: {
+    backgroundColor: moss.accent, borderRadius: 14,
+    paddingHorizontal: 28, paddingVertical: 10,
+  },
+  profileCloseBtnText: {
+    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#fff',
   },
 });
