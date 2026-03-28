@@ -13,12 +13,13 @@ import { signOut } from '@/lib/supabase';
 
 export default function AppHeader() {
   const router = useRouter();
-  const { user } = useAppStore();
+  const { user, clearUser } = useAppStore();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     setMenuOpen(false);
     await signOut();
+    clearUser();
   };
 
   return (

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
-  StyleSheet, Image, Alert, ActivityIndicator, RefreshControl,
+  StyleSheet, Image, Alert, ActivityIndicator, RefreshControl, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -73,6 +73,11 @@ export default function ProfileScreen() {
   };
 
   const handlePickPhoto = () => {
+    // On web, Alert.alert with multiple buttons doesn't work — go straight to library
+    if (Platform.OS === 'web') {
+      pickImage('library');
+      return;
+    }
     Alert.alert('Profile Photo', 'Choose a photo source', [
       { text: 'Camera', onPress: () => pickImage('camera') },
       { text: 'Photo Library', onPress: () => pickImage('library') },
@@ -82,12 +87,15 @@ export default function ProfileScreen() {
 
   const pickImage = async (source: 'camera' | 'library') => {
     if (!user) return;
-    if (source === 'camera') {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== 'granted') { Alert.alert('Permission needed', 'Camera access required.'); return; }
-    } else {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') { Alert.alert('Permission needed', 'Photo library access required.'); return; }
+    // On web, no permissions needed — ImagePicker uses a file input
+    if (Platform.OS !== 'web') {
+      if (source === 'camera') {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') { Alert.alert('Permission needed', 'Camera access required.'); return; }
+      } else {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') { Alert.alert('Permission needed', 'Photo library access required.'); return; }
+      }
     }
     const result = source === 'camera'
       ? await ImagePicker.launchCameraAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.7 })
@@ -95,7 +103,7 @@ export default function ProfileScreen() {
     if (result.canceled || !result.assets?.[0]) return;
     setUploadingPhoto(true);
     const { url, error } = await uploadAvatar(user.id, result.assets[0].uri);
-    if (error) { Alert.alert('Upload failed', error.message); }
+    if (error) { console.error('Upload failed', error.message); }
     else if (url) { setUser({ ...user, avatarUrl: url }); }
     setUploadingPhoto(false);
   };
@@ -124,11 +132,17 @@ export default function ProfileScreen() {
     setEditing(false);
   };
 
-  const handleSignOut = () => {
-    Alert.alert('Sign Out', 'Are you sure?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Sign Out', style: 'destructive', onPress: async () => { await signOut(); clearUser(); } },
-    ]);
+  const handleSignOut = async () => {
+    if (Platform.OS === 'web') {
+      // window.confirm works on web (returns boolean)
+      const ok = window.confirm('Are you sure you want to sign out?');
+      if (ok) { await signOut(); clearUser(); }
+    } else {
+      Alert.alert('Sign Out', 'Are you sure?', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign Out', style: 'destructive', onPress: async () => { await signOut(); clearUser(); } },
+      ]);
+    }
   };
 
   const currentSeriesOpt = SERIES_OPTIONS.find((s) => s.value === (user?.series ?? 'primary'));
