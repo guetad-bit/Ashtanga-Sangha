@@ -104,7 +104,7 @@ const s = StyleSheet.create({
     color: colors.ink,
     lineHeight: 22,
   },
-  avatar: { width: 40, height: 40, borderRadius: 20 },
+  avatar: { width: 46, height: 46, borderRadius: 23, borderWidth: 2, borderColor: '#8A9E78' },
   avatarPlaceholder: {
     backgroundColor: colors.sage,
     alignItems: 'center',
@@ -134,7 +134,7 @@ const s = StyleSheet.create({
     gap: spacing.md,
     padding: spacing.lg,
   },
-  menuAvatar: { width: 40, height: 40, borderRadius: 20 },
+  menuAvatar: { width: 46, height: 46, borderRadius: 23 },
   menuName: {
     fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 16,

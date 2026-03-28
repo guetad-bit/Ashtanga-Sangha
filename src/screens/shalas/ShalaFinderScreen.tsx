@@ -269,8 +269,8 @@ export default function MyLogScreen() {
             {user?.avatarUrl ? (
               <Image source={{ uri: user.avatarUrl }} style={st.topAvatar} />
             ) : (
-              <View style={[st.topAvatar, { backgroundColor: warm.accentLight, alignItems: 'center', justifyContent: 'center' }]}>
-                <Ionicons name="person" size={18} color={warm.accent} />
+              <View style={[st.topAvatar, { backgroundColor: warm.accent, alignItems: 'center' as any, justifyContent: 'center' as any }]}>
+                <Text style={{ fontSize: 18, color: '#fff', fontWeight: '600' as any }}>{user?.name?.charAt(0) ?? '?'}</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -526,7 +526,7 @@ const st = StyleSheet.create({
   },
   statsPillText: { fontSize: 12, fontWeight: '600', color: warm.orange },
   statsPillDot: { width: 3, height: 3, borderRadius: 1.5, backgroundColor: warm.orange, opacity: 0.5 },
-  topAvatar: { width: 34, height: 34, borderRadius: 17, overflow: 'hidden' },
+  topAvatar: { width: 46, height: 46, borderRadius: 23, borderWidth: 2, borderColor: '#8A9E78', overflow: 'hidden' },
 
   /* Scroll */
   scroll: { flex: 1 },
