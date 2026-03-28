@@ -9,6 +9,33 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import AppHeader from '@/components/AppHeader';
+import { PRIMARY_POSE_SEQUENCE, type AsanaPose } from '@/data/asanaPoses';
+
+// Build a lookup: lowercase english name → image source
+const POSE_IMAGE_MAP = new Map<string, AsanaPose['image']>();
+PRIMARY_POSE_SEQUENCE.forEach((pose) => {
+  POSE_IMAGE_MAP.set(pose.english.toLowerCase(), pose.image);
+  // Also map by sanskrit (without diacritics-ish match — just lowercase)
+  POSE_IMAGE_MAP.set(pose.sanskrit.toLowerCase(), pose.image);
+});
+
+// Helper: find best image match for a Library asana
+function findPoseImage(sanskrit: string, english: string): AsanaPose['image'] | null {
+  // Direct english match
+  const directEng = POSE_IMAGE_MAP.get(english.toLowerCase());
+  if (directEng) return directEng;
+  // Direct sanskrit match
+  const directSan = POSE_IMAGE_MAP.get(sanskrit.toLowerCase());
+  if (directSan) return directSan;
+  // Partial match: find any key that starts with or is contained in the name
+  const engLower = english.toLowerCase();
+  const sanLower = sanskrit.toLowerCase();
+  for (const [key, img] of POSE_IMAGE_MAP.entries()) {
+    if (key.includes(engLower) || engLower.includes(key)) return img;
+    if (key.includes(sanLower) || sanLower.includes(key)) return img;
+  }
+  return null;
+}
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -575,44 +602,62 @@ export default function LibraryScreen() {
                   <Text style={st.sectionHeaderText}>{group.title}</Text>
                   <Text style={st.sectionHeaderCount}>{group.asanas.length}</Text>
                 </View>
-                {group.asanas.map((asana, i) => (
+                {group.asanas.map((asana, i) => {
+                  const poseImg = findPoseImage(asana.sanskrit, asana.english);
+                  return (
                   <TouchableOpacity
                     key={i}
                     style={st.asanaRow}
                     onPress={() => setSelectedAsana(asana)}
                     activeOpacity={0.7}
                   >
-                    <View style={st.asanaNum}>
-                      <Text style={st.asanaNumText}>{i + 1}</Text>
-                    </View>
+                    {poseImg ? (
+                      <View style={st.asanaThumbWrap}>
+                        <Image source={poseImg} style={st.asanaThumb} resizeMode="contain" />
+                      </View>
+                    ) : (
+                      <View style={st.asanaNum}>
+                        <Text style={st.asanaNumText}>{i + 1}</Text>
+                      </View>
+                    )}
                     <View style={st.asanaInfo}>
                       <Text style={st.asanaSanskrit}>{asana.sanskrit}</Text>
                       <Text style={st.asanaEnglish}>{asana.english}</Text>
                     </View>
                     <Ionicons name="chevron-forward" size={14} color={colors.mutedL} />
                   </TouchableOpacity>
-                ))}
+                  );
+                })}
               </View>
             ))}
 
             {/* Flat view (filtered or searched) */}
-            {!showGrouped && filteredAsanas.map((asana, i) => (
+            {!showGrouped && filteredAsanas.map((asana, i) => {
+              const poseImg = findPoseImage(asana.sanskrit, asana.english);
+              return (
               <TouchableOpacity
                 key={i}
                 style={st.asanaRow}
                 onPress={() => setSelectedAsana(asana)}
                 activeOpacity={0.7}
               >
-                <View style={st.asanaNum}>
-                  <Text style={st.asanaNumText}>{i + 1}</Text>
-                </View>
+                {poseImg ? (
+                  <View style={st.asanaThumbWrap}>
+                    <Image source={poseImg} style={st.asanaThumb} resizeMode="contain" />
+                  </View>
+                ) : (
+                  <View style={st.asanaNum}>
+                    <Text style={st.asanaNumText}>{i + 1}</Text>
+                  </View>
+                )}
                 <View style={st.asanaInfo}>
                   <Text style={st.asanaSanskrit}>{asana.sanskrit}</Text>
                   <Text style={st.asanaEnglish}>{asana.english}</Text>
                 </View>
                 <Text style={st.asanaSeries}>{asana.series}</Text>
               </TouchableOpacity>
-            ))}
+              );
+            })}
           </>
         )}
 
@@ -736,7 +781,9 @@ export default function LibraryScreen() {
         presentationStyle="pageSheet"
         onRequestClose={() => setSelectedAsana(null)}
       >
-        {selectedAsana && (
+        {selectedAsana && (() => {
+          const modalImg = findPoseImage(selectedAsana.sanskrit, selectedAsana.english);
+          return (
           <SafeAreaView style={st.modalSafe}>
             {/* Hero gradient header */}
             <LinearGradient
@@ -756,6 +803,13 @@ export default function LibraryScreen() {
                   <Text style={st.modalBadgeText}>{selectedAsana.series}</Text>
                 </View>
               </View>
+
+              {/* Pose image */}
+              {modalImg && (
+                <View style={st.modalImageWrap}>
+                  <Image source={modalImg} style={st.modalImage} resizeMode="contain" />
+                </View>
+              )}
 
               {/* Asana name */}
               <Text style={st.modalSanskrit}>{selectedAsana.sanskrit}</Text>
@@ -789,7 +843,8 @@ export default function LibraryScreen() {
               </View>
             </ScrollView>
           </SafeAreaView>
-        )}
+          );
+        })()}
       </Modal>
     </SafeAreaView>
   );
@@ -873,8 +928,18 @@ const st = StyleSheet.create({
     padding: spacing.md, marginBottom: 8,
     ...shadows.sm,
   },
+  asanaThumbWrap: {
+    width: 48, height: 48, borderRadius: 12,
+    backgroundColor: '#F6F2EC',
+    alignItems: 'center', justifyContent: 'center',
+    marginRight: spacing.md,
+    overflow: 'hidden' as any,
+  },
+  asanaThumb: {
+    width: 40, height: 40,
+  },
   asanaNum: {
-    width: 32, height: 32, borderRadius: 16,
+    width: 48, height: 48, borderRadius: 12,
     backgroundColor: colors.sagePale, alignItems: 'center', justifyContent: 'center',
     marginRight: spacing.md,
   },
@@ -1085,6 +1150,17 @@ const st = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(126,200,164,0.5)',
   },
   modalBadgeText: { ...typography.labelSm, color: '#9DE0C0' },
+  modalImageWrap: {
+    alignSelf: 'center' as any,
+    width: 160, height: 160, borderRadius: 20,
+    backgroundColor: '#F6F2EC',
+    alignItems: 'center', justifyContent: 'center',
+    marginBottom: spacing.lg,
+    overflow: 'hidden' as any,
+  },
+  modalImage: {
+    width: 140, height: 140,
+  },
   modalSanskrit: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 28, lineHeight: 34,
     color: '#fff', marginBottom: 4,
