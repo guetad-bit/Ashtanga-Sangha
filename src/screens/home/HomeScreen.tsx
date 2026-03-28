@@ -377,12 +377,6 @@ export default function HomeScreen() {
           <Text style={s.appTitle}>Ashtanga Sangha</Text>
         </View>
         <View style={s.topbarRight}>
-          <TouchableOpacity style={s.notifBtn} activeOpacity={0.7} onPress={() => router.push('/(tabs)/community')}>
-            <Ionicons name="chatbubble-ellipses" size={22} color={moss.accent} />
-            <View style={s.notifBadge}>
-              <Text style={s.notifBadgeText}>3</Text>
-            </View>
-          </TouchableOpacity>
           <TouchableOpacity onPress={() => setMenuOpen(true)} activeOpacity={0.75}>
             {user?.avatarUrl ? (
               <Image source={{ uri: user.avatarUrl }} style={s.avatar} />

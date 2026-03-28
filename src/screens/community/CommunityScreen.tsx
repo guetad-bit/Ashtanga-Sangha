@@ -179,10 +179,6 @@ export default function CommunityScreen() {
         </TouchableOpacity>
         <Text style={s.headerTitle}>Community</Text>
         <View style={s.headerRight}>
-          <TouchableOpacity activeOpacity={0.7} style={s.headerIcon}>
-            <Ionicons name="chatbubble-ellipses-outline" size={22} color={moss.headerText} />
-            <View style={s.notifDot} />
-          </TouchableOpacity>
           <TouchableOpacity activeOpacity={0.7} onPress={() => router.push('/(tabs)/profile')}>
             {user?.avatarUrl ? (
               <Image source={{ uri: user.avatarUrl }} style={s.headerAvatar} />
