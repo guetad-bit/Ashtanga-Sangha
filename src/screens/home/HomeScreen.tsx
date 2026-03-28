@@ -245,8 +245,10 @@ export default function HomeScreen() {
   const fakeOnMat = FAKE_USERS.filter(u => u.practicedToday).map(u => ({ id: u.id, name: u.name, avatarUrl: u.avatarUrl }));
   const sanghaOnMat = [...meOnMat, ...othersOnMat, ...fakeOnMat];
 
-  // ── Practice state: 'idle' | 'onMat' | 'done' ──
-  const practiceState = practicedToday ? 'done' : isPracticing ? 'onMat' : 'idle';
+  // ── Practice state: 'idle' | 'onMat' ──
+  // After logging, isPracticing resets → back to 'idle' so user can practice again
+  // practicedToday only affects the social circle (shows user as "practiced today")
+  const practiceState = isPracticing ? 'onMat' : 'idle';
 
   // Elapsed time on mat
   const [elapsedMin, setElapsedMin] = useState(0);
@@ -293,6 +295,7 @@ export default function HomeScreen() {
       });
       setLoggedSeries(logSeries.toLowerCase());
     }
+    setIsPracticing(false);
     setShowLogModal(false);
     setLogNotes('');
   };
@@ -456,12 +459,11 @@ export default function HomeScreen() {
             <View style={[
               s.heroContent,
               practiceState === 'onMat' && s.heroContentOnMat,
-              practiceState === 'done' && s.heroContentDone,
             ]}>
               {practiceState === 'onMat' ? (
                 <>
                   <Text style={s.heroOnMatEmoji}>🧘</Text>
-                  <Text style={s.heroTitle}>You're on the mat</Text>
+                  <Text style={s.heroTitle}>I'm on the mat!</Text>
                   <Text style={s.heroSubtitle}>
                     {elapsedMin < 1 ? 'Just started' : `${elapsedMin} min in`}
                   </Text>
@@ -472,12 +474,6 @@ export default function HomeScreen() {
                   >
                     <Text style={[s.heroBtnText, { color: moss.ink }]}>I'M DONE — LOG IT 🙏</Text>
                   </TouchableOpacity>
-                </>
-              ) : practiceState === 'done' ? (
-                <>
-                  <Text style={s.heroOnMatEmoji}>✨</Text>
-                  <Text style={s.heroTitle}>Great practice!</Text>
-                  <Text style={s.heroSubtitle}>{loggedSeries ? SERIES_LABELS[loggedSeries] ?? loggedSeries : ''} · {logDuration} min</Text>
                 </>
               ) : (
                 <>
