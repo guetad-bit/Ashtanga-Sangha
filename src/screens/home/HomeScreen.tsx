@@ -527,13 +527,13 @@ export default function HomeScreen() {
             <View key={u.id} style={s.feedCard}>
               <View style={s.feedCardInner}>
                 <View style={s.feedCardLeft}>
-                  <View style={s.feedUserRow}>
+                  <TouchableOpacity style={s.feedUserRow} activeOpacity={0.7} onPress={() => openProfile(u.name)}>
                     <Image source={{ uri: u.avatarUrl }} style={s.feedAvatar} />
                     <View>
                       <Text style={s.feedUserName}>{u.name}</Text>
                       <Text style={s.feedTimeAgo}>{u.feedTime}</Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                   <Text style={s.feedCaption}>{u.feedCaption}</Text>
                   <View style={s.feedStats}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
