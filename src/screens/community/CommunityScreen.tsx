@@ -329,77 +329,50 @@ export default function CommunityScreen() {
         {/* ═══════════ PEOPLE TAB ═══════════ */}
         {activeTab === 'people' && (
           <>
-            {/* On the mat now */}
-            {livePractitioners.length > 0 && (
-              <>
-                <View style={s.sectionHeader}>
-                  <Text style={s.sectionTitle}>On the Mat Now</Text>
-                  <View style={s.liveBadge}>
-                    <View style={s.liveDot} />
-                    <Text style={s.liveText}>{livePractitioners.length}</Text>
-                  </View>
-                </View>
-                <View style={s.peopleCard}>
-                  {livePractitioners.map((p) => (
-                    <TouchableOpacity key={p.id} style={s.personRow} activeOpacity={0.7} onPress={() => openProfile(p.name)}>
-                      <View style={s.personAvatarWrap}>
-                        {p.avatar_url ? (
-                          <Image source={{ uri: p.avatar_url }} style={s.personAvatar} />
-                        ) : (
-                          <View style={[s.personAvatar, { backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center' }]}>
-                            <Text style={{ fontSize: 16, color: moss.white, fontWeight: '600' }}>{p.name.charAt(0)}</Text>
-                          </View>
-                        )}
-                        <View style={s.onlineDot} />
-                      </View>
-                      <View style={s.personInfo}>
-                        <Text style={s.personName}>{p.name}</Text>
-                                     <Text style={s.personMeta}>{p.series} {p.streak > 0 ? `· On the mat` : ''}</Text>
-                      </View>
-                      <View style={s.followBtnActive}>
-                        <Text style={s.followTextActive}>Following</Text>
-                      </View>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </>
-            )}
-
-            {/* All Members */}
+            {/* Community Members */}
             <View style={s.sectionHeader}>
               <Text style={s.sectionTitle}>Community Members</Text>
             </View>
-            {members.length > 0 ? (
-              <View style={s.peopleCard}>
-                {members.map((m) => (
-                  <TouchableOpacity key={m.id} style={s.personRow} activeOpacity={0.7} onPress={() => openProfile(m.name)}>
-                    <View style={s.personAvatarWrap}>
-                      {m.avatar_url ? (
-                        <Image source={{ uri: m.avatar_url }} style={s.personAvatar} />
-                      ) : (
-                        <View style={[s.personAvatar, { backgroundColor: moss.terra, alignItems: 'center', justifyContent: 'center' }]}>
-                          <Text style={{ fontSize: 16, color: moss.white, fontWeight: '600' }}>{m.name.charAt(0)}</Text>
-                        </View>
-                      )}
-                    </View>
-                    <View style={s.personInfo}>
-                      <Text style={s.personName}>{m.name}</Text>
-                      <Text style={s.personMeta}>
-                        {m.series} {m.location ? `· ${m.location}` : ''}
-                      </Text>
-                    </View>
-                    <TouchableOpacity style={s.followBtn} activeOpacity={0.7}>
-                      <Text style={s.followText}>Follow</Text>
-                    </TouchableOpacity>
+            <View style={s.peopleCard}>
+              {/* Real members from Supabase */}
+              {members.map((m) => (
+                <TouchableOpacity key={m.id} style={s.personRow} activeOpacity={0.7} onPress={() => openProfile(m.name)}>
+                  <View style={s.personAvatarWrap}>
+                    {m.avatar_url ? (
+                      <Image source={{ uri: m.avatar_url }} style={s.personAvatar} />
+                    ) : (
+                      <View style={[s.personAvatar, { backgroundColor: moss.terra, alignItems: 'center', justifyContent: 'center' }]}>
+                        <Text style={{ fontSize: 16, color: moss.white, fontWeight: '600' }}>{m.name.charAt(0)}</Text>
+                      </View>
+                    )}
+                  </View>
+                  <View style={s.personInfo}>
+                    <Text style={s.personName}>{m.name}</Text>
+                    <Text style={s.personMeta}>
+                      {m.series} {m.location ? `· ${m.location}` : ''}
+                    </Text>
+                  </View>
+                  <TouchableOpacity style={s.followBtn} activeOpacity={0.7}>
+                    <Text style={s.followText}>Follow</Text>
                   </TouchableOpacity>
-                ))}
-              </View>
-            ) : (
-              <View style={s.emptyState}>
-                <Ionicons name="people-outline" size={40} color={moss.mutedLight} />
-                <Text style={s.emptyText}>No members found yet</Text>
-              </View>
-            )}
+                </TouchableOpacity>
+              ))}
+              {/* Demo users */}
+              {FAKE_USERS_FEED.map((u) => (
+                <View key={u.id} style={s.personRow}>
+                  <View style={s.personAvatarWrap}>
+                    <Image source={{ uri: u.avatarUrl }} style={s.personAvatar} />
+                  </View>
+                  <View style={s.personInfo}>
+                    <Text style={s.personName}>{u.name}</Text>
+                    <Text style={s.personMeta}>Primary Series</Text>
+                  </View>
+                  <TouchableOpacity style={s.followBtn} activeOpacity={0.7}>
+                    <Text style={s.followText}>Follow</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
           </>
         )}
 
