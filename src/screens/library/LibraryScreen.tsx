@@ -66,7 +66,7 @@ const ASANA_IMAGE_MAP: Record<string, ImageSourcePropType> = {
   'Scale Pose': poseImages.utpluthih,
   'Fish Pose': poseImages.matsyasana,
   'Extended Leg Pose': poseImages.uttana_padasana,
-  'Headstand': poseImages.sirsasana_a,
+  'Headstand': poseImages.sirsasana_b,
   'Bound Lotus': poseImages.baddha_padmasana,
   'Yoga Seal': poseImages.yoga_mudra,
   'Lotus Pose': poseImages.padmasana,
@@ -180,7 +180,7 @@ const PRIMARY_ASANAS: Asana[] = [
   { sanskrit: 'Sirsasana', english: 'Headstand', description: 'The "king of asanas." Forearm balance on the crown of the head. Hold for 25 breaths. The foundation is in the forearms.', benefits: 'Reverses blood flow, builds focus, strengthens core and shoulders', drishti: 'Nasagrai (nose tip)', vinyasaCount: 13, series: 'Finishing' },
   { sanskrit: 'Baddha Padmasana', english: 'Bound Lotus', description: 'Seated lotus with arms crossed behind, each hand catching the opposite foot. Fold forward.', benefits: 'Opens shoulders, stretches ankles, calms the mind', drishti: 'Nasagrai (nose tip)', vinyasaCount: 8, series: 'Finishing' },
   { sanskrit: 'Padmasana', english: 'Lotus Pose', description: 'The classical meditation posture. Sit for 10 breaths with hands in chin mudra after the final forward fold.', benefits: 'Calms the mind, prepares for meditation, opens hips', drishti: 'Nasagrai (nose tip)', vinyasaCount: 8, series: 'Finishing' },
-  { sanskrit: 'Tolasana', english: 'Scale Pose', description: 'In lotus, press hands into the floor and lift the entire body. Hold for 25 breaths. Final strengthening posture.', benefits: 'Arm and core strength, builds bandha awareness, concentration', drishti: 'Nasagrai (nose tip)', vinyasaCount: 8, series: 'Finishing' },
+  { sanskrit: 'Utpluthih', english: 'Sprung Up', description: 'In lotus, press hands into the floor and lift the entire body off the ground. Hold for 10–25 breaths. The final posture of the practice — a test of strength, bandhas, and determination.', benefits: 'Arm and core strength, builds bandha awareness, concentration', drishti: 'Nasagrai (nose tip)', vinyasaCount: 8, series: 'Finishing' },
 ];
 
 // ── INTERMEDIATE SERIES (NADI SHODHANA) ASANAS ───────────────────────────────
