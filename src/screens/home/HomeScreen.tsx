@@ -346,7 +346,9 @@ export default function HomeScreen() {
     );
     if (existing && !loggedSeries) {
       setLoggedSeries(existing.series);
-      setIsPracticing(true);
+      // Don't force isPracticing — user should land in idle state,
+      // ready to start a new session. The social circle still shows
+      // them as "practiced today" via loggedSeries / practicedToday.
     }
   }, [practiceLogs]);
 
