@@ -863,7 +863,7 @@ const s = StyleSheet.create({
   },
   asanaSeriesText: { fontSize: 11, fontWeight: '600' as any, color: moss.accent },
   asanaHint: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted },
-  asanaImageWrap: { position: 'relative' as any, height: 200, backgroundColor: '#F8F6F2' },
+  asanaImageWrap: { position: 'relative' as any, height: 200, backgroundColor: moss.bg },
   asanaImage: { width: '100%' as any, height: '100%' as any },
   asanaImageOverlay: {
     ...StyleSheet.absoluteFillObject,
