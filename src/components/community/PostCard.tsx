@@ -110,7 +110,7 @@ export default function PostCard({
       {/* ── Actions ── */}
       <View style={s.actions}>
         <TouchableOpacity style={s.actionBtn} onPress={handleLike} activeOpacity={0.7}>
-          <Text style={{ fontSize: 18 }}>{liked ? '🙏' : '👏'}</Text>
+          <Ionicons name={liked ? 'heart' : 'heart-outline'} size={18} color={liked ? '#C4956A' : '#9B8E7E'} />
           <Text style={[s.actionLabel, liked && s.actionLabelActive]}>{likes}</Text>
         </TouchableOpacity>
 

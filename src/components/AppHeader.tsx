@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import AppLogo from '@/components/AppLogo';
 import { useAppStore } from '@/store/useAppStore';
+import { Ionicons } from '@expo/vector-icons';
 import { signOut } from '@/lib/supabase';
 
 export default function AppHeader() {
@@ -66,7 +67,7 @@ export default function AppHeader() {
               onPress={() => { setMenuOpen(false); router.push('/(tabs)/profile'); }}
               activeOpacity={0.7}
             >
-              <Text style={s.menuIcon}>👤</Text>
+              <Ionicons name="person-outline" size={18} color="#5E5245" />
               <Text style={s.menuItemText}>My Profile</Text>
             </TouchableOpacity>
 
@@ -74,7 +75,7 @@ export default function AppHeader() {
 
             {/* Sign Out */}
             <TouchableOpacity style={s.menuItem} onPress={handleSignOut} activeOpacity={0.7}>
-              <Text style={s.menuIcon}>🚪</Text>
+              <Ionicons name="log-out-outline" size={18} color="#C0392B" />
               <Text style={[s.menuItemText, { color: '#C0392B' }]}>Sign Out</Text>
             </TouchableOpacity>
           </View>

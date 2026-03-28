@@ -115,7 +115,7 @@ const FAKE_USERS = [
     id: 'f1', name: 'Liat', avatarUrl: 'https://i.pravatar.cc/200?img=5',
     series: 'primary', streak: 12, practicedToday: true,
     badge: 'practiced' as const, badgeText: 'Practiced today',
-    feedCaption: 'Morning Mysore done — feeling so grateful for this practice 🙏',
+    feedCaption: 'Morning Mysore done — feeling so grateful for this practice.',
     feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80',
     feedTime: '4 min ago', feedLikes: 3, feedComments: 1,
   },
@@ -123,7 +123,7 @@ const FAKE_USERS = [
     id: 'f2', name: 'David', avatarUrl: 'https://i.pravatar.cc/200?img=11',
     series: 'intermediate', streak: 5, practicedToday: true,
     badge: 'streak' as const, badgeText: '5-day streak',
-    feedCaption: 'Working on my dropbacks! Finally catching my ankles 🔥',
+    feedCaption: 'Working on my dropbacks! Finally catching my ankles.',
     feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80',
     feedTime: '15 min ago', feedLikes: 5, feedComments: 2,
   },
@@ -131,7 +131,7 @@ const FAKE_USERS = [
     id: 'f3', name: 'Emma', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80',
     series: 'primary', streak: 8, practicedToday: true,
     badge: 'series' as const, badgeText: 'Primary',
-    feedCaption: 'Supta Kurmasana breakthrough today — never give up! 🐢',
+    feedCaption: 'Supta Kurmasana breakthrough today — never give up!',
     feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=80',
     feedTime: '22 min ago', feedLikes: 7, feedComments: 3,
   },
@@ -139,7 +139,7 @@ const FAKE_USERS = [
     id: 'f4', name: 'Noah', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80',
     series: 'primary', streak: 3, practicedToday: true,
     badge: 'practiced' as const, badgeText: 'Practiced today',
-    feedCaption: 'Led class this morning was intense. Love the energy of practicing together 🧘',
+    feedCaption: 'Led class this morning was intense. Love the energy of practicing together.',
     feedImage: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=300&q=80',
     feedTime: '35 min ago', feedLikes: 4, feedComments: 1,
   },
@@ -147,7 +147,7 @@ const FAKE_USERS = [
     id: 'f5', name: 'Priya', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80',
     series: 'intermediate', streak: 3, practicedToday: true,
     badge: 'streak' as const, badgeText: '3-day streak',
-    feedCaption: 'Kapotasana progress — patience is the real practice 💪',
+    feedCaption: 'Kapotasana progress — patience is the real practice.',
     feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80',
     feedTime: '1 hr ago', feedLikes: 9, feedComments: 4,
   },
@@ -155,7 +155,7 @@ const FAKE_USERS = [
     id: 'f6', name: 'Marco', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80',
     series: 'primary', streak: 21, practicedToday: true,
     badge: 'streak' as const, badgeText: '21-day streak',
-    feedCaption: 'Three weeks straight — the mat is my medicine 🌿',
+    feedCaption: 'Three weeks straight — the mat is my medicine.',
     feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80',
     feedTime: '1 hr ago', feedLikes: 12, feedComments: 5,
   },
@@ -163,7 +163,7 @@ const FAKE_USERS = [
     id: 'f7', name: 'Yuki', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80',
     series: 'primary', streak: 7, practicedToday: true,
     badge: 'practiced' as const, badgeText: 'Practiced today',
-    feedCaption: 'Beautiful sunrise practice at the shala today 🌅',
+    feedCaption: 'Beautiful sunrise practice at the shala today.',
     feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=80',
     feedTime: '2 hr ago', feedLikes: 6, feedComments: 2,
   },
@@ -473,7 +473,7 @@ export default function HomeScreen() {
             ]}>
               {practiceState === 'onMat' ? (
                 <>
-                  <Text style={s.heroOnMatEmoji}>🧘</Text>
+                  <Ionicons name="leaf" size={32} color="rgba(255,255,255,0.85)" />
                   <Text style={s.heroTitle}>I'm on the mat!</Text>
                   <Text style={s.heroSubtitle}>
                     {elapsedMin < 1 ? 'Just started' : `${elapsedMin} min in`}
@@ -483,7 +483,7 @@ export default function HomeScreen() {
                     onPress={handlePracticeButton}
                     activeOpacity={0.85}
                   >
-                    <Text style={[s.heroBtnText, { color: moss.ink }]}>I'M DONE — LOG IT 🙏</Text>
+                    <Text style={[s.heroBtnText, { color: moss.ink }]}>I'M DONE — LOG IT</Text>
                   </TouchableOpacity>
                 </>
               ) : (
@@ -495,7 +495,7 @@ export default function HomeScreen() {
                     onPress={handlePracticeButton}
                     activeOpacity={0.85}
                   >
-                    <Text style={s.heroBtnText}>START YOUR PRACTICE 🪷</Text>
+                    <Text style={s.heroBtnText}>START YOUR PRACTICE</Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -534,7 +534,7 @@ export default function HomeScreen() {
             </View>
             <Text style={s.goalHint}>
               {practicesThisWeek >= weeklyGoal
-                ? 'Goal reached! 🎉'
+                ? 'Goal reached!'
                 : `You're ${weeklyGoal - practicesThisWeek} away from your goal!`}
             </Text>
           </View>
@@ -562,8 +562,8 @@ export default function HomeScreen() {
                     </View>
                     <View style={[s.circleBadge, { backgroundColor: bc.bg }]}>
                       {m.badge === 'practiced' && <Ionicons name="checkmark" size={9} color={moss.accent} />}
-                      {m.badge === 'streak' && <Text style={{ fontSize: 8 }}>🔥</Text>}
-                      {m.badge === 'series' && <Text style={{ fontSize: 8 }}>🧘</Text>}
+                      {m.badge === 'streak' && <Ionicons name="flame-outline" size={10} color={moss.amber} />}
+                      {m.badge === 'series' && <Ionicons name="leaf-outline" size={10} color={moss.accent} />}
                       <Text style={[s.circleBadgeText, { color: bc.text }]}>{m.badgeText}</Text>
                     </View>
                   </View>
@@ -590,8 +590,14 @@ export default function HomeScreen() {
                   </View>
                   <Text style={s.feedCaption}>{u.feedCaption}</Text>
                   <View style={s.feedStats}>
-                    <Text style={s.feedHeart}>🙏 {u.feedLikes}</Text>
-                    <Text style={s.feedComment}>💬 {u.feedComments}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <Ionicons name="heart-outline" size={14} color={moss.amber} />
+                      <Text style={s.feedHeart}>{u.feedLikes}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <Ionicons name="chatbubble-outline" size={13} color={moss.muted} />
+                      <Text style={s.feedComment}>{u.feedComments}</Text>
+                    </View>
                   </View>
                 </View>
                 <Image source={{ uri: u.feedImage }} style={s.feedCardImage} />
@@ -717,7 +723,7 @@ export default function HomeScreen() {
 
             {/* Save */}
             <TouchableOpacity style={s.logSaveBtn} onPress={handleSaveLog} activeOpacity={0.85}>
-              <Text style={s.logSaveBtnText}>Save Practice 🙏</Text>
+              <Text style={s.logSaveBtnText}>Save Practice</Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>

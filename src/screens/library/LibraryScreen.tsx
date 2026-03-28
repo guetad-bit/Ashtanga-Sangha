@@ -39,14 +39,14 @@ interface CountingEntry {
 // ── Data ─────────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
-  { key: 'asanas', label: 'Asanas', icon: '🧘' },
-  { key: 'sequences', label: 'Sequences', icon: '📜' },
-  { key: 'philosophy', label: 'Philosophy', icon: '🕉' },
-  { key: 'mantras', label: 'Mantras', icon: '🔔' },
-  { key: 'counting', label: 'Sanskrit Count', icon: '🔢' },
-  { key: 'breathing', label: 'Pranayama', icon: '🌬' },
-  { key: 'anatomy', label: 'Anatomy', icon: '🦴' },
-  { key: 'history', label: 'History', icon: '📖' },
+  { key: 'asanas', label: 'Asanas', icon: 'body-outline' },
+  { key: 'sequences', label: 'Sequences', icon: 'list-outline' },
+  { key: 'philosophy', label: 'Philosophy', icon: 'leaf-outline' },
+  { key: 'mantras', label: 'Mantras', icon: 'musical-note-outline' },
+  { key: 'counting', label: 'Sanskrit Count', icon: 'language-outline' },
+  { key: 'breathing', label: 'Pranayama', icon: 'water-outline' },
+  { key: 'anatomy', label: 'Anatomy', icon: 'fitness-outline' },
+  { key: 'history', label: 'History', icon: 'book-outline' },
 ];
 
 // ── PRIMARY SERIES ASANAS ────────────────────────────────────────────────────
@@ -476,7 +476,7 @@ export default function LibraryScreen() {
             onPress={() => { setActiveCategory(cat.key); setAsanaFilter(null); }}
             activeOpacity={0.7}
           >
-            <Text style={st.catIcon}>{cat.icon}</Text>
+            <Ionicons name={cat.icon as any} size={15} color={colors.sage} />
             <Text style={[st.catLabel, activeCategory === cat.key && st.catLabelActive]}>
               {cat.label}
             </Text>
@@ -563,7 +563,7 @@ export default function LibraryScreen() {
             {/* No results */}
             {filteredAsanas.length === 0 && (
               <View style={st.emptyState}>
-                <Text style={st.emptyIcon}>🔍</Text>
+                <Ionicons name="search-outline" size={40} color={colors.mutedL} />
                 <Text style={st.emptyText}>No asanas match "{searchQuery}"</Text>
               </View>
             )}
