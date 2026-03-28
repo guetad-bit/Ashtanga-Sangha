@@ -1,7 +1,7 @@
 // src/screens/home/HomeScreen.tsx
 import React, { useEffect, useState } from 'react';
 import {
-  View, Text, ScrollView, TouchableOpacity, Pressable, Modal,
+  View, Text, ScrollView, TouchableOpacity, Pressable, Modal, TextInput,
   StyleSheet, Image, RefreshControl, ImageBackground, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,7 +10,7 @@ import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
 import { getWeeklyRhythm, calculateStreak } from '@/utils/practiceStreak';
 import { daysUntilNextMoonDay } from '@/utils/moonDay';
-import { getPracticeLogs, getPracticingNow, getFeed, signOut } from '@/lib/supabase';
+import { getPracticeLogs, getPracticingNow, getFeed, signOut, logPractice } from '@/lib/supabase';
 import AppLogo from '@/components/AppLogo';
 import { Ionicons } from '@expo/vector-icons';
 import { getAsanaOfTheDay, getSeriesColor, type AsanaPose } from '@/data/asanaPoses';
@@ -198,7 +198,7 @@ export default function HomeScreen() {
   const {
     user, practiceLogs, setPracticeLogs,
     isPracticing, setIsPracticing,
-    userPosts, setLogModalOpen, clearUser,
+    userPosts, setLogModalOpen, clearUser, addPracticeLog,
   } = useAppStore();
 
   const router = useRouter();
@@ -207,6 +207,10 @@ export default function HomeScreen() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loggedSeries, setLoggedSeries] = useState<string | null>(null);
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>([]);
+  const [showLogModal, setShowLogModal] = useState(false);
+  const [logSeries, setLogSeries] = useState('Primary');
+  const [logDuration, setLogDuration] = useState(75);
+  const [logNotes, setLogNotes] = useState('');
 
   // Computed
   const now = new Date();
@@ -241,9 +245,56 @@ export default function HomeScreen() {
   const fakeOnMat = FAKE_USERS.filter(u => u.practicedToday).map(u => ({ id: u.id, name: u.name, avatarUrl: u.avatarUrl }));
   const sanghaOnMat = [...meOnMat, ...othersOnMat, ...fakeOnMat];
 
+  // ── Practice state: 'idle' | 'onMat' | 'done' ──
+  const practiceState = practicedToday ? 'done' : isPracticing ? 'onMat' : 'idle';
+
+  // Elapsed time on mat
+  const [elapsedMin, setElapsedMin] = useState(0);
+  useEffect(() => {
+    if (!isPracticing) return;
+    const startedAt = useAppStore.getState().practicingStartedAt;
+    if (!startedAt) return;
+    const tick = () => {
+      const mins = Math.floor((Date.now() - new Date(startedAt).getTime()) / 60000);
+      setElapsedMin(mins);
+    };
+    tick();
+    const iv = setInterval(tick, 30000);
+    return () => clearInterval(iv);
+  }, [isPracticing]);
+
   // ── Actions ──
   const handlePracticeButton = () => {
-    setLogModalOpen(true);
+    if (practiceState === 'idle') {
+      // Start practice → go on the mat
+      setIsPracticing(true);
+    } else if (practiceState === 'onMat') {
+      // Finish practice → open log modal
+      const startedAt = useAppStore.getState().practicingStartedAt;
+      if (startedAt) {
+        const mins = Math.round((Date.now() - new Date(startedAt).getTime()) / 60000);
+        setLogDuration(mins > 0 ? mins : 75);
+      }
+      setShowLogModal(true);
+    }
+  };
+
+  const handleSaveLog = async () => {
+    if (!user) return;
+    const fullNotes = logNotes.trim();
+    const { error } = await logPractice(user.id, logSeries.toLowerCase(), logDuration, fullNotes);
+    if (!error) {
+      addPracticeLog({
+        id: Date.now().toString(),
+        userId: user.id,
+        loggedAt: new Date().toISOString(),
+        series: logSeries.toLowerCase(),
+        durationMin: logDuration,
+      });
+      setLoggedSeries(logSeries.toLowerCase());
+    }
+    setShowLogModal(false);
+    setLogNotes('');
   };
 
   const handleSignOut = async () => {
@@ -402,18 +453,45 @@ export default function HomeScreen() {
             imageStyle={s.heroImageInner}
           >
             <View style={s.heroGradient} />
-            <View style={s.heroContent}>
-              <Text style={s.heroTitle}>{guruWisdom.quote}</Text>
-              <Text style={s.heroSubtitle}>— {guruWisdom.guru}</Text>
-              <TouchableOpacity
-                style={[s.heroBtn, isPracticing ? s.heroBtnOnMat : s.heroBtnDefault]}
-                onPress={handlePracticeButton}
-                activeOpacity={0.85}
-              >
-                <Text style={s.heroBtnText}>
-                  {isPracticing ? "On the mat 🧘‍♀️" : "Start Practice 🧘‍♀️"}
-                </Text>
-              </TouchableOpacity>
+            <View style={[
+              s.heroContent,
+              practiceState === 'onMat' && s.heroContentOnMat,
+              practiceState === 'done' && s.heroContentDone,
+            ]}>
+              {practiceState === 'onMat' ? (
+                <>
+                  <Text style={s.heroOnMatEmoji}>🧘</Text>
+                  <Text style={s.heroTitle}>You're on the mat</Text>
+                  <Text style={s.heroSubtitle}>
+                    {elapsedMin < 1 ? 'Just started' : `${elapsedMin} min in`}
+                  </Text>
+                  <TouchableOpacity
+                    style={[s.heroBtn, s.heroBtnFinish]}
+                    onPress={handlePracticeButton}
+                    activeOpacity={0.85}
+                  >
+                    <Text style={[s.heroBtnText, { color: moss.ink }]}>I'M DONE — LOG IT 🙏</Text>
+                  </TouchableOpacity>
+                </>
+              ) : practiceState === 'done' ? (
+                <>
+                  <Text style={s.heroOnMatEmoji}>✨</Text>
+                  <Text style={s.heroTitle}>Great practice!</Text>
+                  <Text style={s.heroSubtitle}>{loggedSeries ? SERIES_LABELS[loggedSeries] ?? loggedSeries : ''} · {logDuration} min</Text>
+                </>
+              ) : (
+                <>
+                  <Text style={s.heroTitle}>{guruWisdom.quote}</Text>
+                  <Text style={s.heroSubtitle}>— {guruWisdom.guru}</Text>
+                  <TouchableOpacity
+                    style={[s.heroBtn, s.heroBtnDefault]}
+                    onPress={handlePracticeButton}
+                    activeOpacity={0.85}
+                  >
+                    <Text style={s.heroBtnText}>START YOUR PRACTICE 🪷</Text>
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
           </ImageBackground>
         </View>
@@ -576,6 +654,68 @@ export default function HomeScreen() {
         </View>
 
       </ScrollView>
+
+      {/* ═══ PRACTICE LOG MODAL ═══ */}
+      <Modal visible={showLogModal} transparent animationType="slide" onRequestClose={() => setShowLogModal(false)}>
+        <Pressable style={s.logBackdrop} onPress={() => setShowLogModal(false)}>
+          <Pressable style={s.logSheet} onPress={() => {}}>
+            <View style={s.logHandle} />
+            <Text style={s.logTitle}>How was your practice?</Text>
+
+            {/* Series picker */}
+            <Text style={s.logLabel}>Series</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
+              <View style={s.logChipsRow}>
+                {['Primary', 'Intermediate', 'Advanced A', 'Led Class', 'Half Primary'].map((opt) => (
+                  <TouchableOpacity
+                    key={opt}
+                    style={[s.logChip, logSeries === opt && s.logChipActive]}
+                    onPress={() => setLogSeries(opt)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[s.logChipText, logSeries === opt && s.logChipTextActive]}>{opt}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+
+            {/* Duration */}
+            <Text style={s.logLabel}>Duration (minutes)</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
+              <View style={s.logChipsRow}>
+                {[30, 45, 60, 75, 90, 120].map((d) => (
+                  <TouchableOpacity
+                    key={d}
+                    style={[s.logChip, logDuration === d && s.logChipActive]}
+                    onPress={() => setLogDuration(d)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[s.logChipText, logDuration === d && s.logChipTextActive]}>{d}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+
+            {/* Notes */}
+            <Text style={s.logLabel}>Notes (optional)</Text>
+            <TextInput
+              style={s.logInput}
+              placeholder="How did it feel? Any breakthroughs?"
+              placeholderTextColor={moss.mutedLight}
+              multiline
+              numberOfLines={3}
+              value={logNotes}
+              onChangeText={setLogNotes}
+            />
+
+            {/* Save */}
+            <TouchableOpacity style={s.logSaveBtn} onPress={handleSaveLog} activeOpacity={0.85}>
+              <Text style={s.logSaveBtnText}>Save Practice 🙏</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
     </SafeAreaView>
   );
 }
@@ -899,4 +1039,74 @@ const s = StyleSheet.create({
   },
   asanaStatNum: { fontSize: 20, fontWeight: '700' as any, color: moss.ink },
   asanaStatLabel: { fontSize: 11, color: moss.muted, fontWeight: '500' as any },
+
+  /* ── Hero state variants ── */
+  heroContentOnMat: {
+    backgroundColor: 'rgba(59,50,40,0.80)',
+  },
+  heroContentDone: {
+    backgroundColor: 'rgba(138,158,120,0.85)',
+  },
+  heroOnMatEmoji: {
+    fontSize: 48, marginBottom: 8,
+  },
+  heroBtnFinish: {
+    backgroundColor: moss.cardBg,
+    shadowColor: 'rgba(0,0,0,0.15)',
+    shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 12,
+  },
+
+  /* ── Practice Log Modal ── */
+  logBackdrop: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end' as any,
+  },
+  logSheet: {
+    backgroundColor: moss.cardBg, borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    paddingHorizontal: 24, paddingBottom: 40, paddingTop: 12,
+    maxHeight: '80%' as any,
+  },
+  logHandle: {
+    width: 40, height: 4, borderRadius: 2, backgroundColor: moss.mutedLight,
+    alignSelf: 'center' as any, marginBottom: 16,
+  },
+  logTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: moss.ink,
+    marginBottom: 20, textAlign: 'center' as any,
+  },
+  logLabel: {
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.muted,
+    marginBottom: 8, textTransform: 'uppercase' as any, letterSpacing: 0.5,
+  },
+  logChipsRow: {
+    flexDirection: 'row' as any, gap: 8,
+  },
+  logChip: {
+    paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20,
+    backgroundColor: moss.beige, borderWidth: 1.5, borderColor: 'transparent',
+  },
+  logChipActive: {
+    backgroundColor: moss.accentLight, borderColor: moss.accent,
+  },
+  logChipText: {
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.inkMid,
+  },
+  logChipTextActive: {
+    color: moss.accent, fontWeight: '600' as any,
+  },
+  logInput: {
+    backgroundColor: moss.beige, borderRadius: 14, padding: 14,
+    fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.ink,
+    minHeight: 80, textAlignVertical: 'top' as any, marginBottom: 20,
+  },
+  logSaveBtn: {
+    backgroundColor: moss.accent, borderRadius: 28, paddingVertical: 16,
+    alignItems: 'center' as any,
+    shadowColor: 'rgba(138,158,120,0.4)',
+    shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 12,
+  },
+  logSaveBtnText: {
+    fontFamily: 'DMSans_700Bold', fontSize: 17, color: '#fff',
+    letterSpacing: 0.5,
+  },
 });
