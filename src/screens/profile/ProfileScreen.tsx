@@ -102,9 +102,13 @@ export default function ProfileScreen() {
       : await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.7 });
     if (result.canceled || !result.assets?.[0]) return;
     setUploadingPhoto(true);
-    const { url, error } = await uploadAvatar(user.id, result.assets[0].uri);
-    if (error) { console.error('Upload failed', error.message); }
-    else if (url) { setUser({ ...user, avatarUrl: url }); }
+    try {
+      const { url, error } = await uploadAvatar(user.id, result.assets[0].uri);
+      if (error) { console.error('Upload failed:', error); }
+      else if (url) { setUser({ ...user, avatarUrl: url }); }
+    } catch (e) {
+      console.error('Upload exception:', e);
+    }
     setUploadingPhoto(false);
   };
 

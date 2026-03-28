@@ -135,11 +135,23 @@ export async function upsertProfile(profile: {
 // ── Avatar upload ────────────────────────────────────────────────────────────
 
 export async function uploadAvatar(userId: string, uri: string) {
-  // React Native: read the file as arraybuffer (blob doesn't work reliably)
   const response = await fetch(uri);
   const arrayBuffer = await response.arrayBuffer();
 
-  const fileExt = uri.split('.').pop()?.split('?')[0]?.toLowerCase() ?? 'jpg';
+  // Detect file extension: data URIs and blob URLs don't have file extensions,
+  // so we check the content-type header or the data URI prefix
+  let fileExt = 'jpg';
+  const respType = response.headers.get('content-type');
+  if (respType?.includes('png')) fileExt = 'png';
+  else if (respType?.includes('webp')) fileExt = 'webp';
+  else if (uri.startsWith('data:image/png')) fileExt = 'png';
+  else if (uri.startsWith('data:image/webp')) fileExt = 'webp';
+  else if (!uri.startsWith('data:') && !uri.startsWith('blob:')) {
+    // Native file path — extract extension normally
+    const ext = uri.split('.').pop()?.split('?')[0]?.toLowerCase();
+    if (ext && ['jpg', 'jpeg', 'png', 'webp', 'heic'].includes(ext)) fileExt = ext;
+  }
+
   const filePath = `${userId}/avatar.${fileExt}`;
   const contentType = `image/${fileExt === 'jpg' ? 'jpeg' : fileExt}`;
 
