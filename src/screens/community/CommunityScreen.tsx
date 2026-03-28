@@ -183,7 +183,9 @@ export default function CommunityScreen() {
             {user?.avatarUrl ? (
               <Image source={{ uri: user.avatarUrl }} style={s.headerAvatar} />
             ) : (
-              <Ionicons name="person" size={22} color={moss.headerText} />
+              <View style={[s.headerAvatar, { backgroundColor: moss.accent, alignItems: 'center' as any, justifyContent: 'center' as any }]}>
+                <Text style={{ fontSize: 16, color: moss.white, fontWeight: '600' as any }}>{user?.name?.charAt(0) ?? '?'}</Text>
+              </View>
             )}
           </TouchableOpacity>
         </View>
@@ -449,7 +451,7 @@ const s = StyleSheet.create({
     gap: spacing.lg,
   },
   headerIcon: { position: 'relative' },
-  headerAvatar: { width: 28, height: 28, borderRadius: 14 },
+  headerAvatar: { width: 42, height: 42, borderRadius: 21, borderWidth: 2, borderColor: moss.ring },
   notifDot: {
     position: 'absolute',
     top: -2,

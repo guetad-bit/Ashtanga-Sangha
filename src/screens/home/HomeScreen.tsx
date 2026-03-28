@@ -754,7 +754,7 @@ const s = StyleSheet.create({
     borderWidth: 1.5, borderColor: moss.bg,
   },
   notifBadgeText: { fontSize: 9, fontWeight: '700' as any, color: '#fff' },
-  avatar: { width: 38, height: 38, borderRadius: 19, borderWidth: 2, borderColor: moss.ring },
+  avatar: { width: 42, height: 42, borderRadius: 21, borderWidth: 2, borderColor: moss.ring },
   avatarPlaceholder: {
     backgroundColor: moss.accent, alignItems: 'center' as any, justifyContent: 'center' as any,
   },
@@ -776,7 +776,7 @@ const s = StyleSheet.create({
     flexDirection: 'row' as any, alignItems: 'center' as any, gap: spacing.md,
     padding: spacing.lg,
   },
-  menuAvatar: { width: 40, height: 40, borderRadius: 20 },
+  menuAvatar: { width: 42, height: 42, borderRadius: 21 },
   menuName: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 16, lineHeight: 20,
     color: moss.ink,
