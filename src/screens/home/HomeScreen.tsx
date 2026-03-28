@@ -93,12 +93,20 @@ const GURU_WISDOM = [
   { guru: 'T. Krishnamacharya', quote: 'Where is the delusion when truth is known?' },
 ];
 
-// Practice hero images
+// Practice hero images (local illustrated assets)
 const PRACTICE_IMAGES = [
-  'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80',
-  'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
-  'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800&q=80',
-  'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=800&q=80',
+  require('@/../assets/hero/hero_1.png'),
+  require('@/../assets/hero/hero_2.png'),
+  require('@/../assets/hero/hero_3.png'),
+  require('@/../assets/hero/hero_4.png'),
+];
+
+// On-mat hero images (warmer amber tones)
+const ONMAT_IMAGES = [
+  require('@/../assets/hero/hero_onmat_1.png'),
+  require('@/../assets/hero/hero_onmat_2.png'),
+  require('@/../assets/hero/hero_onmat_3.png'),
+  require('@/../assets/hero/hero_onmat_4.png'),
 ];
 
 // ── 7 Fake Users (circle members, on-mat yogis, feed authors) ──
@@ -219,6 +227,7 @@ export default function HomeScreen() {
   const guruWisdom = GURU_WISDOM[dayOfYear % GURU_WISDOM.length];
   const practicedToday = loggedSeries !== null;
   const practiceImage = PRACTICE_IMAGES[dayOfYear % PRACTICE_IMAGES.length];
+  const onMatImage = ONMAT_IMAGES[dayOfYear % ONMAT_IMAGES.length];
   const rhythm = getWeeklyRhythm(practiceLogs);
   const streak = calculateStreak(practiceLogs);
   const practicesThisWeek = rhythm.filter((d) => d.status === 'done').length;
@@ -451,7 +460,7 @@ export default function HomeScreen() {
         {/* ═══ 1. HERO CARD ═══ */}
         <View style={s.heroCard}>
           <ImageBackground
-            source={{ uri: practiceImage }}
+            source={practiceState === 'onMat' ? onMatImage : practiceImage}
             style={s.heroImage}
             imageStyle={s.heroImageInner}
           >
@@ -833,7 +842,7 @@ const s = StyleSheet.create({
     justifyContent: 'center' as any,
     alignItems: 'center' as any,
     paddingHorizontal: 24,
-    backgroundColor: 'rgba(138,158,120,0.75)',
+    backgroundColor: 'rgba(138,158,120,0.55)',
     borderRadius: 20,
   },
   heroTitle: {
@@ -1038,7 +1047,7 @@ const s = StyleSheet.create({
 
   /* ── Hero state variants ── */
   heroContentOnMat: {
-    backgroundColor: 'rgba(59,50,40,0.80)',
+    backgroundColor: 'rgba(59,50,40,0.55)',
   },
   heroContentDone: {
     backgroundColor: 'rgba(138,158,120,0.85)',
