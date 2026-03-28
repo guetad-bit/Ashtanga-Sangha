@@ -451,7 +451,7 @@ const s = StyleSheet.create({
     gap: spacing.lg,
   },
   headerIcon: { position: 'relative' },
-  headerAvatar: { width: 42, height: 42, borderRadius: 21, borderWidth: 2, borderColor: moss.ring },
+  headerAvatar: { width: 46, height: 46, borderRadius: 23, borderWidth: 2, borderColor: moss.ring },
   notifDot: {
     position: 'absolute',
     top: -2,
