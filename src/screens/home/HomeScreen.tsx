@@ -13,6 +13,7 @@ import { daysUntilNextMoonDay } from '@/utils/moonDay';
 import { getPracticeLogs, getPracticingNow, getFeed, signOut } from '@/lib/supabase';
 import AppLogo from '@/components/AppLogo';
 import { Ionicons } from '@expo/vector-icons';
+import { getAsanaOfTheDay, getSeriesColor, type AsanaPose } from '@/data/asanaPoses';
 
 interface PracticingUser {
   id: string;
@@ -218,7 +219,14 @@ export default function HomeScreen() {
   const streak = calculateStreak(practiceLogs);
   const practicesThisWeek = rhythm.filter((d) => d.status === 'done').length;
   const weeklyGoal = 5;
-  const asana = ASANAS[dayOfYear % ASANAS.length];
+  const todaysAsana = getAsanaOfTheDay();
+  const seriesColor = getSeriesColor(todaysAsana.series);
+  const asana = {
+    name: todaysAsana.sanskrit, subtitle: todaysAsana.english,
+    series: todaysAsana.series, image: todaysAsana.image,
+    benefits: todaysAsana.benefits, tips: todaysAsana.tips,
+    breaths: todaysAsana.breaths, sides: todaysAsana.sides, difficulty: todaysAsana.difficulty,
+  };
 
   // Build week checkmarks from rhythm data
   const weekChecks = rhythm.map((d) => d.status === 'done');
@@ -524,7 +532,7 @@ export default function HomeScreen() {
 
           {/* Asana image */}
           <View style={s.asanaImageWrap}>
-            <Image source={{ uri: asana.image }} style={s.asanaImage} />
+            <Image source={asana.image} style={s.asanaImage} resizeMode="contain" />
             <View style={s.asanaImageOverlay} />
             <View style={s.asanaImageText}>
               <Text style={s.asanaName}>{asana.name}</Text>
@@ -855,24 +863,21 @@ const s = StyleSheet.create({
   },
   asanaSeriesText: { fontSize: 11, fontWeight: '600' as any, color: moss.accent },
   asanaHint: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted },
-  asanaImageWrap: { position: 'relative' as any, height: 180 },
-  asanaImage: { width: '100%' as any, height: '100%' as any, opacity: 0.85 },
+  asanaImageWrap: { position: 'relative' as any, height: 200, backgroundColor: '#F8F6F2' },
+  asanaImage: { width: '100%' as any, height: '100%' as any },
   asanaImageOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(59,50,40,0.35)',
+    backgroundColor: 'transparent',
   },
   asanaImageText: {
     position: 'absolute' as any, bottom: 14, left: 20, right: 20,
   },
   asanaName: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: '#fff',
-    lineHeight: 26, textShadowColor: 'rgba(0,0,0,0.4)',
-    textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 8,
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: moss.ink,
+    lineHeight: 26,
   },
   asanaSubtitle: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: 'rgba(255,255,255,0.85)',
-    textShadowColor: 'rgba(0,0,0,0.3)',
-    textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4,
+    fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted,
   },
   asanaDetails: { padding: 16, paddingTop: 14 },
   asanaTags: { flexDirection: 'row' as any, flexWrap: 'wrap' as any, gap: 8, marginBottom: 14 },
