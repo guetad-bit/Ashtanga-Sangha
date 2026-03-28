@@ -43,7 +43,7 @@ const moss = {
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-type Tab = 'latest' | 'people' | 'topics';
+type Tab = 'latest' | 'people';
 
 interface PracticingUser {
   id: string;
@@ -77,13 +77,6 @@ interface Member {
   location: string | null;
   bio: string | null;
 }
-
-/* ── Mock discussion topics ─────────────────────────────────────────────── */
-const DISCUSSIONS = [
-  { id: '1', title: 'Padmasana Tips',    replies: 125, color: moss.sage,  bg: moss.sageBg  },
-  { id: '2', title: 'Overcoming Injury', replies: 99,  color: moss.gold,  bg: moss.goldBg  },
-  { id: '3', title: 'Morning Practice Wins', replies: 154, color: moss.amber, bg: moss.amberBg },
-];
 
 // Fake users for demo feed
 const FAKE_USERS_FEED = [
@@ -140,6 +133,11 @@ export default function CommunityScreen() {
     setRefreshing(false);
   }, []);
 
+  // Combine real practitioners + fake demo users (same as homepage)
+  const fakeOnMat = FAKE_USERS_FEED.map((u) => ({
+    id: u.id, name: u.name, avatarUrl: u.avatarUrl,
+    location: null, series: 'primary', streak: 0,
+  }));
   const allPeople = [
     ...livePractitioners.map((p) => ({
       id: p.id,
@@ -149,14 +147,7 @@ export default function CommunityScreen() {
       series: p.series,
       streak: p.streak ?? 0,
     })),
-    ...members.map((m) => ({
-      id: m.id,
-      name: m.name ?? 'Practitioner',
-      avatarUrl: m.avatar_url,
-      location: m.location,
-      series: m.series,
-      streak: m.streak ?? 0,
-    })),
+    ...fakeOnMat,
   ];
 
   /* ── Render helpers ───────────────────────────────────────────────────── */
@@ -176,13 +167,6 @@ export default function CommunityScreen() {
       </View>
       <Text style={s.partnerName} numberOfLines={1}>{p.name.split(' ')[0]}</Text>
       {p.location && <Text style={s.partnerLocation} numberOfLines={1}>{p.location}</Text>}
-    </TouchableOpacity>
-  );
-
-  const renderDiscussionCard = (d: typeof DISCUSSIONS[0]) => (
-    <TouchableOpacity key={d.id} style={[s.discussionCard, { backgroundColor: d.bg }]} activeOpacity={0.7}>
-      <Text style={[s.discussionTitle, { color: d.color }]}>{d.title}</Text>
-      <Text style={[s.discussionReplies, { color: d.color }]}>{d.replies} Replies</Text>
     </TouchableOpacity>
   );
 
@@ -225,7 +209,7 @@ export default function CommunityScreen() {
 
       {/* ── Underline tabs ── */}
       <View style={s.tabRow}>
-        {(['latest', 'people', 'topics'] as Tab[]).map((tab) => (
+        {(['latest', 'people'] as Tab[]).map((tab) => (
           <TouchableOpacity
             key={tab}
             style={[s.tab, activeTab === tab && s.tabActive]}
@@ -233,7 +217,7 @@ export default function CommunityScreen() {
             activeOpacity={0.7}
           >
             <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>
-              {tab === 'latest' ? 'Latest' : tab === 'people' ? 'People' : 'Topics'}
+              {tab === 'latest' ? 'Latest' : 'People'}
             </Text>
           </TouchableOpacity>
         ))}
@@ -287,18 +271,6 @@ export default function CommunityScreen() {
                 )}
               </ScrollView>
             </View>
-
-            {/* Popular Discussions */}
-            <View style={s.sectionHeader}>
-              <Text style={s.sectionTitle}>Popular Discussions</Text>
-            </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={s.discussionsScroll}
-            >
-              {DISCUSSIONS.map(renderDiscussionCard)}
-            </ScrollView>
 
             {/* Sangha Feed */}
             <View style={s.sectionHeader}>
@@ -449,26 +421,6 @@ export default function CommunityScreen() {
           </>
         )}
 
-        {/* ═══════════ TOPICS TAB ═══════════ */}
-        {activeTab === 'topics' && (
-          <>
-            <View style={s.sectionHeader}>
-              <Text style={s.sectionTitle}>Discussion Topics</Text>
-            </View>
-            {DISCUSSIONS.map((d) => (
-              <TouchableOpacity key={d.id} style={[s.topicRow, { borderLeftColor: d.color }]} activeOpacity={0.7}>
-                <View style={{ flex: 1 }}>
-                  <Text style={s.topicTitle}>{d.title}</Text>
-                  <Text style={s.topicMeta}>{d.replies} replies · Active today</Text>
-                </View>
-                <Ionicons name="chevron-forward" size={18} color={moss.mutedLight} />
-              </TouchableOpacity>
-            ))}
-            <View style={s.emptyState}>
-              <Text style={[s.emptyText, { marginTop: spacing.lg }]}>More topics coming soon</Text>
-            </View>
-          </>
-        )}
       </ScrollView>
     </SafeAreaView>
   );
