@@ -111,86 +111,16 @@ const ONMAT_IMAGES = [
   require('@/../assets/hero/hero_onmat_4.png'),
 ];
 
-// ── 7 Fake Users (circle members, on-mat yogis, feed authors) ──
-const FAKE_USERS = [
-  {
-    id: 'f1', name: 'Liat', avatarUrl: 'https://i.pravatar.cc/200?img=5',
-    series: 'primary', streak: 12, practicedToday: true, bio: 'Practicing Ashtanga for 3 years. Love the morning Mysore routine.',
-    badge: 'practiced' as const, badgeText: 'Practiced today',
-    feedCaption: 'Morning Mysore done — feeling so grateful for this practice.',
-    feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80',
-    feedTime: '4 min ago', feedLikes: 3, feedComments: 1,
-  },
-  {
-    id: 'f2', name: 'David', avatarUrl: 'https://i.pravatar.cc/200?img=11',
-    series: 'intermediate', streak: 5, practicedToday: true, bio: 'Working through Intermediate series. Dropbacks are my current edge.',
-    badge: 'streak' as const, badgeText: '5-day streak',
-    feedCaption: 'Working on my dropbacks! Finally catching my ankles.',
-    feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80',
-    feedTime: '15 min ago', feedLikes: 5, feedComments: 2,
-  },
-  {
-    id: 'f3', name: 'Emma', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80',
-    series: 'primary', streak: 8, practicedToday: true, bio: 'Dedicated to the practice. Supta Kurmasana is my ongoing journey.',
-    badge: 'series' as const, badgeText: 'Primary',
-    feedCaption: 'Supta Kurmasana breakthrough today — never give up!',
-    feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=80',
-    feedTime: '22 min ago', feedLikes: 7, feedComments: 3,
-  },
-  {
-    id: 'f4', name: 'Noah', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80',
-    series: 'primary', streak: 3, practicedToday: true, bio: 'New to Ashtanga. Enjoying the discipline and community.',
-    badge: 'practiced' as const, badgeText: 'Practiced today',
-    feedCaption: 'Led class this morning was intense. Love the energy of practicing together.',
-    feedImage: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=300&q=80',
-    feedTime: '35 min ago', feedLikes: 4, feedComments: 1,
-  },
-  {
-    id: 'f5', name: 'Priya', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80',
-    series: 'intermediate', streak: 3, practicedToday: true, bio: 'Kapotasana warrior. Patience is everything.',
-    badge: 'streak' as const, badgeText: '3-day streak',
-    feedCaption: 'Kapotasana progress — patience is the real practice.',
-    feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80',
-    feedTime: '1 hr ago', feedLikes: 9, feedComments: 4,
-  },
-  {
-    id: 'f6', name: 'Marco', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80',
-    series: 'primary', streak: 21, practicedToday: true, bio: 'The mat is my medicine. 6 days a week, rain or shine.',
-    badge: 'streak' as const, badgeText: '21-day streak',
-    feedCaption: 'Three weeks straight — the mat is my medicine.',
-    feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80',
-    feedTime: '1 hr ago', feedLikes: 12, feedComments: 5,
-  },
-  {
-    id: 'f7', name: 'Yuki', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80',
-    series: 'primary', streak: 7, practicedToday: true, bio: 'Finding peace through practice. One breath at a time.',
-    badge: 'practiced' as const, badgeText: 'Practiced today',
-    feedCaption: 'Beautiful sunrise practice at the shala today.',
-    feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=80',
-    feedTime: '2 hr ago', feedLikes: 6, feedComments: 2,
-  },
-];
+// ── Circle members, on-mat yogis, feed authors (populated from real data) ──
+const FAKE_USERS: {
+  id: string; name: string; avatarUrl: string;
+  series: string; streak: number; practicedToday: boolean; bio: string;
+  badge: 'practiced' | 'streak' | 'series'; badgeText: string;
+  feedCaption: string; feedImage: string; feedTime: string; feedLikes: number; feedComments: number;
+}[] = [];
 
 // Week day checkmarks
 const WEEK_DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
-// Asana of the day data
-const ASANAS = [
-  {
-    name: 'Marichyasana C', subtitle: 'Pose Dedicated to the Sage Marichi',
-    series: 'Primary Series', image: 'https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=600&q=80',
-    benefits: ['Spinal twist', 'Digestion', 'Shoulder opening', 'Hip flexibility'],
-    tips: 'Ground through both sit bones. Lengthen the spine before twisting. Use the exhale to deepen the rotation. Keep the bound shoulder relaxed.',
-    breaths: 5, sides: 'Both', difficulty: 'Int.',
-  },
-  {
-    name: 'Utthita Trikonasana', subtitle: 'Extended Triangle Pose',
-    series: 'Primary Series', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80',
-    benefits: ['Hamstrings', 'Balance', 'Core strength', 'Spine length'],
-    tips: 'Press into the outer edge of the back foot. Extend through the crown of the head. Keep the chest open and rotate from the thoracic spine.',
-    breaths: 5, sides: 'Both', difficulty: 'Beg.',
-  },
-];
 
 // Series display names
 const SERIES_LABELS: Record<string, string> = {

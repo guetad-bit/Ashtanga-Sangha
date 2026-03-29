@@ -81,15 +81,10 @@ interface Member {
 }
 
 // Fake users for demo feed
-const FAKE_USERS_FEED = [
-  { id: 'f1', name: 'Liat', avatarUrl: 'https://i.pravatar.cc/200?img=5', series: 'Primary Series', streak: 12, bio: 'Practicing Ashtanga for 3 years. Love the morning Mysore routine.', feedCaption: 'Morning Mysore done — feeling so grateful for this practice.', feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80', feedTime: '4 min ago', feedLikes: 3, feedComments: 1 },
-  { id: 'f2', name: 'David', avatarUrl: 'https://i.pravatar.cc/200?img=11', series: 'Intermediate', streak: 5, bio: 'Working through Intermediate series. Dropbacks are my current edge.', feedCaption: 'Working on my dropbacks! Finally catching my ankles.', feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80', feedTime: '15 min ago', feedLikes: 5, feedComments: 2 },
-  { id: 'f3', name: 'Emma', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80', series: 'Primary Series', streak: 8, bio: 'Dedicated to the practice. Supta Kurmasana is my ongoing journey.', feedCaption: 'Supta Kurmasana breakthrough today — never give up!', feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=80', feedTime: '22 min ago', feedLikes: 7, feedComments: 3 },
-  { id: 'f4', name: 'Noah', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80', series: 'Primary Series', streak: 3, bio: 'New to Ashtanga. Enjoying the discipline and community.', feedCaption: 'Led class this morning was intense. Love the energy of practicing together.', feedImage: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=300&q=80', feedTime: '35 min ago', feedLikes: 4, feedComments: 1 },
-  { id: 'f5', name: 'Priya', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80', series: 'Intermediate', streak: 3, bio: 'Kapotasana warrior. Patience is everything.', feedCaption: 'Kapotasana progress — patience is the real practice.', feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80', feedTime: '1 hr ago', feedLikes: 9, feedComments: 4 },
-  { id: 'f6', name: 'Marco', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80', series: 'Primary Series', streak: 21, bio: 'The mat is my medicine. 6 days a week, rain or shine.', feedCaption: 'Three weeks straight — the mat is my medicine.', feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&q=80', feedTime: '1 hr ago', feedLikes: 12, feedComments: 5 },
-  { id: 'f7', name: 'Yuki', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80', series: 'Primary Series', streak: 7, bio: 'Finding peace through practice. One breath at a time.', feedCaption: 'Beautiful sunrise practice at the shala today.', feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&q=80', feedTime: '2 hr ago', feedLikes: 6, feedComments: 2 },
-];
+const FAKE_USERS_FEED: {
+  id: string; name: string; avatarUrl: string; series: string; streak: number; bio: string;
+  feedCaption: string; feedImage: string; feedTime: string; feedLikes: number; feedComments: number;
+}[] = [];
 
 export default function CommunityScreen() {
   const router = useRouter();
