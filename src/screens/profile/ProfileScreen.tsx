@@ -377,14 +377,14 @@ const st = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(138,158,120,0.25)',
   },
   badgeText: {
-    fontSize: 12, color: '#5E5245', fontWeight: '600' as any, letterSpacing: 0.3,
+    fontSize: 12, color: '#3B3228', fontWeight: '600' as any, letterSpacing: 0.3,
   },
 
   locationRow: {
     flexDirection: 'row' as any, alignItems: 'center' as any, gap: 4,
     marginTop: 4,
   },
-  locationText: { ...typography.bodyXs, color: '#9B8E7E' },
+  locationText: { ...typography.bodyXs, color: '#5E5245' },
 
   // Action row
   actionRow: {
@@ -419,21 +419,21 @@ const st = StyleSheet.create({
     borderWidth: 1, borderColor: '#E8E0D4',
   },
   cardTitle: {
-    ...typography.headingXs, color: '#9B8E7E',
+    ...typography.headingXs, color: '#5E5245',
     textTransform: 'uppercase' as any, letterSpacing: 0.8,
     marginBottom: spacing.md,
   },
 
   // Bio / fields
-  bioText: { ...typography.bodyMd, color: '#5E5245', lineHeight: 22 },
+  bioText: { ...typography.bodyMd, color: '#3B3228', lineHeight: 22 },
   bioInput: {
-    ...typography.bodyMd, color: '#5E5245',
+    ...typography.bodyMd, color: '#3B3228',
     borderWidth: 1, borderColor: '#8A9E78', borderRadius: radius.md,
     padding: spacing.md, minHeight: 80, textAlignVertical: 'top' as any,
     backgroundColor: '#F6F2EC',
   },
   fieldInput: {
-    ...typography.bodyMd, color: '#5E5245',
+    ...typography.bodyMd, color: '#3B3228',
     borderWidth: 1, borderColor: '#8A9E78', borderRadius: radius.md,
     padding: spacing.md,
     backgroundColor: '#F6F2EC',
@@ -448,7 +448,7 @@ const st = StyleSheet.create({
     backgroundColor: '#F6F2EC',
   },
   chipActive: { borderColor: '#8A9E78', backgroundColor: 'rgba(138,158,120,0.12)' },
-  chipText: { ...typography.labelSm, color: '#5E5245' },
+  chipText: { ...typography.labelSm, color: '#3B3228' },
   chipTextActive: { color: '#8A9E78', fontWeight: '700' as any },
 
   // Sign out

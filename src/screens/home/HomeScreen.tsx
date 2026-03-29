@@ -434,7 +434,7 @@ export default function HomeScreen() {
                 </>
               ) : (
                 <>
-                  <Text style={s.heroTitle}>{guruWisdom.quote}</Text>
+                  <Text style={[s.heroTitle, guruWisdom.quote.length > 80 && s.heroTitleSmall]}>{guruWisdom.quote}</Text>
                   <Text style={s.heroSubtitle}>— {guruWisdom.guru}</Text>
                   <TouchableOpacity
                     style={[s.heroBtn, s.heroBtnDefault]}
@@ -823,9 +823,10 @@ const s = StyleSheet.create({
   },
   heroContent: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center' as any,
+    justifyContent: 'flex-end' as any,
     alignItems: 'center' as any,
     paddingHorizontal: 24,
+    paddingBottom: 28,
     backgroundColor: 'rgba(138,158,120,0.55)',
     borderRadius: 20,
   },
@@ -838,6 +839,9 @@ const s = StyleSheet.create({
     textShadowColor: 'rgba(0,0,0,0.4)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 12,
+  },
+  heroTitleSmall: {
+    fontSize: 24, lineHeight: 30,
   },
   heroSubtitle: {
     fontFamily: 'DMSans_400Regular',
@@ -1032,6 +1036,8 @@ const s = StyleSheet.create({
   /* ── Hero state variants ── */
   heroContentOnMat: {
     backgroundColor: 'rgba(59,50,40,0.55)',
+    justifyContent: 'center' as any,
+    paddingBottom: 0,
   },
   heroContentDone: {
     backgroundColor: 'rgba(138,158,120,0.85)',

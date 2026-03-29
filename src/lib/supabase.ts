@@ -187,6 +187,14 @@ export async function logPractice(userId: string, series: string, durationMin: n
   });
 }
 
+export async function deletePracticeLog(logId: string) {
+  return supabase.from('practice_logs').delete().eq('id', logId);
+}
+
+export async function updatePracticeLog(logId: string, changes: { series?: string; duration_min?: number; notes?: string }) {
+  return supabase.from('practice_logs').update(changes).eq('id', logId);
+}
+
 export async function getPracticeLogs(userId: string, limit = 30) {
   return supabase
     .from('practice_logs')
