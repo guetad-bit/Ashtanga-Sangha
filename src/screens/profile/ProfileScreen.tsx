@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
-  StyleSheet, Image, Alert, ActivityIndicator, RefreshControl, Platform,
+  StyleSheet, Image, Alert, ActivityIndicator, RefreshControl, Platform, Modal, Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -140,17 +140,14 @@ export default function ProfileScreen() {
     setEditing(false);
   };
 
-  const handleSignOut = async () => {
-    if (Platform.OS === 'web') {
-      // window.confirm works on web (returns boolean)
-      const ok = window.confirm(t('profile.signOutConfirm'));
-      if (ok) { await signOut(); clearUser(); }
-    } else {
-      Alert.alert(t('profile.signOut'), t('profile.signOutQuestion'), [
-        { text: t('profile.cancel'), style: 'cancel' },
-        { text: t('profile.signOut'), style: 'destructive', onPress: async () => { await signOut(); clearUser(); } },
-      ]);
-    }
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const handleSignOut = () => {
+    setShowSignOutConfirm(true);
+  };
+  const confirmSignOut = async () => {
+    setShowSignOutConfirm(false);
+    await signOut();
+    clearUser();
   };
 
   const currentSeriesOpt = seriesOptions.find((s) => s.value === (user?.series ?? 'primary'));
@@ -344,6 +341,24 @@ export default function ProfileScreen() {
 
         <Text style={st.version}>{t('profile.version')}</Text>
       </ScrollView>
+
+      {/* Sign-out confirmation modal */}
+      <Modal visible={showSignOutConfirm} transparent animationType="fade" onRequestClose={() => setShowSignOutConfirm(false)}>
+        <Pressable style={st.modalBackdrop} onPress={() => setShowSignOutConfirm(false)}>
+          <View style={st.modalBox}>
+            <Text style={st.modalTitle}>{t('profile.signOut')}</Text>
+            <Text style={st.modalBody}>{t('profile.signOutConfirm')}</Text>
+            <View style={st.modalBtns}>
+              <TouchableOpacity style={st.modalCancelBtn} onPress={() => setShowSignOutConfirm(false)} activeOpacity={0.7}>
+                <Text style={st.modalCancelText}>{t('profile.cancel')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={st.modalConfirmBtn} onPress={confirmSignOut} activeOpacity={0.7}>
+                <Text style={st.modalConfirmText}>{t('profile.signOut')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -497,4 +512,35 @@ const st = StyleSheet.create({
     ...typography.bodyXs, color: '#C4B8A8',
     textAlign: 'center' as any, marginTop: spacing.xl, marginBottom: spacing.xl,
   },
+
+  // Sign-out confirmation modal
+  modalBackdrop: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.35)',
+    justifyContent: 'center' as any, alignItems: 'center' as any,
+  },
+  modalBox: {
+    backgroundColor: '#FFFFFF', borderRadius: 20, padding: 28, width: 300,
+    ...shadows.lg,
+  },
+  modalTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20, color: '#3B3228',
+    textAlign: 'center' as any, marginBottom: 8,
+  },
+  modalBody: {
+    fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#5E5245',
+    textAlign: 'center' as any, marginBottom: 24,
+  },
+  modalBtns: {
+    flexDirection: 'row' as any, gap: 12,
+  },
+  modalCancelBtn: {
+    flex: 1, paddingVertical: 12, borderRadius: 12,
+    borderWidth: 1, borderColor: '#E8E0D4', alignItems: 'center' as any,
+  },
+  modalCancelText: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: '#5E5245' },
+  modalConfirmBtn: {
+    flex: 1, paddingVertical: 12, borderRadius: 12,
+    backgroundColor: '#C4956A', alignItems: 'center' as any,
+  },
+  modalConfirmText: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: '#FFFFFF' },
 });
