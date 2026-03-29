@@ -37,6 +37,9 @@ const he = {
     asanaFocus: 'התמקדו בתנוחה הזו במהלך התרגול של היום',
     keyTips: 'טיפים',
     dayLabels: ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'],
+    moonToday: 'יום ירח — יום מנוחה',
+    moonTomorrow: 'מחר יום ירח',
+    moonInDays: 'יום ירח בעוד {{count}} ימים',
   },
 
   // ── Practice Log Screen ──
@@ -231,6 +234,12 @@ const he = {
     moodChallenging: 'מאתגר',
     moodLowEnergy: 'אנרגיה נמוכה',
     moodBlissful: 'מרומם',
+    howWasPractice: 'איך היה התרגול?',
+    seriesLabel: 'סדרה',
+    durationLabel: 'משך (דקות)',
+    notesLabel: 'הערות (אופציונלי)',
+    notesPlaceholder: 'איך הרגשת? משהו חדש?',
+    savePractice: 'Save Practice',
   },
 
   // ── Onboarding ──

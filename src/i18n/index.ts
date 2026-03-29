@@ -8,7 +8,7 @@ i18n.use(initReactI18next).init({
     en: { translation: en },
     he: { translation: he },
   },
-  lng: 'en', // default language
+  lng: 'he', // default language
   fallbackLng: 'en',
   interpolation: {
     escapeValue: false, // React already escapes

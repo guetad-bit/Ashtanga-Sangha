@@ -77,7 +77,7 @@ export const useAppStore = create<AppState>((set) => ({
   isLogModalOpen: false,
   isPracticing: false,
   practicingStartedAt: null,
-  language: 'en',
+  language: 'he',
 
   setOnboarded: (v) => set({ isOnboarded: v }),
 

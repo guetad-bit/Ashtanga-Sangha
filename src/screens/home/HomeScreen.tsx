@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
 import { getWeeklyRhythm, calculateStreak } from '@/utils/practiceStreak';
-import { daysUntilNextMoonDay } from '@/utils/moonDay';
+import { daysUntilNextMoonDay, isMoonDay } from '@/utils/moonDay';
 import { getPracticeLogs, getPracticingNow, getFeed, signOut, logPractice } from '@/lib/supabase';
 import AppLogo from '@/components/AppLogo';
 import AppHeader from '@/components/AppHeader';
@@ -219,7 +219,7 @@ export default function HomeScreen() {
   const [loggedSeries, setLoggedSeries] = useState<string | null>(null);
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>([]);
   const [showLogModal, setShowLogModal] = useState(false);
-  const [logSeries, setLogSeries] = useState('Primary');
+  const [logSeries, setLogSeries] = useState('primary'); // DB key, not display label
   const [logDuration, setLogDuration] = useState(75);
   const [logNotes, setLogNotes] = useState('');
   const [profileCard, setProfileCard] = useState<{ name: string; avatarUrl: string; series: string; streak: number; bio: string } | null>(null);
@@ -308,16 +308,16 @@ export default function HomeScreen() {
   const handleSaveLog = async () => {
     if (!user) return;
     const fullNotes = logNotes.trim();
-    const { error } = await logPractice(user.id, logSeries.toLowerCase(), logDuration, fullNotes);
+    const { error } = await logPractice(user.id, logSeries, logDuration, fullNotes);
     if (!error) {
       addPracticeLog({
         id: Date.now().toString(),
         userId: user.id,
         loggedAt: new Date().toISOString(),
-        series: logSeries.toLowerCase(),
+        series: logSeries,
         durationMin: logDuration,
       });
-      setLoggedSeries(logSeries.toLowerCase());
+      setLoggedSeries(logSeries);
     }
     setIsPracticing(false);
     setShowLogModal(false);
@@ -459,23 +459,34 @@ export default function HomeScreen() {
         <View style={s.weekCard}>
           {/* Top: This Week title and day circles */}
           <View>
-            <Text style={s.weekTitle}>{t('home.thisWeek')}</Text>
+            <Text style={[s.weekTitle, isRTL && { textAlign: 'right' }]}>{t('home.thisWeek')}</Text>
             <View style={s.weekDays}>
-              {WEEK_DAYS_I18N.map((label, i) => (
-                <View key={i} style={s.weekDayCol}>
-                  <Text style={s.weekDayLabel}>{label}</Text>
-                  <View style={[s.weekDayCircle, { backgroundColor: weekChecks[i] ? moss.accent : moss.beige }]}>
-                    {weekChecks[i] && (
-                      <Ionicons name="checkmark" size={14} color="#fff" />
-                    )}
+              {WEEK_DAYS_I18N.map((label, i) => {
+                const isDone = weekChecks[i];
+                const isToday = rhythm[i]?.status === 'today';
+                const isMoon = rhythm[i] && isMoonDay(rhythm[i].date);
+                return (
+                  <View key={i} style={s.weekDayCol}>
+                    <Text style={s.weekDayLabel}>{label}</Text>
+                    <View style={[
+                      s.weekDayCircle,
+                      { backgroundColor: isDone ? moss.accent : isToday ? moss.accentLight : moss.beige },
+                      isToday && !isDone && { borderWidth: 2, borderColor: moss.accent },
+                    ]}>
+                      {isDone ? (
+                        <Ionicons name="checkmark" size={14} color="#fff" />
+                      ) : isMoon ? (
+                        <Text style={{ fontSize: 14 }}>🌙</Text>
+                      ) : null}
+                    </View>
                   </View>
-                </View>
-              ))}
+                );
+              })}
             </View>
           </View>
           {/* Bottom: Goal progress */}
           <View style={s.weekGoalSection}>
-            <View style={s.goalNumbers}>
+            <View style={[s.goalNumbers, isRTL && { flexDirection: 'row-reverse' }]}>
               <Text style={s.goalBig}>{practicesThisWeek}</Text>
               <Text style={s.goalSlash}> / </Text>
               <Text style={s.goalSmall}>{weeklyGoal}</Text>
@@ -484,12 +495,24 @@ export default function HomeScreen() {
             <View style={s.progressBar}>
               <View style={[s.progressFill, { width: `${Math.min(100, (practicesThisWeek / weeklyGoal) * 100)}%` as any }]} />
             </View>
-            <Text style={s.goalHint}>
+            <Text style={[s.goalHint, isRTL && { textAlign: 'right' }]}>
               {practicesThisWeek >= weeklyGoal
                 ? t('home.goalReached')
                 : t('home.goalAway', { count: weeklyGoal - practicesThisWeek })}
             </Text>
           </View>
+          {/* Moon day info */}
+          {daysUntilNextMoonDay() >= 0 && daysUntilNextMoonDay() <= 7 && (
+            <View style={s.moonBadge}>
+              <Text style={s.moonBadgeText}>
+                🌙 {daysUntilNextMoonDay() === 0
+                  ? t('home.moonToday')
+                  : daysUntilNextMoonDay() === 1
+                    ? t('home.moonTomorrow')
+                    : t('home.moonInDays', { count: daysUntilNextMoonDay() })}
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* ═══ 3. YOUR CIRCLE ═══ */}
@@ -625,27 +648,29 @@ export default function HomeScreen() {
         <Pressable style={s.logBackdrop} onPress={() => setShowLogModal(false)}>
           <Pressable style={s.logSheet} onPress={() => {}}>
             <View style={s.logHandle} />
-            <Text style={s.logTitle}>How was your practice?</Text>
+            <Text style={s.logTitle}>{t('logModal.howWasPractice')}</Text>
 
             {/* Series picker */}
-            <Text style={s.logLabel}>Series</Text>
+            <Text style={s.logLabel}>{t('logModal.seriesLabel')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
               <View style={s.logChipsRow}>
-                {['Primary', 'Intermediate', 'Advanced A', 'Led Class', 'Half Primary'].map((opt) => (
+                {(['primary', 'intermediate', 'advanced_a', 'led_class', 'half_primary'] as const).map((key) => (
                   <TouchableOpacity
-                    key={opt}
-                    style={[s.logChip, logSeries === opt && s.logChipActive]}
-                    onPress={() => setLogSeries(opt)}
+                    key={key}
+                    style={[s.logChip, logSeries === key && s.logChipActive]}
+                    onPress={() => setLogSeries(key)}
                     activeOpacity={0.7}
                   >
-                    <Text style={[s.logChipText, logSeries === opt && s.logChipTextActive]}>{opt}</Text>
+                    <Text style={[s.logChipText, logSeries === key && s.logChipTextActive]}>
+                      {t(`series.${({advanced_a:'advanced_a',led_class:'ledClass',half_primary:'halfPrimary'} as Record<string,string>)[key] || key}`)}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
             </ScrollView>
 
             {/* Duration */}
-            <Text style={s.logLabel}>Duration (minutes)</Text>
+            <Text style={s.logLabel}>{t('logModal.durationLabel')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
               <View style={s.logChipsRow}>
                 {[30, 45, 60, 75, 90, 120].map((d) => (
@@ -662,10 +687,10 @@ export default function HomeScreen() {
             </ScrollView>
 
             {/* Notes */}
-            <Text style={s.logLabel}>Notes (optional)</Text>
+            <Text style={s.logLabel}>{t('logModal.notesLabel')}</Text>
             <TextInput
               style={s.logInput}
-              placeholder="How did it feel? Any breakthroughs?"
+              placeholder={t('logModal.notesPlaceholder')}
               placeholderTextColor={moss.mutedLight}
               multiline
               numberOfLines={3}
@@ -675,7 +700,7 @@ export default function HomeScreen() {
 
             {/* Save */}
             <TouchableOpacity style={s.logSaveBtn} onPress={handleSaveLog} activeOpacity={0.85}>
-              <Text style={s.logSaveBtnText}>Save Practice</Text>
+              <Text style={s.logSaveBtnText}>{t('logModal.savePractice')}</Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>
@@ -887,7 +912,7 @@ const s = StyleSheet.create({
   },
   weekTitle: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
-    color: moss.ink, marginBottom: 16, fontWeight: '600' as any,
+    color: moss.ink, marginBottom: 16,
   },
   weekDays: { flexDirection: 'row' as any, justifyContent: 'space-around' as any, marginBottom: 24 },
   weekDayCol: { alignItems: 'center' as any, gap: 8 },
@@ -914,6 +939,17 @@ const s = StyleSheet.create({
     backgroundColor: moss.accent,
   },
   goalHint: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted },
+  moonBadge: {
+    marginTop: 14,
+    backgroundColor: moss.orangeLight,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    alignSelf: 'flex-start' as any,
+  },
+  moonBadgeText: {
+    fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.amber,
+  },
 
   /* ── Your Circle ── */
   circleSection: {

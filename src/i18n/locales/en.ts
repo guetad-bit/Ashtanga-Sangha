@@ -37,6 +37,9 @@ const en = {
     asanaFocus: 'Focus on this posture during today\'s practice',
     keyTips: 'Key tips',
     dayLabels: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+    moonToday: 'Moon day — rest today',
+    moonTomorrow: 'Moon day tomorrow',
+    moonInDays: 'Moon day in {{count}} days',
   },
 
   // ── Guru Wisdom (keep originals — these are famous quotes) ──
@@ -234,6 +237,12 @@ const en = {
     moodChallenging: 'Challenging',
     moodLowEnergy: 'Low Energy',
     moodBlissful: 'Blissful',
+    howWasPractice: 'How was your practice?',
+    seriesLabel: 'Series',
+    durationLabel: 'Duration (minutes)',
+    notesLabel: 'Notes (optional)',
+    notesPlaceholder: 'How did it feel? Any breakthroughs?',
+    savePractice: 'Save Practice',
   },
 
   // ── Onboarding ──

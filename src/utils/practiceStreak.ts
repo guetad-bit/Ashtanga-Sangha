@@ -78,8 +78,8 @@ export function getWeeklyRhythm(logs: PracticeLog[]): {
 
     let status: 'done' | 'today' | 'rest' | 'empty' | 'future';
     if (isFuture) status = 'future';
-    else if (isToday) status = 'today';
     else if (practiced) status = 'done';
+    else if (isToday) status = 'today';
     else if (moonRest) status = 'rest';
     else status = 'empty';
 
