@@ -89,7 +89,8 @@ const FAKE_USERS_FEED: {
 export default function CommunityScreen() {
   const router = useRouter();
   const { user, userPosts } = useAppStore();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'he';
   const [activeTab, setActiveTab] = useState<Tab>('latest');
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -220,8 +221,8 @@ export default function CommunityScreen() {
         {activeTab === 'latest' && (
           <>
             {/* On the mat right now */}
-            <View style={s.sectionHeader}>
-              <Text style={s.sectionTitle}>{t('community.onTheMatNow')}</Text>
+            <View style={[s.sectionHeader, isRTL && { flexDirection: 'row-reverse' }]}>
+              <Text style={[s.sectionTitle, isRTL && { textAlign: 'right' }]}>{t('community.onTheMatNow')}</Text>
             </View>
             <View style={s.partnersCard}>
               <ScrollView
@@ -258,8 +259,8 @@ export default function CommunityScreen() {
             </View>
 
             {/* Sangha Feed */}
-            <View style={s.sectionHeader}>
-              <Text style={s.sectionTitle}>{t('community.sanghaFeed')}</Text>
+            <View style={[s.sectionHeader, isRTL && { flexDirection: 'row-reverse' }]}>
+              <Text style={[s.sectionTitle, isRTL && { textAlign: 'right' }]}>{t('community.sanghaFeed')}</Text>
               <TouchableOpacity onPress={() => router.push('/new-post')} activeOpacity={0.7}>
                 <Text style={s.sectionLink}>{t('community.newPost')}</Text>
               </TouchableOpacity>
@@ -333,8 +334,8 @@ export default function CommunityScreen() {
         {activeTab === 'people' && (
           <>
             {/* Community Members */}
-            <View style={s.sectionHeader}>
-              <Text style={s.sectionTitle}>{t('community.communityMembers')}</Text>
+            <View style={[s.sectionHeader, isRTL && { flexDirection: 'row-reverse' }]}>
+              <Text style={[s.sectionTitle, isRTL && { textAlign: 'right' }]}>{t('community.communityMembers')}</Text>
             </View>
             <View style={s.peopleCard}>
               {/* Real members from Supabase */}
@@ -521,8 +522,8 @@ const s = StyleSheet.create({
     marginBottom: spacing.md,
   },
   sectionTitle: {
-    fontFamily: 'DMSans_600SemiBold',
-    fontSize: 17,
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 18,
     color: moss.ink,
   },
   sectionLink: {
