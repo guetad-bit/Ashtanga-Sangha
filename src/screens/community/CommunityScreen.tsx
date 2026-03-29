@@ -181,10 +181,10 @@ export default function CommunityScreen() {
 
       {/* ── Search bar ── */}
       <View style={s.searchWrap}>
-        <View style={s.searchBar}>
+        <View style={[s.searchBar, isRTL && { flexDirection: 'row-reverse' }]}>
           <Ionicons name="search-outline" size={18} color={moss.muted} />
           <TextInput
-            style={s.searchInput}
+            style={[s.searchInput, isRTL && { textAlign: 'right' }]}
             placeholder={t('community.searchMembers')}
             placeholderTextColor={moss.muted}
             value={searchQuery}
