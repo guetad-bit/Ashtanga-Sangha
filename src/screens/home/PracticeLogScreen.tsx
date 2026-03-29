@@ -11,20 +11,26 @@ import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
 import { logPractice } from '@/lib/supabase';
 
-const SERIES_OPTIONS = (t: any) => [
-  t('series.primary'),
-  t('series.intermediate'),
-  t('series.advanced_a'),
-  t('series.ledClass'),
-  t('series.halfPrimary'),
-];
-const LOCATION_OPTIONS = (t: any) => [
-  t('practiceLog.locationHome'),
-  t('practiceLog.locationShala'),
-  t('practiceLog.locationOnline'),
-  t('practiceLog.locationOutdoors'),
-  t('practiceLog.locationWorkshop'),
-];
+// Keys match what goes into the database
+const SERIES_KEYS = ['primary', 'intermediate', 'advanced_a', 'led_class', 'half_primary'] as const;
+const LOCATION_KEYS = ['home', 'shala', 'online', 'outdoors', 'workshop'] as const;
+
+const SERIES_I18N: Record<string, string> = {
+  primary: 'series.primary',
+  intermediate: 'series.intermediate',
+  advanced_a: 'series.advanced_a',
+  led_class: 'series.ledClass',
+  half_primary: 'series.halfPrimary',
+};
+
+const LOCATION_I18N: Record<string, { i18nKey: string; emoji: string }> = {
+  home:     { i18nKey: 'practiceLog.locationHome', emoji: '🏠' },
+  shala:    { i18nKey: 'practiceLog.locationShala', emoji: '🧘' },
+  online:   { i18nKey: 'practiceLog.locationOnline', emoji: '💻' },
+  outdoors: { i18nKey: 'practiceLog.locationOutdoors', emoji: '🌿' },
+  workshop: { i18nKey: 'practiceLog.locationWorkshop', emoji: '📚' },
+};
+
 const DURATION_OPTIONS = [30, 45, 60, 75, 90, 120];
 
 export default function PracticeLogScreen() {
@@ -32,8 +38,8 @@ export default function PracticeLogScreen() {
   const router = useRouter();
   const { user, addPracticeLog } = useAppStore();
 
-  const [series, setSeries] = useState(t('series.primary'));
-  const [location, setLocation] = useState(t('practiceLog.locationHome'));
+  const [series, setSeries] = useState<string>('primary');
+  const [location, setLocation] = useState<string>('home');
   const [duration, setDuration] = useState(75);
   const [stoppedAt, setStoppedAt] = useState('');
   const [notes, setNotes] = useState('');
@@ -43,20 +49,21 @@ export default function PracticeLogScreen() {
   const handleSave = async () => {
     if (!user || saving) return;
     setSaving(true);
+    const locationLabel = t(LOCATION_I18N[location]?.i18nKey ?? 'practiceLog.locationHome');
     const fullNotes = [
-      location && `📍 ${location}`,
+      location && `📍 ${locationLabel}`,
       stoppedAt && `Stopped at: ${stoppedAt}`,
       notes && notes,
       workOnNext && `🎯 Work on next: ${workOnNext}`,
     ].filter(Boolean).join('\n');
 
-    const { error } = await logPractice(user.id, series.toLowerCase(), duration, fullNotes);
+    const { error } = await logPractice(user.id, series, duration, fullNotes);
     if (!error) {
       addPracticeLog({
         id: Date.now().toString(),
         userId: user.id,
         loggedAt: new Date().toISOString(),
-        series: series.toLowerCase(),
+        series,
         durationMin: duration,
       });
     }
@@ -92,13 +99,15 @@ export default function PracticeLogScreen() {
           {/* Series */}
           <Text style={s.label}>{t('practiceLog.series')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipsRow}>
-            {SERIES_OPTIONS(t).map((opt) => (
+            {SERIES_KEYS.map((key) => (
               <TouchableOpacity
-                key={opt}
-                style={[s.chip, series === opt && s.chipActive]}
-                onPress={() => setSeries(opt)}
+                key={key}
+                style={[s.chip, series === key && s.chipActive]}
+                onPress={() => setSeries(key)}
               >
-                <Text style={[s.chipText, series === opt && s.chipTextActive]}>{opt}</Text>
+                <Text style={[s.chipText, series === key && s.chipTextActive]}>
+                  {t(SERIES_I18N[key])}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -106,22 +115,16 @@ export default function PracticeLogScreen() {
           {/* Location */}
           <Text style={s.label}>{t('practiceLog.whereDidYouPractice')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipsRow}>
-            {LOCATION_OPTIONS(t).map((opt) => {
-              const emojis: any = {
-                [t('practiceLog.locationHome')]: '🏠',
-                [t('practiceLog.locationShala')]: '🧘',
-                [t('practiceLog.locationOnline')]: '💻',
-                [t('practiceLog.locationOutdoors')]: '🌿',
-                [t('practiceLog.locationWorkshop')]: '📚',
-              };
+            {LOCATION_KEYS.map((key) => {
+              const loc = LOCATION_I18N[key];
               return (
                 <TouchableOpacity
-                  key={opt}
-                  style={[s.chip, location === opt && s.chipActive]}
-                  onPress={() => setLocation(opt)}
+                  key={key}
+                  style={[s.chip, location === key && s.chipActive]}
+                  onPress={() => setLocation(key)}
                 >
-                  <Text style={[s.chipText, location === opt && s.chipTextActive]}>
-                    {emojis[opt]} {opt}
+                  <Text style={[s.chipText, location === key && s.chipTextActive]}>
+                    {loc.emoji} {t(loc.i18nKey)}
                   </Text>
                 </TouchableOpacity>
               );
@@ -137,7 +140,7 @@ export default function PracticeLogScreen() {
                 style={[s.chip, duration === d && s.chipActive]}
                 onPress={() => setDuration(d)}
               >
-                <Text style={[s.chipText, duration === d && s.chipTextActive]}>{d} {t('practiceLog.min', { d })}</Text>
+                <Text style={[s.chipText, duration === d && s.chipTextActive]}>{t('practiceLog.min', { d })}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -165,7 +168,7 @@ export default function PracticeLogScreen() {
           />
 
           {/* Work on next */}
-          <Text style={s.label}>🎯 {t('practiceLog.workOnNext')}</Text>
+          <Text style={s.label}>{t('practiceLog.workOnNext')}</Text>
           <TextInput
             style={s.input}
             placeholder={t('practiceLog.workOnNextPlaceholder')}
