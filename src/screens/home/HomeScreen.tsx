@@ -205,7 +205,8 @@ const SERIES_LABELS: Record<string, string> = {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'he';
   const {
     user, practiceLogs, setPracticeLogs,
     isPracticing, setIsPracticing,
@@ -493,10 +494,10 @@ export default function HomeScreen() {
 
         {/* ═══ 3. YOUR CIRCLE ═══ */}
         <View style={s.circleSection}>
-          <View style={s.circleHeader}>
-            <View>
+          <View style={[s.circleHeader, isRTL && { flexDirection: 'row-reverse' }]}>
+            <View style={isRTL ? { alignItems: 'flex-end' } : undefined}>
               <Text style={s.circleTitle}>{t('home.yourCircle')}</Text>
-              <Text style={s.circleSubtitle}>{t('home.circleSubtitle')}</Text>
+              <Text style={[s.circleSubtitle, isRTL && { textAlign: 'right' }]}>{t('home.circleSubtitle')}</Text>
             </View>
             <TouchableOpacity activeOpacity={0.7}>
               <Text style={s.circleViewAll}>{t('home.viewAll')}</Text>
@@ -563,13 +564,13 @@ export default function HomeScreen() {
         {/* ═══ 5. ASANA OF THE DAY ═══ */}
         <View style={s.asanaCard}>
           <View style={s.asanaHeader}>
-            <View style={s.asanaHeaderTop}>
+            <View style={[s.asanaHeaderTop, isRTL && { flexDirection: 'row-reverse' }]}>
               <Text style={s.asanaTitle}>{t('home.asanaOfTheDay')}</Text>
               <View style={s.asanaSeriesBadge}>
                 <Text style={s.asanaSeriesText}>{asana.series}</Text>
               </View>
             </View>
-            <Text style={s.asanaHint}>{t('home.asanaFocus')}</Text>
+            <Text style={[s.asanaHint, isRTL && { textAlign: 'right' }]}>{t('home.asanaFocus')}</Text>
           </View>
 
           {/* Asana image */}

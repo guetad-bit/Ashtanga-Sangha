@@ -33,7 +33,7 @@ const he = {
     viewAll: 'הכל →',
     sanghaFeed: 'פיד הסנגהה',
     seeAllCommunity: 'הכל בקהילה →',
-    asanaOfTheDay: 'אסנה של היום',
+    asanaOfTheDay: 'התנוחה היומית',
     asanaFocus: 'התמקדו בתנוחה הזו במהלך התרגול של היום',
     keyTips: 'טיפים',
     dayLabels: ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'],
