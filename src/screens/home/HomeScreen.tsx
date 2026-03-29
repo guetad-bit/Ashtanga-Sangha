@@ -551,7 +551,6 @@ export default function HomeScreen() {
 
         {/* ═══ 4. SANGHA FEED ═══ */}
         <View style={s.feedSection}>
-          <Text style={s.feedTitle}>{t('home.sanghaFeed')}</Text>
           {FAKE_USERS.slice(0, 2).map((u) => (
             <View key={u.id} style={s.feedCard}>
               <View style={s.feedCardInner}>
