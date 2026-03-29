@@ -6,20 +6,34 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
 import { logPractice } from '@/lib/supabase';
 
-const SERIES_OPTIONS = ['Primary', 'Intermediate', 'Advanced A', 'Led Class', 'Half Primary'];
-const LOCATION_OPTIONS = ['Home', 'Shala', 'Online', 'Outdoors', 'Workshop'];
+const SERIES_OPTIONS = (t: any) => [
+  t('series.primary'),
+  t('series.intermediate'),
+  t('series.advanced_a'),
+  t('series.ledClass'),
+  t('series.halfPrimary'),
+];
+const LOCATION_OPTIONS = (t: any) => [
+  t('practiceLog.locationHome'),
+  t('practiceLog.locationShala'),
+  t('practiceLog.locationOnline'),
+  t('practiceLog.locationOutdoors'),
+  t('practiceLog.locationWorkshop'),
+];
 const DURATION_OPTIONS = [30, 45, 60, 75, 90, 120];
 
 export default function PracticeLogScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user, addPracticeLog } = useAppStore();
 
-  const [series, setSeries] = useState('Primary');
-  const [location, setLocation] = useState('Home');
+  const [series, setSeries] = useState(t('series.primary'));
+  const [location, setLocation] = useState(t('practiceLog.locationHome'));
   const [duration, setDuration] = useState(75);
   const [stoppedAt, setStoppedAt] = useState('');
   const [notes, setNotes] = useState('');
@@ -59,12 +73,12 @@ export default function PracticeLogScreen() {
         {/* Header */}
         <View style={s.header}>
           <TouchableOpacity onPress={() => router.back()}>
-            <Text style={s.cancelBtn}>Cancel</Text>
+            <Text style={s.cancelBtn}>{t('practiceLog.cancel')}</Text>
           </TouchableOpacity>
-          <Text style={s.headerTitle}>Log Practice</Text>
+          <Text style={s.headerTitle}>{t('practiceLog.logPractice')}</Text>
           <TouchableOpacity onPress={handleSave} disabled={saving}>
             <Text style={[s.saveBtn, saving && { opacity: 0.5 }]}>
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? t('practiceLog.saving') : t('practiceLog.save')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -76,9 +90,9 @@ export default function PracticeLogScreen() {
           keyboardShouldPersistTaps="handled"
         >
           {/* Series */}
-          <Text style={s.label}>Series</Text>
+          <Text style={s.label}>{t('practiceLog.series')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipsRow}>
-            {SERIES_OPTIONS.map((opt) => (
+            {SERIES_OPTIONS(t).map((opt) => (
               <TouchableOpacity
                 key={opt}
                 style={[s.chip, series === opt && s.chipActive]}
@@ -90,23 +104,32 @@ export default function PracticeLogScreen() {
           </ScrollView>
 
           {/* Location */}
-          <Text style={s.label}>Where did you practice?</Text>
+          <Text style={s.label}>{t('practiceLog.whereDidYouPractice')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipsRow}>
-            {LOCATION_OPTIONS.map((opt) => (
-              <TouchableOpacity
-                key={opt}
-                style={[s.chip, location === opt && s.chipActive]}
-                onPress={() => setLocation(opt)}
-              >
-                <Text style={[s.chipText, location === opt && s.chipTextActive]}>
-                  {opt === 'Home' ? '🏠' : opt === 'Shala' ? '🧘' : opt === 'Online' ? '💻' : opt === 'Outdoors' ? '🌿' : '📚'} {opt}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {LOCATION_OPTIONS(t).map((opt) => {
+              const emojis: any = {
+                [t('practiceLog.locationHome')]: '🏠',
+                [t('practiceLog.locationShala')]: '🧘',
+                [t('practiceLog.locationOnline')]: '💻',
+                [t('practiceLog.locationOutdoors')]: '🌿',
+                [t('practiceLog.locationWorkshop')]: '📚',
+              };
+              return (
+                <TouchableOpacity
+                  key={opt}
+                  style={[s.chip, location === opt && s.chipActive]}
+                  onPress={() => setLocation(opt)}
+                >
+                  <Text style={[s.chipText, location === opt && s.chipTextActive]}>
+                    {emojis[opt]} {opt}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
 
           {/* Duration */}
-          <Text style={s.label}>About how long?</Text>
+          <Text style={s.label}>{t('practiceLog.aboutHowLong')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipsRow}>
             {DURATION_OPTIONS.map((d) => (
               <TouchableOpacity
@@ -114,26 +137,26 @@ export default function PracticeLogScreen() {
                 style={[s.chip, duration === d && s.chipActive]}
                 onPress={() => setDuration(d)}
               >
-                <Text style={[s.chipText, duration === d && s.chipTextActive]}>{d} min</Text>
+                <Text style={[s.chipText, duration === d && s.chipTextActive]}>{d} {t('practiceLog.min', { d })}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
 
           {/* Stopped at */}
-          <Text style={s.label}>Stopped at (posture)</Text>
+          <Text style={s.label}>{t('practiceLog.stoppedAt')}</Text>
           <TextInput
             style={s.input}
-            placeholder="e.g. Navasana, Marichyasana C..."
+            placeholder={t('practiceLog.stoppedAtPlaceholder')}
             placeholderTextColor="#C4B8A8"
             value={stoppedAt}
             onChangeText={setStoppedAt}
           />
 
           {/* Notes */}
-          <Text style={s.label}>Notes</Text>
+          <Text style={s.label}>{t('practiceLog.notes')}</Text>
           <TextInput
             style={[s.input, s.textArea]}
-            placeholder="How was your practice today?"
+            placeholder={t('practiceLog.notesPlaceholder')}
             placeholderTextColor="#C4B8A8"
             value={notes}
             onChangeText={setNotes}
@@ -142,10 +165,10 @@ export default function PracticeLogScreen() {
           />
 
           {/* Work on next */}
-          <Text style={s.label}>🎯 Work on next time</Text>
+          <Text style={s.label}>🎯 {t('practiceLog.workOnNext')}</Text>
           <TextInput
             style={s.input}
-            placeholder="e.g. Jump-backs, deeper twist in Mari C..."
+            placeholder={t('practiceLog.workOnNextPlaceholder')}
             placeholderTextColor="#C4B8A8"
             value={workOnNext}
             onChangeText={setWorkOnNext}

@@ -1,11 +1,12 @@
 // app/_layout.tsx
 import { useState, useEffect } from 'react';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, I18nManager } from 'react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useAuthListener } from '@/lib/useAuth';
 import { useAppStore } from '@/store/useAppStore';
 import { supabase } from '@/lib/supabase';
 import { colors } from '@/styles/tokens';
+import '@/i18n'; // Initialize i18n
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);

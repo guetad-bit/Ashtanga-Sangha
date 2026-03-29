@@ -8,6 +8,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography } from '@/styles/tokens';
 import { signInWithEmail, signInWithGoogle } from '@/lib/supabase';
 import { useAppStore } from '@/store/useAppStore';
@@ -39,10 +40,11 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
   const [loading, setLoading] = useState(false);
   const insets = useSafeAreaInsets();
   const { setUser, setOnboarded } = useAppStore();
+  const { t } = useTranslation();
 
   const handleLogin = async () => {
-    if (!email.includes('@')) { Alert.alert('Please enter a valid email'); return; }
-    if (password.length < 1) { Alert.alert('Please enter your password'); return; }
+    if (!email.includes('@')) { Alert.alert(t('login.invalidEmail')); return; }
+    if (password.length < 1) { Alert.alert(t('login.enterPassword')); return; }
 
     setLoading(true);
     const { data, error } = await signInWithEmail(email, password);
@@ -97,18 +99,18 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
           showsVerticalScrollIndicator={false}
         >
           {/* Heading */}
-          <Text style={s.kicker}>WELCOME BACK</Text>
-          <Text style={s.title}>Sign in to{'\n'}your sangha</Text>
-          <Text style={s.sub}>Continue your practice journey</Text>
+          <Text style={s.kicker}>{t('login.welcomeBack')}</Text>
+          <Text style={s.title}>{t('login.signInToSangha')}</Text>
+          <Text style={s.sub}>{t('login.continueJourney')}</Text>
 
           {/* Email */}
           <View style={s.field}>
-            <Text style={s.label}>Email</Text>
+            <Text style={s.label}>{t('login.email')}</Text>
             <View style={s.inputWrap}>
               <Ionicons name="mail-outline" size={17} color={moss.muted} style={s.inputIcon} />
               <TextInput
                 style={s.input}
-                placeholder="you@example.com"
+                placeholder={t('login.emailPlaceholder')}
                 placeholderTextColor={moss.muted}
                 value={email}
                 onChangeText={setEmail}
@@ -121,12 +123,12 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
 
           {/* Password */}
           <View style={s.field}>
-            <Text style={s.label}>Password</Text>
+            <Text style={s.label}>{t('login.password')}</Text>
             <View style={s.inputWrap}>
               <Ionicons name="lock-closed-outline" size={17} color={moss.muted} style={s.inputIcon} />
               <TextInput
                 style={[s.input, s.inputPw]}
-                placeholder="Your password"
+                placeholder={t('login.passwordPlaceholder')}
                 placeholderTextColor={moss.muted}
                 value={password}
                 onChangeText={setPassword}
@@ -152,21 +154,21 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
           >
             {loading
               ? <ActivityIndicator color="#fff" />
-              : <Text style={s.primaryBtnText}>Sign In</Text>
+              : <Text style={s.primaryBtnText}>{t('login.signIn')}</Text>
             }
           </TouchableOpacity>
 
           {/* Divider */}
           <View style={s.divider}>
             <View style={s.dividerLine} />
-            <Text style={s.dividerText}>or</Text>
+            <Text style={s.dividerText}>{t('login.or')}</Text>
             <View style={s.dividerLine} />
           </View>
 
           {/* Google */}
           <TouchableOpacity style={s.googleBtn} onPress={() => signInWithGoogle()} activeOpacity={0.85}>
             <Text style={s.googleBtnText}>
-              Continue with{' '}
+              {t('login.continueWithGoogle').split('Google')[0]}
               <Text style={{ color: '#4285F4' }}>G</Text>
               <Text style={{ color: '#EA4335' }}>o</Text>
               <Text style={{ color: '#FBBC05' }}>o</Text>
@@ -178,8 +180,8 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
 
           {/* Register link */}
           <Text style={s.footer}>
-            New to the sangha?{'  '}
-            <Text style={s.footerLink} onPress={onGoToRegister}>Create account</Text>
+            {t('login.newToSangha')}{'  '}
+            <Text style={s.footerLink} onPress={onGoToRegister}>{t('login.createAccount')}</Text>
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>

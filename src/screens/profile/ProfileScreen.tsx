@@ -7,30 +7,34 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore, Series, Level } from '@/store/useAppStore';
+import i18n from '@/i18n';
 import { upsertProfile, signOut, getProfile, uploadAvatar } from '@/lib/supabase';
 import AppHeader from '@/components/AppHeader';
 
-const SERIES_OPTIONS: { value: Series; label: string; icon: string }[] = [
-  { value: 'sun_sals',     label: 'Sun Salutations', icon: 'sunny-outline' },
-  { value: 'primary',      label: 'Primary',         icon: 'leaf-outline' },
-  { value: 'intermediate', label: 'Intermediate',    icon: 'flame-outline' },
-  { value: 'advanced_a',   label: 'Advanced A',      icon: 'flash-outline' },
-  { value: 'advanced_b',   label: 'Advanced B',      icon: 'star-outline' },
-  { value: 'short',        label: 'Short',           icon: 'timer-outline' },
-];
-
-const LEVEL_OPTIONS: { value: Level; label: string }[] = [
-  { value: 'beginner',     label: 'Beginner' },
-  { value: 'regular',      label: 'Regular' },
-  { value: 'intermediate', label: 'Intermediate' },
-  { value: 'advanced',     label: 'Advanced' },
-  { value: 'teacher',      label: 'Teacher' },
-];
-
 export default function ProfileScreen() {
-  const { user, setUser, clearUser } = useAppStore();
+  const { t } = useTranslation();
+  const { user, setUser, clearUser, language, setLanguage } = useAppStore();
+
+  // Dynamic options based on translation
+  const seriesOptions: { value: Series; label: string; icon: string }[] = [
+    { value: 'sun_sals',     label: t('series.sun_sals'), icon: 'sunny-outline' },
+    { value: 'primary',      label: t('series.primary'),         icon: 'leaf-outline' },
+    { value: 'intermediate', label: t('series.intermediate'),    icon: 'flame-outline' },
+    { value: 'advanced_a',   label: t('series.advanced_a'),      icon: 'flash-outline' },
+    { value: 'advanced_b',   label: t('series.advanced_b'),      icon: 'star-outline' },
+    { value: 'short',        label: t('series.short'),           icon: 'timer-outline' },
+  ];
+
+  const levelOptions: { value: Level; label: string }[] = [
+    { value: 'beginner',     label: t('level.beginner') },
+    { value: 'regular',      label: t('level.regular') },
+    { value: 'intermediate', label: t('level.intermediate') },
+    { value: 'advanced',     label: t('level.advanced') },
+    { value: 'teacher',      label: t('level.teacher') },
+  ];
 
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -78,10 +82,10 @@ export default function ProfileScreen() {
       pickImage('library');
       return;
     }
-    Alert.alert('Profile Photo', 'Choose a photo source', [
-      { text: 'Camera', onPress: () => pickImage('camera') },
-      { text: 'Photo Library', onPress: () => pickImage('library') },
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('profile.profilePhoto'), t('profile.chooseSource'), [
+      { text: t('profile.camera'), onPress: () => pickImage('camera') },
+      { text: t('profile.photoLibrary'), onPress: () => pickImage('library') },
+      { text: t('profile.cancel'), style: 'cancel' },
     ]);
   };
 
@@ -91,10 +95,10 @@ export default function ProfileScreen() {
     if (Platform.OS !== 'web') {
       if (source === 'camera') {
         const { status } = await ImagePicker.requestCameraPermissionsAsync();
-        if (status !== 'granted') { Alert.alert('Permission needed', 'Camera access required.'); return; }
+        if (status !== 'granted') { Alert.alert(t('profile.permissionNeeded'), t('profile.cameraAccess')); return; }
       } else {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') { Alert.alert('Permission needed', 'Photo library access required.'); return; }
+        if (status !== 'granted') { Alert.alert(t('profile.permissionNeeded'), t('profile.photoAccess')); return; }
       }
     }
     const result = source === 'camera'
@@ -114,7 +118,7 @@ export default function ProfileScreen() {
 
   const handleSave = async () => {
     if (!user) return;
-    if (!name.trim()) { Alert.alert('Name required', 'Please enter your name.'); return; }
+    if (!name.trim()) { Alert.alert(t('profile.nameRequired'), t('profile.nameRequiredMsg')); return; }
     setSaving(true);
     const { error } = await upsertProfile({
       id: user.id, name: name.trim(), series, level,
@@ -139,18 +143,18 @@ export default function ProfileScreen() {
   const handleSignOut = async () => {
     if (Platform.OS === 'web') {
       // window.confirm works on web (returns boolean)
-      const ok = window.confirm('Are you sure you want to sign out?');
+      const ok = window.confirm(t('profile.signOutConfirm'));
       if (ok) { await signOut(); clearUser(); }
     } else {
-      Alert.alert('Sign Out', 'Are you sure?', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign Out', style: 'destructive', onPress: async () => { await signOut(); clearUser(); } },
+      Alert.alert(t('profile.signOut'), t('profile.signOutQuestion'), [
+        { text: t('profile.cancel'), style: 'cancel' },
+        { text: t('profile.signOut'), style: 'destructive', onPress: async () => { await signOut(); clearUser(); } },
       ]);
     }
   };
 
-  const currentSeriesOpt = SERIES_OPTIONS.find((s) => s.value === (user?.series ?? 'primary'));
-  const currentLevelOpt  = LEVEL_OPTIONS.find((l) => l.value === (user?.level ?? 'beginner'));
+  const currentSeriesOpt = seriesOptions.find((s) => s.value === (user?.series ?? 'primary'));
+  const currentLevelOpt  = levelOptions.find((l) => l.value === (user?.level ?? 'beginner'));
 
   return (
     <SafeAreaView style={st.safe} edges={['top']}>
@@ -188,12 +192,12 @@ export default function ProfileScreen() {
               style={st.nameInput}
               value={name}
               onChangeText={setName}
-              placeholder="Your name"
+              placeholder={t('profile.yourName')}
               placeholderTextColor="#C4B8A8"
               autoFocus
             />
           ) : (
-            <Text style={st.profileName}>{user?.name ?? 'Practitioner'}</Text>
+            <Text style={st.profileName}>{user?.name ?? t('profile.practitioner')}</Text>
           )}
 
           {/* Badges */}
@@ -201,7 +205,7 @@ export default function ProfileScreen() {
             <View style={st.badgeRow}>
               <View style={st.badge}>
                 <Ionicons name="person-outline" size={12} color={colors.sage} />
-                <Text style={st.badgeText}>{currentLevelOpt?.label ?? 'Practitioner'}</Text>
+                <Text style={st.badgeText}>{currentLevelOpt?.label ?? t('profile.practitioner')}</Text>
               </View>
               {currentSeriesOpt && (
                 <View style={st.badge}>
@@ -224,16 +228,16 @@ export default function ProfileScreen() {
             {editing ? (
               <>
                 <TouchableOpacity onPress={handleCancel} style={st.cancelBtn}>
-                  <Text style={st.cancelText}>Cancel</Text>
+                  <Text style={st.cancelText}>{t('profile.cancel')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleSave} disabled={saving} style={st.saveBtn}>
-                  {saving ? <ActivityIndicator color="#fff" size="small" /> : <Text style={st.saveBtnText}>Save</Text>}
+                  {saving ? <ActivityIndicator color="#fff" size="small" /> : <Text style={st.saveBtnText}>{t('profile.save')}</Text>}
                 </TouchableOpacity>
               </>
             ) : (
               <TouchableOpacity onPress={() => setEditing(true)} style={st.editBtn} activeOpacity={0.7}>
                 <Ionicons name="pencil-outline" size={14} color={colors.sage} />
-                <Text style={st.editBtnText}>Edit Profile</Text>
+                <Text style={st.editBtnText}>{t('profile.editProfile')}</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -241,13 +245,13 @@ export default function ProfileScreen() {
 
         {/* ── About ── */}
         <View style={st.card}>
-          <Text style={st.cardTitle}>About</Text>
+          <Text style={st.cardTitle}>{t('profile.about')}</Text>
           {editing ? (
             <TextInput
               style={st.bioInput}
               value={bio}
               onChangeText={setBio}
-              placeholder="Share your practice journey..."
+              placeholder={t('profile.bioPlaceholder')}
               placeholderTextColor="#C4B8A8"
               multiline
               numberOfLines={3}
@@ -255,7 +259,7 @@ export default function ProfileScreen() {
             />
           ) : (
             <Text style={st.bioText}>
-              {user?.bio || 'No bio yet. Tap Edit Profile to add one.'}
+              {user?.bio || t('profile.noBio')}
             </Text>
           )}
         </View>
@@ -263,12 +267,12 @@ export default function ProfileScreen() {
         {/* ── Location (edit mode) ── */}
         {editing && (
           <View style={st.card}>
-            <Text style={st.cardTitle}>Location</Text>
+            <Text style={st.cardTitle}>{t('profile.location')}</Text>
             <TextInput
               style={st.fieldInput}
               value={location}
               onChangeText={setLocation}
-              placeholder="e.g. Mysore, India"
+              placeholder={t('profile.locationPlaceholder')}
               placeholderTextColor="#C4B8A8"
             />
           </View>
@@ -277,9 +281,9 @@ export default function ProfileScreen() {
         {/* ── Series + Level (edit mode) ── */}
         {editing && (
           <View style={st.card}>
-            <Text style={st.cardTitle}>Current Series</Text>
+            <Text style={st.cardTitle}>{t('profile.currentSeries')}</Text>
             <View style={st.chipRow}>
-              {SERIES_OPTIONS.map((opt) => (
+              {seriesOptions.map((opt) => (
                 <TouchableOpacity
                   key={opt.value}
                   style={[st.chip, series === opt.value && st.chipActive]}
@@ -290,9 +294,9 @@ export default function ProfileScreen() {
                 </TouchableOpacity>
               ))}
             </View>
-            <Text style={[st.cardTitle, { marginTop: spacing.lg }]}>Level</Text>
+            <Text style={[st.cardTitle, { marginTop: spacing.lg }]}>{t('profile.levelLabel')}</Text>
             <View style={st.chipRow}>
-              {LEVEL_OPTIONS.map((opt) => (
+              {levelOptions.map((opt) => (
                 <TouchableOpacity
                   key={opt.value}
                   style={[st.chip, level === opt.value && st.chipActive]}
@@ -305,13 +309,40 @@ export default function ProfileScreen() {
           </View>
         )}
 
+        {/* ── Language toggle ── */}
+        {!editing && (
+          <View style={st.card}>
+            <Text style={st.cardTitle}>{t('profile.language')}</Text>
+            <View style={st.chipRow}>
+              <TouchableOpacity
+                style={[st.chip, language === 'en' && st.chipActive]}
+                onPress={() => {
+                  setLanguage('en');
+                  i18n.changeLanguage('en');
+                }}
+              >
+                <Text style={[st.chipText, language === 'en' && st.chipTextActive]}>English</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[st.chip, language === 'he' && st.chipActive]}
+                onPress={() => {
+                  setLanguage('he');
+                  i18n.changeLanguage('he');
+                }}
+              >
+                <Text style={[st.chipText, language === 'he' && st.chipTextActive]}>עברית</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
         {/* ── Sign out ── */}
         <TouchableOpacity style={st.signOutBtn} onPress={handleSignOut} activeOpacity={0.8}>
           <Ionicons name="log-out-outline" size={18} color="#C4956A" />
-          <Text style={st.signOutText}>Sign Out</Text>
+          <Text style={st.signOutText}>{t('profile.signOut')}</Text>
         </TouchableOpacity>
 
-        <Text style={st.version}>Ashtanga Sangha v1.0</Text>
+        <Text style={st.version}>{t('profile.version')}</Text>
       </ScrollView>
     </SafeAreaView>
   );

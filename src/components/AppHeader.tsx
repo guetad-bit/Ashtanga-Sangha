@@ -10,10 +10,12 @@ import AppLogo from '@/components/AppLogo';
 import { useAppStore } from '@/store/useAppStore';
 import { Ionicons } from '@expo/vector-icons';
 import { signOut } from '@/lib/supabase';
+import { useTranslation } from 'react-i18next';
 
 export default function AppHeader() {
   const router = useRouter();
   const { user, clearUser } = useAppStore();
+  const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
@@ -27,7 +29,7 @@ export default function AppHeader() {
       <View style={s.topbar}>
         <View style={s.topbarLeft}>
           <AppLogo size={36} />
-          <Text style={s.appTitle}>Ashtanga Sangha</Text>
+          <Text style={s.appTitle}>{t('header.brand')}</Text>
         </View>
 
         <TouchableOpacity onPress={() => setMenuOpen(true)} activeOpacity={0.75}>
@@ -69,7 +71,7 @@ export default function AppHeader() {
               activeOpacity={0.7}
             >
               <Ionicons name="person-outline" size={18} color="#5E5245" />
-              <Text style={s.menuItemText}>My Profile</Text>
+              <Text style={s.menuItemText}>{t('header.myProfile')}</Text>
             </TouchableOpacity>
 
             <View style={s.menuDivider} />
@@ -77,7 +79,7 @@ export default function AppHeader() {
             {/* Sign Out */}
             <TouchableOpacity style={s.menuItem} onPress={handleSignOut} activeOpacity={0.7}>
               <Ionicons name="log-out-outline" size={18} color="#C0392B" />
-              <Text style={[s.menuItemText, { color: '#C0392B' }]}>Sign Out</Text>
+              <Text style={[s.menuItemText, { color: '#C0392B' }]}>{t('header.signOut')}</Text>
             </TouchableOpacity>
           </View>
         </Pressable>

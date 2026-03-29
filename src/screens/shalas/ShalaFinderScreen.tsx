@@ -6,12 +6,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'expo-router';
 import { getPracticeLogs, deletePracticeLog, updatePracticeLog } from '@/lib/supabase';
 import { calculateStreak } from '@/utils/practiceStreak';
 import type { PracticeLog } from '@/utils/practiceStreak';
 import AppHeader from '@/components/AppHeader';
+import i18n from '@/i18n';
 
 /* ââ Warm palette (shared with HomeScreen / CommunityScreen) ââ */
 const warm = {
@@ -26,11 +28,15 @@ const warm = {
   divider: '#EDE5D8', white: '#FFFFFF',
 };
 
-const SERIES_LABELS: Record<string, string> = {
-  sun_sals: 'Sun Salutations', primary: 'Primary Series',
-  intermediate: 'Intermediate', advanced_a: 'Advanced A',
-  advanced_b: 'Advanced B', short: 'Short Practice',
-};
+// SERIES_LABELS will be computed inside component using t() to support translations
+const getSeriesLabels = (t: any): Record<string, string> => ({
+  sun_sals: t('series.sun_sals'),
+  primary: t('series.primarySeries'),
+  intermediate: t('series.intermediate'),
+  advanced_a: t('series.advanced_a'),
+  advanced_b: t('series.advanced_b'),
+  short: t('series.short'),
+});
 
 const SERIES_ICONS: Record<string, string> = {
   sun_sals: 'sunny-outline', primary: 'fitness-outline',
@@ -51,9 +57,9 @@ const SERIES_COLORS: Record<string, { bg: string; fg: string }> = {
 function formatDate(iso: string) {
   const d = new Date(iso);
   const now = new Date();
-  if (d.toDateString() === now.toDateString()) return 'Today';
+  if (d.toDateString() === now.toDateString()) return i18n.t('myLog.today');
   const y = new Date(now.getTime() - 86400000);
-  if (d.toDateString() === y.toDateString()) return 'Yesterday';
+  if (d.toDateString() === y.toDateString()) return i18n.t('myLog.yesterday');
   return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 }
 
@@ -71,12 +77,12 @@ function groupByMonth(logs: PracticeLog[]) {
   return Array.from(map.entries()).map(([month, logs]) => ({ month, logs }));
 }
 
-function getFavoriteSeries(logs: PracticeLog[]): string {
+function getFavoriteSeries(logs: PracticeLog[], seriesLabels: Record<string, string>): string {
   if (logs.length === 0) return '-';
   const freq: Record<string, number> = {};
   logs.forEach(l => { freq[l.series] = (freq[l.series] || 0) + 1; });
   const top = Object.entries(freq).sort((a, b) => b[1] - a[1])[0];
-  return SERIES_LABELS[top[0]] || top[0];
+  return seriesLabels[top[0]] || top[0];
 }
 
 function getAvgDuration(logs: PracticeLog[]): number {
@@ -98,6 +104,7 @@ function getMonthCalendar(year: number, month: number) {
 
 /* ââ Mini Calendar ââ */
 function PracticeCalendar({ logs, year, month }: { logs: PracticeLog[]; year: number; month: number }) {
+  const { t } = useTranslation();
   const cells = getMonthCalendar(year, month);
   const today = new Date();
   const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
@@ -111,7 +118,7 @@ function PracticeCalendar({ logs, year, month }: { logs: PracticeLog[]; year: nu
     }
   });
   const monthName = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const dayLabels = t('home.dayLabels', { returnObjects: true }) as string[];
 
   return (
     <View style={st.calWrap}>
@@ -151,12 +158,14 @@ function PracticeCalendar({ logs, year, month }: { logs: PracticeLog[]; year: nu
 }
 
 /* ââ Main Component ââ */
-const SERIES_OPTIONS = Object.entries(SERIES_LABELS).map(([key, label]) => ({ key, label }));
 const DURATION_OPTIONS = [5, 10, 15, 20, 30, 45, 60, 75, 90, 120];
 
 export default function MyLogScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user, practiceLogs, setPracticeLogs, removePracticeLog, updatePracticeLog: updateLogInStore } = useAppStore();
+  const SERIES_LABELS = getSeriesLabels(t);
+  const SERIES_OPTIONS = Object.entries(SERIES_LABELS).map(([key, label]) => ({ key, label }));
   const [refreshing, setRefreshing] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -175,7 +184,7 @@ export default function MyLogScreen() {
   const totalPractices = safeLogs.length;
   const totalMinutes = safeLogs.reduce((sum, l) => sum + l.durationMin, 0);
   const totalHours = (totalMinutes / 60).toFixed(1);
-  const favSeries = useMemo(() => getFavoriteSeries(safeLogs), [safeLogs]);
+  const favSeries = useMemo(() => getFavoriteSeries(safeLogs, SERIES_LABELS), [safeLogs, SERIES_LABELS]);
   const avgDuration = useMemo(() => getAvgDuration(safeLogs), [safeLogs]);
 
   const sorted = useMemo(() =>
@@ -258,9 +267,9 @@ export default function MyLogScreen() {
       {/* Stats row */}
       <View style={st.statsRow}>
         <View style={st.statsPill}>
-          <Text style={st.statsPillText}>{totalPractices} sessions</Text>
+          <Text style={st.statsPillText}>{t('myLog.sessions', { count: totalPractices })}</Text>
           <View style={st.statsPillDot} />
-          <Text style={st.statsPillText}>{totalHours}h</Text>
+          <Text style={st.statsPillText}>{t('myLog.hours', { hours: totalHours })}</Text>
         </View>
       </View>
 
@@ -277,21 +286,21 @@ export default function MyLogScreen() {
               <Ionicons name="flame" size={18} color={warm.orange} />
             </View>
             <Text style={st.statNumber}>{streak}</Text>
-            <Text style={st.statLabel}>Day Streak</Text>
+            <Text style={st.statLabel}>{t('myLog.dayStreak')}</Text>
           </View>
           <View style={st.statCard}>
             <View style={[st.statIcon, { backgroundColor: warm.sageBg }]}>
               <Ionicons name="time-outline" size={18} color={warm.sage} />
             </View>
             <Text style={st.statNumber}>{avgDuration}m</Text>
-            <Text style={st.statLabel}>Avg Duration</Text>
+            <Text style={st.statLabel}>{t('myLog.avgDuration')}</Text>
           </View>
           <View style={st.statCard}>
             <View style={[st.statIcon, { backgroundColor: warm.blueBg }]}>
               <Ionicons name="heart-outline" size={18} color={warm.blue} />
             </View>
             <Text style={st.statNumber2}>{favSeries}</Text>
-            <Text style={st.statLabel}>Favorite</Text>
+            <Text style={st.statLabel}>{t('myLog.favorite')}</Text>
           </View>
         </View>
 
@@ -303,19 +312,19 @@ export default function MyLogScreen() {
           <View style={st.monthBannerLeft}>
             <Ionicons name="calendar" size={18} color={warm.accent} />
             <Text style={st.monthBannerText}>
-              <Text style={st.monthBannerBold}>{thisMonthLogs.length}</Text> practices
+              <Text style={st.monthBannerBold}>{thisMonthLogs.length}</Text> {t('myLog.practicesLabel')}
             </Text>
           </View>
-          <Text style={st.monthBannerRight}>{Math.round(thisMonthMin / 60)}h {thisMonthMin % 60}m this month</Text>
+          <Text style={st.monthBannerRight}>{Math.round(thisMonthMin / 60)}h {thisMonthMin % 60}m {t('myLog.thisMonth')}</Text>
         </View>
 
         {/* ââ Log Entries ââ */}
         {sorted.length === 0 ? (
           <View style={st.emptyState}>
             <Ionicons name="journal-outline" size={48} color={warm.mutedLight} />
-            <Text style={st.emptyTitle}>No practices logged yet</Text>
+            <Text style={st.emptyTitle}>{t('myLog.noPractices')}</Text>
             <Text style={st.emptySubtitle}>
-              Tap "I'm Practicing Now" on the Home tab to start your journey.
+              {t('myLog.noLogSubtitle')}
             </Text>
           </View>
         ) : (
@@ -357,17 +366,17 @@ export default function MyLogScreen() {
                       <View style={st.logExpanded}>
                         <View style={st.logDetailRow}>
                           <Ionicons name="time-outline" size={16} color={warm.muted} />
-                          <Text style={st.logDetailLabel}>Duration</Text>
-                          <Text style={st.logDetailValue}>{log.durationMin} minutes</Text>
+                          <Text style={st.logDetailLabel}>{t('myLog.duration')}</Text>
+                          <Text style={st.logDetailValue}>{t('myLog.minutes', { count: log.durationMin })}</Text>
                         </View>
                         <View style={st.logDetailRow}>
                           <Ionicons name="barbell-outline" size={16} color={warm.muted} />
-                          <Text style={st.logDetailLabel}>Series</Text>
+                          <Text style={st.logDetailLabel}>{t('practiceLog.series')}</Text>
                           <Text style={st.logDetailValue}>{SERIES_LABELS[log.series] || log.series}</Text>
                         </View>
                         <View style={st.logDetailRow}>
                           <Ionicons name="calendar-outline" size={16} color={warm.muted} />
-                          <Text style={st.logDetailLabel}>Logged</Text>
+                          <Text style={st.logDetailLabel}>{t('myLog.logged')}</Text>
                           <Text style={st.logDetailValue}>
                             {new Date(log.loggedAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                           </Text>
@@ -376,11 +385,11 @@ export default function MyLogScreen() {
                         <View style={st.logActions}>
                           <TouchableOpacity style={st.editBtn} onPress={() => handleEditOpen(log)}>
                             <Ionicons name="pencil-outline" size={15} color={warm.blue} />
-                            <Text style={st.editBtnText}>Edit</Text>
+                            <Text style={st.editBtnText}>{t('myLog.edit')}</Text>
                           </TouchableOpacity>
                           <TouchableOpacity style={st.deleteBtn} onPress={() => setDeletingId(log.id)}>
                             <Ionicons name="trash-outline" size={15} color={warm.red} />
-                            <Text style={st.deleteBtnText}>Delete</Text>
+                            <Text style={st.deleteBtnText}>{t('myLog.delete')}</Text>
                           </TouchableOpacity>
                         </View>
                       </View>
@@ -402,18 +411,18 @@ export default function MyLogScreen() {
             <View style={st.modalIconWrap}>
               <Ionicons name="trash" size={28} color={warm.red} />
             </View>
-            <Text style={st.modalTitle}>Delete Practice?</Text>
-            <Text style={st.modalBody}>This will permanently remove this practice log. This action cannot be undone.</Text>
+            <Text style={st.modalTitle}>{t('myLog.deletePractice')}</Text>
+            <Text style={st.modalBody}>{t('myLog.deleteConfirm')}</Text>
             <View style={st.modalBtns}>
               <TouchableOpacity style={st.modalCancelBtn} onPress={() => setDeletingId(null)}>
-                <Text style={st.modalCancelText}>Cancel</Text>
+                <Text style={st.modalCancelText}>{t('myLog.cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[st.modalDeleteBtn, deleteLoading && { opacity: 0.6 }]}
                 onPress={handleDeleteConfirm}
                 disabled={deleteLoading}
               >
-                <Text style={st.modalDeleteText}>{deleteLoading ? 'Deleting...' : 'Delete'}</Text>
+                <Text style={st.modalDeleteText}>{deleteLoading ? t('myLog.deleting') : t('myLog.delete')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -425,14 +434,14 @@ export default function MyLogScreen() {
         <Pressable style={st.modalOverlay} onPress={() => setEditingLog(null)}>
           <Pressable style={st.editModalCard} onPress={() => {}}>
             <View style={st.editModalHeader}>
-              <Text style={st.editModalTitle}>Edit Practice</Text>
+              <Text style={st.editModalTitle}>{t('myLog.editPractice')}</Text>
               <TouchableOpacity onPress={() => setEditingLog(null)}>
                 <Ionicons name="close" size={22} color={warm.muted} />
               </TouchableOpacity>
             </View>
 
             {/* Series Picker */}
-            <Text style={st.editLabel}>Series</Text>
+            <Text style={st.editLabel}>{t('practiceLog.series')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={st.editSeriesScroll} contentContainerStyle={st.editSeriesRow}>
               {SERIES_OPTIONS.map((s) => (
                 <TouchableOpacity
@@ -447,7 +456,7 @@ export default function MyLogScreen() {
             </ScrollView>
 
             {/* Duration Picker */}
-            <Text style={st.editLabel}>Duration (minutes)</Text>
+            <Text style={st.editLabel}>{t('myLog.durationMinutes')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={st.editDurationScroll} contentContainerStyle={st.editDurationRow}>
               {DURATION_OPTIONS.map((d) => (
                 <TouchableOpacity
@@ -483,7 +492,7 @@ export default function MyLogScreen() {
               onPress={handleEditSave}
               disabled={editSaving}
             >
-              <Text style={st.editSaveBtnText}>{editSaving ? 'Saving...' : 'Save Changes'}</Text>
+              <Text style={st.editSaveBtnText}>{editSaving ? t('myLog.savingDots') : t('myLog.saveChanges')}</Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>

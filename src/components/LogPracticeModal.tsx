@@ -5,25 +5,26 @@ import {
   StyleSheet, ScrollView, ActivityIndicator, Alert,
   KeyboardAvoidingView, Platform,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
 import { logPractice, setPracticingNow } from '@/lib/supabase';
 
-const SERIES_OPTIONS = [
-  { value: 'sun_sals', label: 'Sun Salutations', emoji: '☀️' },
-  { value: 'primary', label: 'Primary Series', emoji: '🧘' },
-  { value: 'intermediate', label: 'Intermediate', emoji: '🔥' },
-  { value: 'advanced_a', label: 'Advanced A', emoji: '⚡' },
-  { value: 'advanced_b', label: 'Advanced B', emoji: '🌟' },
-  { value: 'short', label: 'Short Practice', emoji: '🕐' },
+const SERIES_OPTIONS = (t: any) => [
+  { value: 'sun_sals', label: t('series.sun_sals'), emoji: '☀️' },
+  { value: 'primary', label: t('series.primary'), emoji: '🧘' },
+  { value: 'intermediate', label: t('series.intermediate'), emoji: '🔥' },
+  { value: 'advanced_a', label: t('series.advanced_a'), emoji: '⚡' },
+  { value: 'advanced_b', label: t('series.advanced_b'), emoji: '🌟' },
+  { value: 'short', label: t('series.short'), emoji: '🕐' },
 ] as const;
 
-const MOOD_OPTIONS = [
-  { value: 'strong', label: 'Strong', emoji: '🔥' },
-  { value: 'steady', label: 'Steady', emoji: '🧘' },
-  { value: 'challenging', label: 'Challenging', emoji: '💧' },
-  { value: 'low_energy', label: 'Low Energy', emoji: '🌙' },
-  { value: 'blissful', label: 'Blissful', emoji: '✨' },
+const MOOD_OPTIONS = (t: any) => [
+  { value: 'strong', label: t('logModal.moodStrong'), emoji: '🔥' },
+  { value: 'steady', label: t('logModal.moodSteady'), emoji: '🧘' },
+  { value: 'challenging', label: t('logModal.moodChallenging'), emoji: '💧' },
+  { value: 'low_energy', label: t('logModal.moodLowEnergy'), emoji: '🌙' },
+  { value: 'blissful', label: t('logModal.moodBlissful'), emoji: '✨' },
 ] as const;
 
 const DURATION_OPTIONS = [30, 45, 60, 75, 90, 120];
@@ -50,6 +51,7 @@ const moss = {
 };
 
 export default function LogPracticeModal() {
+  const { t } = useTranslation();
   const {
     isLogModalOpen, setLogModalOpen,
     user, addPracticeLog,
@@ -84,7 +86,7 @@ export default function LogPracticeModal() {
 
   const handleGoOnMat = async () => {
     if (!user) {
-      Alert.alert('Not signed in', 'Please sign in first.');
+      Alert.alert(t('logModal.notSignedIn'), t('logModal.signInFirst'));
       return;
     }
     setSaving(true);
@@ -93,7 +95,7 @@ export default function LogPracticeModal() {
       setIsPracticing(true);
       setStep('on_the_mat');
     } catch {
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      Alert.alert(t('logModal.error'), t('logModal.somethingWrong'));
     } finally {
       setSaving(false);
     }
@@ -108,7 +110,7 @@ export default function LogPracticeModal() {
     setSaving(true);
     try {
       const fullNotes = [
-        mood && `Feeling: ${MOOD_OPTIONS.find(m => m.value === mood)?.label ?? mood}`,
+        mood && `Feeling: ${MOOD_OPTIONS(t).find(m => m.value === mood)?.label ?? mood}`,
         stoppedAt && `Stopped at: ${stoppedAt}`,
         notes && notes,
         workingOn && `Working on: ${workingOn}`,
@@ -116,7 +118,7 @@ export default function LogPracticeModal() {
 
       const { error } = await logPractice(user.id, selectedSeries, duration, fullNotes || undefined);
       if (error) {
-        Alert.alert('Error', error.message);
+        Alert.alert(t('logModal.error'), error.message);
         setSaving(false);
         return;
       }
@@ -132,7 +134,7 @@ export default function LogPracticeModal() {
       setLogModalOpen(false);
       resetForm();
     } catch {
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      Alert.alert(t('logModal.error'), t('logModal.somethingWrong'));
     } finally {
       setSaving(false);
     }
@@ -161,12 +163,12 @@ export default function LogPracticeModal() {
         <View style={styles.header}>
           <TouchableOpacity onPress={handleClose} style={styles.closeBtn}>
             <Text style={styles.closeBtnText}>
-              {step === 'questionnaire' ? 'Skip' : 'Cancel'}
+              {step === 'questionnaire' ? t('practiceLog.cancel') : t('practiceLog.cancel')}
             </Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>
-            {step === 'select_series' ? 'Start Practice' :
-             step === 'on_the_mat' ? 'On the Mat' :
+            {step === 'select_series' ? t('practiceLog.logPractice') :
+             step === 'on_the_mat' ? t('logModal.onTheMat') :
              'How Was Your Practice?'}
           </Text>
           <View style={{ width: 60 }} />
@@ -192,9 +194,9 @@ export default function LogPracticeModal() {
                 </Text>
               </View>
 
-              <Text style={styles.sectionLabel}>What are you practicing?</Text>
+              <Text style={styles.sectionLabel}>{t('practiceLog.series')}</Text>
               <View style={styles.seriesGrid}>
-                {SERIES_OPTIONS.map((series) => {
+                {SERIES_OPTIONS(t).map((series) => {
                   const isSelected = selectedSeries === series.value;
                   return (
                     <TouchableOpacity
@@ -227,7 +229,7 @@ export default function LogPracticeModal() {
                   <ActivityIndicator color="#fff" />
                 ) : (
                   <>
-                    <Text style={styles.goBtnText}>I'm on the mat 🧘</Text>
+                    <Text style={styles.goBtnText}>{t('logModal.imOnTheMat')} 🧘</Text>
                     <Text style={styles.goBtnSub}>Your sangha will see you're practicing</Text>
                   </>
                 )}
@@ -252,7 +254,7 @@ export default function LogPracticeModal() {
                 onPress={handleFinishPractice}
                 activeOpacity={0.85}
               >
-                <Text style={styles.finishBtnText}>Finish Practice</Text>
+                <Text style={styles.finishBtnText}>{t('practiceLog.logPractice')}</Text>
               </TouchableOpacity>
             </>
           )}
@@ -268,9 +270,9 @@ export default function LogPracticeModal() {
                 </Text>
               </View>
 
-              <Text style={styles.qLabel}>What did you practice?</Text>
+              <Text style={styles.qLabel}>{t('practiceLog.series')}</Text>
               <View style={styles.seriesGrid}>
-                {SERIES_OPTIONS.map((series) => {
+                {SERIES_OPTIONS(t).map((series) => {
                   const isSelected = selectedSeries === series.value;
                   return (
                     <TouchableOpacity
@@ -290,7 +292,7 @@ export default function LogPracticeModal() {
 
               <Text style={styles.qLabel}>How did you feel?</Text>
               <View style={styles.moodRow}>
-                {MOOD_OPTIONS.map((m) => {
+                {MOOD_OPTIONS(t).map((m) => {
                   const isSelected = mood === m.value;
                   return (
                     <TouchableOpacity
@@ -308,7 +310,7 @@ export default function LogPracticeModal() {
                 })}
               </View>
 
-              <Text style={styles.qLabel}>About how long?</Text>
+              <Text style={styles.qLabel}>{t('practiceLog.aboutHowLong')}</Text>
               <View style={styles.durationRow}>
                 {DURATION_OPTIONS.map((d) => {
                   const isSelected = duration === d;
@@ -327,28 +329,28 @@ export default function LogPracticeModal() {
                 })}
               </View>
 
-              <Text style={styles.qLabel}>Stopped at (posture)</Text>
+              <Text style={styles.qLabel}>{t('practiceLog.stoppedAt')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="e.g. Navasana, Marichyasana C..."
+                placeholder={t('practiceLog.stoppedAtPlaceholder')}
                 placeholderTextColor={moss.muted}
                 value={stoppedAt}
                 onChangeText={setStoppedAt}
               />
 
-              <Text style={styles.qLabel}>What are you working on?</Text>
+              <Text style={styles.qLabel}>{t('practiceLog.workOnNext')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="e.g. Jump-backs, deeper twists..."
+                placeholder={t('practiceLog.workOnNextPlaceholder')}
                 placeholderTextColor={moss.muted}
                 value={workingOn}
                 onChangeText={setWorkingOn}
               />
 
-              <Text style={styles.qLabel}>Anything else?</Text>
+              <Text style={styles.qLabel}>{t('practiceLog.notes')}</Text>
               <TextInput
                 style={[styles.input, styles.textArea]}
-                placeholder="Notes about your practice..."
+                placeholder={t('practiceLog.notesPlaceholder')}
                 placeholderTextColor={moss.muted}
                 value={notes}
                 onChangeText={setNotes}
@@ -365,7 +367,7 @@ export default function LogPracticeModal() {
                 {saving ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text style={styles.saveBtnText}>Save Practice</Text>
+                  <Text style={styles.saveBtnText}>{t('practiceLog.save')}</Text>
                 )}
               </TouchableOpacity>
             </>

@@ -5,6 +5,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -25,16 +26,16 @@ interface PostCardProps {
   onUserPress?: () => void;
 }
 
-function formatTimeAgo(isoDate: string): string {
+function formatTimeAgo(isoDate: string, t: any): string {
   const diff = Date.now() - new Date(isoDate).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 5) return 'Just now';
-  if (mins < 60) return `${mins}m`;
+  if (mins < 5) return t('postCard.justNow');
+  if (mins < 60) return t('postCard.minutesAgo', { count: mins });
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
+  if (hrs < 24) return t('postCard.hoursAgo', { count: hrs });
   const days = Math.floor(hrs / 24);
-  if (days === 1) return 'Yesterday';
-  return `${days}d`;
+  if (days === 1) return t('postCard.yesterday');
+  return t('postCard.daysAgo', { count: days });
 }
 
 export default function PostCard({
@@ -52,6 +53,7 @@ export default function PostCard({
   onShare,
   onUserPress,
 }: PostCardProps) {
+  const { t } = useTranslation();
   const [liked, setLiked] = useState(isLiked);
   const [likes, setLikes] = useState(likesCount);
 
@@ -78,7 +80,7 @@ export default function PostCard({
             </View>
           ) : null}
         </View>
-        <Text style={s.time}>{formatTimeAgo(createdAt)}</Text>
+        <Text style={s.time}>{formatTimeAgo(createdAt, t)}</Text>
       </TouchableOpacity>
 
       {/* ── Image ── */}
@@ -116,12 +118,12 @@ export default function PostCard({
 
         <TouchableOpacity style={s.actionBtn} onPress={onComment} activeOpacity={0.7}>
           <Ionicons name="chatbubble-outline" size={19} color="#9B8E7E" />
-          <Text style={s.actionLabel}>Comment</Text>
+          <Text style={s.actionLabel}>{t('postCard.comment')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={s.actionBtn} onPress={onShare} activeOpacity={0.7}>
           <Ionicons name="paper-plane-outline" size={19} color="#9B8E7E" />
-          <Text style={s.actionLabel}>Share</Text>
+          <Text style={s.actionLabel}>{t('postCard.share')}</Text>
         </TouchableOpacity>
       </View>
     </View>

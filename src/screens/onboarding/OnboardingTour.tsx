@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography } from '@/styles/tokens';
 import AppLogo from '@/components/AppLogo';
 
@@ -37,45 +38,6 @@ interface Slide {
   description: string;
 }
 
-const SLIDES: Slide[] = [
-  {
-    id: '1',
-    image: require('../../../assets/onboard-1.png'),
-    accent: warm.orange,
-    gradientFloor: 'rgba(61,50,41,0.97)',
-    title: 'Welcome to Sangha',
-    kicker: 'Your Ashtanga Community',
-    description: 'Track your practice, connect with fellow yogis around the world, and deepen your commitment to the mat.',
-  },
-  {
-    id: '2',
-    image: require('../../../assets/onboard-1.png'),
-    accent: warm.sage,
-    gradientFloor: 'rgba(50,56,38,0.97)',
-    title: 'Step on the Mat',
-    kicker: 'Practice together, apart',
-    description: 'Tap "On the Mat" when you start practicing. Your sangha will see you\'re there â even from across the globe.',
-  },
-  {
-    id: '3',
-    image: require('../../../assets/onboard-1.png'),
-    accent: warm.gold,
-    gradientFloor: 'rgba(60,48,30,0.97)',
-    title: 'Build Your Streak',
-    kicker: 'One day at a time',
-    description: 'Track your daily rhythm, build streaks, and honor moon days. Consistency is the heart of Ashtanga.',
-  },
-  {
-    id: '4',
-    image: require('../../../assets/onboard-1.png'),
-    accent: warm.accent,
-    gradientFloor: 'rgba(55,36,22,0.97)',
-    title: 'Join the Sangha',
-    kicker: 'You\'re not practicing alone',
-    description: 'Share moments, join gatherings, and grow with a community that breathes together.',
-  },
-];
-
 interface OnboardingTourProps {
   onFinish: () => void;
 }
@@ -84,6 +46,46 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
   const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+
+  const SLIDES: Slide[] = [
+    {
+      id: '1',
+      image: require('../../../assets/onboard-1.png'),
+      accent: warm.orange,
+      gradientFloor: 'rgba(61,50,41,0.97)',
+      title: t('onboarding.slide1Title'),
+      kicker: t('onboarding.slide1Subtitle'),
+      description: t('onboarding.slide1Body'),
+    },
+    {
+      id: '2',
+      image: require('../../../assets/onboard-1.png'),
+      accent: warm.sage,
+      gradientFloor: 'rgba(50,56,38,0.97)',
+      title: t('onboarding.slide2Title'),
+      kicker: t('onboarding.slide2Subtitle'),
+      description: t('onboarding.slide2Body'),
+    },
+    {
+      id: '3',
+      image: require('../../../assets/onboard-1.png'),
+      accent: warm.gold,
+      gradientFloor: 'rgba(60,48,30,0.97)',
+      title: t('onboarding.slide3Title'),
+      kicker: t('onboarding.slide3Subtitle'),
+      description: t('onboarding.slide3Body'),
+    },
+    {
+      id: '4',
+      image: require('../../../assets/onboard-1.png'),
+      accent: warm.accent,
+      gradientFloor: 'rgba(55,36,22,0.97)',
+      title: t('onboarding.slide4Title'),
+      kicker: t('onboarding.slide4Subtitle'),
+      description: t('onboarding.slide4Body'),
+    },
+  ];
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (Platform.OS === 'web') return;
@@ -152,7 +154,7 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
           <Text style={s.appName}>Ashtanga Sangha</Text>
         </View>
         <Pressable onPress={onFinish} hitSlop={12}>
-          <Text style={s.skipText}>Skip</Text>
+          <Text style={s.skipText}>{t('onboarding.skip')}</Text>
         </Pressable>
       </View>
 
@@ -189,7 +191,7 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
           onPress={goNext}
         >
           <Text style={s.nextBtnText}>
-            {isLast ? 'Get Started  \u2192' : 'Next'}
+            {isLast ? t('onboarding.getStarted') : t('onboarding.next')}
           </Text>
         </Pressable>
       </View>

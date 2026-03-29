@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '@/store/useAppStore';
@@ -93,6 +94,7 @@ const FAKE_USERS_FEED = [
 export default function CommunityScreen() {
   const router = useRouter();
   const { user, userPosts } = useAppStore();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<Tab>('latest');
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -187,7 +189,7 @@ export default function CommunityScreen() {
           <Ionicons name="search-outline" size={18} color={moss.muted} />
           <TextInput
             style={s.searchInput}
-            placeholder="Search members..."
+            placeholder={t('community.searchMembers')}
             placeholderTextColor={moss.muted}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -205,7 +207,7 @@ export default function CommunityScreen() {
             activeOpacity={0.7}
           >
             <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>
-              {tab === 'latest' ? 'Latest' : 'People'}
+              {tab === 'latest' ? t('community.latest') : t('community.people')}
             </Text>
           </TouchableOpacity>
         ))}
@@ -224,7 +226,7 @@ export default function CommunityScreen() {
           <>
             {/* On the mat right now */}
             <View style={s.sectionHeader}>
-              <Text style={s.sectionTitle}>On the Mat Right Now</Text>
+              <Text style={s.sectionTitle}>{t('community.onTheMatNow')}</Text>
             </View>
             <View style={s.partnersCard}>
               <ScrollView
@@ -242,13 +244,13 @@ export default function CommunityScreen() {
                             <Text style={{ color: moss.white, fontFamily: 'DMSans_600SemiBold', fontSize: 12 }}>More</Text>
                           </View>
                         </View>
-                        <Text style={s.partnerName}>+ More</Text>
+                        <Text style={s.partnerName}>{t('community.more')}</Text>
                       </TouchableOpacity>
                     )}
                   </>
                 ) : (
                   <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.xl }}>
-                    <Text style={{ color: moss.muted, fontSize: 14 }}>No practitioners yet</Text>
+                    <Text style={{ color: moss.muted, fontSize: 14 }}>{t('community.noPractitioners')}</Text>
                   </View>
                 )}
                 {/* Arrow indicator */}
@@ -262,9 +264,9 @@ export default function CommunityScreen() {
 
             {/* Sangha Feed */}
             <View style={s.sectionHeader}>
-              <Text style={s.sectionTitle}>Sangha Feed</Text>
+              <Text style={s.sectionTitle}>{t('community.sanghaFeed')}</Text>
               <TouchableOpacity onPress={() => router.push('/new-post')} activeOpacity={0.7}>
-                <Text style={s.sectionLink}>New post</Text>
+                <Text style={s.sectionLink}>{t('community.newPost')}</Text>
               </TouchableOpacity>
             </View>
 
@@ -337,7 +339,7 @@ export default function CommunityScreen() {
           <>
             {/* Community Members */}
             <View style={s.sectionHeader}>
-              <Text style={s.sectionTitle}>Community Members</Text>
+              <Text style={s.sectionTitle}>{t('community.communityMembers')}</Text>
             </View>
             <View style={s.peopleCard}>
               {/* Real members from Supabase */}
@@ -359,7 +361,7 @@ export default function CommunityScreen() {
                     </Text>
                   </View>
                   <TouchableOpacity style={s.followBtn} activeOpacity={0.7}>
-                    <Text style={s.followText}>Follow</Text>
+                    <Text style={s.followText}>{t('community.follow')}</Text>
                   </TouchableOpacity>
                 </TouchableOpacity>
               ))}
@@ -374,7 +376,7 @@ export default function CommunityScreen() {
                     <Text style={s.personMeta}>{u.series}</Text>
                   </View>
                   <TouchableOpacity style={s.followBtn} activeOpacity={0.7}>
-                    <Text style={s.followText}>Follow</Text>
+                    <Text style={s.followText}>{t('community.follow')}</Text>
                   </TouchableOpacity>
                 </TouchableOpacity>
               ))}
@@ -400,13 +402,13 @@ export default function CommunityScreen() {
                   {profileCard.streak > 0 && (
                     <View style={[s.profileBadge, { backgroundColor: moss.amberBg }]}>
                       <Ionicons name="flame-outline" size={13} color={moss.amber} />
-                      <Text style={[s.profileBadgeText, { color: moss.amber }]}>{profileCard.streak}-day streak</Text>
+                      <Text style={[s.profileBadgeText, { color: moss.amber }]}>{t('community.dayStreak', { count: profileCard.streak })}</Text>
                     </View>
                   )}
                 </View>
                 <Text style={s.profileBio}>{profileCard.bio}</Text>
                 <TouchableOpacity style={s.profileCloseBtn} onPress={() => setProfileCard(null)} activeOpacity={0.7}>
-                  <Text style={s.profileCloseBtnText}>Close</Text>
+                  <Text style={s.profileCloseBtnText}>{t('community.close')}</Text>
                 </TouchableOpacity>
               </>
             )}

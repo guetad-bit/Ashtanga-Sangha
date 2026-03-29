@@ -8,6 +8,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { spacing } from '@/styles/tokens';
 import { signUpWithEmail, signInWithGoogle } from '@/lib/supabase';
 import { useAppStore } from '@/store/useAppStore';
@@ -33,11 +34,12 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
   const [loading, setLoading] = useState(false);
   const insets = useSafeAreaInsets();
   const { setUser, setOnboarded } = useAppStore();
+  const { t } = useTranslation();
 
   const handleRegister = async () => {
-    if (!name.trim()) { Alert.alert('Please enter your name'); return; }
-    if (!email.includes('@')) { Alert.alert('Please enter a valid email'); return; }
-    if (password.length < 8) { Alert.alert('Password needs 8+ characters'); return; }
+    if (!name.trim()) { Alert.alert(t('register.enterName')); return; }
+    if (!email.includes('@')) { Alert.alert(t('register.email')); return; }
+    if (password.length < 8) { Alert.alert(t('register.passwordLength')); return; }
 
     setLoading(true);
     const { data, error } = await signUpWithEmail(email, password, name);
@@ -80,20 +82,20 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
 
           {/* ââ Headline ââââââââââââââââââââââââââââââââââ */}
           <Text style={st.headline}>
-            Create your{'\n'}free account
+            {t('register.createAccount')}
           </Text>
           <Text style={st.subtitle}>
-            Join 12,847 practitioners worldwide
+            {t('register.joinPractitioners')}
           </Text>
 
           {/* ââ Name field âââââââââââââââââââââââââââââââââ */}
           <View style={st.field}>
-            <Text style={st.label}>Full name</Text>
+            <Text style={st.label}>{t('register.fullName')}</Text>
             <View style={st.inputWrap}>
               <Ionicons name="person-outline" size={17} color="rgba(255,255,255,0.45)" style={st.inputIcon} />
               <TextInput
                 style={st.input}
-                placeholder="e.g. Maya Goldberg"
+                placeholder={t('register.namePlaceholder')}
                 placeholderTextColor="rgba(255,255,255,0.35)"
                 value={name}
                 onChangeText={setName}
@@ -105,12 +107,12 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
 
           {/* ââ Email field ââââââââââââââââââââââââââââââââ */}
           <View style={st.field}>
-            <Text style={st.label}>Email</Text>
+            <Text style={st.label}>{t('register.email')}</Text>
             <View style={st.inputWrap}>
               <Ionicons name="mail-outline" size={17} color="rgba(255,255,255,0.45)" style={st.inputIcon} />
               <TextInput
                 style={st.input}
-                placeholder="you@example.com"
+                placeholder={t('register.emailPlaceholder')}
                 placeholderTextColor="rgba(255,255,255,0.35)"
                 value={email}
                 onChangeText={setEmail}
@@ -123,12 +125,12 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
 
           {/* ââ Password field âââââââââââââââââââââââââââââ */}
           <View style={st.field}>
-            <Text style={st.label}>Password</Text>
+            <Text style={st.label}>{t('register.password')}</Text>
             <View style={st.inputWrap}>
               <Ionicons name="lock-closed-outline" size={17} color="rgba(255,255,255,0.45)" style={st.inputIcon} />
               <TextInput
                 style={[st.input, st.inputPw]}
-                placeholder="At least 8 characters"
+                placeholder={t('register.passwordHint')}
                 placeholderTextColor="rgba(255,255,255,0.35)"
                 value={password}
                 onChangeText={setPassword}
@@ -154,21 +156,21 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
           >
             {loading
               ? <ActivityIndicator color="#fff" />
-              : <Text style={st.primaryBtnText}>Create Account</Text>
+              : <Text style={st.primaryBtnText}>{t('register.createAccountBtn')}</Text>
             }
           </TouchableOpacity>
 
           {/* ââ Terms ââââââââââââââââââââââââââââââââââââââ */}
           <Text style={st.terms}>
-            By creating an account you agree to our{' '}
-            <Text style={st.termsLink}>Terms of Service</Text> and{' '}
-            <Text style={st.termsLink}>Privacy Policy</Text>
+            {t('register.agreeToTerms')}{' '}
+            <Text style={st.termsLink}>{t('register.termsOfService')}</Text> {t('common.and')}{' '}
+            <Text style={st.termsLink}>{t('register.privacyPolicy')}</Text>
           </Text>
 
           {/* ââ OR divider âââââââââââââââââââââââââââââââââ */}
           <View style={st.divider}>
             <View style={st.dividerLine} />
-            <Text style={st.dividerText}>OR</Text>
+            <Text style={st.dividerText}>{t('register.orLabel')}</Text>
             <View style={st.dividerLine} />
           </View>
 
@@ -179,7 +181,7 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
             activeOpacity={0.85}
           >
             <Text style={st.googleBtnText}>
-              Sign up with{' '}
+              {t('register.signUpWithGoogle').split('Google')[0]}
               <Text style={{ color: '#4285F4' }}>G</Text>
               <Text style={{ color: '#EA4335' }}>o</Text>
               <Text style={{ color: '#FBBC05' }}>o</Text>
@@ -191,8 +193,8 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
 
           {/* ââ Sign in link âââââââââââââââââââââââââââââââ */}
           <Text style={st.footer}>
-            Already a member?{'  '}
-            <Text style={st.footerLink} onPress={onGoToLogin}>Sign in</Text>
+            {t('register.alreadyMember')}{'  '}
+            <Text style={st.footerLink} onPress={onGoToLogin}>{t('register.signIn')}</Text>
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>

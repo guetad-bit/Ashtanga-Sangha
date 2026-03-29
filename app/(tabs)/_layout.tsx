@@ -6,8 +6,10 @@ import { StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '@/styles/tokens';
 import LogPracticeModal from '@/components/LogPracticeModal';
+import { useTranslation } from 'react-i18next';
 
 export default function TabLayout() {
+  const { t } = useTranslation();
   return (
     <>
       <Tabs
@@ -22,7 +24,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Home',
+            title: t('nav.home'),
             tabBarIcon: ({ color, focused }) => (
               <Ionicons name={focused ? 'leaf' : 'leaf-outline'} size={22} color={color} />
             ),
@@ -31,7 +33,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="community"
           options={{
-            title: 'Community',
+            title: t('nav.community'),
             tabBarIcon: ({ color, focused }) => (
               <Ionicons name={focused ? 'people' : 'people-outline'} size={22} color={color} />
             ),
@@ -40,7 +42,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="shalas"
           options={{
-            title: 'My Log',
+            title: t('nav.myLog'),
             tabBarIcon: ({ color, focused }) => (
               <Ionicons name={focused ? 'journal' : 'journal-outline'} size={22} color={color} />
             ),
@@ -49,7 +51,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="library"
           options={{
-            title: 'Library',
+            title: t('nav.library'),
             tabBarIcon: ({ color, focused }) => (
               <Ionicons name={focused ? 'book' : 'book-outline'} size={22} color={color} />
             ),

@@ -6,6 +6,7 @@ import {
   ActivityIndicator, RefreshControl, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
 import { getGatherings, bookGathering, getUserBookings, cancelBooking } from '@/lib/supabase';
@@ -37,12 +38,12 @@ type BookingStep = 'review' | 'details' | 'confirmed';
 
 type FilterType = 'all' | 'retreat' | 'workshop' | 'training' | 'online';
 
-const FILTERS: { label: string; value: FilterType }[] = [
-  { label: 'All', value: 'all' },
-  { label: 'Retreats', value: 'retreat' },
-  { label: 'Workshops', value: 'workshop' },
-  { label: 'Trainings', value: 'training' },
-  { label: 'Online', value: 'online' },
+const FILTERS = (t: any): { label: string; value: FilterType }[] => [
+  { label: t('gatherings.all'), value: 'all' },
+  { label: t('gatherings.retreats'), value: 'retreat' },
+  { label: t('gatherings.workshops'), value: 'workshop' },
+  { label: t('gatherings.trainings'), value: 'training' },
+  { label: t('gatherings.online'), value: 'online' },
 ];
 
 function formatDateRange(start: string, end: string): string {
@@ -58,6 +59,7 @@ function daysBetween(start: string, end: string): number {
 }
 
 export default function GatheringsScreen() {
+  const { t } = useTranslation();
   const { user } = useAppStore();
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [gatherings, setGatherings] = useState<Gathering[]>([]);
@@ -119,12 +121,12 @@ export default function GatheringsScreen() {
 
   // Open booking flow
   const openBooking = (g: Gathering) => {
-    if (!user) { Alert.alert('Sign in required', 'Please sign in to book.'); return; }
+    if (!user) { Alert.alert(t('gatherings.signInRequired'), t('gatherings.signInToBook')); return; }
     if (bookedIds.has(g.id)) {
-      Alert.alert('Cancel Booking', `Cancel your spot at ${g.title}?`, [
-        { text: 'Keep', style: 'cancel' },
+      Alert.alert(t('gatherings.cancelBooking'), t('gatherings.cancelBookingMsg', { title: g.title }), [
+        { text: t('gatherings.keep'), style: 'cancel' },
         {
-          text: 'Cancel',
+          text: t('gatherings.cancel'),
           style: 'destructive',
           onPress: async () => {
             setBooking(true);
@@ -157,7 +159,7 @@ export default function GatheringsScreen() {
       confirmAnim.setValue(0);
       Animated.spring(confirmAnim, { toValue: 1, useNativeDriver: true, tension: 50, friction: 7 }).start();
     } else {
-      Alert.alert('Error', error.message);
+      Alert.alert(t('gatherings.error'), error.message);
     }
   };
 
@@ -178,8 +180,8 @@ export default function GatheringsScreen() {
     <SafeAreaView style={s.safe}>
       {/* Header */}
       <View style={s.header}>
-        <Text style={s.title}>Gatherings</Text>
-        <Text style={s.subtitle}>Retreats, workshops & immersions</Text>
+        <Text style={s.title}>{t('gatherings.title')}</Text>
+        <Text style={s.subtitle}>{t('gatherings.subtitle')}</Text>
       </View>
 
       {/* Filters */}
@@ -187,7 +189,7 @@ export default function GatheringsScreen() {
         horizontal showsHorizontalScrollIndicator={false}
         contentContainerStyle={s.filters} style={s.filterScroll}
       >
-        {FILTERS.map((f) => (
+        {FILTERS(t).map((f) => (
           <TouchableOpacity
             key={f.value}
             style={[s.filterPill, activeFilter === f.value && s.filterActive]}

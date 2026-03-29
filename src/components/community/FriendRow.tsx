@@ -1,6 +1,7 @@
 // src/components/community/FriendRow.tsx
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography } from '@/styles/tokens';
 
 interface FriendRowProps {
@@ -15,16 +16,16 @@ interface FriendRowProps {
 }
 
 /** Format the relative time label, e.g. "2h ago", "Just now" */
-function formatTimeAgo(isoDate?: string): string {
+function formatTimeAgo(isoDate?: string, t?: any): string {
   if (!isoDate) return '';
   const diff = Date.now() - new Date(isoDate).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 5) return 'Just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 5) return t?.('friendRow.justNow') || 'Just now';
+  if (mins < 60) return t?.('friendRow.minutesAgo', { count: mins }) || `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
+  if (hrs < 24) return t?.('friendRow.hoursAgo', { count: hrs }) || `${hrs}h ago`;
   const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
+  return t?.('friendRow.daysAgo', { count: days }) || `${days}d ago`;
 }
 
 /** Capitalize first letter of series name */
@@ -42,7 +43,8 @@ export default function FriendRow({
   onPress,
   onFollowToggle,
 }: FriendRowProps) {
-  const timeAgo = formatTimeAgo(lastPractice);
+  const { t } = useTranslation();
+  const timeAgo = formatTimeAgo(lastPractice, t);
   const isPracticingNow = lastPractice && (Date.now() - new Date(lastPractice).getTime()) < 2 * 3600000;
 
   return (
@@ -58,7 +60,7 @@ export default function FriendRow({
         <Text style={styles.name} numberOfLines={1}>{name}</Text>
         <Text style={styles.meta} numberOfLines={1}>
           {formatSeries(series)}
-          {streak > 0 ? ` · ${streak}d streak` : ''}
+          {streak > 0 ? ` · ${t('friendRow.dayStreak', { count: streak })}` : ''}
           {timeAgo ? ` · ${timeAgo}` : ''}
         </Text>
       </View>
@@ -70,7 +72,7 @@ export default function FriendRow({
         activeOpacity={0.8}
       >
         <Text style={[styles.followText, isFollowing && styles.followTextActive]}>
-          {isFollowing ? 'Following' : 'Follow'}
+          {isFollowing ? t('friendRow.following') : t('friendRow.follow')}
         </Text>
       </TouchableOpacity>
     </TouchableOpacity>

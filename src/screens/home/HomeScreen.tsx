@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
 import { getWeeklyRhythm, calculateStreak } from '@/utils/practiceStreak';
@@ -204,6 +205,7 @@ const SERIES_LABELS: Record<string, string> = {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const {
     user, practiceLogs, setPracticeLogs,
     isPracticing, setIsPracticing,
@@ -220,6 +222,9 @@ export default function HomeScreen() {
   const [logDuration, setLogDuration] = useState(75);
   const [logNotes, setLogNotes] = useState('');
   const [profileCard, setProfileCard] = useState<{ name: string; avatarUrl: string; series: string; streak: number; bio: string } | null>(null);
+
+  // Localized week day labels
+  const WEEK_DAYS_I18N = t('home.dayLabels', { returnObjects: true }) as string[];
 
   const openProfile = (name: string) => {
     const fakeUser = FAKE_USERS.find((u) => u.name === name);
@@ -383,12 +388,12 @@ export default function HomeScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={moss.accent} />}
       >
         {/* ── Welcome ── */}
-        <Text style={s.welcome}>Welcome back, {user?.name?.split(' ')[0] ?? 'Yogi'}</Text>
+        <Text style={s.welcome}>{t('home.welcomeBack', { name: user?.name?.split(' ')[0] ?? 'Yogi' })}</Text>
 
         {/* ── Yogis on the mat ── */}
         <View style={s.yogisOnMat}>
           <Text style={s.yogisCountText}>
-            <Text style={s.yogisCountBold}>{sanghaOnMat.length} yogis</Text> on the mat today
+            <Text style={s.yogisCountBold}>{sanghaOnMat.length}</Text> {t('home.yogisOnMat')}
           </Text>
           <View style={s.yogisAvatarRow}>
             {sanghaOnMat.slice(0, 7).map((u, i) => (
@@ -420,16 +425,16 @@ export default function HomeScreen() {
               {practiceState === 'onMat' ? (
                 <>
                   <Ionicons name="leaf" size={32} color="rgba(255,255,255,0.85)" />
-                  <Text style={s.heroTitle}>I'm on the mat!</Text>
+                  <Text style={s.heroTitle}>{t('home.onTheMat')}</Text>
                   <Text style={s.heroSubtitle}>
-                    {elapsedMin < 1 ? 'Just started' : `${elapsedMin} min in`}
+                    {elapsedMin < 1 ? t('home.justStarted') : t('home.minIn', { min: elapsedMin })}
                   </Text>
                   <TouchableOpacity
                     style={[s.heroBtn, s.heroBtnFinish]}
                     onPress={handlePracticeButton}
                     activeOpacity={0.85}
                   >
-                    <Text style={[s.heroBtnText, { color: moss.ink }]}>I'M DONE — LOG IT</Text>
+                    <Text style={[s.heroBtnText, { color: moss.ink }]}>{t('home.doneLogIt')}</Text>
                   </TouchableOpacity>
                 </>
               ) : (
@@ -441,7 +446,7 @@ export default function HomeScreen() {
                     onPress={handlePracticeButton}
                     activeOpacity={0.85}
                   >
-                    <Text style={s.heroBtnText}>START YOUR PRACTICE</Text>
+                    <Text style={s.heroBtnText}>{t('home.startPractice')}</Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -453,9 +458,9 @@ export default function HomeScreen() {
         <View style={s.weekCard}>
           {/* Top: This Week title and day circles */}
           <View>
-            <Text style={s.weekTitle}>This Week</Text>
+            <Text style={s.weekTitle}>{t('home.thisWeek')}</Text>
             <View style={s.weekDays}>
-              {WEEK_DAYS.map((label, i) => (
+              {WEEK_DAYS_I18N.map((label, i) => (
                 <View key={i} style={s.weekDayCol}>
                   <Text style={s.weekDayLabel}>{label}</Text>
                   <View style={[s.weekDayCircle, { backgroundColor: weekChecks[i] ? moss.accent : moss.beige }]}>
@@ -473,15 +478,15 @@ export default function HomeScreen() {
               <Text style={s.goalBig}>{practicesThisWeek}</Text>
               <Text style={s.goalSlash}> / </Text>
               <Text style={s.goalSmall}>{weeklyGoal}</Text>
-              <Text style={s.goalLabel}> practices</Text>
+              <Text style={s.goalLabel}> {t('home.practices')}</Text>
             </View>
             <View style={s.progressBar}>
               <View style={[s.progressFill, { width: `${Math.min(100, (practicesThisWeek / weeklyGoal) * 100)}%` as any }]} />
             </View>
             <Text style={s.goalHint}>
               {practicesThisWeek >= weeklyGoal
-                ? 'Goal reached!'
-                : `You're ${weeklyGoal - practicesThisWeek} away from your goal!`}
+                ? t('home.goalReached')
+                : t('home.goalAway', { count: weeklyGoal - practicesThisWeek })}
             </Text>
           </View>
         </View>
@@ -490,11 +495,11 @@ export default function HomeScreen() {
         <View style={s.circleSection}>
           <View style={s.circleHeader}>
             <View>
-              <Text style={s.circleTitle}>Your Circle</Text>
-              <Text style={s.circleSubtitle}>Practice together, stay motivated</Text>
+              <Text style={s.circleTitle}>{t('home.yourCircle')}</Text>
+              <Text style={s.circleSubtitle}>{t('home.circleSubtitle')}</Text>
             </View>
             <TouchableOpacity activeOpacity={0.7}>
-              <Text style={s.circleViewAll}>View all →</Text>
+              <Text style={s.circleViewAll}>{t('home.viewAll')}</Text>
             </TouchableOpacity>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.circleScroll}>
@@ -522,7 +527,7 @@ export default function HomeScreen() {
 
         {/* ═══ 4. SANGHA FEED ═══ */}
         <View style={s.feedSection}>
-          <Text style={s.feedTitle}>Sangha Feed</Text>
+          <Text style={s.feedTitle}>{t('home.sanghaFeed')}</Text>
           {FAKE_USERS.slice(0, 2).map((u) => (
             <View key={u.id} style={s.feedCard}>
               <View style={s.feedCardInner}>
@@ -551,7 +556,7 @@ export default function HomeScreen() {
             </View>
           ))}
           <TouchableOpacity onPress={() => router.push('/(tabs)/community')} activeOpacity={0.7}>
-            <Text style={s.feedSeeAll}>See all in Community →</Text>
+            <Text style={s.feedSeeAll}>{t('home.seeAllCommunity')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -559,12 +564,12 @@ export default function HomeScreen() {
         <View style={s.asanaCard}>
           <View style={s.asanaHeader}>
             <View style={s.asanaHeaderTop}>
-              <Text style={s.asanaTitle}>Asana of the Day</Text>
+              <Text style={s.asanaTitle}>{t('home.asanaOfTheDay')}</Text>
               <View style={s.asanaSeriesBadge}>
                 <Text style={s.asanaSeriesText}>{asana.series}</Text>
               </View>
             </View>
-            <Text style={s.asanaHint}>Focus on this posture during today's practice</Text>
+            <Text style={s.asanaHint}>{t('home.asanaFocus')}</Text>
           </View>
 
           {/* Asana image */}
@@ -590,7 +595,7 @@ export default function HomeScreen() {
 
             {/* Key tips */}
             <View style={s.asanaTips}>
-              <Text style={s.asanaTipsTitle}>Key tips</Text>
+              <Text style={s.asanaTipsTitle}>{t('home.keyTips')}</Text>
               <Text style={s.asanaTipsBody}>{asana.tips}</Text>
             </View>
 

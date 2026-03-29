@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { spacing, radius, typography } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -27,6 +28,7 @@ const POPULAR_TAGS = [
 ];
 
 export default function NewPostScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user, addUserPost } = useAppStore();
 
@@ -39,7 +41,7 @@ export default function NewPostScreen() {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission needed', 'We need access to your photos to add an image.');
+      Alert.alert(t('newPost.permissionPhotos'));
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -56,7 +58,7 @@ export default function NewPostScreen() {
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission needed', 'We need camera access to take a photo.');
+      Alert.alert(t('newPost.permissionCamera'));
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
@@ -77,7 +79,7 @@ export default function NewPostScreen() {
 
   const handlePost = async () => {
     if (!caption.trim() && !imageUri) {
-      Alert.alert('Empty post', 'Write something or add a photo.');
+      Alert.alert(t('newPost.emptyPost'), t('newPost.emptyPostMsg'));
       return;
     }
     setPosting(true);
@@ -107,7 +109,7 @@ export default function NewPostScreen() {
         <TouchableOpacity onPress={() => router.back()} style={s.backBtn} hitSlop={12}>
           <Ionicons name="chevron-back" size={22} color={warm.ink} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Share</Text>
+        <Text style={s.headerTitle}>{t('newPost.share')}</Text>
         <TouchableOpacity
           onPress={handlePost}
           disabled={!canPost || posting}
@@ -115,7 +117,7 @@ export default function NewPostScreen() {
           activeOpacity={0.8}
         >
           <Text style={[s.postBtnText, (!canPost || posting) && s.postBtnTextDisabled]}>
-            {posting ? 'Postingâ¦' : 'Post'}
+            {posting ? t('newPost.posting') : t('newPost.post')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -143,14 +145,14 @@ export default function NewPostScreen() {
               )}
               <View>
                 <Text style={s.userName}>{user?.name ?? 'Practitioner'}</Text>
-                <Text style={s.userHint}>What's on your mat today?</Text>
+                <Text style={s.userHint}>{t('newPost.whatsOnYourMat')}</Text>
               </View>
             </View>
 
             {/* Caption */}
             <TextInput
               style={s.captionInput}
-              placeholder="Share your practice, thoughts, or a momentâ¦"
+              placeholder={t('newPost.sharePlaceholder')}
               placeholderTextColor={warm.mutedLight}
               multiline
               value={caption}
@@ -170,20 +172,20 @@ export default function NewPostScreen() {
           </View>
 
           {/* ââ Attachments ââ */}
-          <Text style={s.sectionLabel}>Add to your post</Text>
+          <Text style={s.sectionLabel}>{t('newPost.addToPost')}</Text>
           <View style={s.attachRow}>
             <TouchableOpacity style={s.attachBtn} onPress={pickImage} activeOpacity={0.7}>
               <View style={[s.attachIcon, { backgroundColor: warm.sageBg }]}>
                 <Ionicons name="image-outline" size={20} color={warm.sage} />
               </View>
-              <Text style={s.attachText}>Gallery</Text>
+              <Text style={s.attachText}>{t('newPost.gallery')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={s.attachBtn} onPress={takePhoto} activeOpacity={0.7}>
               <View style={[s.attachIcon, { backgroundColor: warm.orangeLight }]}>
                 <Ionicons name="camera-outline" size={20} color={warm.orange} />
               </View>
-              <Text style={s.attachText}>Camera</Text>
+              <Text style={s.attachText}>{t('newPost.camera')}</Text>
             </TouchableOpacity>
 
             <View style={s.attachBtn}>
@@ -192,7 +194,7 @@ export default function NewPostScreen() {
               </View>
               <TextInput
                 style={s.locationInline}
-                placeholder="Location"
+                placeholder={t('newPost.location')}
                 placeholderTextColor={warm.mutedLight}
                 value={location}
                 onChangeText={setLocation}
@@ -201,7 +203,7 @@ export default function NewPostScreen() {
           </View>
 
           {/* ââ Tags ââ */}
-          <Text style={s.sectionLabel}>Tags</Text>
+          <Text style={s.sectionLabel}>{t('newPost.popularTags')}</Text>
           <View style={s.tagsWrap}>
             {POPULAR_TAGS.map((tag) => {
               const active = selectedTags.includes(tag);

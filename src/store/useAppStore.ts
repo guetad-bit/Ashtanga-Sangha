@@ -49,6 +49,7 @@ interface AppState {
   isLogModalOpen: boolean;
   isPracticing: boolean;
   practicingStartedAt: string | null;
+  language: 'en' | 'he';
 
   // Actions
   setOnboarded: (v: boolean) => void;
@@ -62,6 +63,7 @@ interface AppState {
   setActiveTab: (tab: AppState['activeTab']) => void;
   setLogModalOpen: (v: boolean) => void;
   setIsPracticing: (v: boolean) => void;
+  setLanguage: (lang: 'en' | 'he') => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -75,6 +77,7 @@ export const useAppStore = create<AppState>((set) => ({
   isLogModalOpen: false,
   isPracticing: false,
   practicingStartedAt: null,
+  language: 'en',
 
   setOnboarded: (v) => set({ isOnboarded: v }),
 
@@ -113,4 +116,6 @@ export const useAppStore = create<AppState>((set) => ({
     isPracticing: v,
     practicingStartedAt: v ? new Date().toISOString() : null,
   }),
+
+  setLanguage: (lang) => set({ language: lang }),
 }));
