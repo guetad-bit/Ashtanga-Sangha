@@ -10,7 +10,7 @@ const he = {
 
   // ── AppHeader ──
   header: {
-    brand: 'אשטנגה סנגהה',
+    brand: 'Ashtanga Sangha',
     myProfile: 'הפרופיל שלי',
     signOut: 'התנתקות',
   },
@@ -22,8 +22,8 @@ const he = {
     onTheMat: 'אני על המזרן!',
     justStarted: 'רק התחלתי',
     minIn: '{{min}} דקות',
-    doneLogIt: 'סיימתי — לרשום',
-    startPractice: 'התחלת תרגול',
+    doneLogIt: "I'M DONE — LOG IT",
+    startPractice: 'START YOUR PRACTICE',
     thisWeek: 'השבוע',
     practices: 'תרגולים',
     goalReached: 'היעד הושג!',
@@ -104,7 +104,7 @@ const he = {
     nameRequired: 'נדרש שם',
     nameRequiredMsg: 'נא להזין שם.',
     error: 'שגיאה',
-    version: 'אשטנגה סנגהה v1.0',
+    version: 'Ashtanga Sangha v1.0',
     profilePhoto: 'תמונת פרופיל',
     chooseSource: 'בחר מקור תמונה',
     camera: 'מצלמה',
