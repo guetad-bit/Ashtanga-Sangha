@@ -212,6 +212,13 @@ const en = {
     hoursAgo: '{{count}}h',
     yesterday: 'Yesterday',
     daysAgo: '{{count}}d',
+    edit: 'Edit',
+    editPost: 'Edit Post',
+    delete: 'Delete',
+    deleteTitle: 'Delete Post',
+    deleteConfirm: 'Are you sure you want to delete this post?',
+    cancel: 'Cancel',
+    save: 'Save',
   },
 
   // ── Friend Row ──

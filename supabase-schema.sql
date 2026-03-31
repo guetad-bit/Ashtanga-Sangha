@@ -82,6 +82,7 @@ create table posts (
 alter table posts enable row level security;
 create policy "Posts are public" on posts for select using (true);
 create policy "Users can create posts" on posts for insert with check (auth.uid() = user_id);
+create policy "Users can update own posts" on posts for update using (auth.uid() = user_id);
 create policy "Users can delete own posts" on posts for delete using (auth.uid() = user_id);
 
 -- ── Social: likes ─────────────────────────────────────────────────────────────

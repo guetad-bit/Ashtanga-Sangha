@@ -209,6 +209,13 @@ const he = {
     hoursAgo: 'לפני {{count}} שע׳',
     yesterday: 'אתמול',
     daysAgo: 'לפני {{count}} ימים',
+    edit: 'עריכה',
+    editPost: 'עריכת פוסט',
+    delete: 'מחיקה',
+    deleteTitle: 'מחיקת פוסט',
+    deleteConfirm: 'בטוח שאתה רוצה למחוק את הפוסט?',
+    cancel: 'ביטול',
+    save: 'שמירה',
   },
 
   // ── Friend Row ──

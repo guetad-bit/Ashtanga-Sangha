@@ -11,7 +11,7 @@ import { useRouter } from 'expo-router';
 import { useAppStore } from '@/store/useAppStore';
 import PostCard from '@/components/community/PostCard';
 import AppHeader from '@/components/AppHeader';
-import { getPracticingNow, getFeed, supabase } from '@/lib/supabase';
+import { getPracticingNow, getFeed, deletePost, supabase } from '@/lib/supabase';
 
 /* ── Stone & Moss light palette ──────────────────────────────────────── */
 const moss = {
@@ -270,6 +270,7 @@ export default function CommunityScreen() {
               feedPosts.map((post) => (
                 <PostCard
                   key={post.id}
+                  postId={post.id}
                   userName={post.profiles?.name ?? 'Practitioner'}
                   userAvatar={post.profiles?.avatar_url ?? 'https://via.placeholder.com/120'}
                   imageUrl={post.image_url ?? undefined}
@@ -279,13 +280,23 @@ export default function CommunityScreen() {
                   isLiked={false}
                   createdAt={post.created_at}
                   tags={[]}
+                  isOwner={post.user_id === user?.id}
                   onUserPress={() => openProfile(post.profiles?.name ?? '')}
+                  onDelete={async (id) => {
+                    await deletePost(id);
+                    setFeedPosts((prev) => prev.filter((p) => p.id !== id));
+                  }}
+                  onEdit={async (id, newCaption) => {
+                    await supabase.from('posts').update({ caption: newCaption }).eq('id', id);
+                    setFeedPosts((prev) => prev.map((p) => p.id === id ? { ...p, caption: newCaption } : p));
+                  }}
                 />
               ))
             ) : userPosts.length > 0 ? (
               userPosts.map((post) => (
                 <PostCard
                   key={post.id}
+                  postId={post.id}
                   userName={post.userName}
                   userAvatar={post.userAvatar ?? 'https://via.placeholder.com/120'}
                   imageUrl={post.imageUri}
@@ -295,7 +306,13 @@ export default function CommunityScreen() {
                   isLiked={post.isLiked}
                   createdAt={post.createdAt}
                   tags={post.tags}
+                  isOwner={true}
                   onUserPress={() => openProfile(post.userName)}
+                  onDelete={async (id) => {
+                    await deletePost(id);
+                    // Also remove from local store
+                    setFeedPosts((prev) => prev.filter((p) => p.id !== id));
+                  }}
                 />
               ))
             ) : (

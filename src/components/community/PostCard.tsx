@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, Image, TouchableOpacity, StyleSheet,
-  Dimensions,
+  Dimensions, Modal, Pressable, TextInput, Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,7 @@ import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 interface PostCardProps {
+  postId?: string;
   userName: string;
   userAvatar: string;
   imageUrl?: string;
@@ -20,10 +21,13 @@ interface PostCardProps {
   isLiked: boolean;
   createdAt: string;
   tags: string[];
+  isOwner?: boolean;
   onLike?: () => void;
   onComment?: () => void;
   onShare?: () => void;
   onUserPress?: () => void;
+  onDelete?: (postId: string) => void;
+  onEdit?: (postId: string, newCaption: string) => void;
 }
 
 function formatTimeAgo(isoDate: string, t: any): string {
@@ -39,6 +43,7 @@ function formatTimeAgo(isoDate: string, t: any): string {
 }
 
 export default function PostCard({
+  postId,
   userName,
   userAvatar,
   imageUrl,
@@ -48,14 +53,20 @@ export default function PostCard({
   isLiked,
   createdAt,
   tags,
+  isOwner,
   onLike,
   onComment,
   onShare,
   onUserPress,
+  onDelete,
+  onEdit,
 }: PostCardProps) {
   const { t } = useTranslation();
   const [liked, setLiked] = useState(isLiked);
   const [likes, setLikes] = useState(likesCount);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [editCaption, setEditCaption] = useState(caption);
 
   const handleLike = () => {
     setLiked(prev => !prev);
@@ -63,25 +74,96 @@ export default function PostCard({
     onLike?.();
   };
 
+  const handleDelete = () => {
+    setShowMenu(false);
+    Alert.alert(
+      t('postCard.deleteTitle'),
+      t('postCard.deleteConfirm'),
+      [
+        { text: t('postCard.cancel'), style: 'cancel' },
+        {
+          text: t('postCard.delete'),
+          style: 'destructive',
+          onPress: () => postId && onDelete?.(postId),
+        },
+      ],
+    );
+  };
+
+  const handleEditSave = () => {
+    if (postId && editCaption.trim()) {
+      onEdit?.(postId, editCaption.trim());
+    }
+    setShowEdit(false);
+  };
+
   return (
     <View style={s.card}>
       {/* ── Header ── */}
-      <TouchableOpacity style={s.header} onPress={onUserPress} activeOpacity={0.7}>
-        <View style={s.avatarWrap}>
-          <Image source={{ uri: userAvatar }} style={s.avatar} />
-          <View style={s.avatarRing} />
-        </View>
-        <View style={s.headerInfo}>
-          <Text style={s.userName}>{userName}</Text>
-          {location ? (
-            <View style={s.locationRow}>
-              <Ionicons name="location-outline" size={11} color="#9B8E7E" />
-              <Text style={s.location}>{location}</Text>
-            </View>
-          ) : null}
-        </View>
+      <View style={s.header}>
+        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', flex: 1, gap: 12 }} onPress={onUserPress} activeOpacity={0.7}>
+          <View style={s.avatarWrap}>
+            <Image source={{ uri: userAvatar }} style={s.avatar} />
+            <View style={s.avatarRing} />
+          </View>
+          <View style={s.headerInfo}>
+            <Text style={s.userName}>{userName}</Text>
+            {location ? (
+              <View style={s.locationRow}>
+                <Ionicons name="location-outline" size={11} color="#9B8E7E" />
+                <Text style={s.location}>{location}</Text>
+              </View>
+            ) : null}
+          </View>
+        </TouchableOpacity>
         <Text style={s.time}>{formatTimeAgo(createdAt, t)}</Text>
-      </TouchableOpacity>
+        {isOwner && (
+          <TouchableOpacity onPress={() => setShowMenu(true)} hitSlop={12} style={{ paddingLeft: 8 }}>
+            <Ionicons name="ellipsis-horizontal" size={20} color="#9B8E7E" />
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* ── Owner menu modal ── */}
+      <Modal visible={showMenu} transparent animationType="fade" onRequestClose={() => setShowMenu(false)}>
+        <Pressable style={s.menuBackdrop} onPress={() => setShowMenu(false)}>
+          <View style={s.menuBox}>
+            <TouchableOpacity style={s.menuItem} onPress={() => { setShowMenu(false); setEditCaption(caption); setShowEdit(true); }}>
+              <Ionicons name="create-outline" size={20} color="#3B3228" />
+              <Text style={s.menuText}>{t('postCard.edit')}</Text>
+            </TouchableOpacity>
+            <View style={s.menuDivider} />
+            <TouchableOpacity style={s.menuItem} onPress={handleDelete}>
+              <Ionicons name="trash-outline" size={20} color="#C45B3F" />
+              <Text style={[s.menuText, { color: '#C45B3F' }]}>{t('postCard.delete')}</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* ── Edit modal ── */}
+      <Modal visible={showEdit} transparent animationType="fade" onRequestClose={() => setShowEdit(false)}>
+        <Pressable style={s.menuBackdrop} onPress={() => setShowEdit(false)}>
+          <View style={s.editBox}>
+            <Text style={s.editTitle}>{t('postCard.editPost')}</Text>
+            <TextInput
+              style={s.editInput}
+              value={editCaption}
+              onChangeText={setEditCaption}
+              multiline
+              autoFocus
+            />
+            <View style={s.editBtns}>
+              <TouchableOpacity style={s.editCancelBtn} onPress={() => setShowEdit(false)}>
+                <Text style={s.editCancelText}>{t('postCard.cancel')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={s.editSaveBtn} onPress={handleEditSave}>
+                <Text style={s.editSaveText}>{t('postCard.save')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
 
       {/* ── Image ── */}
       {imageUrl && (
@@ -237,4 +319,49 @@ const s = StyleSheet.create({
     color: '#9B8E7E',
   },
   actionLabelActive: { color: '#8A9E78' },
+
+  // Owner menu
+  menuBackdrop: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.35)',
+    justifyContent: 'center', alignItems: 'center', padding: 24,
+  },
+  menuBox: {
+    backgroundColor: '#FFFFFF', borderRadius: 16, width: '100%', maxWidth: 280,
+    overflow: 'hidden',
+  },
+  menuItem: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    paddingHorizontal: 20, paddingVertical: 16,
+  },
+  menuText: {
+    fontFamily: 'DMSans_500Medium', fontSize: 16, color: '#3B3228',
+  },
+  menuDivider: { height: 1, backgroundColor: '#E8E0D4' },
+
+  // Edit modal
+  editBox: {
+    backgroundColor: '#FFFFFF', borderRadius: 20, width: '100%', maxWidth: 340,
+    padding: 20,
+  },
+  editTitle: {
+    fontFamily: 'DMSans_600SemiBold', fontSize: 18, color: '#3B3228',
+    marginBottom: 12,
+  },
+  editInput: {
+    fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#3B3228',
+    borderWidth: 1, borderColor: '#E8E0D4', borderRadius: 12,
+    padding: 12, minHeight: 100, textAlignVertical: 'top',
+    marginBottom: 16,
+  },
+  editBtns: { flexDirection: 'row', gap: 10, justifyContent: 'flex-end' },
+  editCancelBtn: {
+    paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10,
+    borderWidth: 1, borderColor: '#E8E0D4',
+  },
+  editCancelText: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: '#9B8E7E' },
+  editSaveBtn: {
+    paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10,
+    backgroundColor: '#8A9E78',
+  },
+  editSaveText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#FFFFFF' },
 });
