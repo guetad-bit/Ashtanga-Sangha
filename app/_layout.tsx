@@ -1,39 +1,57 @@
 // app/_layout.tsx
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useAuthListener } from '@/lib/useAuth';
 import { useAppStore } from '@/store/useAppStore';
+import { supabase } from '@/lib/supabase';
+import { colors } from '@/styles/tokens';
 import '@/i18n'; // Initialize i18n
 
 export default function RootLayout() {
+  const [isReady, setIsReady] = useState(false);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const segments = useSegments();
   const router = useRouter();
 
-  // Still listen for auth changes — if someone signs in later, we pick it up
+  // Start listening for auth changes
   useAuthListener();
 
-  // Auto-set a guest user so screens that reference user data don't crash
+  // Check if there's an existing session on app start
   useEffect(() => {
-    const { user, setUser, setOnboarded } = useAppStore.getState();
-    if (!user) {
-      setUser({
-        id: 'guest',
-        name: 'אורח',          // "Guest" in Hebrew
-        email: '',
-        series: 'primary',
-        level: 'regular',
-      });
-      setOnboarded(true);
-    }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      // Give the auth listener a moment to process
+      setTimeout(() => setIsReady(true), 500);
+    });
   }, []);
 
-  // If user somehow lands on the auth screens, redirect to main app
+  // Redirect based on auth state
   useEffect(() => {
+    if (!isReady) return;
+
     const inAuthGroup = segments[0] === '(auth)';
-    if (inAuthGroup) {
+    const inOAuthCallback = segments[0] === 'auth'; // /auth/callback route
+
+    // Skip redirects while processing OAuth callback
+    if (inOAuthCallback) return;
+
+    if (!isAuthenticated && !inAuthGroup) {
+      // Not signed in — redirect to login
+      router.replace('/(auth)/login');
+    } else if (isAuthenticated && inAuthGroup) {
+      // Signed in — redirect to main app
       router.replace('/(tabs)');
     }
-  }, [segments]);
+  }, [isAuthenticated, segments, isReady]);
+
+  // Show loading while checking session
+  if (!isReady) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" color={colors.blue} />
+      </View>
+    );
+  }
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -45,3 +63,12 @@ export default function RootLayout() {
     </Stack>
   );
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.page,
+  },
+});
