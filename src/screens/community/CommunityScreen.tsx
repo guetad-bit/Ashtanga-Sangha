@@ -247,37 +247,34 @@ export default function CommunityScreen() {
               <Text style={[s.sectionTitle, isRTL && { textAlign: 'right' }]}>{t('community.onTheMatNow')}</Text>
             </View>
             <View style={s.partnersCard}>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={s.partnersScroll}
-              >
-                {allPeople.length > 0 ? (
-                  <>
-                    {allPeople.slice(0, 4).map((p, i) => renderPartnerAvatar(p, i))}
-                    {allPeople.length > 4 && (
-                      <TouchableOpacity style={s.partnerItem} activeOpacity={0.7}>
-                        <View style={[s.partnerAvatarRing, { borderColor: moss.greenBadge }]}>
-                          <View style={[s.partnerAvatar, { backgroundColor: moss.greenBadge, alignItems: 'center', justifyContent: 'center' }]}>
-                            <Text style={{ color: moss.white, fontFamily: 'DMSans_600SemiBold', fontSize: 12 }}>More</Text>
-                          </View>
+              {allPeople.length > 0 ? (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={s.partnersScroll}
+                >
+                  {allPeople.slice(0, 4).map((p, i) => renderPartnerAvatar(p, i))}
+                  {allPeople.length > 4 && (
+                    <TouchableOpacity style={s.partnerItem} activeOpacity={0.7}>
+                      <View style={[s.partnerAvatarRing, { borderColor: moss.greenBadge }]}>
+                        <View style={[s.partnerAvatar, { backgroundColor: moss.greenBadge, alignItems: 'center', justifyContent: 'center' }]}>
+                          <Text style={{ color: moss.white, fontFamily: 'DMSans_600SemiBold', fontSize: 12 }}>More</Text>
                         </View>
-                        <Text style={s.partnerName}>{t('community.more')}</Text>
-                      </TouchableOpacity>
-                    )}
-                  </>
-                ) : (
-                  <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.xl, width: '100%' }}>
-                    <Text style={{ color: moss.muted, fontSize: 14, textAlign: isRTL ? 'right' : 'left' }}>{t('community.noPractitioners')}</Text>
-                  </View>
-                )}
-                {/* Arrow indicator */}
-                {allPeople.length > 3 && (
-                  <View style={s.arrowWrap}>
-                    <Ionicons name="chevron-forward" size={20} color={moss.mutedLight} />
-                  </View>
-                )}
-              </ScrollView>
+                      </View>
+                      <Text style={s.partnerName}>{t('community.more')}</Text>
+                    </TouchableOpacity>
+                  )}
+                  {allPeople.length > 3 && (
+                    <View style={s.arrowWrap}>
+                      <Ionicons name="chevron-forward" size={20} color={moss.mutedLight} />
+                    </View>
+                  )}
+                </ScrollView>
+              ) : (
+                <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.xl }}>
+                  <Text style={{ color: moss.muted, fontSize: 14, textAlign: isRTL ? 'right' : 'left' }}>{t('community.noPractitioners')}</Text>
+                </View>
+              )}
             </View>
 
             {/* Sangha Feed */}
