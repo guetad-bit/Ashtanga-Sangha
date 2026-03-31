@@ -245,8 +245,8 @@ export default function CommunityScreen() {
                     )}
                   </>
                 ) : (
-                  <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.xl }}>
-                    <Text style={{ color: moss.muted, fontSize: 14 }}>{t('community.noPractitioners')}</Text>
+                  <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.xl, width: '100%' }}>
+                    <Text style={{ color: moss.muted, fontSize: 14, textAlign: isRTL ? 'right' : 'left' }}>{t('community.noPractitioners')}</Text>
                   </View>
                 )}
                 {/* Arrow indicator */}
