@@ -33,6 +33,7 @@ const en = {
     viewAll: 'View all →',
     sanghaFeed: 'Sangha Feed',
     seeAllCommunity: 'See all in Community →',
+    noPostsYet: 'No posts yet — be the first to share!',
     asanaOfTheDay: 'Asana of the Day',
     asanaFocus: 'Focus on this posture during today\'s practice',
     keyTips: 'Key tips',

@@ -119,6 +119,18 @@ const FAKE_USERS: {
   feedCaption: string; feedImage: string; feedTime: string; feedLikes: number; feedComments: number;
 }[] = [];
 
+// Time-ago helper
+function getTimeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+
 // Week day checkmarks
 const WEEK_DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
@@ -481,33 +493,47 @@ export default function HomeScreen() {
 
         {/* ═══ 4. SANGHA FEED ═══ */}
         <View style={s.feedSection}>
-          {FAKE_USERS.slice(0, 2).map((u) => (
-            <View key={u.id} style={s.feedCard}>
-              <View style={s.feedCardInner}>
-                <View style={s.feedCardLeft}>
-                  <TouchableOpacity style={s.feedUserRow} activeOpacity={0.7} onPress={() => openProfile(u.name)}>
-                    <Image source={{ uri: u.avatarUrl }} style={s.feedAvatar} />
-                    <View>
-                      <Text style={s.feedUserName}>{u.name}</Text>
-                      <Text style={s.feedTimeAgo}>{u.feedTime}</Text>
+          {feedPosts.slice(0, 3).map((post) => {
+            const authorName = post.profiles?.name ?? 'Practitioner';
+            const authorAvatar = post.profiles?.avatar_url;
+            const timeAgo = getTimeAgo(post.created_at);
+            return (
+              <View key={post.id} style={s.feedCard}>
+                <View style={s.feedCardInner}>
+                  <View style={s.feedCardLeft}>
+                    <View style={s.feedUserRow}>
+                      {authorAvatar ? (
+                        <Image source={{ uri: authorAvatar }} style={s.feedAvatar} />
+                      ) : (
+                        <View style={[s.feedAvatar, { backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center' }]}>
+                          <Text style={{ fontSize: 16, color: '#fff', fontWeight: '600' }}>{authorName.charAt(0)}</Text>
+                        </View>
+                      )}
+                      <View>
+                        <Text style={s.feedUserName}>{authorName}</Text>
+                        <Text style={s.feedTimeAgo}>{timeAgo}</Text>
+                      </View>
                     </View>
-                  </TouchableOpacity>
-                  <Text style={s.feedCaption}>{u.feedCaption}</Text>
-                  <View style={s.feedStats}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                      <Ionicons name="heart-outline" size={14} color={moss.amber} />
-                      <Text style={s.feedHeart}>{u.feedLikes}</Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                      <Ionicons name="chatbubble-outline" size={13} color={moss.muted} />
-                      <Text style={s.feedComment}>{u.feedComments}</Text>
+                    <Text style={s.feedCaption}>{post.caption}</Text>
+                    <View style={s.feedStats}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                        <Ionicons name="heart-outline" size={14} color={moss.amber} />
+                        <Text style={s.feedHeart}>{post.likes_count ?? 0}</Text>
+                      </View>
                     </View>
                   </View>
+                  {post.image_url && (
+                    <Image source={{ uri: post.image_url }} style={s.feedCardImage} />
+                  )}
                 </View>
-                <Image source={{ uri: u.feedImage }} style={s.feedCardImage} />
               </View>
-            </View>
-          ))}
+            );
+          })}
+          {feedPosts.length === 0 && (
+            <Text style={{ color: moss.muted, fontSize: 14, textAlign: 'center', paddingVertical: 20 }}>
+              {t('home.noPostsYet')}
+            </Text>
+          )}
           <TouchableOpacity onPress={() => router.push('/(tabs)/community')} activeOpacity={0.7}>
             <Text style={s.feedSeeAll}>{t('home.seeAllCommunity')}</Text>
           </TouchableOpacity>

@@ -33,6 +33,7 @@ const he = {
     viewAll: 'הכל →',
     sanghaFeed: 'פיד הסנגהה',
     seeAllCommunity: 'הכל בקהילה →',
+    noPostsYet: 'אין פוסטים עדיין — היו הראשונים לשתף!',
     asanaOfTheDay: 'התנוחה היומית',
     asanaFocus: 'התמקדו בתנוחה הזו במהלך התרגול של היום',
     keyTips: 'טיפים',
