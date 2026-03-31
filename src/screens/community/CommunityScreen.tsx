@@ -91,7 +91,7 @@ export default function CommunityScreen() {
   const { user, userPosts } = useAppStore();
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'he';
-  const [activeTab, setActiveTab] = useState<Tab>('latest');
+  const [activeTab, setActiveTab] = useState<Tab>('people');
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [livePractitioners, setLivePractitioners] = useState<PracticingUser[]>([]);
@@ -195,7 +195,7 @@ export default function CommunityScreen() {
 
       {/* ── Underline tabs ── */}
       <View style={s.tabRow}>
-        {(['latest', 'people'] as Tab[]).map((tab) => (
+        {(['people', 'latest'] as Tab[]).map((tab) => (
           <TouchableOpacity
             key={tab}
             style={[s.tab, activeTab === tab && s.tabActive]}
