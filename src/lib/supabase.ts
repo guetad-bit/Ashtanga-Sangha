@@ -323,10 +323,14 @@ export async function getFollowers(userId: string) {
 // ── Practicing status ────────────────────────────────────────────────────────
 
 export async function setPracticingNow(userId: string, practicing: boolean) {
-  return supabase.from('profiles').update({
-    practicing_now: practicing,
-    practicing_started_at: practicing ? new Date().toISOString() : null,
-  }).eq('id', userId);
+  // When starting: set both flags. When stopping: keep practicing_now true
+  // and keep practicing_started_at so user stays visible in "yogis on the mat today".
+  // The daily filter in getPracticingNow handles cleanup (yesterday's entries won't show).
+  const update: any = {
+    practicing_now: true,
+    ...(practicing ? { practicing_started_at: new Date().toISOString() } : {}),
+  };
+  return supabase.from('profiles').update(update).eq('id', userId);
 }
 
 export async function getPracticingNow() {

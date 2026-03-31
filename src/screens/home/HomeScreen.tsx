@@ -11,7 +11,7 @@ import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
 import { getWeeklyRhythm, calculateStreak } from '@/utils/practiceStreak';
 import { daysUntilNextMoonDay, isMoonDay } from '@/utils/moonDay';
-import { getPracticeLogs, getPracticingNow, getFeed, signOut, logPractice } from '@/lib/supabase';
+import { getPracticeLogs, getPracticingNow, setPracticingNow, getFeed, signOut, logPractice } from '@/lib/supabase';
 import AppLogo from '@/components/AppLogo';
 import AppHeader from '@/components/AppHeader';
 import { Ionicons } from '@expo/vector-icons';
@@ -232,9 +232,10 @@ export default function HomeScreen() {
   }, [isPracticing]);
 
   // ── Actions ──
-  const handlePracticeButton = () => {
+  const handlePracticeButton = async () => {
     if (practiceState === 'idle') {
       // Start practice → go on the mat
+      if (user) await setPracticingNow(user.id, true);
       setIsPracticing(true);
     } else if (practiceState === 'onMat') {
       // Finish practice → open log modal
