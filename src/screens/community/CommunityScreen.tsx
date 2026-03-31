@@ -11,7 +11,7 @@ import { useRouter } from 'expo-router';
 import { useAppStore } from '@/store/useAppStore';
 import PostCard from '@/components/community/PostCard';
 import AppHeader from '@/components/AppHeader';
-import { getPracticingNow, getFeed, deletePost, supabase } from '@/lib/supabase';
+import { getPracticingNow, getFeed, deletePost, followUser, unfollowUser, getFollowing, supabase } from '@/lib/supabase';
 
 /* ── Stone & Moss light palette ──────────────────────────────────────── */
 const moss = {
@@ -98,6 +98,27 @@ export default function CommunityScreen() {
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
   const [profileCard, setProfileCard] = useState<{ name: string; avatarUrl: string; series: string; streak: number; bio: string } | null>(null);
+  const [followingIds, setFollowingIds] = useState<Set<string>>(new Set());
+
+  // Load who the current user follows
+  const fetchFollowing = useCallback(async () => {
+    if (!user?.id) return;
+    const { data } = await getFollowing(user.id);
+    if (data) {
+      setFollowingIds(new Set(data.map((f: any) => f.following_id)));
+    }
+  }, [user?.id]);
+
+  const toggleFollow = useCallback(async (memberId: string) => {
+    if (!user?.id) return;
+    if (followingIds.has(memberId)) {
+      await unfollowUser(user.id, memberId);
+      setFollowingIds((prev) => { const next = new Set(prev); next.delete(memberId); return next; });
+    } else {
+      await followUser(user.id, memberId);
+      setFollowingIds((prev) => new Set(prev).add(memberId));
+    }
+  }, [user?.id, followingIds]);
 
   const openProfile = useCallback((name: string) => {
     const fakeUser = FAKE_USERS_FEED.find((u) => u.name === name);
@@ -130,6 +151,7 @@ export default function CommunityScreen() {
     fetchPracticing();
     fetchFeed();
     fetchMembers();
+    fetchFollowing();
   }, []);
 
   const onRefresh = useCallback(async () => {
@@ -373,8 +395,14 @@ export default function CommunityScreen() {
                       {m.series} {m.location ? `· ${m.location}` : ''}
                     </Text>
                   </View>
-                  <TouchableOpacity style={s.followBtn} activeOpacity={0.7}>
-                    <Text style={s.followText}>{t('community.follow')}</Text>
+                  <TouchableOpacity
+                    style={followingIds.has(m.id) ? s.followBtnActive : s.followBtn}
+                    activeOpacity={0.7}
+                    onPress={() => toggleFollow(m.id)}
+                  >
+                    <Text style={followingIds.has(m.id) ? s.followTextActive : s.followText}>
+                      {followingIds.has(m.id) ? t('community.following') : t('community.follow')}
+                    </Text>
                   </TouchableOpacity>
                 </TouchableOpacity>
               ))}
