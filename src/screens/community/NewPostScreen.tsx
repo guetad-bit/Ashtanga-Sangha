@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { spacing, radius, typography } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
-import { createPost } from '@/lib/supabase';
+import { createPost, uploadPostImage } from '@/lib/supabase';
 
 /* ââ Warm palette (matches Home / Community) ââ */
 const warm = {
@@ -85,11 +85,24 @@ export default function NewPostScreen() {
     }
     setPosting(true);
     try {
+      // Upload image to Supabase Storage first (if any)
+      let publicImageUrl: string | undefined;
+      if (imageUri) {
+        const { url, error: uploadErr } = await uploadPostImage(user?.id ?? '', imageUri);
+        if (uploadErr || !url) {
+          console.error('Image upload failed:', uploadErr);
+          Alert.alert('Error', 'Failed to upload image');
+          setPosting(false);
+          return;
+        }
+        publicImageUrl = url;
+      }
+
       // Save to Supabase
       const { error } = await createPost(
         user?.id ?? '',
         caption.trim(),
-        imageUri ?? undefined,
+        publicImageUrl,
         location.trim() || undefined,
       );
       if (error) {

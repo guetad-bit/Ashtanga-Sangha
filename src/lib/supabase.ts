@@ -354,6 +354,40 @@ export async function getRecentPractitioners(limit = 20) {
     .limit(limit);
 }
 
+// ── Post image upload ────────────────────────────────────────────────────────
+
+export async function uploadPostImage(userId: string, uri: string): Promise<{ url: string | null; error: any }> {
+  try {
+    const response = await fetch(uri);
+    const arrayBuffer = await response.arrayBuffer();
+
+    let fileExt = 'jpg';
+    const respType = response.headers.get('content-type');
+    if (respType?.includes('png')) fileExt = 'png';
+    else if (respType?.includes('webp')) fileExt = 'webp';
+    else if (uri.startsWith('data:image/png')) fileExt = 'png';
+    else if (uri.startsWith('data:image/webp')) fileExt = 'webp';
+    else if (!uri.startsWith('data:') && !uri.startsWith('blob:')) {
+      const ext = uri.split('.').pop()?.split('?')[0]?.toLowerCase();
+      if (ext && ['jpg', 'jpeg', 'png', 'webp', 'heic'].includes(ext)) fileExt = ext;
+    }
+
+    const filePath = `${userId}/${Date.now()}.${fileExt}`;
+    const contentType = `image/${fileExt === 'jpg' ? 'jpeg' : fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('post-images')
+      .upload(filePath, arrayBuffer, { contentType, upsert: false });
+
+    if (uploadError) return { url: null, error: uploadError };
+
+    const { data } = supabase.storage.from('post-images').getPublicUrl(filePath);
+    return { url: data.publicUrl, error: null };
+  } catch (e) {
+    return { url: null, error: e };
+  }
+}
+
 // ── Posts (enhanced) ─────────────────────────────────────────────────────────
 
 export async function createPost(userId: string, caption: string, imageUrl?: string, location?: string) {
