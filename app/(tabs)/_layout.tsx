@@ -9,7 +9,8 @@ import LogPracticeModal from '@/components/LogPracticeModal';
 import { useTranslation } from 'react-i18next';
 
 export default function TabLayout() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'he';
   return (
     <>
       <Tabs
@@ -17,7 +18,7 @@ export default function TabLayout() {
           headerShown: false,
           tabBarActiveTintColor: '#8A9E78',
           tabBarInactiveTintColor: '#C4B8A8',
-          tabBarStyle: styles.tabBar,
+          tabBarStyle: [styles.tabBar, isRTL && { flexDirection: 'row-reverse' }],
           tabBarLabelStyle: styles.tabLabel,
         }}
       >
