@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { spacing, radius, typography } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
+import { createPost } from '@/lib/supabase';
 
 /* ââ Warm palette (matches Home / Community) ââ */
 const warm = {
@@ -83,20 +84,39 @@ export default function NewPostScreen() {
       return;
     }
     setPosting(true);
-    addUserPost({
-      id: `up-${Date.now()}`,
-      userName: user?.name ?? 'Practitioner',
-      userAvatar: user?.avatarUrl ?? null,
-      imageUri: imageUri ?? undefined,
-      caption: caption.trim(),
-      location: location.trim() || undefined,
-      tags: selectedTags,
-      likesCount: 0,
-      isLiked: false,
-      createdAt: new Date().toISOString(),
-    });
+    try {
+      // Save to Supabase
+      const { error } = await createPost(
+        user?.id ?? '',
+        caption.trim(),
+        imageUri ?? undefined,
+        location.trim() || undefined,
+      );
+      if (error) {
+        console.error('Failed to save post:', error);
+        Alert.alert('Error', error.message ?? 'Failed to save post');
+        setPosting(false);
+        return;
+      }
+      // Also add to local store for immediate display
+      addUserPost({
+        id: `up-${Date.now()}`,
+        userName: user?.name ?? 'Practitioner',
+        userAvatar: user?.avatarUrl ?? null,
+        imageUri: imageUri ?? undefined,
+        caption: caption.trim(),
+        location: location.trim() || undefined,
+        tags: selectedTags,
+        likesCount: 0,
+        isLiked: false,
+        createdAt: new Date().toISOString(),
+      });
+      router.back();
+    } catch (e) {
+      console.error('Post error:', e);
+      Alert.alert('Error', 'Something went wrong');
+    }
     setPosting(false);
-    router.back();
   };
 
   const canPost = caption.trim().length > 0 || imageUri;
