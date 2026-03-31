@@ -1,25 +1,62 @@
 // app/(tabs)/_layout.tsx
 import React from 'react';
-import { Platform } from 'react-native';
+import { View, Text, TouchableOpacity, Platform, StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
-import { StyleSheet } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/styles/tokens';
 import LogPracticeModal from '@/components/LogPracticeModal';
 import { useTranslation } from 'react-i18next';
 
-export default function TabLayout() {
-  const { t, i18n } = useTranslation();
+function RTLTabBar({ state, descriptors, navigation }: any) {
+  const { i18n } = useTranslation();
   const isRTL = i18n.language === 'he';
+
+  // Filter out hidden tabs (href: null)
+  const visibleRoutes = state.routes.filter((_: any, i: number) => {
+    const options = descriptors[state.routes[i].key]?.options;
+    return options?.href !== null;
+  });
+
+  const orderedRoutes = isRTL ? [...visibleRoutes].reverse() : visibleRoutes;
+
+  return (
+    <View style={styles.tabBar}>
+      {orderedRoutes.map((route: any) => {
+        const { options } = descriptors[route.key];
+        const isFocused = state.index === state.routes.indexOf(route);
+        const color = isFocused ? '#8A9E78' : '#C4B8A8';
+
+        const onPress = () => {
+          const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(route.name);
+          }
+        };
+
+        return (
+          <TouchableOpacity
+            key={route.key}
+            onPress={onPress}
+            style={styles.tabItem}
+            activeOpacity={0.7}
+          >
+            {options.tabBarIcon?.({ color, focused: isFocused, size: 22 })}
+            <Text style={[styles.tabLabel, { color }]}>{options.title ?? route.name}</Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+}
+
+export default function TabLayout() {
+  const { t } = useTranslation();
   return (
     <>
       <Tabs
+        tabBar={(props) => <RTLTabBar {...props} />}
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: '#8A9E78',
-          tabBarInactiveTintColor: '#C4B8A8',
-          tabBarStyle: [styles.tabBar, isRTL && { flexDirection: 'row-reverse' }],
-          tabBarLabelStyle: styles.tabLabel,
         }}
       >
         <Tabs.Screen
@@ -79,11 +116,19 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
+    flexDirection: 'row',
     backgroundColor: '#FFFFFF',
     borderTopColor: '#E8E0D4',
     borderTopWidth: 1,
     paddingTop: 6,
     height: Platform.OS === 'web' ? 65 : 85,
+    paddingBottom: Platform.OS === 'web' ? 0 : 20,
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
   },
   tabLabel: {
     fontSize: 11,
