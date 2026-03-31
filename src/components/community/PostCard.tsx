@@ -65,6 +65,7 @@ export default function PostCard({
   const [liked, setLiked] = useState(isLiked);
   const [likes, setLikes] = useState(likesCount);
   const [showMenu, setShowMenu] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [editCaption, setEditCaption] = useState(caption);
 
@@ -76,18 +77,12 @@ export default function PostCard({
 
   const handleDelete = () => {
     setShowMenu(false);
-    Alert.alert(
-      t('postCard.deleteTitle'),
-      t('postCard.deleteConfirm'),
-      [
-        { text: t('postCard.cancel'), style: 'cancel' },
-        {
-          text: t('postCard.delete'),
-          style: 'destructive',
-          onPress: () => postId && onDelete?.(postId),
-        },
-      ],
-    );
+    setShowDelete(true);
+  };
+
+  const confirmDelete = () => {
+    setShowDelete(false);
+    if (postId) onDelete?.(postId);
   };
 
   const handleEditSave = () => {
@@ -159,6 +154,24 @@ export default function PostCard({
               </TouchableOpacity>
               <TouchableOpacity style={s.editSaveBtn} onPress={handleEditSave}>
                 <Text style={s.editSaveText}>{t('postCard.save')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* ── Delete confirmation modal ── */}
+      <Modal visible={showDelete} transparent animationType="fade" onRequestClose={() => setShowDelete(false)}>
+        <Pressable style={s.menuBackdrop} onPress={() => setShowDelete(false)}>
+          <View style={s.editBox}>
+            <Text style={s.editTitle}>{t('postCard.deleteTitle')}</Text>
+            <Text style={{ fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#5E5245', marginBottom: 20 }}>{t('postCard.deleteConfirm')}</Text>
+            <View style={s.editBtns}>
+              <TouchableOpacity style={s.editCancelBtn} onPress={() => setShowDelete(false)}>
+                <Text style={s.editCancelText}>{t('postCard.cancel')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[s.editSaveBtn, { backgroundColor: '#C45B3F' }]} onPress={confirmDelete}>
+                <Text style={s.editSaveText}>{t('postCard.delete')}</Text>
               </TouchableOpacity>
             </View>
           </View>
