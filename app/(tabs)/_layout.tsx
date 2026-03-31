@@ -7,15 +7,14 @@ import { colors } from '@/styles/tokens';
 import LogPracticeModal from '@/components/LogPracticeModal';
 import { useTranslation } from 'react-i18next';
 
+const HIDDEN_TABS = ['gatherings', 'profile'];
+
 function RTLTabBar({ state, descriptors, navigation }: any) {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === 'he';
 
-  // Filter out hidden tabs (href: null)
-  const visibleRoutes = state.routes.filter((_: any, i: number) => {
-    const options = descriptors[state.routes[i].key]?.options;
-    return options?.href !== null;
-  });
+  // Filter out hidden tabs by route name
+  const visibleRoutes = state.routes.filter((route: any) => !HIDDEN_TABS.includes(route.name));
 
   const orderedRoutes = isRTL ? [...visibleRoutes].reverse() : visibleRoutes;
 
