@@ -14,6 +14,9 @@ create table profiles (
   level text default 'regular',
   location text,
   practicing_since int,
+  practicing_now boolean default false,
+  practicing_started_at timestamptz,
+  teacher text,
   streak int default 0,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -50,6 +53,7 @@ create table practice_logs (
 
 alter table practice_logs enable row level security;
 create policy "Users can view own logs" on practice_logs for select using (auth.uid() = user_id);
+create policy "Community can see recent logs" on practice_logs for select using (true);
 create policy "Users can insert own logs" on practice_logs for insert with check (auth.uid() = user_id);
 
 -- ── Social: follows ───────────────────────────────────────────────────────────

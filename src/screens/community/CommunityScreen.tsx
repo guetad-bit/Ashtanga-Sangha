@@ -54,7 +54,7 @@ interface PracticingUser {
   series: string;
   level: string;
   streak: number;
-  practicing_since: string;
+  practicing_started_at: string;
   location?: string;
 }
 

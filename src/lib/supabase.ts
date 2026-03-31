@@ -325,7 +325,7 @@ export async function getFollowers(userId: string) {
 export async function setPracticingNow(userId: string, practicing: boolean) {
   return supabase.from('profiles').update({
     practicing_now: practicing,
-    practicing_since: practicing ? new Date().toISOString() : null,
+    practicing_started_at: practicing ? new Date().toISOString() : null,
   }).eq('id', userId);
 }
 
@@ -335,10 +335,10 @@ export async function getPracticingNow() {
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
   return supabase
     .from('profiles')
-    .select('id, name, avatar_url, series, level, streak, practicing_since')
+    .select('id, name, avatar_url, series, level, streak, practicing_started_at')
     .eq('practicing_now', true)
-    .gte('practicing_since', startOfDay)
-    .order('practicing_since', { ascending: false });
+    .gte('practicing_started_at', startOfDay)
+    .order('practicing_started_at', { ascending: false });
 }
 
 // ── Community: who's practicing ──────────────────────────────────────────────
