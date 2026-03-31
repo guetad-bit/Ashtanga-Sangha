@@ -58,7 +58,6 @@ export default function AppHeader() {
               )}
               <View style={{ flex: 1 }}>
                 <Text style={s.menuName}>{user?.name ?? 'Yogi'}</Text>
-                <Text style={s.menuEmail}>{user?.email ?? ''}</Text>
               </View>
             </View>
 
@@ -140,11 +139,10 @@ const s = StyleSheet.create({
   menuAvatar: { width: 46, height: 46, borderRadius: 23 },
   menuName: {
     fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 16,
-    lineHeight: 20,
+    fontSize: 20,
+    lineHeight: 26,
     color: colors.ink,
   },
-  menuEmail: { ...typography.bodyXs, color: colors.muted, marginTop: 1 },
   menuDivider: { height: 1, backgroundColor: '#F0EDE8' },
   menuItem: {
     flexDirection: 'row',
@@ -154,5 +152,5 @@ const s = StyleSheet.create({
     paddingVertical: spacing.md,
   },
   menuIcon: { fontSize: 18, width: 24, textAlign: 'center' },
-  menuItemText: { ...typography.bodyMd, color: colors.ink },
+  menuItemText: { fontFamily: 'DMSans_500Medium', fontSize: 16, lineHeight: 22, color: colors.ink },
 });
