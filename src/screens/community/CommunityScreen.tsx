@@ -91,7 +91,7 @@ export default function CommunityScreen() {
   const { user, userPosts } = useAppStore();
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'he';
-  const [activeTab, setActiveTab] = useState<Tab>('people');
+  const [activeTab, setActiveTab] = useState<Tab>('latest');
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [livePractitioners, setLivePractitioners] = useState<PracticingUser[]>([]);
