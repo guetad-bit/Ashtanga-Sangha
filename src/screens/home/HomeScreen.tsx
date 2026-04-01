@@ -188,7 +188,7 @@ export default function HomeScreen() {
   const rhythm = getWeeklyRhythm(practiceLogs);
   const streak = calculateStreak(practiceLogs);
   const practicesThisWeek = rhythm.filter((d) => d.status === 'done').length;
-  const weeklyGoal = 5;
+  const weeklyGoal = 6;
   const todaysAsana = getAsanaOfTheDay();
   const seriesColor = getSeriesColor(todaysAsana.series);
   const asana = {
