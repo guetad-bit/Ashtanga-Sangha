@@ -1,11 +1,11 @@
 // src/screens/home/HomeScreen.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, Pressable, Modal, TextInput,
   StyleSheet, Image, RefreshControl, ImageBackground, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
@@ -232,11 +232,11 @@ export default function HomeScreen() {
   }, [isPracticing]);
 
   // ── Actions ──
-  const handlePracticeButton = async () => {
+  const handlePracticeButton = () => {
     if (practiceState === 'idle') {
       // Start practice → go on the mat
-      if (user) await setPracticingNow(user.id, true);
       setIsPracticing(true);
+      if (user) setPracticingNow(user.id, true).catch(console.error);
     } else if (practiceState === 'onMat') {
       // Finish practice → open log modal
       const startedAt = useAppStore.getState().practicingStartedAt;
@@ -305,7 +305,12 @@ export default function HomeScreen() {
     }
   }, [practiceLogs]);
 
-  useEffect(() => { fetchLogs(); fetchPracticing(); fetchFeed(); }, [user?.id]);
+  // Refetch data every time screen gains focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchLogs(); fetchPracticing(); fetchFeed();
+    }, [user?.id])
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);

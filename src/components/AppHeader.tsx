@@ -47,7 +47,7 @@ export default function AppHeader() {
       {/* ── Dropdown menu modal ── */}
       <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
         <Pressable style={s.menuBackdrop} onPress={() => setMenuOpen(false)}>
-          <View style={s.menuContainer}>
+          <Pressable style={s.menuContainer} onPress={(e) => e.stopPropagation()}>
             {/* User info */}
             <View style={[s.menuHeader, isRTL && { flexDirection: 'row-reverse' }]}>
               {user?.avatarUrl ? (
@@ -81,7 +81,7 @@ export default function AppHeader() {
               <Ionicons name="log-out-outline" size={18} color="#C0392B" />
               <Text style={[s.menuItemText, { color: '#C0392B' }]}>{t('header.signOut')}</Text>
             </TouchableOpacity>
-          </View>
+          </Pressable>
         </Pressable>
       </Modal>
     </>

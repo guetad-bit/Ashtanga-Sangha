@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useAppStore } from '@/store/useAppStore';
 import PostCard from '@/components/community/PostCard';
 import AppHeader from '@/components/AppHeader';
@@ -147,12 +147,15 @@ export default function CommunityScreen() {
     if (data) setMembers(data as Member[]);
   }, [user?.id]);
 
-  useEffect(() => {
-    fetchPracticing();
-    fetchFeed();
-    fetchMembers();
-    fetchFollowing();
-  }, []);
+  // Refetch feed every time screen gains focus (e.g. returning from NewPostScreen)
+  useFocusEffect(
+    useCallback(() => {
+      fetchPracticing();
+      fetchFeed();
+      fetchMembers();
+      fetchFollowing();
+    }, [])
+  );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
