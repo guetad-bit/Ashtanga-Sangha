@@ -678,7 +678,7 @@ export default function HomeScreen() {
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
               <View style={s.logChipsRow}>
                 {(['strong', 'steady', 'challenging', 'low_energy', 'blissful'] as const).map((key) => {
-                  const emojis: Record<string, string> = { strong: '💪', steady: '🧘', challenging: '🔥', low_energy: '😴', blissful: '✨' };
+                  const emojis: Record<string, string> = { strong: '◉', steady: '○', challenging: '△', low_energy: '▽', blissful: '☼' };
                   return (
                     <TouchableOpacity
                       key={key}

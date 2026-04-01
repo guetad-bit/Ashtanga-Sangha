@@ -45,7 +45,7 @@ const SERIES_ICONS: Record<string, string> = {
 };
 
 const FEELING_EMOJIS: Record<string, string> = {
-  strong: '💪', steady: '🧘', challenging: '🔥', low_energy: '😴', blissful: '✨',
+  strong: '◉', steady: '○', challenging: '△', low_energy: '▽', blissful: '☼',
 };
 
 const getFeelingLabels = (t: any): Record<string, string> => ({
