@@ -1,7 +1,7 @@
 // src/screens/shalas/ShalaFinderScreen.tsx â "My Log" redesigned
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, RefreshControl,
+  View, Text, StyleSheet, ScrollView, RefreshControl, TextInput,
   TouchableOpacity, Image, Modal, Pressable, Alert, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -186,6 +186,8 @@ export default function MyLogScreen() {
   const [editingLog, setEditingLog] = useState<PracticeLog | null>(null);
   const [editSeries, setEditSeries] = useState('');
   const [editDuration, setEditDuration] = useState(0);
+  const [editFeeling, setEditFeeling] = useState<string | null>(null);
+  const [editNotes, setEditNotes] = useState('');
   const [editSaving, setEditSaving] = useState(false);
 
   // Delete confirmation state
@@ -244,6 +246,8 @@ export default function MyLogScreen() {
     setEditingLog(log);
     setEditSeries(log.series);
     setEditDuration(log.durationMin);
+    setEditFeeling(log.feeling || null);
+    setEditNotes(log.notes || '');
   }, []);
 
   const handleEditSave = useCallback(async () => {
@@ -253,14 +257,19 @@ export default function MyLogScreen() {
       const { error } = await updatePracticeLog(editingLog.id, {
         series: editSeries,
         duration_min: editDuration,
+        feeling: editFeeling || undefined,
+        notes: editNotes.trim() || undefined,
       });
       if (!error) {
-        updateLogInStore(editingLog.id, { series: editSeries, durationMin: editDuration });
+        updateLogInStore(editingLog.id, {
+          series: editSeries, durationMin: editDuration,
+          feeling: editFeeling || undefined, notes: editNotes.trim() || undefined,
+        });
       }
     } catch (e) { console.log('edit error', e); }
     setEditSaving(false);
     setEditingLog(null);
-  }, [editingLog, editSeries, editDuration]);
+  }, [editingLog, editSeries, editDuration, editFeeling, editNotes]);
 
   const handleDeleteConfirm = useCallback(async () => {
     if (!deletingId) return;
@@ -460,7 +469,7 @@ export default function MyLogScreen() {
       {/* ââ Edit Modal ââ */}
       <Modal visible={!!editingLog} transparent animationType="slide" onRequestClose={() => setEditingLog(null)}>
         <Pressable style={st.modalOverlay} onPress={() => setEditingLog(null)}>
-          <Pressable style={st.editModalCard} onPress={() => {}}>
+          <Pressable style={[st.editModalCard, { maxHeight: '85%' }]} onPress={() => {}}>
             <View style={st.editModalHeader}>
               <Text style={st.editModalTitle}>{t('myLog.editPractice')}</Text>
               <TouchableOpacity onPress={() => setEditingLog(null)}>
@@ -513,6 +522,35 @@ export default function MyLogScreen() {
                 <Ionicons name="add" size={18} color={warm.ink} />
               </TouchableOpacity>
             </View>
+
+            {/* Feeling Picker */}
+            <Text style={st.editLabel}>{t('logModal.feelingLabel')}</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={st.editSeriesScroll} contentContainerStyle={st.editSeriesRow}>
+              {(['strong', 'steady', 'challenging', 'low_energy', 'blissful'] as const).map((key) => (
+                <TouchableOpacity
+                  key={key}
+                  style={[st.editSeriesChip, editFeeling === key && st.editSeriesChipActive]}
+                  onPress={() => setEditFeeling(editFeeling === key ? null : key)}
+                >
+                  <Text style={{ fontSize: 14 }}>{FEELING_EMOJIS[key]}</Text>
+                  <Text style={[st.editSeriesChipText, editFeeling === key && st.editSeriesChipTextActive]}>
+                    {FEELING_LABELS[key]}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            {/* Notes */}
+            <Text style={st.editLabel}>{t('logModal.notesLabel')}</Text>
+            <TextInput
+              style={st.editNotesInput}
+              placeholder={t('logModal.notesPlaceholder')}
+              placeholderTextColor={warm.mutedLight}
+              multiline
+              numberOfLines={3}
+              value={editNotes}
+              onChangeText={setEditNotes}
+            />
 
             {/* Save Button */}
             <TouchableOpacity
@@ -744,6 +782,12 @@ const st = StyleSheet.create({
     backgroundColor: warm.divider, alignItems: 'center', justifyContent: 'center',
   },
   customDurText: { fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: warm.ink, minWidth: 70, textAlign: 'center' },
+  editNotesInput: {
+    borderWidth: 1, borderColor: warm.divider, borderRadius: 12,
+    padding: 12, minHeight: 70, fontSize: 14, color: warm.ink,
+    fontFamily: 'DMSans_400Regular', textAlignVertical: 'top' as any,
+    backgroundColor: '#FAF8F5', marginBottom: 8,
+  },
   editSaveBtn: {
     backgroundColor: warm.orange, borderRadius: 14,
     paddingVertical: 14, alignItems: 'center', marginTop: 8,
