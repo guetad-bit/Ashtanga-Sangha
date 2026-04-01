@@ -88,7 +88,7 @@ const FAKE_USERS_FEED: {
 
 export default function CommunityScreen() {
   const router = useRouter();
-  const { user, userPosts } = useAppStore();
+  const { user, userPosts, isPracticing, practiceLogs } = useAppStore();
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'he';
   const [activeTab, setActiveTab] = useState<Tab>('latest');
@@ -163,13 +163,25 @@ export default function CommunityScreen() {
     setRefreshing(false);
   }, []);
 
-  // Combine real practitioners + fake demo users (same as homepage)
+  // Check if current user practiced today (from local state)
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const practicedToday = practiceLogs.some((log) => log.loggedAt?.slice(0, 10) === todayStr);
+
+  // Current user on mat (from local state — same logic as HomeScreen)
+  const meOnMat = (isPracticing || practicedToday) && user
+    ? [{ id: user.id, name: user.name, avatarUrl: user.avatarUrl ?? null, location: null, series: user.series ?? 'primary', streak: 0 }]
+    : [];
+
+  // Combine current user + real practitioners from DB + fake demo users
   const fakeOnMat = FAKE_USERS_FEED.map((u) => ({
     id: u.id, name: u.name, avatarUrl: u.avatarUrl,
     location: null, series: 'primary', streak: 0,
   }));
+  const dbPractitioners = livePractitioners
+    .filter((p) => p.id !== user?.id); // exclude current user (already in meOnMat)
   const allPeople = [
-    ...livePractitioners.map((p) => ({
+    ...meOnMat,
+    ...dbPractitioners.map((p) => ({
       id: p.id,
       name: p.name ?? 'Practitioner',
       avatarUrl: p.avatar_url,
