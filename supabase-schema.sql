@@ -77,6 +77,7 @@ create table posts (
   caption text,
   location text,
   likes_count int default 0,
+  comments_count int default 0,
   created_at timestamptz default now()
 );
 
@@ -114,6 +115,37 @@ $$ language plpgsql;
 create trigger on_like_change
   after insert or delete on likes
   for each row execute procedure update_likes_count();
+
+-- ── Social: comments ─────────────────────────────────────────────────────────
+create table comments (
+  id uuid default uuid_generate_v4() primary key,
+  post_id uuid references posts(id) on delete cascade not null,
+  user_id uuid references profiles(id) on delete cascade not null,
+  body text not null,
+  created_at timestamptz default now()
+);
+
+alter table comments enable row level security;
+create policy "Comments are public" on comments for select using (true);
+create policy "Users can create comments" on comments for insert with check (auth.uid() = user_id);
+create policy "Users can delete own comments" on comments for delete using (auth.uid() = user_id);
+
+-- Auto-update comments_count on posts
+create or replace function update_comments_count()
+returns trigger as $$
+begin
+  if (TG_OP = 'INSERT') then
+    update posts set comments_count = comments_count + 1 where id = new.post_id;
+  elsif (TG_OP = 'DELETE') then
+    update posts set comments_count = comments_count - 1 where id = old.post_id;
+  end if;
+  return null;
+end;
+$$ language plpgsql;
+
+create trigger on_comment_change
+  after insert or delete on comments
+  for each row execute procedure update_comments_count();
 
 -- ── Gatherings ────────────────────────────────────────────────────────────────
 create table gatherings (

@@ -263,12 +263,11 @@ export async function cancelBooking(gatheringId: string, userId: string) {
 // ── Social ────────────────────────────────────────────────────────────────────
 
 export async function getFeed(userId: string) {
-  // Posts from people you follow
   return supabase
     .from('posts')
     .select('*, profiles!posts_user_id_fkey(name, avatar_url)')
     .order('created_at', { ascending: false })
-    .limit(20);
+    .limit(30);
 }
 
 export async function likePost(postId: string, userId: string) {
@@ -288,6 +287,24 @@ export async function getUserLikes(userId: string) {
     .from('likes')
     .select('post_id')
     .eq('user_id', userId);
+}
+
+// ── Comments ────────────────────────────────────────────────────────────────
+
+export async function getComments(postId: string) {
+  return supabase
+    .from('comments')
+    .select('*, profiles!comments_user_id_fkey(name, avatar_url)')
+    .eq('post_id', postId)
+    .order('created_at', { ascending: true });
+}
+
+export async function addComment(postId: string, userId: string, body: string) {
+  return supabase.from('comments').insert({ post_id: postId, user_id: userId, body });
+}
+
+export async function deleteComment(commentId: string) {
+  return supabase.from('comments').delete().eq('id', commentId);
 }
 
 // ── Follows ──────────────────────────────────────────────────────────────────

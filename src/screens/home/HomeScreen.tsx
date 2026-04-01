@@ -510,7 +510,12 @@ export default function HomeScreen() {
             const authorAvatar = post.profiles?.avatar_url;
             const timeAgo = getTimeAgo(post.created_at);
             return (
-              <View key={post.id} style={s.feedCard}>
+              <TouchableOpacity
+                key={post.id}
+                style={s.feedCard}
+                activeOpacity={0.8}
+                onPress={() => router.push('/(tabs)/community')}
+              >
                 <View style={s.feedCardInner}>
                   <View style={s.feedCardLeft}>
                     <View style={s.feedUserRow}>
@@ -526,19 +531,25 @@ export default function HomeScreen() {
                         <Text style={s.feedTimeAgo}>{timeAgo}</Text>
                       </View>
                     </View>
-                    <Text style={s.feedCaption}>{post.caption}</Text>
+                    <Text style={s.feedCaption} numberOfLines={3}>{post.caption}</Text>
                     <View style={s.feedStats}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                        <Ionicons name="heart-outline" size={14} color={moss.amber} />
+                        <Ionicons name="heart" size={14} color="#E25858" />
                         <Text style={s.feedHeart}>{post.likes_count ?? 0}</Text>
                       </View>
+                      {(post as any).comments_count > 0 && (
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: 12 }}>
+                          <Ionicons name="chatbubble-outline" size={13} color={moss.muted} />
+                          <Text style={s.feedHeart}>{(post as any).comments_count}</Text>
+                        </View>
+                      )}
                     </View>
                   </View>
                   {post.image_url && (
                     <Image source={{ uri: post.image_url }} style={s.feedCardImage} />
                   )}
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           })}
           {feedPosts.length === 0 && (

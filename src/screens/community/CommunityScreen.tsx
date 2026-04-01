@@ -11,7 +11,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { useAppStore } from '@/store/useAppStore';
 import PostCard from '@/components/community/PostCard';
 import AppHeader from '@/components/AppHeader';
-import { getPracticingNow, getFeed, deletePost, followUser, unfollowUser, getFollowing, supabase } from '@/lib/supabase';
+import { getPracticingNow, getFeed, deletePost, followUser, unfollowUser, getFollowing, getUserLikes, supabase } from '@/lib/supabase';
 
 /* ── Stone & Moss light palette ──────────────────────────────────────── */
 const moss = {
@@ -65,6 +65,7 @@ interface FeedPost {
   image_url: string | null;
   location: string | null;
   likes_count: number;
+  comments_count?: number;
   created_at: string;
   profiles: { name: string; avatar_url: string | null } | null;
 }
@@ -99,6 +100,7 @@ export default function CommunityScreen() {
   const [members, setMembers] = useState<Member[]>([]);
   const [profileCard, setProfileCard] = useState<{ name: string; avatarUrl: string; series: string; streak: number; bio: string } | null>(null);
   const [followingIds, setFollowingIds] = useState<Set<string>>(new Set());
+  const [likedPostIds, setLikedPostIds] = useState<Set<string>>(new Set());
 
   // Load who the current user follows
   const fetchFollowing = useCallback(async () => {
@@ -137,6 +139,12 @@ export default function CommunityScreen() {
     if (data) setFeedPosts(data as FeedPost[]);
   }, [user?.id]);
 
+  const fetchLikes = useCallback(async () => {
+    if (!user?.id) return;
+    const { data } = await getUserLikes(user.id);
+    if (data) setLikedPostIds(new Set(data.map((l: any) => l.post_id)));
+  }, [user?.id]);
+
   const fetchMembers = useCallback(async () => {
     const { data } = await supabase
       .from('profiles')
@@ -154,12 +162,13 @@ export default function CommunityScreen() {
       fetchFeed();
       fetchMembers();
       fetchFollowing();
+      fetchLikes();
     }, [])
   );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([fetchPracticing(), fetchFeed(), fetchMembers()]);
+    await Promise.all([fetchPracticing(), fetchFeed(), fetchMembers(), fetchLikes()]);
     setRefreshing(false);
   }, []);
 
@@ -305,13 +314,15 @@ export default function CommunityScreen() {
                 <PostCard
                   key={post.id}
                   postId={post.id}
+                  userId={user?.id}
                   userName={post.profiles?.name ?? 'Practitioner'}
                   userAvatar={post.profiles?.avatar_url ?? 'https://via.placeholder.com/120'}
                   imageUrl={post.image_url ?? undefined}
                   caption={post.caption ?? ''}
                   location={post.location ?? undefined}
                   likesCount={post.likes_count ?? 0}
-                  isLiked={false}
+                  commentsCount={post.comments_count ?? 0}
+                  isLiked={likedPostIds.has(post.id)}
                   createdAt={post.created_at}
                   tags={[]}
                   isOwner={post.user_id === user?.id}
@@ -331,6 +342,7 @@ export default function CommunityScreen() {
                 <PostCard
                   key={post.id}
                   postId={post.id}
+                  userId={user?.id}
                   userName={post.userName}
                   userAvatar={post.userAvatar ?? 'https://via.placeholder.com/120'}
                   imageUrl={post.imageUri}
@@ -344,7 +356,6 @@ export default function CommunityScreen() {
                   onUserPress={() => openProfile(post.userName)}
                   onDelete={async (id) => {
                     await deletePost(id);
-                    // Also remove from local store
                     setFeedPosts((prev) => prev.filter((p) => p.id !== id));
                   }}
                 />
