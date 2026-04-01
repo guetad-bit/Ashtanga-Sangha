@@ -678,16 +678,19 @@ export default function HomeScreen() {
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
               <View style={s.logChipsRow}>
                 {(['strong', 'steady', 'challenging', 'low_energy', 'blissful'] as const).map((key) => {
-                  const emojis: Record<string, string> = { strong: '◉', steady: '○', challenging: '△', low_energy: '▽', blissful: '☼' };
+                  const feelingIcons: Record<string, keyof typeof Ionicons.glyphMap> = { strong: 'flash', steady: 'leaf', challenging: 'flame', low_energy: 'moon', blissful: 'sunny' };
+                  const feelingColors: Record<string, string> = { strong: '#E07A3A', steady: '#6B9E6B', challenging: '#D05555', low_energy: '#7B8EC2', blissful: '#E6A817' };
+                  const active = logFeeling === key;
+                  const fc = feelingColors[key];
                   return (
                     <TouchableOpacity
                       key={key}
-                      style={[s.logChip, logFeeling === key && s.logChipActive]}
-                      onPress={() => setLogFeeling(logFeeling === key ? null : key)}
+                      style={[s.logChip, active && { backgroundColor: fc, borderColor: fc }]}
+                      onPress={() => setLogFeeling(active ? null : key)}
                       activeOpacity={0.7}
                     >
-                      <Text style={{ fontSize: 14 }}>{emojis[key]}</Text>
-                      <Text style={[s.logChipText, logFeeling === key && s.logChipTextActive]}>
+                      <Ionicons name={feelingIcons[key]} size={18} color={active ? '#fff' : fc} />
+                      <Text style={[s.logChipText, active && s.logChipTextActive]}>
                         {t(`logModal.mood${key.charAt(0).toUpperCase() + key.slice(1).replace(/_([a-z])/g, (_, c) => c.toUpperCase())}`)}
                       </Text>
                     </TouchableOpacity>
@@ -1155,7 +1158,7 @@ const s = StyleSheet.create({
   },
   logDurAdjust: {
     flexDirection: 'row' as any, alignItems: 'center' as any,
-    justifyContent: 'center' as any, gap: 16, marginVertical: 12,
+    justifyContent: 'center' as any, gap: 16, marginVertical: 6,
   },
   logDurBtn: {
     width: 36, height: 36, borderRadius: 18, backgroundColor: '#EDE5D8',

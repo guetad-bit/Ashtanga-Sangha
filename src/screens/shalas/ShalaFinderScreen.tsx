@@ -44,8 +44,11 @@ const SERIES_ICONS: Record<string, string> = {
   advanced_b: 'star-outline', short: 'timer-outline',
 };
 
-const FEELING_EMOJIS: Record<string, string> = {
-  strong: '◉', steady: '○', challenging: '△', low_energy: '▽', blissful: '☼',
+const FEELING_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
+  strong: 'flash', steady: 'leaf', challenging: 'flame', low_energy: 'moon', blissful: 'sunny',
+};
+const FEELING_COLORS: Record<string, string> = {
+  strong: '#E07A3A', steady: '#6B9E6B', challenging: '#D05555', low_energy: '#7B8EC2', blissful: '#E6A817',
 };
 
 const getFeelingLabels = (t: any): Record<string, string> => ({
@@ -408,7 +411,7 @@ export default function MyLogScreen() {
                         {/* ââ Edit / Delete Actions ââ */}
                         {log.feeling && (
                           <View style={st.logDetailRow}>
-                            <Text style={{ fontSize: 16 }}>{FEELING_EMOJIS[log.feeling] || '🧘'}</Text>
+                            <Ionicons name={FEELING_ICONS[log.feeling] || 'leaf'} size={18} color={FEELING_COLORS[log.feeling] || warm.primary} />
                             <Text style={st.logDetailLabel}>{t('myLog.feeling')}</Text>
                             <Text style={st.logDetailValue}>{FEELING_LABELS[log.feeling] || log.feeling}</Text>
                           </View>
@@ -526,18 +529,22 @@ export default function MyLogScreen() {
             {/* Feeling Picker */}
             <Text style={st.editLabel}>{t('logModal.feelingLabel')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={st.editSeriesScroll} contentContainerStyle={st.editSeriesRow}>
-              {(['strong', 'steady', 'challenging', 'low_energy', 'blissful'] as const).map((key) => (
-                <TouchableOpacity
-                  key={key}
-                  style={[st.editSeriesChip, editFeeling === key && st.editSeriesChipActive]}
-                  onPress={() => setEditFeeling(editFeeling === key ? null : key)}
-                >
-                  <Text style={{ fontSize: 14 }}>{FEELING_EMOJIS[key]}</Text>
-                  <Text style={[st.editSeriesChipText, editFeeling === key && st.editSeriesChipTextActive]}>
-                    {FEELING_LABELS[key]}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              {(['strong', 'steady', 'challenging', 'low_energy', 'blissful'] as const).map((key) => {
+                const active = editFeeling === key;
+                const fc = FEELING_COLORS[key];
+                return (
+                  <TouchableOpacity
+                    key={key}
+                    style={[st.editSeriesChip, active && { backgroundColor: fc, borderColor: fc }]}
+                    onPress={() => setEditFeeling(active ? null : key)}
+                  >
+                    <Ionicons name={FEELING_ICONS[key]} size={18} color={active ? '#fff' : fc} />
+                    <Text style={[st.editSeriesChipText, active && st.editSeriesChipTextActive]}>
+                      {FEELING_LABELS[key]}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </ScrollView>
 
             {/* Notes */}
@@ -763,7 +770,7 @@ const st = StyleSheet.create({
   editSeriesChipActive: { backgroundColor: warm.orange, borderColor: warm.orange },
   editSeriesChipText: { fontSize: 13, color: warm.inkMid, fontWeight: '500' },
   editSeriesChipTextActive: { color: '#fff', fontWeight: '600' },
-  editDurationScroll: { marginBottom: 12 },
+  editDurationScroll: { marginBottom: 4 },
   editDurationRow: { gap: 8 },
   editDurationChip: {
     paddingHorizontal: 16, paddingVertical: 8,
@@ -775,7 +782,7 @@ const st = StyleSheet.create({
   editDurationChipTextActive: { color: '#fff' },
   customDurRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 20, marginVertical: 12,
+    gap: 20, marginVertical: 6,
   },
   durAdjustBtn: {
     width: 36, height: 36, borderRadius: 18,
