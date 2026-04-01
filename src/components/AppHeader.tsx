@@ -15,7 +15,8 @@ import { useTranslation } from 'react-i18next';
 export default function AppHeader() {
   const router = useRouter();
   const { user, clearUser } = useAppStore();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'he';
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
@@ -48,7 +49,7 @@ export default function AppHeader() {
         <Pressable style={s.menuBackdrop} onPress={() => setMenuOpen(false)}>
           <View style={s.menuContainer}>
             {/* User info */}
-            <View style={s.menuHeader}>
+            <View style={[s.menuHeader, isRTL && { flexDirection: 'row-reverse' }]}>
               {user?.avatarUrl ? (
                 <Image source={{ uri: user.avatarUrl }} style={s.menuAvatar} />
               ) : (
@@ -57,7 +58,7 @@ export default function AppHeader() {
                 </View>
               )}
               <View style={{ flex: 1 }}>
-                <Text style={s.menuName}>{user?.name ?? 'Yogi'}</Text>
+                <Text style={[s.menuName, isRTL && { textAlign: 'right' }]}>{user?.name ?? 'Yogi'}</Text>
               </View>
             </View>
 
@@ -65,7 +66,7 @@ export default function AppHeader() {
 
             {/* My Profile */}
             <TouchableOpacity
-              style={s.menuItem}
+              style={[s.menuItem, isRTL && { flexDirection: 'row-reverse' }]}
               onPress={() => { setMenuOpen(false); router.push('/(tabs)/profile'); }}
               activeOpacity={0.7}
             >
@@ -76,7 +77,7 @@ export default function AppHeader() {
             <View style={s.menuDivider} />
 
             {/* Sign Out */}
-            <TouchableOpacity style={s.menuItem} onPress={handleSignOut} activeOpacity={0.7}>
+            <TouchableOpacity style={[s.menuItem, isRTL && { flexDirection: 'row-reverse' }]} onPress={handleSignOut} activeOpacity={0.7}>
               <Ionicons name="log-out-outline" size={18} color="#C0392B" />
               <Text style={[s.menuItemText, { color: '#C0392B' }]}>{t('header.signOut')}</Text>
             </TouchableOpacity>
