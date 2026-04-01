@@ -44,6 +44,18 @@ const SERIES_ICONS: Record<string, string> = {
   advanced_b: 'star-outline', short: 'timer-outline',
 };
 
+const FEELING_EMOJIS: Record<string, string> = {
+  strong: '💪', steady: '🧘', challenging: '🔥', low_energy: '😴', blissful: '✨',
+};
+
+const getFeelingLabels = (t: any): Record<string, string> => ({
+  strong: t('logModal.moodStrong'),
+  steady: t('logModal.moodSteady'),
+  challenging: t('logModal.moodChallenging'),
+  low_energy: t('logModal.moodLowEnergy'),
+  blissful: t('logModal.moodBlissful'),
+});
+
 const SERIES_COLORS: Record<string, { bg: string; fg: string }> = {
   sun_sals:     { bg: '#FFF8E1', fg: '#F9A825' },
   primary:      { bg: warm.orangeLight, fg: warm.orange },
@@ -165,6 +177,7 @@ export default function MyLogScreen() {
   const router = useRouter();
   const { user, practiceLogs, setPracticeLogs, removePracticeLog, updatePracticeLog: updateLogInStore } = useAppStore();
   const SERIES_LABELS = getSeriesLabels(t);
+  const FEELING_LABELS = getFeelingLabels(t);
   const SERIES_OPTIONS = Object.entries(SERIES_LABELS).map(([key, label]) => ({ key, label }));
   const [refreshing, setRefreshing] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -210,6 +223,8 @@ export default function MyLogScreen() {
         data.map((row: any) => ({
           id: row.id, userId: row.user_id, loggedAt: row.logged_at,
           series: row.series, durationMin: row.duration_min,
+          feeling: row.feeling || undefined,
+          notes: row.notes || undefined,
         }))
       );
     }
@@ -382,7 +397,20 @@ export default function MyLogScreen() {
                           </Text>
                         </View>
                         {/* ââ Edit / Delete Actions ââ */}
-                        <View style={st.logActions}>
+                        {log.feeling && (
+                          <View style={st.logDetailRow}>
+                            <Text style={{ fontSize: 16 }}>{FEELING_EMOJIS[log.feeling] || '🧘'}</Text>
+                            <Text style={st.logDetailLabel}>{t('myLog.feeling')}</Text>
+                            <Text style={st.logDetailValue}>{FEELING_LABELS[log.feeling] || log.feeling}</Text>
+                          </View>
+                        )}
+                        {log.notes && (
+                          <View style={st.logNotesWrap}>
+                            <Ionicons name="document-text-outline" size={16} color={warm.muted} />
+                            <Text style={st.logNotesText}>{log.notes}</Text>
+                          </View>
+                        )}
+<View style={st.logActions}>
                           <TouchableOpacity style={st.editBtn} onPress={() => handleEditOpen(log)}>
                             <Ionicons name="pencil-outline" size={15} color={warm.blue} />
                             <Text style={st.editBtnText}>{t('myLog.edit')}</Text>
@@ -618,6 +646,17 @@ const st = StyleSheet.create({
   logDetailRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   logDetailLabel: { fontSize: 13, color: warm.muted, width: 70 },
   logDetailValue: { fontSize: 13, fontWeight: '600', color: warm.ink, flex: 1 },
+
+  /* Notes display */
+  logNotesWrap: {
+    flexDirection: 'row' as any, alignItems: 'flex-start' as any, gap: 8,
+    marginTop: 6, padding: 10, backgroundColor: '#FAF8F5',
+    borderRadius: 8, borderWidth: 1, borderColor: warm.divider,
+  },
+  logNotesText: {
+    fontSize: 13, color: warm.ink, flex: 1, lineHeight: 19,
+    fontFamily: 'DMSans_400Regular',
+  },
 
   /* Log action buttons */
   logActions: {

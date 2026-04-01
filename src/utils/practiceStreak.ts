@@ -8,6 +8,8 @@ export interface PracticeLog {
   loggedAt: string; // ISO date string
   series: string;
   durationMin: number;
+  feeling?: string;   // 'strong' | 'steady' | 'challenging' | 'low_energy' | 'blissful'
+  notes?: string;
 }
 
 /**

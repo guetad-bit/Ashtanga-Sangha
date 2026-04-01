@@ -177,12 +177,13 @@ export async function uploadAvatar(userId: string, uri: string) {
 
 // ── Practice logs ─────────────────────────────────────────────────────────────
 
-export async function logPractice(userId: string, series: string, durationMin: number, notes?: string) {
+export async function logPractice(userId: string, series: string, durationMin: number, notes?: string, feeling?: string) {
   return supabase.from('practice_logs').insert({
     user_id: userId,
     series,
     duration_min: durationMin,
-    notes,
+    notes: notes || null,
+    feeling: feeling || null,
     logged_at: new Date().toISOString(),
   });
 }
@@ -191,7 +192,7 @@ export async function deletePracticeLog(logId: string) {
   return supabase.from('practice_logs').delete().eq('id', logId);
 }
 
-export async function updatePracticeLog(logId: string, changes: { series?: string; duration_min?: number; notes?: string }) {
+export async function updatePracticeLog(logId: string, changes: { series?: string; duration_min?: number; notes?: string; feeling?: string }) {
   return supabase.from('practice_logs').update(changes).eq('id', logId);
 }
 

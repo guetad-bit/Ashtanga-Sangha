@@ -186,6 +186,8 @@ const he = {
     duration: 'משך',
     minutes: '{{count}} דקות',
     logged: 'תועד',
+    feeling: 'תחושה',
+    notes: 'הערות',
     edit: 'עריכה',
     delete: 'מחיקה',
     deletePractice: 'למחוק תרגול?',
@@ -245,9 +247,10 @@ const he = {
     howWasPractice: 'איך היה התרגול?',
     seriesLabel: 'סדרה',
     durationLabel: 'משך (דקות)',
+    feelingLabel: 'איך הרגשת היום?',
     notesLabel: 'הערות (אופציונלי)',
-    notesPlaceholder: 'איך הרגשת? משהו חדש?',
-    savePractice: 'Save Practice',
+    notesPlaceholder: 'משהו חדש? תובנה?',
+    savePractice: 'שמירת תרגול',
   },
 
   // ── Onboarding ──

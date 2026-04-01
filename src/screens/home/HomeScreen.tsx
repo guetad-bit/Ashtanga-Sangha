@@ -164,6 +164,7 @@ export default function HomeScreen() {
   const [logSeries, setLogSeries] = useState('primary'); // DB key, not display label
   const [logDuration, setLogDuration] = useState(75);
   const [logNotes, setLogNotes] = useState('');
+  const [logFeeling, setLogFeeling] = useState<string | null>(null);
   const [profileCard, setProfileCard] = useState<{ name: string; avatarUrl: string; series: string; streak: number; bio: string } | null>(null);
 
   // Localized week day labels
@@ -251,7 +252,7 @@ export default function HomeScreen() {
   const handleSaveLog = async () => {
     if (!user) return;
     const fullNotes = logNotes.trim();
-    const { error } = await logPractice(user.id, logSeries, logDuration, fullNotes);
+    const { error } = await logPractice(user.id, logSeries, logDuration, fullNotes || undefined, logFeeling || undefined);
     if (!error) {
       addPracticeLog({
         id: Date.now().toString(),
@@ -259,12 +260,15 @@ export default function HomeScreen() {
         loggedAt: new Date().toISOString(),
         series: logSeries,
         durationMin: logDuration,
+        feeling: logFeeling || undefined,
+        notes: fullNotes || undefined,
       });
       setLoggedSeries(logSeries);
     }
     setIsPracticing(false);
     setShowLogModal(false);
     setLogNotes('');
+    setLogFeeling(null);
   };
 
 
@@ -277,6 +281,8 @@ export default function HomeScreen() {
         data.map((row: any) => ({
           id: row.id, userId: row.user_id, loggedAt: row.logged_at,
           series: row.series, durationMin: row.duration_min,
+          feeling: row.feeling || undefined,
+          notes: row.notes || undefined,
         }))
       );
     }
@@ -642,6 +648,25 @@ export default function HomeScreen() {
                     activeOpacity={0.7}
                   >
                     <Text style={[s.logChipText, logDuration === d && s.logChipTextActive]}>{d}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+
+            {/* Feeling */}
+            <Text style={s.logLabel}>{t('logModal.feelingLabel')}</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
+              <View style={s.logChipsRow}>
+                {(['strong', 'steady', 'challenging', 'low_energy', 'blissful'] as const).map((key) => (
+                  <TouchableOpacity
+                    key={key}
+                    style={[s.logChip, logFeeling === key && s.logChipActive]}
+                    onPress={() => setLogFeeling(logFeeling === key ? null : key)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[s.logChipText, logFeeling === key && s.logChipTextActive]}>
+                      {t(`logModal.mood${key.charAt(0).toUpperCase() + key.slice(1).replace(/_([a-z])/g, (_, c) => c.toUpperCase())}`)}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>

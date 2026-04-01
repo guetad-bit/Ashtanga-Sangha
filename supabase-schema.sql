@@ -48,6 +48,7 @@ create table practice_logs (
   series text not null,
   duration_min int,
   notes text,
+  feeling text,
   logged_at timestamptz default now()
 );
 
