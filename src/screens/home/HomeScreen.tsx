@@ -614,12 +614,17 @@ export default function HomeScreen() {
       <Modal visible={showLogModal} transparent animationType="slide" onRequestClose={() => setShowLogModal(false)}>
         <Pressable style={s.logBackdrop} onPress={() => setShowLogModal(false)}>
           <Pressable style={s.logSheet} onPress={() => {}}>
-            <View style={s.logHandle} />
-            <Text style={s.logTitle}>{t('logModal.howWasPractice')}</Text>
+            {/* Header with title + close */}
+            <View style={s.logHeader}>
+              <Text style={s.logTitle}>{t('logModal.howWasPractice')}</Text>
+              <TouchableOpacity onPress={() => setShowLogModal(false)}>
+                <Ionicons name="close" size={22} color={moss.muted} />
+              </TouchableOpacity>
+            </View>
 
             {/* Series picker */}
             <Text style={s.logLabel}>{t('logModal.seriesLabel')}</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
               <View style={s.logChipsRow}>
                 {(['primary', 'intermediate', 'advanced_a', 'led_class', 'half_primary'] as const).map((key) => (
                   <TouchableOpacity
@@ -628,6 +633,11 @@ export default function HomeScreen() {
                     onPress={() => setLogSeries(key)}
                     activeOpacity={0.7}
                   >
+                    <Ionicons
+                      name={({primary:'fitness-outline',intermediate:'flash-outline',advanced_a:'rocket-outline',led_class:'people-outline',half_primary:'timer-outline'} as any)[key] || 'fitness-outline'}
+                      size={14}
+                      color={logSeries === key ? '#fff' : moss.inkMid}
+                    />
                     <Text style={[s.logChipText, logSeries === key && s.logChipTextActive]}>
                       {t(`series.${({advanced_a:'advanced_a',led_class:'ledClass',half_primary:'halfPrimary'} as Record<string,string>)[key] || key}`)}
                     </Text>
@@ -638,37 +648,51 @@ export default function HomeScreen() {
 
             {/* Duration */}
             <Text style={s.logLabel}>{t('logModal.durationLabel')}</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 4 }}>
               <View style={s.logChipsRow}>
                 {[30, 45, 60, 75, 90, 120].map((d) => (
                   <TouchableOpacity
                     key={d}
-                    style={[s.logChip, logDuration === d && s.logChipActive]}
+                    style={[s.logDurChip, logDuration === d && s.logDurChipActive]}
                     onPress={() => setLogDuration(d)}
                     activeOpacity={0.7}
                   >
-                    <Text style={[s.logChipText, logDuration === d && s.logChipTextActive]}>{d}</Text>
+                    <Text style={[s.logDurChipText, logDuration === d && s.logDurChipTextActive]}>{d}m</Text>
                   </TouchableOpacity>
                 ))}
               </View>
             </ScrollView>
+            {/* +/- fine-tune */}
+            <View style={s.logDurAdjust}>
+              <TouchableOpacity style={s.logDurBtn} onPress={() => setLogDuration(Math.max(5, logDuration - 5))}>
+                <Ionicons name="remove" size={18} color={moss.ink} />
+              </TouchableOpacity>
+              <Text style={s.logDurValue}>{logDuration} min</Text>
+              <TouchableOpacity style={s.logDurBtn} onPress={() => setLogDuration(logDuration + 5)}>
+                <Ionicons name="add" size={18} color={moss.ink} />
+              </TouchableOpacity>
+            </View>
 
             {/* Feeling */}
             <Text style={s.logLabel}>{t('logModal.feelingLabel')}</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
               <View style={s.logChipsRow}>
-                {(['strong', 'steady', 'challenging', 'low_energy', 'blissful'] as const).map((key) => (
-                  <TouchableOpacity
-                    key={key}
-                    style={[s.logChip, logFeeling === key && s.logChipActive]}
-                    onPress={() => setLogFeeling(logFeeling === key ? null : key)}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={[s.logChipText, logFeeling === key && s.logChipTextActive]}>
-                      {t(`logModal.mood${key.charAt(0).toUpperCase() + key.slice(1).replace(/_([a-z])/g, (_, c) => c.toUpperCase())}`)}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                {(['strong', 'steady', 'challenging', 'low_energy', 'blissful'] as const).map((key) => {
+                  const emojis: Record<string, string> = { strong: '💪', steady: '🧘', challenging: '🔥', low_energy: '😴', blissful: '✨' };
+                  return (
+                    <TouchableOpacity
+                      key={key}
+                      style={[s.logChip, logFeeling === key && s.logChipActive]}
+                      onPress={() => setLogFeeling(logFeeling === key ? null : key)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={{ fontSize: 14 }}>{emojis[key]}</Text>
+                      <Text style={[s.logChipText, logFeeling === key && s.logChipTextActive]}>
+                        {t(`logModal.mood${key.charAt(0).toUpperCase() + key.slice(1).replace(/_([a-z])/g, (_, c) => c.toUpperCase())}`)}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </ScrollView>
 
@@ -1079,54 +1103,77 @@ const s = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 12,
   },
 
-  /* ── Practice Log Modal ── */
+  /* ── Practice Log Modal (matches journal edit modal) ── */
   logBackdrop: {
-    flex: 1, backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'flex-end' as any,
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.35)',
+    justifyContent: 'center' as any, alignItems: 'center' as any,
   },
   logSheet: {
-    backgroundColor: moss.cardBg, borderTopLeftRadius: 24, borderTopRightRadius: 24,
-    paddingHorizontal: 24, paddingBottom: 40, paddingTop: 12,
-    maxHeight: '80%' as any,
+    backgroundColor: '#FFFFFF', borderRadius: 20, padding: 20,
+    width: '92%' as any, maxWidth: 400, maxHeight: '85%' as any,
   },
-  logHandle: {
-    width: 40, height: 4, borderRadius: 2, backgroundColor: moss.mutedLight,
-    alignSelf: 'center' as any, marginBottom: 16,
+  logHeader: {
+    flexDirection: 'row' as any, justifyContent: 'space-between' as any,
+    alignItems: 'center' as any, marginBottom: 20,
   },
   logTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: moss.ink,
-    marginBottom: 20, textAlign: 'center' as any,
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20, color: moss.ink,
   },
   logLabel: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.muted,
-    marginBottom: 8, textTransform: 'uppercase' as any, letterSpacing: 0.5,
+    fontSize: 13, fontWeight: '600' as any, color: moss.muted,
+    marginBottom: 8, marginTop: 4,
   },
   logChipsRow: {
     flexDirection: 'row' as any, gap: 8,
   },
   logChip: {
-    paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20,
-    backgroundColor: moss.beige, borderWidth: 1.5, borderColor: 'transparent',
+    flexDirection: 'row' as any, alignItems: 'center' as any, gap: 6,
+    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 24,
+    borderWidth: 1.5, borderColor: '#EDE5D8', backgroundColor: '#FAF8F5',
   },
   logChipActive: {
-    backgroundColor: moss.accentLight, borderColor: moss.accent,
+    backgroundColor: moss.accent, borderColor: moss.accent,
   },
   logChipText: {
     fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.inkMid,
   },
   logChipTextActive: {
-    color: moss.accent, fontWeight: '600' as any,
+    color: '#fff', fontWeight: '600' as any,
+  },
+  logDurChip: {
+    paddingHorizontal: 16, paddingVertical: 8, borderRadius: 24,
+    borderWidth: 1.5, borderColor: '#EDE5D8', backgroundColor: '#FAF8F5',
+  },
+  logDurChipActive: {
+    backgroundColor: moss.accent, borderColor: moss.accent,
+  },
+  logDurChipText: {
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.inkMid,
+  },
+  logDurChipTextActive: {
+    color: '#fff', fontWeight: '600' as any,
+  },
+  logDurAdjust: {
+    flexDirection: 'row' as any, alignItems: 'center' as any,
+    justifyContent: 'center' as any, gap: 16, marginVertical: 12,
+  },
+  logDurBtn: {
+    width: 36, height: 36, borderRadius: 18, backgroundColor: '#EDE5D8',
+    alignItems: 'center' as any, justifyContent: 'center' as any,
+  },
+  logDurValue: {
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 22, color: moss.ink,
+    minWidth: 70, textAlign: 'center' as any,
   },
   logInput: {
-    backgroundColor: moss.beige, borderRadius: 14, padding: 14,
-    fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.ink,
-    minHeight: 80, textAlignVertical: 'top' as any, marginBottom: 20,
+    borderWidth: 1, borderColor: '#EDE5D8', borderRadius: 12,
+    padding: 12, minHeight: 70, fontSize: 14, color: moss.ink,
+    fontFamily: 'DMSans_400Regular', textAlignVertical: 'top' as any,
+    backgroundColor: '#FAF8F5', marginBottom: 12,
   },
   logSaveBtn: {
-    backgroundColor: moss.accent, borderRadius: 28, paddingVertical: 16,
-    alignItems: 'center' as any,
-    shadowColor: 'rgba(138,158,120,0.4)',
-    shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 12,
+    backgroundColor: moss.accent, borderRadius: 14, paddingVertical: 14,
+    alignItems: 'center' as any, marginTop: 4,
   },
   logSaveBtnText: {
     fontFamily: 'DMSans_700Bold', fontSize: 17, color: '#fff',
