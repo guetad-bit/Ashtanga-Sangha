@@ -384,6 +384,33 @@ const en = {
         content: 'Nine drishtis are used throughout practice: Nasagrai (nose tip), Broomadhya (third eye), Nabi chakra (navel), Hastagrai (hand), Padayoragrai (toes), Parsva drishti (far right/left), Angusta ma dyai (thumbs), Urdhva drishti (upward). The gaze steadies the mind and directs prana. Where the eyes go, the mind follows.',
       },
     },
+    breathing: {
+      ujjayi: {
+        title: 'Ujjayi Pranayama',
+        subtitle: 'Victorious Breath',
+        description: 'The primary breathing technique used throughout Ashtanga practice. Slight constriction at the back of the throat creates an audible, oceanic sound. Breath is always through the nose, and the sound helps maintain focus and rhythm.',
+        howTo: 'Inhale and exhale through the nose. Slightly constrict the glottis (back of the throat) to create a soft hissing or oceanic sound. Keep the breath smooth, long, and even. The inhale and exhale should be equal in length.',
+      },
+      nadiShodhana: {
+        title: 'Nadi Shodhana',
+        subtitle: 'Alternate Nostril Breathing',
+        description: 'A purifying pranayama that balances the left (ida) and right (pingala) energy channels. Traditionally practiced after asana, before meditation.',
+        howTo: 'Close the right nostril with the right thumb. Inhale through the left nostril. Close the left nostril with the ring finger, release the right. Exhale through the right. Inhale through the right. Close the right, exhale through the left. This is one round.',
+      },
+      kapalabhati: {
+        title: 'Kapalabhati',
+        subtitle: 'Skull Shining Breath',
+        description: 'A kriya (cleansing technique) that purifies the nasal passages and energizes the mind. Quick, forceful exhales with passive inhales.',
+        howTo: 'Sit tall. Exhale sharply through the nose by contracting the lower belly. The inhale happens naturally as the belly releases. Start with 30 pumps, rest, then repeat 2-3 rounds. Speed increases with practice.',
+      },
+      kumbhaka: {
+        title: 'Kumbhaka',
+        subtitle: 'Breath Retention',
+        description: 'The practice of holding the breath after inhale (antara kumbhaka) or after exhale (bahya kumbhaka). Advanced pranayama traditionally taught only by a teacher.',
+        howTo: 'Only practice under guidance of a qualified teacher. Begin with short retentions after inhale. Never force or strain. Mula bandha and uddiyana bandha are engaged during retention.',
+      },
+      howToPractice: 'How to Practice',
+    },
     anatomy: {
       bandhas: {
         title: 'Bandhas — The Energy Locks',

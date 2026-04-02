@@ -507,6 +507,10 @@ const PHILOSOPHY_KEYS = [
   'yogaSutras', 'moonDays', 'mysoreStyle', 'drishti',
 ] as const;
 
+const BREATHING_KEYS = [
+  'ujjayi', 'nadiShodhana', 'kapalabhati', 'kumbhaka',
+] as const;
+
 const ANATOMY_KEYS = [
   'bandhas', 'spine', 'hips', 'shoulders', 'fascia',
 ] as const;
@@ -810,14 +814,24 @@ export default function LibraryScreen() {
         )}
 
         {/* ── PRANAYAMA ── */}
-        {activeCategory === 'breathing' && PRANAYAMA.map((item, i) => (
-          <View key={i} style={st.pranaCard}>
-            <Text style={st.pranaTitle}>{item.title}</Text>
-            <Text style={st.pranaSub}>{item.subtitle}</Text>
-            <Text style={st.pranaDesc}>{item.description}</Text>
+        {activeCategory === 'breathing' && BREATHING_KEYS.map((key) => (
+          <View key={key} style={st.pranaCard}>
+            <Text style={[st.pranaTitle, isRTL && { textAlign: 'right' }]}>
+              {t(`library.breathing.${key}.title`)}
+            </Text>
+            <Text style={[st.pranaSub, isRTL && { textAlign: 'right' }]}>
+              {t(`library.breathing.${key}.subtitle`)}
+            </Text>
+            <Text style={[st.pranaDesc, isRTL && { textAlign: 'right' }]}>
+              {t(`library.breathing.${key}.description`)}
+            </Text>
             <View style={st.pranaHow}>
-              <Text style={st.pranaHowLabel}>How to Practice</Text>
-              <Text style={st.pranaHowText}>{item.howTo}</Text>
+              <Text style={[st.pranaHowLabel, isRTL && { textAlign: 'right' }]}>
+                {t('library.breathing.howToPractice')}
+              </Text>
+              <Text style={[st.pranaHowText, isRTL && { textAlign: 'right' }]}>
+                {t(`library.breathing.${key}.howTo`)}
+              </Text>
             </View>
           </View>
         ))}
