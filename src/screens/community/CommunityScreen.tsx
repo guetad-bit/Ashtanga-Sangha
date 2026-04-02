@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useAppStore } from '@/store/useAppStore';
-import PostCard from '@/components/community/PostCard';
+
 import AppHeader from '@/components/AppHeader';
 import { getPracticingNow, getFeed, deletePost, followUser, unfollowUser, getFollowing, getUserLikes, supabase } from '@/lib/supabase';
 
@@ -336,56 +336,61 @@ export default function CommunityScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Real posts from Supabase */}
-            {feedPosts.map((post) => (
-              <PostCard
-                key={post.id}
-                postId={post.id}
-                userId={user?.id}
-                userName={post.profiles?.name ?? 'Practitioner'}
-                userAvatar={post.profiles?.avatar_url ?? 'https://via.placeholder.com/120'}
-                imageUrl={post.image_url ?? undefined}
-                caption={post.caption ?? ''}
-                location={post.location ?? undefined}
-                likesCount={post.likes_count ?? 0}
-                commentsCount={post.comments_count ?? 0}
-                isLiked={likedPostIds.has(post.id)}
-                createdAt={post.created_at}
-                tags={[]}
-                isOwner={post.user_id === user?.id}
-                onUserPress={() => openProfile(post.profiles?.name ?? '')}
-                onDelete={async (id) => {
-                  await deletePost(id);
-                  setFeedPosts((prev) => prev.filter((p) => p.id !== id));
-                }}
-                onEdit={async (id, newCaption) => {
-                  await supabase.from('posts').update({ caption: newCaption }).eq('id', id);
-                  setFeedPosts((prev) => prev.map((p) => p.id === id ? { ...p, caption: newCaption } : p));
-                }}
-              />
-            ))}
-            {/* Local posts */}
+            {/* Real posts from Supabase — lightweight cards */}
+            {feedPosts.map((post) => {
+              const pName = post.profiles?.name ?? 'Practitioner';
+              const pAvatar = post.profiles?.avatar_url ?? 'https://i.pravatar.cc/150';
+              return (
+                <View key={post.id} style={s.fakePostCard}>
+                  <View style={[s.fakePostHeader, isRTL && { flexDirection: 'row-reverse' }]}>
+                    <Image source={{ uri: pAvatar }} style={s.fakePostAvatar} />
+                    <View style={[s.fakePostHeaderInfo, isRTL && { alignItems: 'flex-end' }]}>
+                      <Text style={s.fakePostName}>{pName}</Text>
+                      <Text style={s.fakePostTime}>{fakeTimeAgo(post.created_at)}</Text>
+                    </View>
+                  </View>
+                  <Text style={[s.fakePostCaption, isRTL && { textAlign: 'right' }]}>
+                    {post.caption}
+                  </Text>
+                  {post.image_url ? (
+                    <Image source={{ uri: post.image_url }} style={s.fakePostImage} resizeMode="cover" />
+                  ) : null}
+                  <View style={[s.fakePostFooter, isRTL && { flexDirection: 'row-reverse' }]}>
+                    <View style={[s.fakePostStat, isRTL && { flexDirection: 'row-reverse' }]}>
+                      <Ionicons name="heart-outline" size={18} color="#C4956A" />
+                      <Text style={s.fakePostStatText}>{post.likes_count ?? 0}</Text>
+                    </View>
+                    <View style={[s.fakePostStat, isRTL && { flexDirection: 'row-reverse' }]}>
+                      <Ionicons name="chatbubble-outline" size={16} color="#7A6E60" />
+                      <Text style={s.fakePostStatText}>{post.comments_count ?? 0}</Text>
+                    </View>
+                  </View>
+                </View>
+              );
+            })}
+            {/* Local posts — lightweight cards */}
             {userPosts.map((post) => (
-              <PostCard
-                key={post.id}
-                postId={post.id}
-                userId={user?.id}
-                userName={post.userName}
-                userAvatar={post.userAvatar ?? 'https://via.placeholder.com/120'}
-                imageUrl={post.imageUri}
-                caption={post.caption}
-                location={post.location}
-                likesCount={post.likesCount}
-                isLiked={post.isLiked}
-                createdAt={post.createdAt}
-                tags={post.tags}
-                isOwner={true}
-                onUserPress={() => openProfile(post.userName)}
-                onDelete={async (id) => {
-                  await deletePost(id);
-                  setFeedPosts((prev) => prev.filter((p) => p.id !== id));
-                }}
-              />
+              <View key={post.id} style={s.fakePostCard}>
+                <View style={[s.fakePostHeader, isRTL && { flexDirection: 'row-reverse' }]}>
+                  <Image source={{ uri: post.userAvatar ?? 'https://i.pravatar.cc/150' }} style={s.fakePostAvatar} />
+                  <View style={[s.fakePostHeaderInfo, isRTL && { alignItems: 'flex-end' }]}>
+                    <Text style={s.fakePostName}>{post.userName}</Text>
+                    <Text style={s.fakePostTime}>{fakeTimeAgo(post.createdAt)}</Text>
+                  </View>
+                </View>
+                <Text style={[s.fakePostCaption, isRTL && { textAlign: 'right' }]}>
+                  {post.caption}
+                </Text>
+                {post.imageUri ? (
+                  <Image source={{ uri: post.imageUri }} style={s.fakePostImage} resizeMode="cover" />
+                ) : null}
+                <View style={[s.fakePostFooter, isRTL && { flexDirection: 'row-reverse' }]}>
+                  <View style={[s.fakePostStat, isRTL && { flexDirection: 'row-reverse' }]}>
+                    <Ionicons name="heart-outline" size={18} color="#C4956A" />
+                    <Text style={s.fakePostStatText}>{post.likesCount ?? 0}</Text>
+                  </View>
+                </View>
+              </View>
             ))}
             {/* Demo posts — always visible, lightweight cards */}
             {FAKE_POSTS_WITH_IMAGES.map((u) => (
