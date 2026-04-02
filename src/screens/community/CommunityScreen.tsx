@@ -322,77 +322,76 @@ export default function CommunityScreen() {
               </TouchableOpacity>
             </View>
 
-            {feedPosts.length > 0 ? (
-              feedPosts.map((post) => (
-                <PostCard
-                  key={post.id}
-                  postId={post.id}
-                  userId={user?.id}
-                  userName={post.profiles?.name ?? 'Practitioner'}
-                  userAvatar={post.profiles?.avatar_url ?? 'https://via.placeholder.com/120'}
-                  imageUrl={post.image_url ?? undefined}
-                  caption={post.caption ?? ''}
-                  location={post.location ?? undefined}
-                  likesCount={post.likes_count ?? 0}
-                  commentsCount={post.comments_count ?? 0}
-                  isLiked={likedPostIds.has(post.id)}
-                  createdAt={post.created_at}
-                  tags={[]}
-                  isOwner={post.user_id === user?.id}
-                  onUserPress={() => openProfile(post.profiles?.name ?? '')}
-                  onDelete={async (id) => {
-                    await deletePost(id);
-                    setFeedPosts((prev) => prev.filter((p) => p.id !== id));
-                  }}
-                  onEdit={async (id, newCaption) => {
-                    await supabase.from('posts').update({ caption: newCaption }).eq('id', id);
-                    setFeedPosts((prev) => prev.map((p) => p.id === id ? { ...p, caption: newCaption } : p));
-                  }}
-                />
-              ))
-            ) : userPosts.length > 0 ? (
-              userPosts.map((post) => (
-                <PostCard
-                  key={post.id}
-                  postId={post.id}
-                  userId={user?.id}
-                  userName={post.userName}
-                  userAvatar={post.userAvatar ?? 'https://via.placeholder.com/120'}
-                  imageUrl={post.imageUri}
-                  caption={post.caption}
-                  location={post.location}
-                  likesCount={post.likesCount}
-                  isLiked={post.isLiked}
-                  createdAt={post.createdAt}
-                  tags={post.tags}
-                  isOwner={true}
-                  onUserPress={() => openProfile(post.userName)}
-                  onDelete={async (id) => {
-                    await deletePost(id);
-                    setFeedPosts((prev) => prev.filter((p) => p.id !== id));
-                  }}
-                />
-              ))
-            ) : (
-              FAKE_USERS_FEED.map((u) => (
-                <PostCard
-                  key={u.id}
-                  postId={u.id}
-                  userId={u.id}
-                  userName={u.name}
-                  userAvatar={u.avatarUrl}
-                  imageUrl={u.feedImage || undefined}
-                  caption={u.feedCaption}
-                  likesCount={u.feedLikes}
-                  commentsCount={u.feedComments}
-                  isLiked={false}
-                  createdAt={u.feedTime}
-                  tags={[]}
-                  isOwner={false}
-                  onUserPress={() => openProfile(u.name)}
-                />
-              ))
-            )}
+            {/* Real posts from Supabase */}
+            {feedPosts.map((post) => (
+              <PostCard
+                key={post.id}
+                postId={post.id}
+                userId={user?.id}
+                userName={post.profiles?.name ?? 'Practitioner'}
+                userAvatar={post.profiles?.avatar_url ?? 'https://via.placeholder.com/120'}
+                imageUrl={post.image_url ?? undefined}
+                caption={post.caption ?? ''}
+                location={post.location ?? undefined}
+                likesCount={post.likes_count ?? 0}
+                commentsCount={post.comments_count ?? 0}
+                isLiked={likedPostIds.has(post.id)}
+                createdAt={post.created_at}
+                tags={[]}
+                isOwner={post.user_id === user?.id}
+                onUserPress={() => openProfile(post.profiles?.name ?? '')}
+                onDelete={async (id) => {
+                  await deletePost(id);
+                  setFeedPosts((prev) => prev.filter((p) => p.id !== id));
+                }}
+                onEdit={async (id, newCaption) => {
+                  await supabase.from('posts').update({ caption: newCaption }).eq('id', id);
+                  setFeedPosts((prev) => prev.map((p) => p.id === id ? { ...p, caption: newCaption } : p));
+                }}
+              />
+            ))}
+            {/* Local posts */}
+            {userPosts.map((post) => (
+              <PostCard
+                key={post.id}
+                postId={post.id}
+                userId={user?.id}
+                userName={post.userName}
+                userAvatar={post.userAvatar ?? 'https://via.placeholder.com/120'}
+                imageUrl={post.imageUri}
+                caption={post.caption}
+                location={post.location}
+                likesCount={post.likesCount}
+                isLiked={post.isLiked}
+                createdAt={post.createdAt}
+                tags={post.tags}
+                isOwner={true}
+                onUserPress={() => openProfile(post.userName)}
+                onDelete={async (id) => {
+                  await deletePost(id);
+                  setFeedPosts((prev) => prev.filter((p) => p.id !== id));
+                }}
+              />
+            ))}
+            {/* Demo posts — always visible */}
+            {FAKE_USERS_FEED.map((u) => (
+              <PostCard
+                key={u.id}
+                postId={u.id}
+                userId={u.id}
+                userName={u.name}
+                userAvatar={u.avatarUrl}
+                imageUrl={u.feedImage || undefined}
+                caption={u.feedCaption}
+                likesCount={u.feedLikes}
+                commentsCount={u.feedComments}
+                isLiked={false}
+                createdAt={u.feedTime}
+                tags={[]}
+                isOwner={false}
+                onUserPress={() => openProfile(u.name)}
+              />
+            ))}
           </>
         )}
 
