@@ -11,7 +11,7 @@ import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useAppStore } from '@/store/useAppStore';
 import { getWeeklyRhythm, calculateStreak } from '@/utils/practiceStreak';
 import { daysUntilNextMoonDay, isMoonDay } from '@/utils/moonDay';
-import { getPracticeLogs, getPracticingNow, setPracticingNow, getFeed, signOut, logPractice } from '@/lib/supabase';
+import { getPracticeLogs, getPracticingNow, setPracticingNow, getFeed, signOut, logPractice, supabase } from '@/lib/supabase';
 import AppLogo from '@/components/AppLogo';
 import AppHeader from '@/components/AppHeader';
 import { Ionicons } from '@expo/vector-icons';
@@ -180,6 +180,7 @@ export default function HomeScreen() {
   const [logNotes, setLogNotes] = useState('');
   const [logFeeling, setLogFeeling] = useState<string | null>(null);
   const [profileCard, setProfileCard] = useState<{ name: string; avatarUrl: string; series: string; streak: number; bio: string } | null>(null);
+  const [realMembers, setRealMembers] = useState<{ id: string; name: string; avatar_url: string | null; series: string; streak: number; bio: string | null }[]>([]);
 
   // Localized week day labels
   const WEEK_DAYS_I18N = t('home.dayLabels', { returnObjects: true }) as string[];
@@ -318,6 +319,16 @@ export default function HomeScreen() {
     if (data) setFeedPosts(data as FeedPost[]);
   };
 
+  const fetchMembers = async () => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, name, avatar_url, series, streak, bio')
+      .neq('id', user?.id ?? '')
+      .order('streak', { ascending: false })
+      .limit(20);
+    if (data) setRealMembers(data as any);
+  };
+
   useEffect(() => {
     const todayStr = new Date().toISOString().split('T')[0];
     const existing = practiceLogs.find(
@@ -334,13 +345,13 @@ export default function HomeScreen() {
   // Refetch data every time screen gains focus
   useFocusEffect(
     useCallback(() => {
-      fetchLogs(); fetchPracticing(); fetchFeed();
+      fetchLogs(); fetchPracticing(); fetchFeed(); fetchMembers();
     }, [user?.id])
   );
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await Promise.all([fetchLogs(), fetchPracticing(), fetchFeed()]);
+    await Promise.all([fetchLogs(), fetchPracticing(), fetchFeed(), fetchMembers()]);
     setRefreshing(false);
   };
 
@@ -501,6 +512,30 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[s.circleScroll, isRTL && { flexDirection: 'row-reverse' }]}>
+            {/* Real members from Supabase */}
+            {realMembers.map((rm) => (
+              <TouchableOpacity key={rm.id} style={s.circleMember} activeOpacity={0.7} onPress={() => setProfileCard({ name: rm.name, avatarUrl: rm.avatar_url ?? 'https://i.pravatar.cc/150', series: rm.series, streak: rm.streak, bio: rm.bio ?? '' })}>
+                <View style={s.circleMemberAvatarWrap}>
+                  <View style={[s.circleMemberRing, { borderColor: rm.streak > 30 ? moss.amber : moss.accent }]}>
+                    {rm.avatar_url ? (
+                      <Image source={{ uri: rm.avatar_url }} style={s.circleMemberAvatar} />
+                    ) : (
+                      <View style={[s.circleMemberAvatar, { backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center' }]}>
+                        <Text style={{ fontSize: 22, color: '#fff', fontWeight: '600' }}>{rm.name.charAt(0)}</Text>
+                      </View>
+                    )}
+                  </View>
+                  {rm.streak > 0 && (
+                    <View style={[s.circleBadge, { backgroundColor: '#FFF5EC' }]}>
+                      <Ionicons name="flame-outline" size={10} color={moss.amber} />
+                      <Text style={[s.circleBadgeText, { color: moss.amber }]}>{rm.streak}d</Text>
+                    </View>
+                  )}
+                </View>
+                <Text style={s.circleMemberName}>{rm.name.split(' ')[0]}</Text>
+              </TouchableOpacity>
+            ))}
+            {/* Fake demo users */}
             {FAKE_USERS.map((m) => {
               const bc = badgeColor(m.badge);
               return (
