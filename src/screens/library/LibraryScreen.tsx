@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
+import { useTranslation } from 'react-i18next';
 import AppHeader from '@/components/AppHeader';
 import { images as poseImages } from '@/data/asanaPoses';
 import { ImageSourcePropType } from 'react-native';
@@ -500,7 +501,16 @@ const pf = StyleSheet.create({
 
 // ── Component ────────────────────────────────────────────────────────────────
 
+// Philosophy keys for i18n lookup
+const PHILOSOPHY_KEYS = [
+  'eightLimbs', 'tristhana', 'vinyasa', 'bandhas', 'parampara',
+  'yogaSutras', 'moonDays', 'mysoreStyle', 'drishti',
+] as const;
+
 export default function LibraryScreen() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'he';
+
   const [activeCategory, setActiveCategory] = useState('asanas');
   const [selectedAsana, setSelectedAsana] = useState<Asana | null>(null);
   const [expandedPhilo, setExpandedPhilo] = useState<number | null>(null);
@@ -550,7 +560,7 @@ export default function LibraryScreen() {
           >
             <Ionicons name={cat.icon as any} size={15} color={colors.sage} />
             <Text style={[st.catLabel, activeCategory === cat.key && st.catLabelActive]}>
-              {cat.label}
+              {t(`library.categories.${cat.key}`, cat.label)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -730,22 +740,28 @@ export default function LibraryScreen() {
         ))}
 
         {/* ── PHILOSOPHY ── */}
-        {activeCategory === 'philosophy' && PHILOSOPHY.map((item, i) => (
+        {activeCategory === 'philosophy' && PHILOSOPHY_KEYS.map((key, i) => (
           <TouchableOpacity
-            key={i}
+            key={key}
             style={st.philoCard}
             onPress={() => setExpandedPhilo(expandedPhilo === i ? null : i)}
             activeOpacity={0.7}
           >
-            <View style={st.philoHeader}>
+            <View style={[st.philoHeader, isRTL && { flexDirection: 'row-reverse' }]}>
               <View style={{ flex: 1 }}>
-                <Text style={st.philoTitle}>{item.title}</Text>
-                <Text style={st.philoSub}>{item.subtitle}</Text>
+                <Text style={[st.philoTitle, isRTL && { textAlign: 'right' }]}>
+                  {t(`library.philosophy.${key}.title`)}
+                </Text>
+                <Text style={[st.philoSub, isRTL && { textAlign: 'right' }]}>
+                  {t(`library.philosophy.${key}.subtitle`)}
+                </Text>
               </View>
               <Text style={st.philoArrow}>{expandedPhilo === i ? '−' : '+'}</Text>
             </View>
             {expandedPhilo === i && (
-              <Text style={st.philoContent}>{item.content}</Text>
+              <Text style={[st.philoContent, isRTL && { textAlign: 'right' }]}>
+                {t(`library.philosophy.${key}.content`)}
+              </Text>
             )}
           </TouchableOpacity>
         ))}

@@ -325,6 +325,67 @@ const en = {
     getStarted: 'Get Started →',
   },
 
+  // ── Library ──
+  library: {
+    categories: {
+      asanas: 'Asanas',
+      sequences: 'Sequences',
+      philosophy: 'Philosophy',
+      mantras: 'Mantras',
+      counting: 'Sanskrit Count',
+      breathing: 'Pranayama',
+      anatomy: 'Anatomy',
+      history: 'History',
+    },
+    philosophy: {
+      eightLimbs: {
+        title: 'The Eight Limbs of Yoga',
+        subtitle: "Patanjali's Ashtanga",
+        content: 'Ashtanga literally means "eight limbs" (ashta = eight, anga = limb). Patanjali outlined them in the Yoga Sutras: 1. Yama (ethical restraints), 2. Niyama (observances), 3. Asana (posture), 4. Pranayama (breath control), 5. Pratyahara (sense withdrawal), 6. Dharana (concentration), 7. Dhyana (meditation), 8. Samadhi (absorption). The physical practice (asana) is just one limb.',
+      },
+      tristhana: {
+        title: 'Tristhana',
+        subtitle: 'The Three Places of Attention',
+        content: 'Tristhana refers to the three pillars of Ashtanga practice: Posture (asana), Breathing system (ujjayi pranayama with bandhas), and Gazing point (drishti). When all three are aligned, meditation in motion arises naturally. Each asana has a specific drishti, and the breath should be steady and audible throughout.',
+      },
+      vinyasa: {
+        title: 'Vinyasa',
+        subtitle: 'Breath-Movement System',
+        content: 'Vinyasa means "to place in a special way." Each movement in Ashtanga is linked to either an inhale or an exhale. This creates an internal heat (tapas) that purifies the blood and organs. The vinyasa count for each posture is precisely defined — there is a specific number of movements to enter, hold, and exit every asana.',
+      },
+      bandhas: {
+        title: 'Bandhas',
+        subtitle: 'Energy Locks',
+        content: 'Three bandhas are essential: Mula Bandha (root lock — pelvic floor engagement), Uddiyana Bandha (upward flying lock — lower belly drawn in and up), and Jalandhara Bandha (chin lock — used in specific postures like shoulderstand). Bandhas direct prana (life force) upward and create lightness in the body.',
+      },
+      parampara: {
+        title: 'Parampara',
+        subtitle: 'The Teacher-Student Lineage',
+        content: 'Parampara is the unbroken chain of knowledge passed from teacher to student. In Ashtanga: Krishnamacharya taught Pattabhi Jois, who taught Sharath Jois, R. Sharath Jois now leads the tradition. The method is traditionally taught one-on-one in a Mysore-style setting, where each student receives personal attention and progresses at their own pace.',
+      },
+      yogaSutras: {
+        title: 'The Yoga Sutras',
+        subtitle: "Patanjali's Guide to Liberation",
+        content: 'Written approximately 2,000 years ago, the 196 sutras are divided into four chapters: Samadhi Pada (contemplation), Sadhana Pada (practice), Vibhuti Pada (powers), and Kaivalya Pada (liberation). The second sutra defines yoga: "Yogas chitta vritti nirodha" — Yoga is the cessation of the fluctuations of the mind.',
+      },
+      moonDays: {
+        title: 'Moon Days',
+        subtitle: 'Honoring Natural Rhythms',
+        content: "Ashtanga practitioners traditionally rest on full and new moon days. The moon's gravitational pull affects our bodies (we are 70% water). Full moon energy is expansive (risk of over-extension), new moon energy is contractive (lower energy). Observing moon days connects us to natural cycles and teaches restraint.",
+      },
+      mysoreStyle: {
+        title: 'Mysore Style',
+        subtitle: 'The Traditional Teaching Method',
+        content: 'Named after the city in India where Pattabhi Jois taught, Mysore style is self-paced practice in a group setting. The teacher gives individual adjustments and teaches new postures one at a time when the student is ready. Students memorize the sequence and practice at their own rhythm, cultivating self-discipline and inner awareness.',
+      },
+      drishti: {
+        title: 'Drishti',
+        subtitle: 'The Nine Gazing Points',
+        content: 'Nine drishtis are used throughout practice: Nasagrai (nose tip), Broomadhya (third eye), Nabi chakra (navel), Hastagrai (hand), Padayoragrai (toes), Parsva drishti (far right/left), Angusta ma dyai (thumbs), Urdhva drishti (upward). The gaze steadies the mind and directs prana. Where the eyes go, the mind follows.',
+      },
+    },
+  },
+
   // ── Common ──
   common: {
     cancel: 'Cancel',
