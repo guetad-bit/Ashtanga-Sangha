@@ -1006,10 +1006,10 @@ const st = StyleSheet.create({
     borderWidth: 1, borderColor: '#EDE9E3',
   },
   catChipActive: {
-    backgroundColor: colors.ink, borderColor: colors.ink,
+    backgroundColor: '#E8873D', borderColor: '#E8873D',
   },
-  catIcon: { fontSize: 15 },
-  catLabel: { ...typography.labelSm, color: colors.ink, fontSize: 12 },
+  catIcon: { fontSize: 17 },
+  catLabel: { ...typography.labelSm, color: colors.ink, fontSize: 14 },
   catLabelActive: { color: '#fff' },
 
   body: { flex: 1 },
@@ -1054,8 +1054,8 @@ const st = StyleSheet.create({
     paddingHorizontal: 12, paddingVertical: 6,
     borderWidth: 1, borderColor: '#EDE9E3',
   },
-  filterChipActive: { backgroundColor: colors.sage, borderColor: colors.sage },
-  filterText: { ...typography.labelSm, color: colors.ink, fontSize: 11 },
+  filterChipActive: { backgroundColor: '#E8873D', borderColor: '#E8873D' },
+  filterText: { ...typography.labelSm, color: colors.ink, fontSize: 13 },
   filterTextActive: { color: '#fff' },
 
   // Asana list
