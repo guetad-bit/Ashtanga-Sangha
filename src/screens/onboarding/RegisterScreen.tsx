@@ -8,7 +8,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useTranslation } from 'react-i18next';
 import { spacing } from '@/styles/tokens';
 import { signUpWithEmail, signInWithGoogle } from '@/lib/supabase';
 import { useAppStore } from '@/store/useAppStore';
@@ -34,12 +33,11 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
   const [loading, setLoading] = useState(false);
   const insets = useSafeAreaInsets();
   const { setUser, setOnboarded } = useAppStore();
-  const { t } = useTranslation();
 
   const handleRegister = async () => {
-    if (!name.trim()) { Alert.alert(t('register.enterName')); return; }
-    if (!email.includes('@')) { Alert.alert(t('register.email')); return; }
-    if (password.length < 8) { Alert.alert(t('register.passwordLength')); return; }
+    if (!name.trim()) { Alert.alert('Please enter your name'); return; }
+    if (!email.includes('@')) { Alert.alert('Please enter a valid email'); return; }
+    if (password.length < 8) { Alert.alert('Password must be at least 8 characters'); return; }
 
     setLoading(true);
     const { data, error } = await signUpWithEmail(email, password, name);
@@ -74,28 +72,24 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* ââ Logo & branding ââââââââââââââââââââââââââââ */}
+          {/* Logo & branding */}
           <View style={st.brandRow}>
             <AppLogo size={44} />
             <Text style={st.brandName}>Ashtanga Sangha</Text>
           </View>
 
-          {/* ââ Headline ââââââââââââââââââââââââââââââââââ */}
-          <Text style={st.headline}>
-            {t('register.createAccount')}
-          </Text>
-          <Text style={st.subtitle}>
-            {t('register.joinPractitioners')}
-          </Text>
+          {/* Headline */}
+          <Text style={st.headline}>Create Account</Text>
+          <Text style={st.subtitle}>Join practitioners worldwide</Text>
 
-          {/* ââ Name field âââââââââââââââââââââââââââââââââ */}
+          {/* Name field */}
           <View style={st.field}>
-            <Text style={st.label}>{t('register.fullName')}</Text>
+            <Text style={st.label}>Full Name</Text>
             <View style={st.inputWrap}>
               <Ionicons name="person-outline" size={17} color="rgba(255,255,255,0.45)" style={st.inputIcon} />
               <TextInput
                 style={st.input}
-                placeholder={t('register.namePlaceholder')}
+                placeholder="Your name"
                 placeholderTextColor="rgba(255,255,255,0.35)"
                 value={name}
                 onChangeText={setName}
@@ -105,14 +99,14 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
             </View>
           </View>
 
-          {/* ââ Email field ââââââââââââââââââââââââââââââââ */}
+          {/* Email field */}
           <View style={st.field}>
-            <Text style={st.label}>{t('register.email')}</Text>
+            <Text style={st.label}>Email</Text>
             <View style={st.inputWrap}>
               <Ionicons name="mail-outline" size={17} color="rgba(255,255,255,0.45)" style={st.inputIcon} />
               <TextInput
                 style={st.input}
-                placeholder={t('register.emailPlaceholder')}
+                placeholder="you@example.com"
                 placeholderTextColor="rgba(255,255,255,0.35)"
                 value={email}
                 onChangeText={setEmail}
@@ -123,14 +117,14 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
             </View>
           </View>
 
-          {/* ââ Password field âââââââââââââââââââââââââââââ */}
+          {/* Password field */}
           <View style={st.field}>
-            <Text style={st.label}>{t('register.password')}</Text>
+            <Text style={st.label}>Password</Text>
             <View style={st.inputWrap}>
               <Ionicons name="lock-closed-outline" size={17} color="rgba(255,255,255,0.45)" style={st.inputIcon} />
               <TextInput
                 style={[st.input, st.inputPw]}
-                placeholder={t('register.passwordHint')}
+                placeholder="At least 8 characters"
                 placeholderTextColor="rgba(255,255,255,0.35)"
                 value={password}
                 onChangeText={setPassword}
@@ -147,7 +141,7 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
             </View>
           </View>
 
-          {/* ââ Create Account button ââââââââââââââââââââââ */}
+          {/* Create Account button */}
           <TouchableOpacity
             style={[st.primaryBtn, loading && st.primaryBtnDisabled]}
             onPress={handleRegister}
@@ -156,32 +150,32 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
           >
             {loading
               ? <ActivityIndicator color="#fff" />
-              : <Text style={st.primaryBtnText}>{t('register.createAccountBtn')}</Text>
+              : <Text style={st.primaryBtnText}>Create Account</Text>
             }
           </TouchableOpacity>
 
-          {/* ââ Terms ââââââââââââââââââââââââââââââââââââââ */}
+          {/* Terms */}
           <Text style={st.terms}>
-            {t('register.agreeToTerms')}{' '}
-            <Text style={st.termsLink}>{t('register.termsOfService')}</Text> {t('common.and')}{' '}
-            <Text style={st.termsLink}>{t('register.privacyPolicy')}</Text>
+            By creating an account, you agree to our{' '}
+            <Text style={st.termsLink}>Terms of Service</Text> and{' '}
+            <Text style={st.termsLink}>Privacy Policy</Text>
           </Text>
 
-          {/* ââ OR divider âââââââââââââââââââââââââââââââââ */}
+          {/* OR divider */}
           <View style={st.divider}>
             <View style={st.dividerLine} />
-            <Text style={st.dividerText}>{t('register.orLabel')}</Text>
+            <Text style={st.dividerText}>or</Text>
             <View style={st.dividerLine} />
           </View>
 
-          {/* ââ Google sign-up ââââââââââââââââââââââââââââââ */}
+          {/* Google sign-up */}
           <TouchableOpacity
             style={st.googleBtn}
             onPress={() => signInWithGoogle()}
             activeOpacity={0.85}
           >
             <Text style={st.googleBtnText}>
-              {t('register.signUpWithGoogle').split('Google')[0]}
+              Sign up with{' '}
               <Text style={{ color: '#4285F4' }}>G</Text>
               <Text style={{ color: '#EA4335' }}>o</Text>
               <Text style={{ color: '#FBBC05' }}>o</Text>
@@ -191,10 +185,10 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
             </Text>
           </TouchableOpacity>
 
-          {/* ââ Sign in link âââââââââââââââââââââââââââââââ */}
+          {/* Sign in link */}
           <Text style={st.footer}>
-            {t('register.alreadyMember')}{'  '}
-            <Text style={st.footerLink} onPress={onGoToLogin}>{t('register.signIn')}</Text>
+            Already a member?{'  '}
+            <Text style={st.footerLink} onPress={onGoToLogin}>Sign In</Text>
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -211,7 +205,6 @@ const st = StyleSheet.create({
     paddingHorizontal: 28,
   },
 
-  /* ââ Brand ââââââââââââââââââââââââââââ */
   brandRow: {
     alignItems: 'center',
     marginBottom: 8,
@@ -224,7 +217,6 @@ const st = StyleSheet.create({
     letterSpacing: 0.3,
   },
 
-  /* ââ Headline âââââââââââââââââââââââââ */
   headline: {
     fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 34,
@@ -249,7 +241,6 @@ const st = StyleSheet.create({
     textShadowRadius: 3,
   },
 
-  /* ââ Form fields ââââââââââââââââââââââ */
   field: { marginBottom: 16 },
   label: {
     fontFamily: 'DMSans_600SemiBold',
@@ -283,7 +274,6 @@ const st = StyleSheet.create({
     padding: 4,
   },
 
-  /* ââ Primary button âââââââââââââââââââ */
   primaryBtn: {
     backgroundColor: warm.orange,
     borderRadius: 28,
@@ -305,7 +295,6 @@ const st = StyleSheet.create({
     letterSpacing: 0.3,
   },
 
-  /* ââ Terms ââââââââââââââââââââââââââââ */
   terms: {
     fontFamily: 'DMSans_400Regular',
     fontSize: 14,
@@ -319,7 +308,6 @@ const st = StyleSheet.create({
     fontFamily: 'DMSans_500Medium',
   },
 
-  /* ââ Divider ââââââââââââââââââââââââââ */
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -334,7 +322,6 @@ const st = StyleSheet.create({
     letterSpacing: 1,
   },
 
-  /* ââ Google button ââââââââââââââââââââ */
   googleBtn: {
     borderWidth: 1.5,
     borderColor: 'rgba(255,255,255,0.35)',
@@ -351,7 +338,6 @@ const st = StyleSheet.create({
     color: '#fff',
   },
 
-  /* ââ Footer âââââââââââââââââââââââââââ */
   footer: {
     fontFamily: 'DMSans_400Regular',
     fontSize: 15,
