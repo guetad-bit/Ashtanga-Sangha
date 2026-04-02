@@ -1,5 +1,5 @@
 // src/screens/library/LibraryScreen.tsx
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, Image,
   StyleSheet, Modal, Pressable, TextInput,
@@ -528,6 +528,13 @@ export default function LibraryScreen() {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'he';
 
+  const catScrollRef = useRef<ScrollView>(null);
+  const handleCatLayout = useCallback(() => {
+    if (isRTL && catScrollRef.current) {
+      catScrollRef.current.scrollToEnd({ animated: false });
+    }
+  }, [isRTL]);
+
   const [activeCategory, setActiveCategory] = useState('asanas');
   const [selectedAsana, setSelectedAsana] = useState<Asana | null>(null);
   const [expandedPhilo, setExpandedPhilo] = useState<number | null>(null);
@@ -563,10 +570,12 @@ export default function LibraryScreen() {
 
       {/* Category tabs */}
       <ScrollView
+        ref={catScrollRef}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={[st.catScroll, isRTL && { flexDirection: 'row-reverse' }]}
         style={st.catBar}
+        onContentSizeChange={handleCatLayout}
       >
         {CATEGORIES.map((cat) => (
           <TouchableOpacity
