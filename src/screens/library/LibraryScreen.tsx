@@ -1069,13 +1069,13 @@ const st = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center',
     backgroundColor: '#fff', borderRadius: radius.xl,
     padding: spacing.md, marginBottom: 8,
+    gap: 14,
     ...shadows.sm,
   },
   asanaThumbWrap: {
     width: 48, height: 48, borderRadius: 12,
     backgroundColor: '#F6F2EC',
     alignItems: 'center', justifyContent: 'center',
-    marginRight: spacing.md,
     overflow: 'hidden' as any,
   },
   asanaThumb: {
@@ -1084,7 +1084,6 @@ const st = StyleSheet.create({
   asanaNum: {
     width: 48, height: 48, borderRadius: 12,
     backgroundColor: colors.sagePale, alignItems: 'center', justifyContent: 'center',
-    marginRight: spacing.md,
   },
   asanaNumText: { ...typography.headingSm, color: colors.sage, fontSize: 14 },
   asanaInfo: { flex: 1 },
