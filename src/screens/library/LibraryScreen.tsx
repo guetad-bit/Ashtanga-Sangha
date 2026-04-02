@@ -507,6 +507,15 @@ const PHILOSOPHY_KEYS = [
   'yogaSutras', 'moonDays', 'mysoreStyle', 'drishti',
 ] as const;
 
+const ANATOMY_KEYS = [
+  'bandhas', 'spine', 'hips', 'shoulders', 'fascia',
+] as const;
+
+const HISTORY_KEYS = [
+  'krishnamacharya', 'pattabhiJois', 'sharathJois',
+  'yogaKorunta', 'goesWest', 'today',
+] as const;
+
 export default function LibraryScreen() {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'he';
@@ -814,21 +823,31 @@ export default function LibraryScreen() {
         ))}
 
         {/* ── ANATOMY ── */}
-        {activeCategory === 'anatomy' && ANATOMY.map((item, i) => (
-          <View key={i} style={st.anatomyCard}>
-            <Text style={st.anatomyTitle}>{item.title}</Text>
-            <Text style={st.anatomyContent}>{item.content}</Text>
+        {activeCategory === 'anatomy' && ANATOMY_KEYS.map((key) => (
+          <View key={key} style={st.anatomyCard}>
+            <Text style={[st.anatomyTitle, isRTL && { textAlign: 'right' }]}>
+              {t(`library.anatomy.${key}.title`)}
+            </Text>
+            <Text style={[st.anatomyContent, isRTL && { textAlign: 'right' }]}>
+              {t(`library.anatomy.${key}.content`)}
+            </Text>
           </View>
         ))}
 
         {/* ── HISTORY ── */}
-        {activeCategory === 'history' && HISTORY.map((item, i) => (
-          <View key={i} style={st.historyCard}>
+        {activeCategory === 'history' && HISTORY_KEYS.map((key) => (
+          <View key={key} style={[st.historyCard, isRTL && { flexDirection: 'row-reverse' }]}>
             <View style={st.historyDot} />
             <View style={st.historyBody}>
-              <Text style={st.historyTitle}>{item.title}</Text>
-              <Text style={st.historySub}>{item.subtitle}</Text>
-              <Text style={st.historyContent}>{item.content}</Text>
+              <Text style={[st.historyTitle, isRTL && { textAlign: 'right' }]}>
+                {t(`library.history.${key}.title`)}
+              </Text>
+              <Text style={[st.historySub, isRTL && { textAlign: 'right' }]}>
+                {t(`library.history.${key}.subtitle`)}
+              </Text>
+              <Text style={[st.historyContent, isRTL && { textAlign: 'right' }]}>
+                {t(`library.history.${key}.content`)}
+              </Text>
             </View>
           </View>
         ))}

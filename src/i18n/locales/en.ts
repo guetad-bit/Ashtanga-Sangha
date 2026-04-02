@@ -384,6 +384,60 @@ const en = {
         content: 'Nine drishtis are used throughout practice: Nasagrai (nose tip), Broomadhya (third eye), Nabi chakra (navel), Hastagrai (hand), Padayoragrai (toes), Parsva drishti (far right/left), Angusta ma dyai (thumbs), Urdhva drishti (upward). The gaze steadies the mind and directs prana. Where the eyes go, the mind follows.',
       },
     },
+    anatomy: {
+      bandhas: {
+        title: 'Bandhas — The Energy Locks',
+        content: 'Mula Bandha: Engagement of the pelvic floor muscles. Imagine drawing the perineum upward. Active throughout practice. Provides stability and lightness.\n\nUddiyana Bandha: Drawing the lower belly gently in and up, below the navel. Creates core support and internal heat. Should be maintained even through deep breathing.\n\nJalandhara Bandha: Chin lock — lowering the chin to the sternum. Primarily used during pranayama, shoulderstand, and specific postures.',
+      },
+      spine: {
+        title: 'The Spine in Practice',
+        content: 'The spine has four curves: cervical (neck), thoracic (mid-back), lumbar (lower back), sacral (base). Forward folds lengthen the posterior chain. Backbends open the front body and compress the back. Twists create rotational mobility between vertebrae. A healthy practice addresses all directions of spinal movement every session.',
+      },
+      hips: {
+        title: 'Hip Anatomy for Yogis',
+        content: "The hip is a ball-and-socket joint with incredible range of motion. External rotation is needed for lotus and bound postures. Internal rotation features in warrior poses. Hip flexion drives forward folds, extension drives backbends. Tight hip flexors (from sitting) are the modern practitioner's main challenge. Patient, consistent practice gradually opens the hips safely.",
+      },
+      shoulders: {
+        title: 'The Shoulder Complex',
+        content: 'The shoulder involves the scapula, clavicle, and humerus working together. Binds require internal rotation and extension. Arm balances demand stability and strength in external rotation. Chaturanga requires proper scapular stabilization to protect the rotator cuff. Protraction and retraction of the scapulae should be understood for safe practice.',
+      },
+      fascia: {
+        title: 'Understanding Fascia',
+        content: 'Fascia is the connective tissue web that runs throughout the entire body. The "back body line" runs from the soles of the feet, up the back of the legs, along the spine, over the skull. This is why Paschimottanasana (western stretch) targets the entire posterior chain. Consistent practice hydrates and reorganizes fascial tissue over time.',
+      },
+    },
+    history: {
+      krishnamacharya: {
+        title: 'T. Krishnamacharya (1888–1989)',
+        subtitle: 'The Father of Modern Yoga',
+        content: 'Born in Mysore, India, Krishnamacharya studied yoga for 7 years in a cave in Tibet with his guru Ramamohan Brahmachari. He later taught at the Mysore Palace under the patronage of the Maharaja. He developed the vinyasa system that would become Ashtanga. His students include Pattabhi Jois, B.K.S. Iyengar, Indra Devi, and his son T.K.V. Desikachar.',
+      },
+      pattabhiJois: {
+        title: 'Sri K. Pattabhi Jois (1915–2009)',
+        subtitle: 'Guruji — The Keeper of the Tradition',
+        content: 'Pattabhi Jois began studying with Krishnamacharya at age 12 in 1927. He founded the Ashtanga Yoga Research Institute (KPJAYI) in Mysore in 1948. For decades he taught from a small room in his home, and the practice spread worldwide when Western students began arriving in the 1970s. He taught until his passing at age 93, maintaining that the practice never changes.',
+      },
+      sharathJois: {
+        title: 'R. Sharath Jois (1971–present)',
+        subtitle: 'Current Lineage Holder',
+        content: "Sharath began practicing at age 7 under his grandfather Pattabhi Jois. He became the assistant teacher in 1989 and gradually took over the main teaching role. After Guruji's passing in 2009, Sharath became the director of KPJAYI (now Sharath Yoga Centre). He is known for his dedication to preserving the traditional method.",
+      },
+      yogaKorunta: {
+        title: 'The Yoga Korunta',
+        subtitle: 'The Ancient Text',
+        content: 'Krishnamacharya reportedly discovered an ancient manuscript called the Yoga Korunta by the sage Vamana Rishi, written on palm leaves. This text supposedly described the vinyasa system, grouping asanas into sequences. The original manuscript was said to have been eaten by ants. Whether the Korunta existed as described remains debated among scholars.',
+      },
+      goesWest: {
+        title: 'Ashtanga Goes West',
+        subtitle: 'The 1970s Revolution',
+        content: "In 1973, Norman Allen became the first Westerner to complete the full Ashtanga system in Mysore. David Williams and Nancy Gilgoff followed. They brought the practice to the United States, opening the first Ashtanga studios in Maui and later Encinitas, California. Through the 1990s, Ashtanga's popularity exploded, with students making annual pilgrimages to Mysore.",
+      },
+      today: {
+        title: 'The Mysore Tradition Today',
+        subtitle: 'Global Practice, Local Roots',
+        content: 'Today, thousands of authorized and certified teachers worldwide carry the Ashtanga tradition forward. The annual trip to Mysore remains a rite of passage. Shalas from Berlin to Bali to Tokyo maintain the 4:30 AM start time. The practice continues to evolve while honoring its roots — an unbroken lineage spanning nearly a century.',
+      },
+    },
   },
 
   // ── Common ──
