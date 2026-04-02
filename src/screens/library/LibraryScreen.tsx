@@ -565,7 +565,7 @@ export default function LibraryScreen() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={st.catScroll}
+        contentContainerStyle={[st.catScroll, isRTL && { flexDirection: 'row-reverse' }]}
         style={st.catBar}
       >
         {CATEGORIES.map((cat) => (
@@ -638,7 +638,7 @@ export default function LibraryScreen() {
             </View>
 
             {/* Filter by section */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={st.filterRow}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[st.filterRow, isRTL && { flexDirection: 'row-reverse' }]}>
               <TouchableOpacity
                 style={[st.filterChip, !asanaFilter && st.filterChipActive]}
                 onPress={() => setAsanaFilter(null)}
