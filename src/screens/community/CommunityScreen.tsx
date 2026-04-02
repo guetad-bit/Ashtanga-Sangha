@@ -86,17 +86,17 @@ const FAKE_USERS_FEED: {
   id: string; name: string; avatarUrl: string; series: string; streak: number; bio: string;
   feedCaption: string; feedImage: string; feedTime: string; feedLikes: number; feedComments: number;
 }[] = [
-  { id: 'fake-noa', name: 'נועה לוי', avatarUrl: 'https://i.pravatar.cc/150?img=1', series: 'primary', streak: 142, bio: 'מורה ליוגה ומתרגלת אשטנגה 6 שנים. מתרגלת בשאלה בפלורנטין.', feedCaption: 'תרגול בוקר מושלם 🌅 הסדרה הראשונה זרמה היום בצורה מדהימה', feedImage: '', feedTime: new Date(Date.now() - 2 * 3600000).toISOString(), feedLikes: 12, feedComments: 3 },
+  { id: 'fake-noa', name: 'נועה לוי', avatarUrl: 'https://i.pravatar.cc/150?img=1', series: 'primary', streak: 142, bio: 'מורה ליוגה ומתרגלת אשטנגה 6 שנים. מתרגלת בשאלה בפלורנטין.', feedCaption: 'תרגול בוקר מושלם 🌅 הסדרה הראשונה זרמה היום בצורה מדהימה', feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=400&fit=crop', feedTime: new Date(Date.now() - 2 * 3600000).toISOString(), feedLikes: 12, feedComments: 3 },
   { id: 'fake-ori', name: 'אורי כהן', avatarUrl: 'https://i.pravatar.cc/150?img=3', series: 'primary', streak: 8, bio: 'מתכנת שהתחיל אשטנגה לפני 8 חודשים.', feedCaption: 'סוף סוף הצלחתי לתפוס את האצבעות בג׳אנו שירשאסנה! 🎉', feedImage: '', feedTime: new Date(Date.now() - 5 * 3600000).toISOString(), feedLikes: 18, feedComments: 7 },
   { id: 'fake-michal', name: 'מיכל אברהם', avatarUrl: 'https://i.pravatar.cc/150?img=5', series: 'intermediate', streak: 365, bio: 'פסיכולוגית, אמא לשלושה. מתרגלת 12 שנה.', feedCaption: 'קאפוטאסנה — כל יום מחדש. הנשימה היא המפתח 🙏', feedImage: '', feedTime: new Date(Date.now() - 8 * 3600000).toISOString(), feedLikes: 24, feedComments: 5 },
-  { id: 'fake-yotam', name: 'יותם ברק', avatarUrl: 'https://i.pravatar.cc/150?img=8', series: 'sun_sals', streak: 21, bio: 'מדריך צלילה באילת. מתרגל על החוף בזריחה.', feedCaption: 'ברכות שמש על חוף אלמוג 🌊☀️ אין כמו להתרגל עם רגליים בחול', feedImage: '', feedTime: new Date(Date.now() - 18 * 3600000).toISOString(), feedLikes: 31, feedComments: 9 },
+  { id: 'fake-yotam', name: 'יותם ברק', avatarUrl: 'https://i.pravatar.cc/150?img=8', series: 'sun_sals', streak: 21, bio: 'מדריך צלילה באילת. מתרגל על החוף בזריחה.', feedCaption: 'ברכות שמש על חוף אלמוג 🌊☀️ אין כמו להתרגל עם רגליים בחול', feedImage: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=600&h=400&fit=crop', feedTime: new Date(Date.now() - 18 * 3600000).toISOString(), feedLikes: 31, feedComments: 9 },
   { id: 'fake-rinat', name: 'רינת שמעוני', avatarUrl: 'https://i.pravatar.cc/150?img=9', series: 'primary', streak: 56, bio: 'ארכיטקטית מחיפה. מתרגלת 4 שנים בבית.', feedCaption: 'גיליתי שכשמיישרים את הירכיים בטריקונאסנה הכל משתנה', feedImage: '', feedTime: new Date(Date.now() - 3 * 3600000).toISOString(), feedLikes: 8, feedComments: 2 },
   { id: 'fake-daniel', name: 'דניאל פרידמן', avatarUrl: 'https://i.pravatar.cc/150?img=11', series: 'primary', streak: 34, bio: 'שף ובעל מסעדה. מתרגל ב-10 בבוקר.', feedCaption: 'תרגול מאוחר + ארוחת בוקר בריאה = יום מושלם 🍳🧘‍♂️', feedImage: '', feedTime: new Date(Date.now() - 26 * 3600000).toISOString(), feedLikes: 15, feedComments: 4 },
   { id: 'fake-talia', name: 'טליה וולף', avatarUrl: 'https://i.pravatar.cc/150?img=10', series: 'short', streak: 89, bio: 'חקלאית אורגנית בגליל. אמא ל-4.', feedCaption: 'תרגול של 40 דקות בין הגן לרפת. לא צריך יותר 🌿', feedImage: '', feedTime: new Date(Date.now() - 4 * 3600000).toISOString(), feedLikes: 22, feedComments: 6 },
-  { id: 'fake-ido', name: 'עידו נחום', avatarUrl: 'https://i.pravatar.cc/150?img=12', series: 'primary', streak: 512, bio: 'רופא משפחה, מתרגל 18 שנה. נוסע למייסור כל שנתיים.', feedCaption: 'אחרי 18 שנה, סופטה קורמאסנה עדיין מלמדת אותי משהו חדש', feedImage: '', feedTime: new Date(Date.now() - 6 * 3600000).toISOString(), feedLikes: 35, feedComments: 11 },
+  { id: 'fake-ido', name: 'עידו נחום', avatarUrl: 'https://i.pravatar.cc/150?img=12', series: 'primary', streak: 512, bio: 'רופא משפחה, מתרגל 18 שנה. נוסע למייסור כל שנתיים.', feedCaption: 'אחרי 18 שנה, סופטה קורמאסנה עדיין מלמדת אותי משהו חדש', feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=400&fit=crop', feedTime: new Date(Date.now() - 6 * 3600000).toISOString(), feedLikes: 35, feedComments: 11 },
   { id: 'fake-shira', name: 'שירה מזרחי', avatarUrl: 'https://i.pravatar.cc/150?img=16', series: 'sun_sals', streak: 3, bio: 'סטודנטית לאמנות, 3 חודשים של אשטנגה.', feedCaption: 'ציירתי את ויראבהדראסנה B 🎨 מי רוצה לראות?', feedImage: '', feedTime: new Date(Date.now() - 48 * 3600000).toISOString(), feedLikes: 27, feedComments: 8 },
   { id: 'fake-amir', name: 'אמיר חדד', avatarUrl: 'https://i.pravatar.cc/150?img=13', series: 'primary', streak: 12, bio: 'עורך דין ואב טרי מכפר סבא.', feedCaption: 'התינוקת התעוררה באמצע נאוואסנה. עשיתי אותה עם תינוקת על הבטן 😂', feedImage: '', feedTime: new Date(Date.now() - 1 * 3600000).toISOString(), feedLikes: 42, feedComments: 14 },
-  { id: 'fake-sarah', name: 'Sarah Mitchell', avatarUrl: 'https://i.pravatar.cc/150?img=20', series: 'primary', streak: 204, bio: 'Yoga teacher in London. 3 months in Mysore with Sharath.', feedCaption: 'Morning Mysore at the shala. Nothing beats practicing together 🕉️', feedImage: '', feedTime: new Date(Date.now() - 7 * 3600000).toISOString(), feedLikes: 19, feedComments: 4 },
+  { id: 'fake-sarah', name: 'Sarah Mitchell', avatarUrl: 'https://i.pravatar.cc/150?img=20', series: 'primary', streak: 204, bio: 'Yoga teacher in London. 3 months in Mysore with Sharath.', feedCaption: 'Morning Mysore at the shala. Nothing beats practicing together 🕉️', feedImage: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600&h=400&fit=crop', feedTime: new Date(Date.now() - 7 * 3600000).toISOString(), feedLikes: 19, feedComments: 4 },
   { id: 'fake-david', name: 'David Stern', avatarUrl: 'https://i.pravatar.cc/150?img=14', series: 'intermediate', streak: 730, bio: 'Former Wall Street, now yoga teacher in Brooklyn. 15 years.', feedCaption: 'Kapo day. The backbend that changed everything. Trust the breath. 🔥', feedImage: '', feedTime: new Date(Date.now() - 10 * 3600000).toISOString(), feedLikes: 28, feedComments: 6 },
 ];
 
@@ -375,31 +375,22 @@ export default function CommunityScreen() {
               ))
             ) : (
               FAKE_USERS_FEED.map((u) => (
-                <View key={u.id} style={{ backgroundColor: moss.cardBg, borderRadius: 16, borderWidth: 1, borderColor: moss.divider, marginHorizontal: spacing.lg, marginBottom: 12, overflow: 'hidden' }}>
-                  <View style={{ flexDirection: 'row' }}>
-                    <View style={{ flex: 1, padding: 16 }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                        <Image source={{ uri: u.avatarUrl }} style={{ width: 40, height: 40, borderRadius: 20 }} />
-                        <View>
-                          <Text style={{ fontFamily: 'DMSans_700Bold', fontSize: 15, color: moss.ink }}>{u.name}</Text>
-                          <Text style={{ fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.muted }}>{u.feedTime}</Text>
-                        </View>
-                      </View>
-                      <Text style={{ fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.ink, marginBottom: 10 }}>{u.feedCaption}</Text>
-                      <View style={{ flexDirection: 'row', gap: 14 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                          <Ionicons name="heart-outline" size={14} color={moss.heartRed ?? moss.amber} />
-                          <Text style={{ fontSize: 14, color: moss.heartRed ?? moss.amber }}>{u.feedLikes}</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                          <Ionicons name="chatbubble-outline" size={13} color={moss.muted} />
-                          <Text style={{ fontSize: 14, color: moss.muted }}>{u.feedComments}</Text>
-                        </View>
-                      </View>
-                    </View>
-                    <Image source={{ uri: u.feedImage }} style={{ width: 130, minHeight: 120 }} />
-                  </View>
-                </View>
+                <PostCard
+                  key={u.id}
+                  postId={u.id}
+                  userId={u.id}
+                  userName={u.name}
+                  userAvatar={u.avatarUrl}
+                  imageUrl={u.feedImage || undefined}
+                  caption={u.feedCaption}
+                  likesCount={u.feedLikes}
+                  commentsCount={u.feedComments}
+                  isLiked={false}
+                  createdAt={u.feedTime}
+                  tags={[]}
+                  isOwner={false}
+                  onUserPress={() => openProfile(u.name)}
+                />
               ))
             )}
           </>
