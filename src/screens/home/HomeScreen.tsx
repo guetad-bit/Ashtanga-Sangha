@@ -496,11 +496,11 @@ export default function HomeScreen() {
               <Text style={s.circleTitle}>{t('home.yourCircle')}</Text>
               <Text style={[s.circleSubtitle, isRTL && { textAlign: 'right' }]}>{t('home.circleSubtitle')}</Text>
             </View>
-            <TouchableOpacity activeOpacity={0.7}>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => router.push('/(tabs)/community')}>
               <Text style={s.circleViewAll}>{t('home.viewAll')}</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.circleScroll}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[s.circleScroll, isRTL && { flexDirection: 'row-reverse' }]}>
             {FAKE_USERS.map((m) => {
               const bc = badgeColor(m.badge);
               return (
