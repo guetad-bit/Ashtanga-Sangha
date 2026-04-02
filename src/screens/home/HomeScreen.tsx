@@ -1311,17 +1311,17 @@ const s = StyleSheet.create({
     backgroundColor: moss.accentLight, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 14,
   },
   profileBadgeText: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: moss.accent,
+    fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: moss.accent,
   },
   profileBio: {
-    fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.inkMid,
-    textAlign: 'center' as any, lineHeight: 20, marginBottom: 18,
+    fontFamily: 'DMSans_400Regular', fontSize: 16, color: '#2A2420',
+    textAlign: 'center' as any, lineHeight: 24, marginBottom: 18,
   },
   profileCloseBtn: {
     backgroundColor: moss.accent, borderRadius: 14,
     paddingHorizontal: 28, paddingVertical: 10,
   },
   profileCloseBtnText: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#fff',
+    fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: '#fff',
   },
 });
