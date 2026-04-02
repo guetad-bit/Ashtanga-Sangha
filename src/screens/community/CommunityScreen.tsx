@@ -389,34 +389,33 @@ export default function CommunityScreen() {
             ))}
             {/* Demo posts — always visible, lightweight cards */}
             {FAKE_POSTS_WITH_IMAGES.map((u) => (
-              <TouchableOpacity key={u.id} activeOpacity={0.85} onPress={() => openProfile(u.name)}
-                style={{ backgroundColor: moss.cardBg, borderRadius: 16, borderWidth: 1, borderColor: moss.divider, marginHorizontal: spacing.lg, marginBottom: 14, overflow: 'hidden', ...shadows.md }}>
+              <View key={u.id} style={s.fakePostCard}>
                 {/* Header */}
-                <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, paddingBottom: 10 }, isRTL && { flexDirection: 'row-reverse' }]}>
-                  <Image source={{ uri: u.avatarUrl }} style={{ width: 42, height: 42, borderRadius: 21 }} />
-                  <View style={[{ flex: 1 }, isRTL && { alignItems: 'flex-end' }]}>
-                    <Text style={{ fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: '#2A2420' }}>{u.name}</Text>
-                    <Text style={{ fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#7A6E60' }}>{fakeTimeAgo(u.feedTime)}</Text>
+                <View style={[s.fakePostHeader, isRTL && { flexDirection: 'row-reverse' }]}>
+                  <Image source={{ uri: u.avatarUrl }} style={s.fakePostAvatar} />
+                  <View style={[s.fakePostHeaderInfo, isRTL && { alignItems: 'flex-end' }]}>
+                    <Text style={s.fakePostName}>{u.name}</Text>
+                    <Text style={s.fakePostTime}>{fakeTimeAgo(u.feedTime)}</Text>
                   </View>
                 </View>
                 {/* Caption */}
-                <Text style={[{ fontFamily: 'DMSans_400Regular', fontSize: 16, color: '#2A2420', lineHeight: 24, paddingHorizontal: 14, paddingBottom: 10 }, isRTL && { textAlign: 'right' }]}>
+                <Text style={[s.fakePostCaption, isRTL && { textAlign: 'right' }]}>
                   {u.feedCaption}
                 </Text>
                 {/* Image */}
-                <Image source={{ uri: u.feedImage }} style={{ width: '100%', height: 260, backgroundColor: moss.divider }} resizeMode="cover" />
+                <Image source={{ uri: u.feedImage }} style={s.fakePostImage} resizeMode="cover" />
                 {/* Footer */}
-                <View style={[{ flexDirection: 'row', alignItems: 'center', padding: 12, gap: 16 }, isRTL && { flexDirection: 'row-reverse' }]}>
-                  <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 6 }, isRTL && { flexDirection: 'row-reverse' }]}>
+                <View style={[s.fakePostFooter, isRTL && { flexDirection: 'row-reverse' }]}>
+                  <View style={[s.fakePostStat, isRTL && { flexDirection: 'row-reverse' }]}>
                     <Ionicons name="heart-outline" size={18} color="#C4956A" />
-                    <Text style={{ fontFamily: 'DMSans_500Medium', fontSize: 15, color: '#4A3F36' }}>{u.feedLikes}</Text>
+                    <Text style={s.fakePostStatText}>{u.feedLikes}</Text>
                   </View>
-                  <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 6 }, isRTL && { flexDirection: 'row-reverse' }]}>
+                  <View style={[s.fakePostStat, isRTL && { flexDirection: 'row-reverse' }]}>
                     <Ionicons name="chatbubble-outline" size={16} color="#7A6E60" />
-                    <Text style={{ fontFamily: 'DMSans_500Medium', fontSize: 15, color: '#4A3F36' }}>{u.feedComments}</Text>
+                    <Text style={s.fakePostStatText}>{u.feedComments}</Text>
                   </View>
                 </View>
-              </TouchableOpacity>
+              </View>
             ))}
           </>
         )}
@@ -915,4 +914,47 @@ const s = StyleSheet.create({
     fontSize: 16,
     color: moss.white,
   },
+
+  /* ── Fake post cards (lightweight, no modals) ── */
+  fakePostCard: {
+    backgroundColor: moss.cardBg,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: moss.divider,
+    marginHorizontal: spacing.lg,
+    marginBottom: 14,
+    overflow: 'hidden' as any,
+  },
+  fakePostHeader: {
+    flexDirection: 'row' as any,
+    alignItems: 'center' as any,
+    gap: 12,
+    padding: 14,
+    paddingBottom: 10,
+  },
+  fakePostAvatar: { width: 42, height: 42, borderRadius: 21 },
+  fakePostHeaderInfo: { flex: 1 },
+  fakePostName: { fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: '#2A2420' },
+  fakePostTime: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#7A6E60' },
+  fakePostCaption: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 16,
+    color: '#2A2420',
+    lineHeight: 24,
+    paddingHorizontal: 14,
+    paddingBottom: 10,
+  },
+  fakePostImage: { width: '100%' as any, height: 260, backgroundColor: moss.divider },
+  fakePostFooter: {
+    flexDirection: 'row' as any,
+    alignItems: 'center' as any,
+    padding: 12,
+    gap: 16,
+  },
+  fakePostStat: {
+    flexDirection: 'row' as any,
+    alignItems: 'center' as any,
+    gap: 6,
+  },
+  fakePostStatText: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: '#4A3F36' },
 });
