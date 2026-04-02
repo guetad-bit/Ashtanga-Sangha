@@ -546,8 +546,8 @@ const s = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontFamily: 'DMSans_400Regular',
-    fontSize: 14,
-    color: moss.ink,
+    fontSize: 16,
+    color: '#2A2420',
     padding: 0,
   },
 
@@ -571,12 +571,12 @@ const s = StyleSheet.create({
   },
   tabText: {
     fontFamily: 'DMSans_500Medium',
-    fontSize: 15,
-    color: moss.mutedLight,
+    fontSize: 16,
+    color: '#4A3F36',
   },
   tabTextActive: {
     fontFamily: 'DMSans_600SemiBold',
-    color: moss.ink,
+    color: '#2A2420',
   },
 
   /* ── Scroll ─────────────────────────────────────────────────────────────── */
@@ -599,7 +599,7 @@ const s = StyleSheet.create({
   },
   sectionLink: {
     fontFamily: 'DMSans_500Medium',
-    fontSize: 14,
+    fontSize: 16,
     color: moss.accent,
   },
 
@@ -636,14 +636,14 @@ const s = StyleSheet.create({
   partnerAvatar: { width: 54, height: 54, borderRadius: 27 },
   partnerName: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 14,
-    color: moss.ink,
+    fontSize: 15,
+    color: '#2A2420',
     textAlign: 'center',
   },
   partnerLocation: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 14,
-    color: moss.muted,
+    fontSize: 15,
+    color: '#4A3F36',
     textAlign: 'center',
     marginTop: 1,
   },
@@ -668,13 +668,15 @@ const s = StyleSheet.create({
   },
   discussionTitle: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 16,
+    lineHeight: 22,
+    color: '#2A2420',
     marginBottom: spacing.sm,
   },
   discussionReplies: {
     fontFamily: 'DMSans_500Medium',
-    fontSize: 14,
+    fontSize: 15,
+    color: '#4A3F36',
   },
 
   /* ── People tab ─────────────────────────────────────────────────────────── */
@@ -695,7 +697,7 @@ const s = StyleSheet.create({
   },
   liveText: {
     fontFamily: 'DMSans_500Medium',
-    fontSize: 14,
+    fontSize: 15,
     color: moss.sage,
   },
   peopleCard: {
@@ -741,13 +743,13 @@ const s = StyleSheet.create({
   personInfo: { flex: 1 },
   personName: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 14,
-    color: moss.ink,
+    fontSize: 16,
+    color: '#2A2420',
   },
   personMeta: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 14,
-    color: moss.muted,
+    fontSize: 15,
+    color: '#4A3F36',
     marginTop: 2,
   },
   followBtn: {
@@ -759,7 +761,7 @@ const s = StyleSheet.create({
   },
   followText: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 14,
+    fontSize: 15,
     color: moss.accent,
   },
   followBtnActive: {
@@ -772,7 +774,7 @@ const s = StyleSheet.create({
   },
   followTextActive: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 14,
+    fontSize: 15,
     color: moss.accent,
   },
 
@@ -802,8 +804,8 @@ const s = StyleSheet.create({
   },
   topicMeta: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 14,
-    color: moss.muted,
+    fontSize: 15,
+    color: '#4A3F36',
   },
 
   /* ── Empty state ────────────────────────────────────────────────────────── */
@@ -814,8 +816,8 @@ const s = StyleSheet.create({
   },
   emptyText: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 14,
-    color: moss.mutedLight,
+    fontSize: 16,
+    color: '#4A3F36',
   },
 
   /* ── Profile card modal ── */
@@ -865,15 +867,15 @@ const s = StyleSheet.create({
   },
   profileBadgeText: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 14,
+    fontSize: 16,
     color: moss.accent,
   },
   profileBio: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 14,
-    color: moss.inkMid,
+    fontSize: 16,
+    color: '#2A2420',
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 24,
     marginBottom: 18,
   },
   profileCloseBtn: {
@@ -884,7 +886,7 @@ const s = StyleSheet.create({
   },
   profileCloseBtnText: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 14,
+    fontSize: 16,
     color: moss.white,
   },
 });

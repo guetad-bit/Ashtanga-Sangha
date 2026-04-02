@@ -359,8 +359,8 @@ export default function PostCard({
             ) : comments.length === 0 ? (
               <View style={{ padding: 40, alignItems: 'center' }}>
                 <Ionicons name="chatbubbles-outline" size={36} color={warm.divider} />
-                <Text style={{ color: warm.muted, marginTop: 12, fontSize: 15 }}>{t('postCard.noComments')}</Text>
-                <Text style={{ color: warm.mutedLight, fontSize: 14, marginTop: 4 }}>{t('postCard.beFirst')}</Text>
+                <Text style={{ color: '#4A3F36', marginTop: 12, fontSize: 16 }}>{t('postCard.noComments')}</Text>
+                <Text style={{ color: '#7A6E60', fontSize: 15, marginTop: 4 }}>{t('postCard.beFirst')}</Text>
               </View>
             ) : (
               <FlatList
@@ -502,18 +502,18 @@ const s = StyleSheet.create({
   avatarWrap: { width: 42, height: 42 },
   avatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: warm.divider },
   headerInfo: { flex: 1 },
-  userName: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: warm.ink },
+  userName: { fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: '#2A2420' },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
-  metaDot: { color: warm.mutedLight, fontSize: 14 },
-  time: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.mutedLight },
-  location: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.mutedLight },
+  metaDot: { color: '#7A6E60', fontSize: 15 },
+  time: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#7A6E60' },
+  location: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#7A6E60' },
 
   /* Body / Caption */
   body: { paddingHorizontal: 16, paddingBottom: 10 },
-  caption: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: warm.ink, lineHeight: 22 },
+  caption: { fontFamily: 'DMSans_400Regular', fontSize: 16, color: '#2A2420', lineHeight: 24 },
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 8 },
   tagPill: { backgroundColor: '#DCE8D3', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 3 },
-  tagText: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: '#6E8A5C' },
+  tagText: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#6E8A5C' },
 
   /* Image */
   postImage: { width: '100%', height: 260, backgroundColor: warm.divider },
@@ -530,7 +530,7 @@ const s = StyleSheet.create({
     backgroundColor: warm.heartRed,
     alignItems: 'center', justifyContent: 'center',
   },
-  countText: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.muted },
+  countText: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#4A3F36' },
 
   /* Actions bar */
   actionDivider: { height: 1, backgroundColor: warm.divider, marginHorizontal: 16 },
@@ -547,7 +547,7 @@ const s = StyleSheet.create({
     gap: 6,
     paddingVertical: 10,
   },
-  actionLabel: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: warm.muted },
+  actionLabel: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: '#4A3F36' },
 
   /* ── Comments modal (bottom sheet) ── */
   commModalWrap: { flex: 1, justifyContent: 'flex-end' },
@@ -579,11 +579,11 @@ const s = StyleSheet.create({
   commItem: { flexDirection: 'row', gap: 10, paddingVertical: 10 },
   commAvatar: { width: 34, height: 34, borderRadius: 17, backgroundColor: warm.divider },
   commBubble: { flex: 1, backgroundColor: warm.bg, borderRadius: 14, padding: 10 },
-  commAuthor: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: warm.ink, marginBottom: 2 },
-  commBody: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.ink, lineHeight: 20 },
+  commAuthor: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: '#2A2420', marginBottom: 2 },
+  commBody: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#2A2420', lineHeight: 22 },
   commMeta: { flexDirection: 'row', gap: 14, marginTop: 6 },
-  commTime: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.mutedLight },
-  commDeleteBtn: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: '#C45B3F' },
+  commTime: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#7A6E60' },
+  commDeleteBtn: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: '#C45B3F' },
 
   commInputRow: {
     flexDirection: 'row',
@@ -598,8 +598,8 @@ const s = StyleSheet.create({
   commInput: {
     flex: 1,
     fontFamily: 'DMSans_400Regular',
-    fontSize: 14,
-    color: warm.ink,
+    fontSize: 15,
+    color: '#2A2420',
     backgroundColor: warm.bg,
     borderRadius: 20,
     paddingHorizontal: 16,
@@ -647,10 +647,10 @@ const s = StyleSheet.create({
     paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10,
     borderWidth: 1, borderColor: warm.divider,
   },
-  editCancelText: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: warm.muted },
+  editCancelText: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: '#4A3F36' },
   editSaveBtn: {
     paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10,
     backgroundColor: warm.sage,
   },
-  editSaveText: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: '#FFFFFF' },
+  editSaveText: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: '#FFFFFF' },
 });
