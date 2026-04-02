@@ -16,6 +16,7 @@ import AppLogo from '@/components/AppLogo';
 import AppHeader from '@/components/AppHeader';
 import { Ionicons } from '@expo/vector-icons';
 import { getAsanaOfTheDay, getSeriesColor, type AsanaPose } from '@/data/asanaPoses';
+import he from '@/i18n/locales/he';
 
 interface PracticingUser {
   id: string;
@@ -192,11 +193,17 @@ export default function HomeScreen() {
   const weeklyGoal = 6;
   const todaysAsana = getAsanaOfTheDay();
   const seriesColor = getSeriesColor(todaysAsana.series);
+  const heHome = (he as any)?.home ?? {};
   const asana = {
-    name: todaysAsana.sanskrit, subtitle: todaysAsana.english,
-    series: todaysAsana.series, image: todaysAsana.image,
-    benefits: todaysAsana.benefits, tips: todaysAsana.tips,
-    breaths: todaysAsana.breaths, sides: todaysAsana.sides, difficulty: todaysAsana.difficulty,
+    name: todaysAsana.sanskrit,
+    subtitle: isRTL ? (heHome.poseEnglish?.[todaysAsana.id] ?? todaysAsana.english) : todaysAsana.english,
+    series: isRTL ? (heHome.series?.[todaysAsana.series] ?? todaysAsana.series) : todaysAsana.series,
+    image: todaysAsana.image,
+    benefits: isRTL ? todaysAsana.benefits.map((b: string) => heHome.benefits?.[b] ?? b) : todaysAsana.benefits,
+    tips: isRTL ? (heHome.poseTips?.[todaysAsana.id] ?? todaysAsana.tips) : todaysAsana.tips,
+    breaths: todaysAsana.breaths,
+    sides: isRTL ? (heHome.sides?.[todaysAsana.sides] ?? todaysAsana.sides) : todaysAsana.sides,
+    difficulty: isRTL ? (heHome.difficulty?.[todaysAsana.difficulty] ?? todaysAsana.difficulty) : todaysAsana.difficulty,
   };
 
   // Build week checkmarks from rhythm data
@@ -597,23 +604,23 @@ export default function HomeScreen() {
 
             {/* Key tips */}
             <View style={s.asanaTips}>
-              <Text style={s.asanaTipsTitle}>{t('home.keyTips')}</Text>
-              <Text style={s.asanaTipsBody}>{asana.tips}</Text>
+              <Text style={[s.asanaTipsTitle, isRTL && { textAlign: 'right' }]}>{t('home.keyTips')}</Text>
+              <Text style={[s.asanaTipsBody, isRTL && { textAlign: 'right' }]}>{asana.tips}</Text>
             </View>
 
             {/* Stats row */}
             <View style={s.asanaStatsRow}>
               <View style={s.asanaStat}>
                 <Text style={s.asanaStatNum}>{asana.breaths}</Text>
-                <Text style={s.asanaStatLabel}>breaths</Text>
+                <Text style={s.asanaStatLabel}>{t('home.breathsLabel')}</Text>
               </View>
               <View style={s.asanaStat}>
                 <Text style={s.asanaStatNum}>{asana.sides}</Text>
-                <Text style={s.asanaStatLabel}>sides</Text>
+                <Text style={s.asanaStatLabel}>{t('home.sidesLabel')}</Text>
               </View>
               <View style={[s.asanaStat, { backgroundColor: moss.amberBg }]}>
                 <Text style={[s.asanaStatNum, { color: moss.amber }]}>{asana.difficulty}</Text>
-                <Text style={s.asanaStatLabel}>difficulty</Text>
+                <Text style={s.asanaStatLabel}>{t('home.difficultyLabel')}</Text>
               </View>
             </View>
           </View>
