@@ -9,6 +9,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useTranslation } from 'react-i18next';
+import he from '@/i18n/locales/he';
 import AppHeader from '@/components/AppHeader';
 import { images as poseImages } from '@/data/asanaPoses';
 import { ImageSourcePropType } from 'react-native';
@@ -530,13 +531,16 @@ export default function LibraryScreen() {
 
   // Helper: look up pose translation by sanskrit name
   // Can't use t() with dot-separated path because sanskrit names contain special chars
-  const asanasBundle = i18n.getResourceBundle(i18n.language, 'translation')?.library?.asanas ?? {};
-  const poses = asanasBundle.poses ?? {};
-  const drishtis = asanasBundle.drishtis ?? {};
+  const hePoses = (he as any)?.library?.asanas?.poses ?? {};
+  const heDrishtis = (he as any)?.library?.asanas?.drishtis ?? {};
   const pose = (sanskrit: string, field: 'english' | 'description' | 'benefits', fallback: string) => {
-    return poses[sanskrit]?.[field] ?? fallback;
+    if (!isRTL) return fallback;
+    return hePoses[sanskrit]?.[field] ?? fallback;
   };
-  const drishtiText = (val: string) => drishtis[val] ?? val;
+  const drishtiText = (val: string) => {
+    if (!isRTL) return val;
+    return heDrishtis[val] ?? val;
+  };
 
   const catScrollRef = useRef<ScrollView>(null);
   const handleCatLayout = useCallback(() => {
