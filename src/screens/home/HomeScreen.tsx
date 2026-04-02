@@ -119,17 +119,17 @@ const FAKE_USERS: {
   badge: 'practiced' | 'streak' | 'series'; badgeText: string;
   feedCaption: string; feedImage: string; feedTime: string; feedLikes: number; feedComments: number;
 }[] = [
-  { id: 'fake-noa', name: 'נועה לוי', avatarUrl: 'https://i.pravatar.cc/150?img=1', series: 'primary', streak: 142, practicedToday: true, bio: 'מורה ליוגה ומתרגלת אשטנגה 6 שנים. מתרגלת בשאלה בפלורנטין.', badge: 'streak', badgeText: '142 days', feedCaption: 'תרגול בוקר מושלם 🌅 הסדרה הראשונה זרמה היום בצורה מדהימה', feedImage: '', feedTime: new Date(Date.now() - 2 * 3600000).toISOString(), feedLikes: 12, feedComments: 3 },
+  { id: 'fake-noa', name: 'נועה לוי', avatarUrl: 'https://i.pravatar.cc/150?img=1', series: 'primary', streak: 142, practicedToday: true, bio: 'מורה ליוגה ומתרגלת אשטנגה 6 שנים. מתרגלת בשאלה בפלורנטין.', badge: 'streak', badgeText: '142 days', feedCaption: 'תרגול בוקר מושלם 🌅 הסדרה הראשונה זרמה היום בצורה מדהימה', feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=400&fit=crop', feedTime: new Date(Date.now() - 2 * 3600000).toISOString(), feedLikes: 12, feedComments: 3 },
   { id: 'fake-ori', name: 'אורי כהן', avatarUrl: 'https://i.pravatar.cc/150?img=3', series: 'primary', streak: 8, practicedToday: true, bio: 'מתכנת שהתחיל אשטנגה לפני 8 חודשים. עדיין נאבק עם תנוחות הישיבה.', badge: 'practiced', badgeText: 'Today', feedCaption: 'סוף סוף הצלחתי לתפוס את האצבעות בג׳אנו שירשאסנה! 🎉', feedImage: '', feedTime: new Date(Date.now() - 5 * 3600000).toISOString(), feedLikes: 18, feedComments: 7 },
   { id: 'fake-michal', name: 'מיכל אברהם', avatarUrl: 'https://i.pravatar.cc/150?img=5', series: 'intermediate', streak: 365, practicedToday: true, bio: 'פסיכולוגית, אמא לשלושה. מתרגלת 12 שנה. התחילה אצל פטבי ג׳ויס.', badge: 'streak', badgeText: '1 year', feedCaption: 'קאפוטאסנה — כל יום מחדש. הנשימה היא המפתח 🙏', feedImage: '', feedTime: new Date(Date.now() - 8 * 3600000).toISOString(), feedLikes: 24, feedComments: 5 },
-  { id: 'fake-yotam', name: 'יותם ברק', avatarUrl: 'https://i.pravatar.cc/150?img=8', series: 'sun_sals', streak: 21, practicedToday: false, bio: 'מדריך צלילה באילת. מתרגל על החוף בזריחה.', badge: 'practiced', badgeText: 'Yesterday', feedCaption: 'ברכות שמש על חוף אלמוג 🌊☀️ אין כמו להתרגל עם רגליים בחול', feedImage: '', feedTime: new Date(Date.now() - 18 * 3600000).toISOString(), feedLikes: 31, feedComments: 9 },
+  { id: 'fake-yotam', name: 'יותם ברק', avatarUrl: 'https://i.pravatar.cc/150?img=8', series: 'sun_sals', streak: 21, practicedToday: false, bio: 'מדריך צלילה באילת. מתרגל על החוף בזריחה.', badge: 'practiced', badgeText: 'Yesterday', feedCaption: 'ברכות שמש על חוף אלמוג 🌊☀️ אין כמו להתרגל עם רגליים בחול', feedImage: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=600&h=400&fit=crop', feedTime: new Date(Date.now() - 18 * 3600000).toISOString(), feedLikes: 31, feedComments: 9 },
   { id: 'fake-rinat', name: 'רינת שמעוני', avatarUrl: 'https://i.pravatar.cc/150?img=9', series: 'primary', streak: 56, practicedToday: true, bio: 'ארכיטקטית מחיפה. מתרגלת 4 שנים בבית.', badge: 'streak', badgeText: '56 days', feedCaption: 'גיליתי שכשמיישרים את הירכיים בטריקונאסנה הכל משתנה', feedImage: '', feedTime: new Date(Date.now() - 3 * 3600000).toISOString(), feedLikes: 8, feedComments: 2 },
   { id: 'fake-daniel', name: 'דניאל פרידמן', avatarUrl: 'https://i.pravatar.cc/150?img=11', series: 'primary', streak: 34, practicedToday: false, bio: 'שף ובעל מסעדה. מתרגל ב-10 בבוקר אחרי משמרות לילה.', badge: 'practiced', badgeText: 'Yesterday', feedCaption: 'תרגול מאוחר + ארוחת בוקר בריאה = יום מושלם 🍳🧘‍♂️', feedImage: '', feedTime: new Date(Date.now() - 26 * 3600000).toISOString(), feedLikes: 15, feedComments: 4 },
   { id: 'fake-talia', name: 'טליה וולף', avatarUrl: 'https://i.pravatar.cc/150?img=10', series: 'short', streak: 89, practicedToday: true, bio: 'חקלאית אורגנית בגליל. אמא ל-4. מתאימה את התרגול לקצב החיים.', badge: 'streak', badgeText: '89 days', feedCaption: 'תרגול של 40 דקות בין הגן לרפת. לא צריך יותר 🌿', feedImage: '', feedTime: new Date(Date.now() - 4 * 3600000).toISOString(), feedLikes: 22, feedComments: 6 },
-  { id: 'fake-ido', name: 'עידו נחום', avatarUrl: 'https://i.pravatar.cc/150?img=12', series: 'primary', streak: 512, practicedToday: true, bio: 'רופא משפחה, מתרגל 18 שנה. נוסע למייסור כל שנתיים.', badge: 'streak', badgeText: '512 days', feedCaption: 'אחרי 18 שנה של תרגול, סופטה קורמאסנה עדיין מלמדת אותי משהו חדש', feedImage: '', feedTime: new Date(Date.now() - 6 * 3600000).toISOString(), feedLikes: 35, feedComments: 11 },
+  { id: 'fake-ido', name: 'עידו נחום', avatarUrl: 'https://i.pravatar.cc/150?img=12', series: 'primary', streak: 512, practicedToday: true, bio: 'רופא משפחה, מתרגל 18 שנה. נוסע למייסור כל שנתיים.', badge: 'streak', badgeText: '512 days', feedCaption: 'אחרי 18 שנה של תרגול, סופטה קורמאסנה עדיין מלמדת אותי משהו חדש', feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=400&fit=crop', feedTime: new Date(Date.now() - 6 * 3600000).toISOString(), feedLikes: 35, feedComments: 11 },
   { id: 'fake-shira', name: 'שירה מזרחי', avatarUrl: 'https://i.pravatar.cc/150?img=16', series: 'sun_sals', streak: 3, practicedToday: false, bio: 'סטודנטית לאמנות, 3 חודשים של אשטנגה. מציירת תנוחות.', badge: 'practiced', badgeText: '3 days ago', feedCaption: 'ציירתי את ויראבהדראסנה B 🎨 מי רוצה לראות?', feedImage: '', feedTime: new Date(Date.now() - 48 * 3600000).toISOString(), feedLikes: 27, feedComments: 8 },
   { id: 'fake-amir', name: 'אמיר חדד', avatarUrl: 'https://i.pravatar.cc/150?img=13', series: 'primary', streak: 12, practicedToday: true, bio: 'עורך דין ואב טרי. מנסה לשמור על הקביעות עם תינוק בבית.', badge: 'practiced', badgeText: 'Today', feedCaption: 'התינוקת התעוררה באמצע נאוואסנה. עשיתי אותה עם תינוקת על הבטן 😂', feedImage: '', feedTime: new Date(Date.now() - 1 * 3600000).toISOString(), feedLikes: 42, feedComments: 14 },
-  { id: 'fake-sarah', name: 'Sarah Mitchell', avatarUrl: 'https://i.pravatar.cc/150?img=20', series: 'primary', streak: 204, practicedToday: true, bio: 'Yoga teacher in London. Spent 3 months in Mysore with Sharath.', badge: 'streak', badgeText: '204 days', feedCaption: 'Morning Mysore at the shala. Nothing beats the energy of practicing together 🕉️', feedImage: '', feedTime: new Date(Date.now() - 7 * 3600000).toISOString(), feedLikes: 19, feedComments: 4 },
+  { id: 'fake-sarah', name: 'Sarah Mitchell', avatarUrl: 'https://i.pravatar.cc/150?img=20', series: 'primary', streak: 204, practicedToday: true, bio: 'Yoga teacher in London. Spent 3 months in Mysore with Sharath.', badge: 'streak', badgeText: '204 days', feedCaption: 'Morning Mysore at the shala. Nothing beats the energy of practicing together 🕉️', feedImage: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600&h=400&fit=crop', feedTime: new Date(Date.now() - 7 * 3600000).toISOString(), feedLikes: 19, feedComments: 4 },
   { id: 'fake-david', name: 'David Stern', avatarUrl: 'https://i.pravatar.cc/150?img=14', series: 'intermediate', streak: 730, practicedToday: true, bio: 'Former Wall Street trader, now full-time yoga teacher in Brooklyn. 15 years of practice.', badge: 'streak', badgeText: '2 years', feedCaption: 'Kapo day. The backbend that changed everything. Trust the breath. 🔥', feedImage: '', feedTime: new Date(Date.now() - 10 * 3600000).toISOString(), feedLikes: 28, feedComments: 6 },
 ];
 
@@ -233,8 +233,7 @@ export default function HomeScreen() {
   const fakeOnMat = FAKE_USERS.filter(u => u.practicedToday).map(u => ({ id: u.id, name: u.name, avatarUrl: u.avatarUrl }));
   const sanghaOnMat = [...meOnMat, ...othersOnMat, ...fakeOnMat];
 
-  // Merged feed for Home: real posts + fake posts with images, sorted newest first, limit 2
-  const FAKE_WITH_IMAGES = FAKE_USERS.filter(u => !!u.feedImage);
+  // Merged feed for Home: real posts + all fake posts, sorted newest first, limit 2
   const homeFeed = [
     ...feedPosts.map((p) => ({
       id: p.id,
@@ -246,7 +245,7 @@ export default function HomeScreen() {
       commentsCount: (p as any).comments_count ?? 0,
       createdAt: p.created_at,
     })),
-    ...FAKE_WITH_IMAGES.map((u) => ({
+    ...FAKE_USERS.map((u) => ({
       id: u.id,
       userName: u.name,
       userAvatar: u.avatarUrl,
@@ -592,47 +591,47 @@ export default function HomeScreen() {
               <TouchableOpacity
                 key={post.id}
                 style={s.feedCard}
-                activeOpacity={0.8}
+                activeOpacity={0.85}
                 onPress={() => router.push('/(tabs)/community')}
               >
-                <View style={s.feedCardInner}>
-                  <View style={s.feedCardLeft}>
-                    <View style={s.feedUserRow}>
-                      {post.userAvatar ? (
-                        <Image source={{ uri: post.userAvatar }} style={s.feedAvatar} />
-                      ) : (
-                        <View style={[s.feedAvatar, { backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center' }]}>
-                          <Text style={{ fontSize: 16, color: '#fff', fontWeight: '600' }}>{post.userName.charAt(0)}</Text>
-                        </View>
-                      )}
-                      <View>
-                        <Text style={s.feedUserName}>{post.userName}</Text>
-                        <Text style={s.feedTimeAgo}>{timeAgo}</Text>
-                      </View>
+                {/* Header */}
+                <View style={[s.feedUserRow, isRTL && { flexDirection: 'row-reverse' }]}>
+                  {post.userAvatar ? (
+                    <Image source={{ uri: post.userAvatar }} style={s.feedAvatar} />
+                  ) : (
+                    <View style={[s.feedAvatar, { backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center' }]}>
+                      <Text style={{ fontSize: 16, color: '#fff', fontWeight: '600' }}>{post.userName.charAt(0)}</Text>
                     </View>
-                    <Text style={s.feedCaption} numberOfLines={3}>{post.caption}</Text>
-                    <View style={s.feedStats}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                        <Ionicons name="heart" size={14} color="#E25858" />
-                        <Text style={s.feedHeart}>{post.likesCount}</Text>
-                      </View>
-                      {post.commentsCount > 0 && (
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: 12 }}>
-                          <Ionicons name="chatbubble-outline" size={13} color={moss.muted} />
-                          <Text style={s.feedHeart}>{post.commentsCount}</Text>
-                        </View>
-                      )}
-                    </View>
+                  )}
+                  <View style={[{ flex: 1 }, isRTL && { alignItems: 'flex-end' }]}>
+                    <Text style={s.feedUserName}>{post.userName}</Text>
+                    <Text style={s.feedTimeAgo}>{timeAgo}</Text>
                   </View>
-                  {post.imageUrl && (
-                    <Image source={{ uri: post.imageUrl }} style={s.feedCardImage} />
+                </View>
+                {/* Caption */}
+                <Text style={[s.feedCaption, isRTL && { textAlign: 'right' }]} numberOfLines={3}>{post.caption}</Text>
+                {/* Image */}
+                {post.imageUrl ? (
+                  <Image source={{ uri: post.imageUrl }} style={s.feedPostImage} resizeMode="cover" />
+                ) : null}
+                {/* Footer */}
+                <View style={[s.feedStats, isRTL && { flexDirection: 'row-reverse' }]}>
+                  <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 6 }, isRTL && { flexDirection: 'row-reverse' }]}>
+                    <Ionicons name="heart-outline" size={18} color="#C4956A" />
+                    <Text style={s.feedHeart}>{post.likesCount}</Text>
+                  </View>
+                  {post.commentsCount > 0 && (
+                    <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 6 }, isRTL && { flexDirection: 'row-reverse' }]}>
+                      <Ionicons name="chatbubble-outline" size={16} color="#7A6E60" />
+                      <Text style={s.feedHeart}>{post.commentsCount}</Text>
+                    </View>
                   )}
                 </View>
               </TouchableOpacity>
             );
           })}
           {homeFeed.length === 0 && (
-            <Text style={{ color: moss.muted, fontSize: 15, textAlign: 'center', paddingVertical: 20 }}>
+            <Text style={{ color: '#4A3F36', fontSize: 15, textAlign: 'center', paddingVertical: 20 }}>
               {t('home.noPostsYet')}
             </Text>
           )}
@@ -1102,22 +1101,26 @@ const s = StyleSheet.create({
   feedCard: {
     backgroundColor: moss.cardBg, borderRadius: 16,
     borderWidth: 1, borderColor: moss.divider,
-    marginBottom: 12, overflow: 'hidden' as any,
+    marginBottom: 14, overflow: 'hidden' as any,
   },
-  feedCardInner: { flexDirection: 'row' as any },
-  feedCardLeft: { flex: 1, padding: 16 },
   feedUserRow: {
-    flexDirection: 'row' as any, alignItems: 'center' as any, gap: 10, marginBottom: 8,
+    flexDirection: 'row' as any, alignItems: 'center' as any, gap: 12,
+    padding: 14, paddingBottom: 10,
   },
-  feedAvatar: { width: 40, height: 40, borderRadius: 20 },
-  feedUserName: { fontFamily: 'DMSans_700Bold', fontSize: 15, color: moss.ink },
-  feedTimeAgo: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.muted },
-  feedCaption: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.ink, marginBottom: 10 },
-  feedStats: { flexDirection: 'row' as any, gap: 14, alignItems: 'center' as any },
-  feedHeart: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: moss.heartRed },
-  feedComment: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: moss.muted },
-  feedCardImage: { width: 130, height: 'auto' as any, minHeight: 120 },
-  feedSeeAll: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: moss.muted, marginTop: 12, marginBottom: 4 },
+  feedAvatar: { width: 42, height: 42, borderRadius: 21 },
+  feedUserName: { fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: '#2A2420' },
+  feedTimeAgo: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#7A6E60' },
+  feedCaption: {
+    fontFamily: 'DMSans_400Regular', fontSize: 16, color: '#2A2420',
+    lineHeight: 24, paddingHorizontal: 14, paddingBottom: 10,
+  },
+  feedPostImage: { width: '100%' as any, height: 200, backgroundColor: moss.divider },
+  feedStats: {
+    flexDirection: 'row' as any, alignItems: 'center' as any,
+    padding: 12, gap: 16,
+  },
+  feedHeart: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: '#4A3F36' },
+  feedSeeAll: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: moss.accent, marginTop: 12, marginBottom: 4 },
 
   /* ── Asana of the Day ── */
   asanaCard: {
