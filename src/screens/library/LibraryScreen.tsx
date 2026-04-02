@@ -543,9 +543,15 @@ export default function LibraryScreen() {
   };
 
   const catScrollRef = useRef<ScrollView>(null);
+  const filterScrollRef = useRef<ScrollView>(null);
   const handleCatLayout = useCallback(() => {
     if (isRTL && catScrollRef.current) {
       catScrollRef.current.scrollToEnd({ animated: false });
+    }
+  }, [isRTL]);
+  const handleFilterLayout = useCallback(() => {
+    if (isRTL && filterScrollRef.current) {
+      filterScrollRef.current.scrollToEnd({ animated: false });
     }
   }, [isRTL]);
 
@@ -661,7 +667,7 @@ export default function LibraryScreen() {
             </View>
 
             {/* Filter by section */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[st.filterRow, isRTL && { flexDirection: 'row-reverse' }]}>
+            <ScrollView ref={filterScrollRef} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[st.filterRow, isRTL && { flexDirection: 'row-reverse' }]} onContentSizeChange={handleFilterLayout}>
               <TouchableOpacity
                 style={[st.filterChip, !asanaFilter && st.filterChipActive]}
                 onPress={() => setAsanaFilter(null)}
@@ -1009,7 +1015,7 @@ const st = StyleSheet.create({
     backgroundColor: '#E8873D', borderColor: '#E8873D',
   },
   catIcon: { fontSize: 17 },
-  catLabel: { ...typography.labelSm, color: colors.ink, fontSize: 14 },
+  catLabel: { ...typography.labelSm, color: colors.ink, fontSize: 15 },
   catLabelActive: { color: '#fff' },
 
   body: { flex: 1 },
@@ -1055,7 +1061,7 @@ const st = StyleSheet.create({
     borderWidth: 1, borderColor: '#EDE9E3',
   },
   filterChipActive: { backgroundColor: '#E8873D', borderColor: '#E8873D' },
-  filterText: { ...typography.labelSm, color: colors.ink, fontSize: 13 },
+  filterText: { ...typography.labelSm, color: colors.ink, fontSize: 14 },
   filterTextActive: { color: '#fff' },
 
   // Asana list
