@@ -694,7 +694,7 @@ export default function LibraryScreen() {
                     )}
                     <View style={st.asanaInfo}>
                       <Text style={[st.asanaSanskrit, isRTL && { textAlign: 'right' }]}>{asana.sanskrit}</Text>
-                      <Text style={[st.asanaEnglish, isRTL && { textAlign: 'right' }]}>{asana.english}</Text>
+                      <Text style={[st.asanaEnglish, isRTL && { textAlign: 'right' }]}>{t(`library.asanas.poses.${asana.sanskrit}.english`, asana.english)}</Text>
                     </View>
                     <Ionicons name={isRTL ? 'chevron-back' : 'chevron-forward'} size={14} color={colors.mutedL} />
                   </TouchableOpacity>
@@ -724,7 +724,7 @@ export default function LibraryScreen() {
                 )}
                 <View style={st.asanaInfo}>
                   <Text style={[st.asanaSanskrit, isRTL && { textAlign: 'right' }]}>{asana.sanskrit}</Text>
-                  <Text style={[st.asanaEnglish, isRTL && { textAlign: 'right' }]}>{asana.english}</Text>
+                  <Text style={[st.asanaEnglish, isRTL && { textAlign: 'right' }]}>{t(`library.asanas.poses.${asana.sanskrit}.english`, asana.english)}</Text>
                 </View>
                 <Text style={st.asanaSeries}>{t(`library.asanas.sections.${asana.series}`, asana.series)}</Text>
               </TouchableOpacity>
@@ -914,7 +914,7 @@ export default function LibraryScreen() {
                   <Ionicons name="close" size={18} color="rgba(255,255,255,0.85)" />
                 </TouchableOpacity>
                 <View style={st.modalBadge}>
-                  <Text style={st.modalBadgeText}>{selectedAsana.series}</Text>
+                  <Text style={st.modalBadgeText}>{t(`library.asanas.sections.${selectedAsana.series}`, selectedAsana.series)}</Text>
                 </View>
               </View>
 
@@ -927,7 +927,7 @@ export default function LibraryScreen() {
 
               {/* Asana name */}
               <Text style={st.modalSanskrit}>{selectedAsana.sanskrit}</Text>
-              <Text style={st.modalEnglish}>{selectedAsana.english}</Text>
+              <Text style={st.modalEnglish}>{t(`library.asanas.poses.${selectedAsana.sanskrit}.english`, selectedAsana.english)}</Text>
 
               {/* Vinyasa count pill */}
               <View style={st.modalVinyasaPill}>
@@ -940,12 +940,12 @@ export default function LibraryScreen() {
             <ScrollView style={st.modalBody} contentContainerStyle={st.modalBodyContent} showsVerticalScrollIndicator={false}>
               <View style={st.modalSection}>
                 <Text style={[st.modalSectionTitle, isRTL && { textAlign: 'right' }]}>{t('library.asanas.description')}</Text>
-                <Text style={[st.modalText, isRTL && { textAlign: 'right' }]}>{selectedAsana.description}</Text>
+                <Text style={[st.modalText, isRTL && { textAlign: 'right' }]}>{t(`library.asanas.poses.${selectedAsana.sanskrit}.description`, selectedAsana.description)}</Text>
               </View>
 
               <View style={st.modalSection}>
                 <Text style={[st.modalSectionTitle, isRTL && { textAlign: 'right' }]}>{t('library.asanas.benefits')}</Text>
-                <Text style={[st.modalText, isRTL && { textAlign: 'right' }]}>{selectedAsana.benefits}</Text>
+                <Text style={[st.modalText, isRTL && { textAlign: 'right' }]}>{t(`library.asanas.poses.${selectedAsana.sanskrit}.benefits`, selectedAsana.benefits)}</Text>
               </View>
 
               <View style={st.modalSection}>
