@@ -511,7 +511,7 @@ const st = StyleSheet.create({
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18, color: '#3B3228',
   },
   cardSubTitle: {
-    fontSize: 13, fontWeight: '600' as any, color: '#9B8E7E',
+    fontSize: 14, fontWeight: '600' as any, color: '#9B8E7E',
     textTransform: 'uppercase' as any, letterSpacing: 0.6,
     marginBottom: spacing.sm,
   },

@@ -213,7 +213,7 @@ const s = StyleSheet.create({
   },
 
   kicker: {
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: 'DMSans_600SemiBold',
     letterSpacing: 2,
     color: moss.accent,

@@ -799,7 +799,7 @@ const s = StyleSheet.create({
     width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.3)',
     borderWidth: 2, borderColor: '#fff', alignItems: 'center', justifyContent: 'center',
   },
-  attendeeMoreText: { ...typography.headingXs, color: '#fff', fontSize: 10 },
+  attendeeMoreText: { ...typography.headingXs, color: '#fff', fontSize: 14 },
 
   spotsChip: {
     backgroundColor: colors.orange, borderRadius: radius.full, alignSelf: 'flex-start',

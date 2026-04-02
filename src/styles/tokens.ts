@@ -28,12 +28,12 @@ export const colors = {
   orangePale: '#FFF5EC',
 
   // Ink palette → Dark text (warm brown-black)
-  ink: '#3B3228',
-  inkMid: '#5E5245',
+  ink: '#2A2420',
+  inkMid: '#4A3F36',
 
   // Muted — secondary text, placeholders
-  muted: '#9B8E7E',
-  mutedL: '#C4B8A8',
+  muted: '#7A6E60',
+  mutedL: '#9B8E7E',
 
   // Base (card and page)
   white: '#FFFFFF',
@@ -99,17 +99,17 @@ export const typography = {
   // Body — DM Sans
   bodyLg: { fontFamily: 'DMSans_400Regular', fontSize: 16, lineHeight: 24 },
   bodyMd: { fontFamily: 'DMSans_400Regular', fontSize: 14, lineHeight: 22 },
-  bodySm: { fontFamily: 'DMSans_400Regular', fontSize: 13, lineHeight: 20 },
-  bodyXs: { fontFamily: 'DMSans_400Regular', fontSize: 11, lineHeight: 16 },
+  bodySm: { fontFamily: 'DMSans_400Regular', fontSize: 14, lineHeight: 20 },
+  bodyXs: { fontFamily: 'DMSans_400Regular', fontSize: 14, lineHeight: 20 },
 
   // Medium weight
   labelLg: { fontFamily: 'DMSans_500Medium', fontSize: 15, lineHeight: 22 },
-  labelMd: { fontFamily: 'DMSans_500Medium', fontSize: 13, lineHeight: 20 },
-  labelSm: { fontFamily: 'DMSans_500Medium', fontSize: 11, lineHeight: 16 },
+  labelMd: { fontFamily: 'DMSans_500Medium', fontSize: 14, lineHeight: 20 },
+  labelSm: { fontFamily: 'DMSans_500Medium', fontSize: 14, lineHeight: 20 },
 
   // Bold / semibold
   headingLg: { fontFamily: 'DMSans_600SemiBold', fontSize: 17, lineHeight: 24 },
   headingMd: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, lineHeight: 22 },
-  headingSm: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, lineHeight: 20 },
-  headingXs: { fontFamily: 'DMSans_600SemiBold', fontSize: 11, lineHeight: 16 },
+  headingSm: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, lineHeight: 20 },
+  headingXs: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, lineHeight: 20 },
 } as const;

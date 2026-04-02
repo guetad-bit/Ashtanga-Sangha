@@ -599,7 +599,7 @@ const st = StyleSheet.create({
     backgroundColor: warm.orangeLight, borderRadius: 20,
     paddingHorizontal: 12, paddingVertical: 5,
   },
-  statsPillText: { fontSize: 12, fontWeight: '600', color: warm.orange },
+  statsPillText: { fontSize: 14, fontWeight: '600', color: warm.orange },
   statsPillDot: { width: 3, height: 3, borderRadius: 1.5, backgroundColor: warm.orange, opacity: 0.5 },
   topAvatar: { width: 46, height: 46, borderRadius: 23, borderWidth: 2, borderColor: '#8A9E78', overflow: 'hidden' },
 
@@ -621,8 +621,8 @@ const st = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   statNumber: { fontFamily: 'DMSerifDisplay_400Regular', fontSize: 24, color: warm.ink },
-  statNumber2: { fontSize: 12, fontWeight: '600', color: warm.ink, textAlign: 'center' },
-  statLabel: { fontSize: 11, color: warm.muted },
+  statNumber2: { fontSize: 14, fontWeight: '600', color: warm.ink, textAlign: 'center' },
+  statLabel: { fontSize: 14, color: warm.muted },
 
   /* Calendar */
   calWrap: {
@@ -632,12 +632,12 @@ const st = StyleSheet.create({
   calTitle: { fontFamily: 'DMSerifDisplay_400Regular', fontSize: 16, color: warm.ink, marginBottom: 12, textAlign: 'center' },
   calGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   calCell: { width: '14.28%', alignItems: 'center', marginBottom: 6 },
-  calDayLabel: { fontSize: 11, fontWeight: '600', color: warm.muted, marginBottom: 4 },
+  calDayLabel: { fontSize: 14, fontWeight: '600', color: warm.muted, marginBottom: 4 },
   calDay: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
   calDayPracticed: { backgroundColor: warm.orange },
   calDayMulti: { backgroundColor: warm.accent },
   calDayToday: { borderWidth: 2, borderColor: warm.accent },
-  calDayText: { fontSize: 13, color: warm.inkMid },
+  calDayText: { fontSize: 14, color: warm.inkMid },
   calDayTextPracticed: { color: '#FFFFFF', fontWeight: '700' },
   calDayTextToday: { color: warm.accent, fontWeight: '700' },
 
@@ -651,7 +651,7 @@ const st = StyleSheet.create({
   monthBannerLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   monthBannerText: { fontSize: 14, color: warm.ink },
   monthBannerBold: { fontWeight: '700' },
-  monthBannerRight: { fontSize: 12, color: warm.muted },
+  monthBannerRight: { fontSize: 14, color: warm.muted },
 
   /* Empty state */
   emptyState: { alignItems: 'center', paddingVertical: 50, paddingHorizontal: 40 },
@@ -664,7 +664,7 @@ const st = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, marginBottom: 10, gap: 12,
   },
   monthHeaderLine: { flex: 1, height: 1, backgroundColor: warm.divider },
-  monthHeader: { fontSize: 12, fontWeight: '600', color: warm.muted, textTransform: 'uppercase', letterSpacing: 1.2 },
+  monthHeader: { fontSize: 14, fontWeight: '600', color: warm.muted, textTransform: 'uppercase', letterSpacing: 1.2 },
 
   /* Log cards */
   logCard: {
@@ -679,11 +679,11 @@ const st = StyleSheet.create({
   },
   logInfo: { flex: 1 },
   logSeries: { fontSize: 15, fontWeight: '600', color: warm.ink, marginBottom: 2 },
-  logMeta: { fontSize: 12, color: warm.muted },
+  logMeta: { fontSize: 14, color: warm.muted },
   logDurationBadge: {
     backgroundColor: warm.sageBg, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20,
   },
-  logDurationText: { fontSize: 13, fontWeight: '700', color: warm.sage },
+  logDurationText: { fontSize: 14, fontWeight: '700', color: warm.sage },
 
   /* Expanded detail */
   logExpanded: {
@@ -691,8 +691,8 @@ const st = StyleSheet.create({
     paddingHorizontal: 14, paddingVertical: 12, backgroundColor: '#FDFCFA', gap: 8,
   },
   logDetailRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  logDetailLabel: { fontSize: 13, color: warm.muted, width: 70 },
-  logDetailValue: { fontSize: 13, fontWeight: '600', color: warm.ink, flex: 1 },
+  logDetailLabel: { fontSize: 14, color: warm.muted, width: 70 },
+  logDetailValue: { fontSize: 14, fontWeight: '600', color: warm.ink, flex: 1 },
 
   /* Notes display */
   logNotesWrap: {
@@ -701,7 +701,7 @@ const st = StyleSheet.create({
     borderRadius: 8, borderWidth: 1, borderColor: warm.divider,
   },
   logNotesText: {
-    fontSize: 13, color: warm.ink, flex: 1, lineHeight: 19,
+    fontSize: 14, color: warm.ink, flex: 1, lineHeight: 19,
     fontFamily: 'DMSans_400Regular',
   },
 
@@ -715,13 +715,13 @@ const st = StyleSheet.create({
     paddingHorizontal: 14, paddingVertical: 7,
     backgroundColor: warm.blueBg, borderRadius: 20,
   },
-  editBtnText: { fontSize: 13, fontWeight: '600', color: warm.blue },
+  editBtnText: { fontSize: 14, fontWeight: '600', color: warm.blue },
   deleteBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     paddingHorizontal: 14, paddingVertical: 7,
     backgroundColor: warm.redBg, borderRadius: 20,
   },
-  deleteBtnText: { fontSize: 13, fontWeight: '600', color: warm.red },
+  deleteBtnText: { fontSize: 14, fontWeight: '600', color: warm.red },
 
   /* Shared modal styles */
   modalOverlay: {
@@ -760,7 +760,7 @@ const st = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20,
   },
   editModalTitle: { fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20, color: warm.ink },
-  editLabel: { fontSize: 13, fontWeight: '600', color: warm.muted, marginBottom: 8, marginTop: 4 },
+  editLabel: { fontSize: 14, fontWeight: '600', color: warm.muted, marginBottom: 8, marginTop: 4 },
   editSeriesScroll: { marginBottom: 12 },
   editSeriesRow: { gap: 8 },
   editSeriesChip: {
@@ -770,7 +770,7 @@ const st = StyleSheet.create({
     backgroundColor: warm.cardBg,
   },
   editSeriesChipActive: { backgroundColor: warm.orange, borderColor: warm.orange },
-  editSeriesChipText: { fontSize: 13, color: warm.inkMid, fontWeight: '500' },
+  editSeriesChipText: { fontSize: 14, color: warm.inkMid, fontWeight: '500' },
   editSeriesChipTextActive: { color: '#fff', fontWeight: '600' },
   editDurationScroll: { marginBottom: 4 },
   editDurationRow: { gap: 8 },
@@ -780,7 +780,7 @@ const st = StyleSheet.create({
     backgroundColor: warm.cardBg,
   },
   editDurationChipActive: { backgroundColor: warm.sage, borderColor: warm.sage },
-  editDurationChipText: { fontSize: 13, fontWeight: '600', color: warm.inkMid },
+  editDurationChipText: { fontSize: 14, fontWeight: '600', color: warm.inkMid },
   editDurationChipTextActive: { color: '#fff' },
   customDurRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',

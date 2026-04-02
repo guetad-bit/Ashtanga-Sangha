@@ -1039,17 +1039,17 @@ const st = StyleSheet.create({
     backgroundColor: colors.ink,
   },
   seriesBtnText: {
-    ...typography.headingXs, color: colors.muted, fontSize: 12,
+    ...typography.headingXs, color: colors.muted, fontSize: 14,
   },
   seriesBtnTextActive: { color: '#fff' },
   seriesBtnSub: {
-    ...typography.bodyXs, color: colors.mutedL, fontSize: 9, marginTop: 1,
+    ...typography.bodyXs, color: colors.mutedL, fontSize: 14, marginTop: 1,
   },
   seriesBtnSubActive: { color: 'rgba(255,255,255,0.55)' },
 
   // Avatar label (example indicator)
   avatarLabel: {
-    ...typography.bodyXs, color: colors.sage, fontSize: 9,
+    ...typography.bodyXs, color: colors.sage, fontSize: 14,
     marginTop: 2, fontStyle: 'italic',
   },
 
@@ -1086,14 +1086,14 @@ const st = StyleSheet.create({
     backgroundColor: colors.sagePale, alignItems: 'center', justifyContent: 'center',
     marginRight: spacing.md,
   },
-  asanaNumText: { ...typography.headingSm, color: colors.sage, fontSize: 12 },
+  asanaNumText: { ...typography.headingSm, color: colors.sage, fontSize: 14 },
   asanaInfo: { flex: 1 },
   asanaSanskrit: {
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 15, lineHeight: 20,
     color: colors.ink,
   },
   asanaEnglish: { ...typography.bodyXs, color: colors.muted, marginTop: 1 },
-  asanaSeries: { ...typography.labelSm, color: colors.sage, fontSize: 10 },
+  asanaSeries: { ...typography.labelSm, color: colors.sage, fontSize: 14 },
 
   // Sequences
   seqCard: {

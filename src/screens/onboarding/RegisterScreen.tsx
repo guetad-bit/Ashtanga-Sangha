@@ -308,7 +308,7 @@ const st = StyleSheet.create({
   /* ââ Terms ââââââââââââââââââââââââââââ */
   terms: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 12,
+    fontSize: 14,
     lineHeight: 17,
     color: 'rgba(255,255,255,0.45)',
     textAlign: 'center',
@@ -329,7 +329,7 @@ const st = StyleSheet.create({
   dividerLine: { flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.25)' },
   dividerText: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 13,
+    fontSize: 14,
     color: 'rgba(255,255,255,0.6)',
     letterSpacing: 1,
   },

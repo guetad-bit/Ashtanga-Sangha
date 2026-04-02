@@ -947,7 +947,7 @@ const s = StyleSheet.create({
   },
   weekDays: { flexDirection: 'row' as any, justifyContent: 'space-around' as any, marginBottom: 24 },
   weekDayCol: { alignItems: 'center' as any, gap: 8 },
-  weekDayLabel: { fontFamily: 'DMSans_500Medium', fontSize: 12, color: moss.muted },
+  weekDayLabel: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.muted },
   weekDayCircle: {
     width: 36, height: 36, borderRadius: 18,
     alignItems: 'center' as any, justifyContent: 'center' as any,
@@ -969,7 +969,7 @@ const s = StyleSheet.create({
     height: '100%' as any, borderRadius: 4,
     backgroundColor: moss.accent,
   },
-  goalHint: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted },
+  goalHint: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.muted },
   moonBadge: {
     marginTop: 14,
     backgroundColor: moss.orangeLight,
@@ -979,7 +979,7 @@ const s = StyleSheet.create({
     alignSelf: 'flex-start' as any,
   },
   moonBadgeText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.amber,
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.amber,
   },
 
   /* ── Your Circle ── */
@@ -994,7 +994,7 @@ const s = StyleSheet.create({
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20,
     color: moss.ink, lineHeight: 26,
   },
-  circleSubtitle: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted, marginTop: 2 },
+  circleSubtitle: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.muted, marginTop: 2 },
   circleViewAll: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.muted, marginTop: 4 },
   circleScroll: { paddingTop: 12, paddingBottom: 4, gap: 6 },
   circleMember: {
@@ -1017,7 +1017,7 @@ const s = StyleSheet.create({
     minWidth: 60, justifyContent: 'center' as any,
   },
   circleBadgeText: { fontSize: 8, fontWeight: '600' as any },
-  circleMemberName: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.ink },
+  circleMemberName: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.ink },
 
   /* ── Sangha Feed ── */
   feedSection: {
@@ -1039,7 +1039,7 @@ const s = StyleSheet.create({
   },
   feedAvatar: { width: 40, height: 40, borderRadius: 20 },
   feedUserName: { fontFamily: 'DMSans_700Bold', fontSize: 15, color: moss.ink },
-  feedTimeAgo: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted },
+  feedTimeAgo: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.muted },
   feedCaption: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.ink, marginBottom: 10 },
   feedStats: { flexDirection: 'row' as any, gap: 14, alignItems: 'center' as any },
   feedHeart: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.heartRed },
@@ -1067,8 +1067,8 @@ const s = StyleSheet.create({
     backgroundColor: moss.accentFaint, borderRadius: 999,
     paddingHorizontal: 10, paddingVertical: 3,
   },
-  asanaSeriesText: { fontSize: 11, fontWeight: '600' as any, color: moss.accent },
-  asanaHint: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted },
+  asanaSeriesText: { fontSize: 14, fontWeight: '600' as any, color: moss.accent },
+  asanaHint: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.muted },
   asanaImageWrap: { position: 'relative' as any, height: 200, backgroundColor: moss.bg },
   asanaImage: { width: '100%' as any, height: '100%' as any },
   asanaImageOverlay: {
@@ -1083,7 +1083,7 @@ const s = StyleSheet.create({
     lineHeight: 26,
   },
   asanaSubtitle: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted,
+    fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.muted,
   },
   asanaDetails: { padding: 16, paddingTop: 14 },
   asanaTags: { flexDirection: 'row' as any, flexWrap: 'wrap' as any, gap: 8, marginBottom: 14 },
@@ -1091,20 +1091,20 @@ const s = StyleSheet.create({
     backgroundColor: moss.beige, borderRadius: 999,
     paddingHorizontal: 10, paddingVertical: 4,
   },
-  asanaTagText: { fontSize: 11, fontWeight: '500' as any, color: moss.inkMid },
+  asanaTagText: { fontSize: 14, fontWeight: '500' as any, color: moss.inkMid },
   asanaTips: {
     backgroundColor: moss.accentFaint, borderRadius: 12,
     padding: 14, marginBottom: 14,
   },
-  asanaTipsTitle: { fontSize: 12, fontWeight: '600' as any, color: moss.accent, marginBottom: 6 },
-  asanaTipsBody: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.inkMid, lineHeight: 18 },
+  asanaTipsTitle: { fontSize: 14, fontWeight: '600' as any, color: moss.accent, marginBottom: 6 },
+  asanaTipsBody: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.inkMid, lineHeight: 18 },
   asanaStatsRow: { flexDirection: 'row' as any, gap: 12 },
   asanaStat: {
     flex: 1, backgroundColor: moss.beige, borderRadius: 12,
     paddingVertical: 10, paddingHorizontal: 14, alignItems: 'center' as any,
   },
   asanaStatNum: { fontSize: 20, fontWeight: '700' as any, color: moss.ink },
-  asanaStatLabel: { fontSize: 11, color: moss.muted, fontWeight: '500' as any },
+  asanaStatLabel: { fontSize: 14, color: moss.muted, fontWeight: '500' as any },
 
   /* ── Hero state variants ── */
   heroContentOnMat: {
@@ -1141,7 +1141,7 @@ const s = StyleSheet.create({
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20, color: moss.ink,
   },
   logLabel: {
-    fontSize: 13, fontWeight: '600' as any, color: moss.muted,
+    fontSize: 14, fontWeight: '600' as any, color: moss.muted,
     marginBottom: 8, marginTop: 4,
   },
   logChipsRow: {
@@ -1236,7 +1236,7 @@ const s = StyleSheet.create({
     backgroundColor: moss.accentLight, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 14,
   },
   profileBadgeText: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 12, color: moss.accent,
+    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: moss.accent,
   },
   profileBio: {
     fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.inkMid,

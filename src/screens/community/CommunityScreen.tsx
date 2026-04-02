@@ -282,7 +282,7 @@ export default function CommunityScreen() {
                     <TouchableOpacity style={s.partnerItem} activeOpacity={0.7}>
                       <View style={[s.partnerAvatarRing, { borderColor: moss.greenBadge }]}>
                         <View style={[s.partnerAvatar, { backgroundColor: moss.greenBadge, alignItems: 'center', justifyContent: 'center' }]}>
-                          <Text style={{ color: moss.white, fontFamily: 'DMSans_600SemiBold', fontSize: 12 }}>More</Text>
+                          <Text style={{ color: moss.white, fontFamily: 'DMSans_600SemiBold', fontSize: 14 }}>More</Text>
                         </View>
                       </View>
                       <Text style={s.partnerName}>{t('community.more')}</Text>
@@ -369,7 +369,7 @@ export default function CommunityScreen() {
                         <Image source={{ uri: u.avatarUrl }} style={{ width: 40, height: 40, borderRadius: 20 }} />
                         <View>
                           <Text style={{ fontFamily: 'DMSans_700Bold', fontSize: 15, color: moss.ink }}>{u.name}</Text>
-                          <Text style={{ fontFamily: 'DMSans_400Regular', fontSize: 13, color: moss.muted }}>{u.feedTime}</Text>
+                          <Text style={{ fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.muted }}>{u.feedTime}</Text>
                         </View>
                       </View>
                       <Text style={{ fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.ink, marginBottom: 10 }}>{u.feedCaption}</Text>
@@ -596,7 +596,7 @@ const s = StyleSheet.create({
   },
   sectionLink: {
     fontFamily: 'DMSans_500Medium',
-    fontSize: 13,
+    fontSize: 14,
     color: moss.accent,
   },
 
@@ -633,13 +633,13 @@ const s = StyleSheet.create({
   partnerAvatar: { width: 54, height: 54, borderRadius: 27 },
   partnerName: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 12,
+    fontSize: 14,
     color: moss.ink,
     textAlign: 'center',
   },
   partnerLocation: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 10,
+    fontSize: 14,
     color: moss.muted,
     textAlign: 'center',
     marginTop: 1,
@@ -671,7 +671,7 @@ const s = StyleSheet.create({
   },
   discussionReplies: {
     fontFamily: 'DMSans_500Medium',
-    fontSize: 12,
+    fontSize: 14,
   },
 
   /* ── People tab ─────────────────────────────────────────────────────────── */
@@ -692,7 +692,7 @@ const s = StyleSheet.create({
   },
   liveText: {
     fontFamily: 'DMSans_500Medium',
-    fontSize: 11,
+    fontSize: 14,
     color: moss.sage,
   },
   peopleCard: {
@@ -743,7 +743,7 @@ const s = StyleSheet.create({
   },
   personMeta: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 11,
+    fontSize: 14,
     color: moss.muted,
     marginTop: 2,
   },
@@ -756,7 +756,7 @@ const s = StyleSheet.create({
   },
   followText: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 11,
+    fontSize: 14,
     color: moss.accent,
   },
   followBtnActive: {
@@ -769,7 +769,7 @@ const s = StyleSheet.create({
   },
   followTextActive: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 11,
+    fontSize: 14,
     color: moss.accent,
   },
 
@@ -799,7 +799,7 @@ const s = StyleSheet.create({
   },
   topicMeta: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 12,
+    fontSize: 14,
     color: moss.muted,
   },
 
@@ -862,7 +862,7 @@ const s = StyleSheet.create({
   },
   profileBadgeText: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 12,
+    fontSize: 14,
     color: moss.accent,
   },
   profileBio: {

@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: moss.ink,
   },
   seriesLabelSmall: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.ink, flex: 1,
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.ink, flex: 1,
   },
   seriesLabelSelected: { color: moss.accent },
   checkMark: {
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
     width: 22, height: 22, borderRadius: 11,
     backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center',
   },
-  checkMarkText: { color: '#fff', fontSize: 13, fontWeight: '700' },
+  checkMarkText: { color: '#fff', fontSize: 14, fontWeight: '700' },
 
   goBtn: {
     backgroundColor: moss.accent, borderRadius: radius['2xl'],
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
   },
   moodEmoji: { fontSize: 16 },
   moodLabel: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.ink,
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.ink,
   },
   moodLabelSelected: { color: moss.coral },
 
@@ -522,7 +522,7 @@ const styles = StyleSheet.create({
     borderColor: moss.accent, backgroundColor: moss.accentBg,
   },
   durationText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.ink,
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.ink,
   },
   durationTextSelected: { color: moss.accent },
 

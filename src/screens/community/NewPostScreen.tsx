@@ -315,7 +315,7 @@ const s = StyleSheet.create({
     fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: warm.ink,
   },
   userHint: {
-    fontFamily: 'DMSans_400Regular', fontSize: 12, color: warm.muted, marginTop: 1,
+    fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.muted, marginTop: 1,
   },
   captionInput: {
     fontFamily: 'DMSans_400Regular', fontSize: 16, lineHeight: 24,
@@ -338,7 +338,7 @@ const s = StyleSheet.create({
 
   /* Attachments */
   sectionLabel: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: warm.muted,
+    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: warm.muted,
     textTransform: 'uppercase', letterSpacing: 0.8,
     marginBottom: 10, marginLeft: 4,
   },
@@ -356,10 +356,10 @@ const s = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   attachText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.ink,
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: warm.ink,
   },
   locationInline: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, color: warm.ink,
+    fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.ink,
     flex: 1, paddingVertical: 0,
   },
 
@@ -377,7 +377,7 @@ const s = StyleSheet.create({
     backgroundColor: warm.sage, borderColor: warm.sage,
   },
   tagText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.inkMid,
+    fontFamily: 'DMSans_500Medium', fontSize: 14, color: warm.inkMid,
   },
   tagTextActive: { color: '#fff' },
 });

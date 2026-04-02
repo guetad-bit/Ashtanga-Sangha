@@ -360,7 +360,7 @@ export default function PostCard({
               <View style={{ padding: 40, alignItems: 'center' }}>
                 <Ionicons name="chatbubbles-outline" size={36} color={warm.divider} />
                 <Text style={{ color: warm.muted, marginTop: 12, fontSize: 15 }}>{t('postCard.noComments')}</Text>
-                <Text style={{ color: warm.mutedLight, fontSize: 13, marginTop: 4 }}>{t('postCard.beFirst')}</Text>
+                <Text style={{ color: warm.mutedLight, fontSize: 14, marginTop: 4 }}>{t('postCard.beFirst')}</Text>
               </View>
             ) : (
               <FlatList
@@ -504,16 +504,16 @@ const s = StyleSheet.create({
   headerInfo: { flex: 1 },
   userName: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, color: warm.ink },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
-  metaDot: { color: warm.mutedLight, fontSize: 11 },
-  time: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: warm.mutedLight },
-  location: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: warm.mutedLight },
+  metaDot: { color: warm.mutedLight, fontSize: 14 },
+  time: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.mutedLight },
+  location: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.mutedLight },
 
   /* Body / Caption */
   body: { paddingHorizontal: 16, paddingBottom: 10 },
   caption: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: warm.ink, lineHeight: 22 },
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 8 },
   tagPill: { backgroundColor: '#DCE8D3', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 3 },
-  tagText: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: '#6E8A5C' },
+  tagText: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: '#6E8A5C' },
 
   /* Image */
   postImage: { width: '100%', height: 260, backgroundColor: warm.divider },
@@ -530,7 +530,7 @@ const s = StyleSheet.create({
     backgroundColor: warm.heartRed,
     alignItems: 'center', justifyContent: 'center',
   },
-  countText: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: warm.muted },
+  countText: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.muted },
 
   /* Actions bar */
   actionDivider: { height: 1, backgroundColor: warm.divider, marginHorizontal: 16 },
@@ -547,7 +547,7 @@ const s = StyleSheet.create({
     gap: 6,
     paddingVertical: 10,
   },
-  actionLabel: { fontFamily: 'DMSans_500Medium', fontSize: 13, color: warm.muted },
+  actionLabel: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: warm.muted },
 
   /* ── Comments modal (bottom sheet) ── */
   commModalWrap: { flex: 1, justifyContent: 'flex-end' },
@@ -579,11 +579,11 @@ const s = StyleSheet.create({
   commItem: { flexDirection: 'row', gap: 10, paddingVertical: 10 },
   commAvatar: { width: 34, height: 34, borderRadius: 17, backgroundColor: warm.divider },
   commBubble: { flex: 1, backgroundColor: warm.bg, borderRadius: 14, padding: 10 },
-  commAuthor: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: warm.ink, marginBottom: 2 },
+  commAuthor: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: warm.ink, marginBottom: 2 },
   commBody: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.ink, lineHeight: 20 },
   commMeta: { flexDirection: 'row', gap: 14, marginTop: 6 },
-  commTime: { fontFamily: 'DMSans_400Regular', fontSize: 11, color: warm.mutedLight },
-  commDeleteBtn: { fontFamily: 'DMSans_500Medium', fontSize: 11, color: '#C45B3F' },
+  commTime: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: warm.mutedLight },
+  commDeleteBtn: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: '#C45B3F' },
 
   commInputRow: {
     flexDirection: 'row',
