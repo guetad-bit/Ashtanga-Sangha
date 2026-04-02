@@ -123,6 +123,10 @@ const en = {
     cameraAccess: 'Camera access required.',
     photoAccess: 'Photo library access required.',
     language: 'Language',
+    favoriteAsana: 'Favorite Asana',
+    favoriteAsanaPlaceholder: 'e.g. Padmasana, Headstand...',
+    noFavoriteAsana: 'No favorite asana selected yet',
+    practiceDetails: 'Practice Details',
   },
 
   // ── Community Screen ──

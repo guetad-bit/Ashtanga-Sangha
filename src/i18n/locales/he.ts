@@ -336,6 +336,10 @@ const he = {
     cameraAccess: 'נדרשת גישה למצלמה.',
     photoAccess: 'נדרשת גישה לגלריה.',
     language: 'שפה',
+    favoriteAsana: 'אסאנה אהובה',
+    favoriteAsanaPlaceholder: 'למשל פדמאסנה, עמידה על הראש...',
+    noFavoriteAsana: 'עדיין לא נבחרה אסאנה אהובה',
+    practiceDetails: 'פרטי תרגול',
   },
 
   // ── Community Screen ──

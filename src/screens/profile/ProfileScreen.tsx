@@ -41,12 +41,15 @@ export default function ProfileScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
+  const isRTL = i18n.language === 'he';
+
   // Editable fields
   const [name, setName] = useState(user?.name ?? '');
   const [bio, setBio] = useState(user?.bio ?? '');
   const [location, setLocation] = useState(user?.location ?? '');
   const [series, setSeries] = useState<Series>(user?.series ?? 'primary');
   const [level, setLevel] = useState<Level>(user?.level ?? 'beginner');
+  const [favoriteAsana, setFavoriteAsana] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -242,10 +245,13 @@ export default function ProfileScreen() {
 
         {/* ── About ── */}
         <View style={st.card}>
-          <Text style={st.cardTitle}>{t('profile.about')}</Text>
+          <View style={[st.cardTitleRow, isRTL && { flexDirection: 'row-reverse' }]}>
+            <Ionicons name="person-circle-outline" size={20} color="#E8873D" />
+            <Text style={st.cardTitle}>{t('profile.about')}</Text>
+          </View>
           {editing ? (
             <TextInput
-              style={st.bioInput}
+              style={[st.bioInput, isRTL && { textAlign: 'right' }]}
               value={bio}
               onChangeText={setBio}
               placeholder={t('profile.bioPlaceholder')}
@@ -255,8 +261,29 @@ export default function ProfileScreen() {
               textAlignVertical="top"
             />
           ) : (
-            <Text style={st.bioText}>
+            <Text style={[st.bioText, isRTL && { textAlign: 'right' }]}>
               {user?.bio || t('profile.noBio')}
+            </Text>
+          )}
+        </View>
+
+        {/* ── Favorite Asana ── */}
+        <View style={st.card}>
+          <View style={[st.cardTitleRow, isRTL && { flexDirection: 'row-reverse' }]}>
+            <Ionicons name="heart-outline" size={20} color="#E8873D" />
+            <Text style={st.cardTitle}>{t('profile.favoriteAsana')}</Text>
+          </View>
+          {editing ? (
+            <TextInput
+              style={[st.fieldInput, isRTL && { textAlign: 'right' }]}
+              value={favoriteAsana}
+              onChangeText={setFavoriteAsana}
+              placeholder={t('profile.favoriteAsanaPlaceholder')}
+              placeholderTextColor="#C4B8A8"
+            />
+          ) : (
+            <Text style={[st.bioText, isRTL && { textAlign: 'right' }]}>
+              {favoriteAsana || t('profile.noFavoriteAsana')}
             </Text>
           )}
         </View>
@@ -264,9 +291,12 @@ export default function ProfileScreen() {
         {/* ── Location (edit mode) ── */}
         {editing && (
           <View style={st.card}>
-            <Text style={st.cardTitle}>{t('profile.location')}</Text>
+            <View style={[st.cardTitleRow, isRTL && { flexDirection: 'row-reverse' }]}>
+              <Ionicons name="location-outline" size={20} color="#E8873D" />
+              <Text style={st.cardTitle}>{t('profile.location')}</Text>
+            </View>
             <TextInput
-              style={st.fieldInput}
+              style={[st.fieldInput, isRTL && { textAlign: 'right' }]}
               value={location}
               onChangeText={setLocation}
               placeholder={t('profile.locationPlaceholder')}
@@ -278,21 +308,25 @@ export default function ProfileScreen() {
         {/* ── Series + Level (edit mode) ── */}
         {editing && (
           <View style={st.card}>
-            <Text style={st.cardTitle}>{t('profile.currentSeries')}</Text>
-            <View style={st.chipRow}>
+            <View style={[st.cardTitleRow, isRTL && { flexDirection: 'row-reverse' }]}>
+              <Ionicons name="fitness-outline" size={20} color="#E8873D" />
+              <Text style={st.cardTitle}>{t('profile.practiceDetails')}</Text>
+            </View>
+            <Text style={[st.cardSubTitle, isRTL && { textAlign: 'right' }]}>{t('profile.currentSeries')}</Text>
+            <View style={[st.chipRow, isRTL && { flexDirection: 'row-reverse' }]}>
               {seriesOptions.map((opt) => (
                 <TouchableOpacity
                   key={opt.value}
                   style={[st.chip, series === opt.value && st.chipActive]}
                   onPress={() => setSeries(opt.value)}
                 >
-                  <Ionicons name={opt.icon as any} size={14} color={series === opt.value ? colors.sage : '#9B8E7E'} />
+                  <Ionicons name={opt.icon as any} size={14} color={series === opt.value ? '#E8873D' : '#9B8E7E'} />
                   <Text style={[st.chipText, series === opt.value && st.chipTextActive]}>{opt.label}</Text>
                 </TouchableOpacity>
               ))}
             </View>
-            <Text style={[st.cardTitle, { marginTop: spacing.lg }]}>{t('profile.levelLabel')}</Text>
-            <View style={st.chipRow}>
+            <Text style={[st.cardSubTitle, { marginTop: spacing.lg }, isRTL && { textAlign: 'right' }]}>{t('profile.levelLabel')}</Text>
+            <View style={[st.chipRow, isRTL && { flexDirection: 'row-reverse' }]}>
               {levelOptions.map((opt) => (
                 <TouchableOpacity
                   key={opt.value}
@@ -309,25 +343,30 @@ export default function ProfileScreen() {
         {/* ── Language toggle ── */}
         {!editing && (
           <View style={st.card}>
-            <Text style={st.cardTitle}>{t('profile.language')}</Text>
-            <View style={st.chipRow}>
+            <View style={[st.cardTitleRow, isRTL && { flexDirection: 'row-reverse' }]}>
+              <Ionicons name="globe-outline" size={20} color="#E8873D" />
+              <Text style={st.cardTitle}>{t('profile.language')}</Text>
+            </View>
+            <View style={[st.chipRow, isRTL && { flexDirection: 'row-reverse' }]}>
               <TouchableOpacity
-                style={[st.chip, language === 'en' && st.chipActive]}
+                style={[st.langChip, language === 'en' && st.langChipActive]}
                 onPress={() => {
                   setLanguage('en');
                   i18n.changeLanguage('en');
                 }}
               >
-                <Text style={[st.chipText, language === 'en' && st.chipTextActive]}>English</Text>
+                <Text style={st.langFlag}>🇬🇧</Text>
+                <Text style={[st.langText, language === 'en' && st.langTextActive]}>English</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[st.chip, language === 'he' && st.chipActive]}
+                style={[st.langChip, language === 'he' && st.langChipActive]}
                 onPress={() => {
                   setLanguage('he');
                   i18n.changeLanguage('he');
                 }}
               >
-                <Text style={[st.chipText, language === 'he' && st.chipTextActive]}>עברית</Text>
+                <Text style={st.langFlag}>🇮🇱</Text>
+                <Text style={[st.langText, language === 'he' && st.langTextActive]}>עברית</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -423,7 +462,7 @@ const st = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(138,158,120,0.25)',
   },
   badgeText: {
-    fontSize: 12, color: '#3B3228', fontWeight: '600' as any, letterSpacing: 0.3,
+    fontSize: 14, color: '#3B3228', fontWeight: '600' as any, letterSpacing: 0.3,
   },
 
   locationRow: {
@@ -460,42 +499,61 @@ const st = StyleSheet.create({
   // ── Cards ──
   card: {
     marginHorizontal: spacing.lg, marginBottom: spacing.md,
-    backgroundColor: '#FFFFFF', borderRadius: radius.xl,
-    padding: spacing.lg, ...shadows.sm,
-    borderWidth: 1, borderColor: '#E8E0D4',
+    backgroundColor: '#FFFFFF', borderRadius: 20,
+    padding: spacing.xl, ...shadows.sm,
+    borderWidth: 1, borderColor: '#EDE9E3',
+  },
+  cardTitleRow: {
+    flexDirection: 'row' as any, alignItems: 'center' as any, gap: 8,
+    marginBottom: spacing.md,
   },
   cardTitle: {
-    ...typography.headingXs, color: '#5E5245',
-    textTransform: 'uppercase' as any, letterSpacing: 0.8,
-    marginBottom: spacing.md,
+    fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18, color: '#3B3228',
+  },
+  cardSubTitle: {
+    fontSize: 13, fontWeight: '600' as any, color: '#9B8E7E',
+    textTransform: 'uppercase' as any, letterSpacing: 0.6,
+    marginBottom: spacing.sm,
   },
 
   // Bio / fields
-  bioText: { ...typography.bodyMd, color: '#3B3228', lineHeight: 22 },
+  bioText: { fontSize: 16, color: '#3B3228', lineHeight: 24 },
   bioInput: {
-    ...typography.bodyMd, color: '#3B3228',
-    borderWidth: 1, borderColor: '#8A9E78', borderRadius: radius.md,
+    fontSize: 16, color: '#3B3228',
+    borderWidth: 1, borderColor: '#E8E0D4', borderRadius: 14,
     padding: spacing.md, minHeight: 80, textAlignVertical: 'top' as any,
-    backgroundColor: '#F6F2EC',
+    backgroundColor: '#FAF8F5',
   },
   fieldInput: {
-    ...typography.bodyMd, color: '#3B3228',
-    borderWidth: 1, borderColor: '#8A9E78', borderRadius: radius.md,
+    fontSize: 16, color: '#3B3228',
+    borderWidth: 1, borderColor: '#E8E0D4', borderRadius: 14,
     padding: spacing.md,
-    backgroundColor: '#F6F2EC',
+    backgroundColor: '#FAF8F5',
   },
 
   // Chips
   chipRow: { flexDirection: 'row' as any, flexWrap: 'wrap' as any, gap: spacing.sm },
   chip: {
     flexDirection: 'row' as any, alignItems: 'center' as any, gap: spacing.xs,
-    paddingVertical: spacing.sm, paddingHorizontal: spacing.md,
+    paddingVertical: 10, paddingHorizontal: 16,
     borderRadius: radius.full, borderWidth: 1.5, borderColor: '#E8E0D4',
-    backgroundColor: '#F6F2EC',
+    backgroundColor: '#FAF8F5',
   },
-  chipActive: { borderColor: '#8A9E78', backgroundColor: 'rgba(138,158,120,0.12)' },
-  chipText: { ...typography.labelSm, color: '#3B3228' },
-  chipTextActive: { color: '#8A9E78', fontWeight: '700' as any },
+  chipActive: { borderColor: '#E8873D', backgroundColor: 'rgba(232,135,61,0.1)' },
+  chipText: { fontSize: 14, color: '#3B3228' },
+  chipTextActive: { color: '#E8873D', fontWeight: '700' as any },
+
+  // Language chips
+  langChip: {
+    flexDirection: 'row' as any, alignItems: 'center' as any, gap: 10,
+    paddingVertical: 14, paddingHorizontal: 20,
+    borderRadius: 16, borderWidth: 1.5, borderColor: '#E8E0D4',
+    backgroundColor: '#FAF8F5', flex: 1,
+  },
+  langChipActive: { borderColor: '#E8873D', backgroundColor: 'rgba(232,135,61,0.08)' },
+  langFlag: { fontSize: 22 },
+  langText: { fontSize: 16, fontWeight: '600' as any, color: '#3B3228' },
+  langTextActive: { color: '#E8873D' },
 
   // Sign out
   signOutBtn: {
