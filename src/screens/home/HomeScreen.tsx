@@ -233,6 +233,32 @@ export default function HomeScreen() {
   const fakeOnMat = FAKE_USERS.filter(u => u.practicedToday).map(u => ({ id: u.id, name: u.name, avatarUrl: u.avatarUrl }));
   const sanghaOnMat = [...meOnMat, ...othersOnMat, ...fakeOnMat];
 
+  // Merged feed for Home: real posts + fake posts with images, sorted newest first, limit 2
+  const FAKE_WITH_IMAGES = FAKE_USERS.filter(u => !!u.feedImage);
+  const homeFeed = [
+    ...feedPosts.map((p) => ({
+      id: p.id,
+      userName: p.profiles?.name ?? 'Practitioner',
+      userAvatar: p.profiles?.avatar_url ?? null,
+      caption: p.caption ?? '',
+      imageUrl: p.image_url,
+      likesCount: p.likes_count ?? 0,
+      commentsCount: (p as any).comments_count ?? 0,
+      createdAt: p.created_at,
+    })),
+    ...FAKE_WITH_IMAGES.map((u) => ({
+      id: u.id,
+      userName: u.name,
+      userAvatar: u.avatarUrl,
+      caption: u.feedCaption,
+      imageUrl: u.feedImage || null,
+      likesCount: u.feedLikes,
+      commentsCount: u.feedComments,
+      createdAt: u.feedTime,
+    })),
+  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+   .slice(0, 2);
+
   // ── Practice state: 'idle' | 'onMat' ──
   // After logging, isPracticing resets → back to 'idle' so user can practice again
   // practicedToday only affects the social circle (shows user as "practiced today")
@@ -558,12 +584,10 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
-        {/* ═══ 4. SANGHA FEED ═══ */}
+        {/* ═══ 4. SANGHA FEED (2 most recent) ═══ */}
         <View style={s.feedSection}>
-          {feedPosts.slice(0, 3).map((post) => {
-            const authorName = post.profiles?.name ?? 'Practitioner';
-            const authorAvatar = post.profiles?.avatar_url;
-            const timeAgo = getTimeAgo(post.created_at);
+          {homeFeed.map((post) => {
+            const timeAgo = getTimeAgo(post.createdAt);
             return (
               <TouchableOpacity
                 key={post.id}
@@ -574,15 +598,15 @@ export default function HomeScreen() {
                 <View style={s.feedCardInner}>
                   <View style={s.feedCardLeft}>
                     <View style={s.feedUserRow}>
-                      {authorAvatar ? (
-                        <Image source={{ uri: authorAvatar }} style={s.feedAvatar} />
+                      {post.userAvatar ? (
+                        <Image source={{ uri: post.userAvatar }} style={s.feedAvatar} />
                       ) : (
                         <View style={[s.feedAvatar, { backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center' }]}>
-                          <Text style={{ fontSize: 16, color: '#fff', fontWeight: '600' }}>{authorName.charAt(0)}</Text>
+                          <Text style={{ fontSize: 16, color: '#fff', fontWeight: '600' }}>{post.userName.charAt(0)}</Text>
                         </View>
                       )}
                       <View>
-                        <Text style={s.feedUserName}>{authorName}</Text>
+                        <Text style={s.feedUserName}>{post.userName}</Text>
                         <Text style={s.feedTimeAgo}>{timeAgo}</Text>
                       </View>
                     </View>
@@ -590,25 +614,25 @@ export default function HomeScreen() {
                     <View style={s.feedStats}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                         <Ionicons name="heart" size={14} color="#E25858" />
-                        <Text style={s.feedHeart}>{post.likes_count ?? 0}</Text>
+                        <Text style={s.feedHeart}>{post.likesCount}</Text>
                       </View>
-                      {(post as any).comments_count > 0 && (
+                      {post.commentsCount > 0 && (
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: 12 }}>
                           <Ionicons name="chatbubble-outline" size={13} color={moss.muted} />
-                          <Text style={s.feedHeart}>{(post as any).comments_count}</Text>
+                          <Text style={s.feedHeart}>{post.commentsCount}</Text>
                         </View>
                       )}
                     </View>
                   </View>
-                  {post.image_url && (
-                    <Image source={{ uri: post.image_url }} style={s.feedCardImage} />
+                  {post.imageUrl && (
+                    <Image source={{ uri: post.imageUrl }} style={s.feedCardImage} />
                   )}
                 </View>
               </TouchableOpacity>
             );
           })}
-          {feedPosts.length === 0 && (
-            <Text style={{ color: moss.muted, fontSize: 14, textAlign: 'center', paddingVertical: 20 }}>
+          {homeFeed.length === 0 && (
+            <Text style={{ color: moss.muted, fontSize: 15, textAlign: 'center', paddingVertical: 20 }}>
               {t('home.noPostsYet')}
             </Text>
           )}

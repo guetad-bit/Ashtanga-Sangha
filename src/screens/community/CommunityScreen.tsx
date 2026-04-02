@@ -103,6 +103,18 @@ const FAKE_USERS_FEED: {
 /* Only show fake posts that have images */
 const FAKE_POSTS_WITH_IMAGES = FAKE_USERS_FEED.filter((u) => !!u.feedImage);
 
+/* Unified post shape for merged feed */
+interface UnifiedPost {
+  id: string;
+  userName: string;
+  userAvatar: string;
+  caption: string;
+  imageUrl: string | null;
+  likesCount: number;
+  commentsCount: number;
+  createdAt: string;
+}
+
 function fakeTimeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const mins = Math.floor(diff / 60000);
@@ -228,6 +240,43 @@ export default function CommunityScreen() {
     ...fakeOnMat,
   ];
 
+  /* ── Merged & sorted feed (real + local + fake) ── */
+  const allFeedPosts: UnifiedPost[] = [
+    // Real Supabase posts
+    ...feedPosts.map((p) => ({
+      id: p.id,
+      userName: p.profiles?.name ?? 'Practitioner',
+      userAvatar: p.profiles?.avatar_url ?? 'https://i.pravatar.cc/150',
+      caption: p.caption ?? '',
+      imageUrl: p.image_url,
+      likesCount: p.likes_count ?? 0,
+      commentsCount: p.comments_count ?? 0,
+      createdAt: p.created_at,
+    })),
+    // Local posts
+    ...userPosts.map((p) => ({
+      id: p.id,
+      userName: p.userName,
+      userAvatar: p.userAvatar ?? 'https://i.pravatar.cc/150',
+      caption: p.caption,
+      imageUrl: p.imageUri ?? null,
+      likesCount: p.likesCount ?? 0,
+      commentsCount: 0,
+      createdAt: p.createdAt,
+    })),
+    // Fake posts with images
+    ...FAKE_POSTS_WITH_IMAGES.map((u) => ({
+      id: u.id,
+      userName: u.name,
+      userAvatar: u.avatarUrl,
+      caption: u.feedCaption,
+      imageUrl: u.feedImage || null,
+      likesCount: u.feedLikes,
+      commentsCount: u.feedComments,
+      createdAt: u.feedTime,
+    })),
+  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
   /* ── Render helpers ───────────────────────────────────────────────────── */
 
   const renderPartnerAvatar = (p: typeof allPeople[0], index: number) => (
@@ -336,88 +385,30 @@ export default function CommunityScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Real posts from Supabase — lightweight cards */}
-            {feedPosts.map((post) => {
-              const pName = post.profiles?.name ?? 'Practitioner';
-              const pAvatar = post.profiles?.avatar_url ?? 'https://i.pravatar.cc/150';
-              return (
-                <View key={post.id} style={s.fakePostCard}>
-                  <View style={[s.fakePostHeader, isRTL && { flexDirection: 'row-reverse' }]}>
-                    <Image source={{ uri: pAvatar }} style={s.fakePostAvatar} />
-                    <View style={[s.fakePostHeaderInfo, isRTL && { alignItems: 'flex-end' }]}>
-                      <Text style={s.fakePostName}>{pName}</Text>
-                      <Text style={s.fakePostTime}>{fakeTimeAgo(post.created_at)}</Text>
-                    </View>
-                  </View>
-                  <Text style={[s.fakePostCaption, isRTL && { textAlign: 'right' }]}>
-                    {post.caption}
-                  </Text>
-                  {post.image_url ? (
-                    <Image source={{ uri: post.image_url }} style={s.fakePostImage} resizeMode="cover" />
-                  ) : null}
-                  <View style={[s.fakePostFooter, isRTL && { flexDirection: 'row-reverse' }]}>
-                    <View style={[s.fakePostStat, isRTL && { flexDirection: 'row-reverse' }]}>
-                      <Ionicons name="heart-outline" size={18} color="#C4956A" />
-                      <Text style={s.fakePostStatText}>{post.likes_count ?? 0}</Text>
-                    </View>
-                    <View style={[s.fakePostStat, isRTL && { flexDirection: 'row-reverse' }]}>
-                      <Ionicons name="chatbubble-outline" size={16} color="#7A6E60" />
-                      <Text style={s.fakePostStatText}>{post.comments_count ?? 0}</Text>
-                    </View>
-                  </View>
-                </View>
-              );
-            })}
-            {/* Local posts — lightweight cards */}
-            {userPosts.map((post) => (
-              <View key={post.id} style={s.fakePostCard}>
+            {/* All posts — sorted newest first */}
+            {allFeedPosts.map((p) => (
+              <View key={p.id} style={s.fakePostCard}>
                 <View style={[s.fakePostHeader, isRTL && { flexDirection: 'row-reverse' }]}>
-                  <Image source={{ uri: post.userAvatar ?? 'https://i.pravatar.cc/150' }} style={s.fakePostAvatar} />
+                  <Image source={{ uri: p.userAvatar }} style={s.fakePostAvatar} />
                   <View style={[s.fakePostHeaderInfo, isRTL && { alignItems: 'flex-end' }]}>
-                    <Text style={s.fakePostName}>{post.userName}</Text>
-                    <Text style={s.fakePostTime}>{fakeTimeAgo(post.createdAt)}</Text>
+                    <Text style={s.fakePostName}>{p.userName}</Text>
+                    <Text style={s.fakePostTime}>{fakeTimeAgo(p.createdAt)}</Text>
                   </View>
                 </View>
                 <Text style={[s.fakePostCaption, isRTL && { textAlign: 'right' }]}>
-                  {post.caption}
+                  {p.caption}
                 </Text>
-                {post.imageUri ? (
-                  <Image source={{ uri: post.imageUri }} style={s.fakePostImage} resizeMode="cover" />
+                {p.imageUrl ? (
+                  <Image source={{ uri: p.imageUrl }} style={s.fakePostImage} resizeMode="cover" />
                 ) : null}
                 <View style={[s.fakePostFooter, isRTL && { flexDirection: 'row-reverse' }]}>
                   <View style={[s.fakePostStat, isRTL && { flexDirection: 'row-reverse' }]}>
                     <Ionicons name="heart-outline" size={18} color="#C4956A" />
-                    <Text style={s.fakePostStatText}>{post.likesCount ?? 0}</Text>
-                  </View>
-                </View>
-              </View>
-            ))}
-            {/* Demo posts — always visible, lightweight cards */}
-            {FAKE_POSTS_WITH_IMAGES.map((u) => (
-              <View key={u.id} style={s.fakePostCard}>
-                {/* Header */}
-                <View style={[s.fakePostHeader, isRTL && { flexDirection: 'row-reverse' }]}>
-                  <Image source={{ uri: u.avatarUrl }} style={s.fakePostAvatar} />
-                  <View style={[s.fakePostHeaderInfo, isRTL && { alignItems: 'flex-end' }]}>
-                    <Text style={s.fakePostName}>{u.name}</Text>
-                    <Text style={s.fakePostTime}>{fakeTimeAgo(u.feedTime)}</Text>
-                  </View>
-                </View>
-                {/* Caption */}
-                <Text style={[s.fakePostCaption, isRTL && { textAlign: 'right' }]}>
-                  {u.feedCaption}
-                </Text>
-                {/* Image */}
-                <Image source={{ uri: u.feedImage }} style={s.fakePostImage} resizeMode="cover" />
-                {/* Footer */}
-                <View style={[s.fakePostFooter, isRTL && { flexDirection: 'row-reverse' }]}>
-                  <View style={[s.fakePostStat, isRTL && { flexDirection: 'row-reverse' }]}>
-                    <Ionicons name="heart-outline" size={18} color="#C4956A" />
-                    <Text style={s.fakePostStatText}>{u.feedLikes}</Text>
+                    <Text style={s.fakePostStatText}>{p.likesCount}</Text>
                   </View>
                   <View style={[s.fakePostStat, isRTL && { flexDirection: 'row-reverse' }]}>
                     <Ionicons name="chatbubble-outline" size={16} color="#7A6E60" />
-                    <Text style={s.fakePostStatText}>{u.feedComments}</Text>
+                    <Text style={s.fakePostStatText}>{p.commentsCount}</Text>
                   </View>
                 </View>
               </View>
