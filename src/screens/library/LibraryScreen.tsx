@@ -614,8 +614,8 @@ export default function LibraryScreen() {
         {/* ── ASANAS ── */}
         {activeCategory === 'asanas' && (
           <>
-            {/* Series toggle: Primary / Intermediate */}
-            <View style={[st.seriesToggle, isRTL && { flexDirection: 'row-reverse' }]}>
+            {/* Series toggle: Primary only (Intermediate hidden for now) */}
+            {/* <View style={[st.seriesToggle, isRTL && { flexDirection: 'row-reverse' }]}>
               <TouchableOpacity
                 style={[st.seriesBtn, activeSeries === 'primary' && st.seriesBtnActive]}
                 onPress={() => { setActiveSeries('primary'); setAsanaFilter(null); setSearchQuery(''); }}
@@ -640,7 +640,7 @@ export default function LibraryScreen() {
                   {t('library.asanas.intermediateSub')}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
 
             {/* Search bar */}
             <View style={[st.searchWrap, isRTL && { flexDirection: 'row-reverse' }]}>
