@@ -592,17 +592,17 @@ export default function LibraryScreen() {
         {activeCategory === 'asanas' && (
           <>
             {/* Series toggle: Primary / Intermediate */}
-            <View style={st.seriesToggle}>
+            <View style={[st.seriesToggle, isRTL && { flexDirection: 'row-reverse' }]}>
               <TouchableOpacity
                 style={[st.seriesBtn, activeSeries === 'primary' && st.seriesBtnActive]}
                 onPress={() => { setActiveSeries('primary'); setAsanaFilter(null); setSearchQuery(''); }}
                 activeOpacity={0.8}
               >
                 <Text style={[st.seriesBtnText, activeSeries === 'primary' && st.seriesBtnTextActive]}>
-                  Primary Series
+                  {t('library.asanas.primarySeries')}
                 </Text>
                 <Text style={[st.seriesBtnSub, activeSeries === 'primary' && st.seriesBtnSubActive]}>
-                  Yoga Chikitsa
+                  {t('library.asanas.primarySub')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -611,20 +611,20 @@ export default function LibraryScreen() {
                 activeOpacity={0.8}
               >
                 <Text style={[st.seriesBtnText, activeSeries === 'intermediate' && st.seriesBtnTextActive]}>
-                  Intermediate
+                  {t('library.asanas.intermediateSeries')}
                 </Text>
                 <Text style={[st.seriesBtnSub, activeSeries === 'intermediate' && st.seriesBtnSubActive]}>
-                  Nadi Shodhana
+                  {t('library.asanas.intermediateSub')}
                 </Text>
               </TouchableOpacity>
             </View>
 
             {/* Search bar */}
-            <View style={st.searchWrap}>
+            <View style={[st.searchWrap, isRTL && { flexDirection: 'row-reverse' }]}>
               <Ionicons name="search" size={16} color={colors.muted} style={st.searchIcon} />
               <TextInput
-                style={st.searchInput}
-                placeholder={`Search ${activeSeries === 'primary' ? 'primary' : 'intermediate'} asanas…`}
+                style={[st.searchInput, isRTL && { textAlign: 'right' }]}
+                placeholder={activeSeries === 'primary' ? t('library.asanas.searchPrimary') : t('library.asanas.searchIntermediate')}
                 placeholderTextColor={colors.mutedL}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
@@ -643,7 +643,7 @@ export default function LibraryScreen() {
                 style={[st.filterChip, !asanaFilter && st.filterChipActive]}
                 onPress={() => setAsanaFilter(null)}
               >
-                <Text style={[st.filterText, !asanaFilter && st.filterTextActive]}>All ({activeAsanas.length})</Text>
+                <Text style={[st.filterText, !asanaFilter && st.filterTextActive]}>{t('library.asanas.all')} ({activeAsanas.length})</Text>
               </TouchableOpacity>
               {activeSections.map((sec) => {
                 const count = activeAsanas.filter((a) => a.series === sec).length;
@@ -653,7 +653,7 @@ export default function LibraryScreen() {
                     style={[st.filterChip, asanaFilter === sec && st.filterChipActive]}
                     onPress={() => setAsanaFilter(sec)}
                   >
-                    <Text style={[st.filterText, asanaFilter === sec && st.filterTextActive]}>{sec} ({count})</Text>
+                    <Text style={[st.filterText, asanaFilter === sec && st.filterTextActive]}>{t(`library.asanas.sections.${sec}`, sec)} ({count})</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -663,15 +663,15 @@ export default function LibraryScreen() {
             {filteredAsanas.length === 0 && (
               <View style={st.emptyState}>
                 <Ionicons name="search-outline" size={40} color={colors.mutedL} />
-                <Text style={st.emptyText}>No asanas match "{searchQuery}"</Text>
+                <Text style={[st.emptyText, isRTL && { textAlign: 'right' }]}>{t('library.asanas.noResults', { query: searchQuery })}</Text>
               </View>
             )}
 
             {/* Grouped view (default) */}
             {showGrouped && groupedAsanas.map((group, groupIdx) => (
               <View key={group.title}>
-                <View style={st.sectionHeader}>
-                  <Text style={st.sectionHeaderText}>{group.title}</Text>
+                <View style={[st.sectionHeader, isRTL && { flexDirection: 'row-reverse' }]}>
+                  <Text style={[st.sectionHeaderText, isRTL && { textAlign: 'right' }]}>{t(`library.asanas.sections.${group.title}`, group.title)}</Text>
                   <Text style={st.sectionHeaderCount}>{group.asanas.length}</Text>
                 </View>
                 {group.asanas.map((asana, i) => {
@@ -679,7 +679,7 @@ export default function LibraryScreen() {
                   return (
                   <TouchableOpacity
                     key={i}
-                    style={st.asanaRow}
+                    style={[st.asanaRow, isRTL && { flexDirection: 'row-reverse' }]}
                     onPress={() => setSelectedAsana(asana)}
                     activeOpacity={0.7}
                   >
@@ -693,10 +693,10 @@ export default function LibraryScreen() {
                       </View>
                     )}
                     <View style={st.asanaInfo}>
-                      <Text style={st.asanaSanskrit}>{asana.sanskrit}</Text>
-                      <Text style={st.asanaEnglish}>{asana.english}</Text>
+                      <Text style={[st.asanaSanskrit, isRTL && { textAlign: 'right' }]}>{asana.sanskrit}</Text>
+                      <Text style={[st.asanaEnglish, isRTL && { textAlign: 'right' }]}>{asana.english}</Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={14} color={colors.mutedL} />
+                    <Ionicons name={isRTL ? 'chevron-back' : 'chevron-forward'} size={14} color={colors.mutedL} />
                   </TouchableOpacity>
                   );
                 })}
@@ -709,7 +709,7 @@ export default function LibraryScreen() {
               return (
               <TouchableOpacity
                 key={i}
-                style={st.asanaRow}
+                style={[st.asanaRow, isRTL && { flexDirection: 'row-reverse' }]}
                 onPress={() => setSelectedAsana(asana)}
                 activeOpacity={0.7}
               >
@@ -723,10 +723,10 @@ export default function LibraryScreen() {
                   </View>
                 )}
                 <View style={st.asanaInfo}>
-                  <Text style={st.asanaSanskrit}>{asana.sanskrit}</Text>
-                  <Text style={st.asanaEnglish}>{asana.english}</Text>
+                  <Text style={[st.asanaSanskrit, isRTL && { textAlign: 'right' }]}>{asana.sanskrit}</Text>
+                  <Text style={[st.asanaEnglish, isRTL && { textAlign: 'right' }]}>{asana.english}</Text>
                 </View>
-                <Text style={st.asanaSeries}>{asana.series}</Text>
+                <Text style={st.asanaSeries}>{t(`library.asanas.sections.${asana.series}`, asana.series)}</Text>
               </TouchableOpacity>
               );
             })}
@@ -932,28 +932,28 @@ export default function LibraryScreen() {
               {/* Vinyasa count pill */}
               <View style={st.modalVinyasaPill}>
                 <Text style={st.modalVinyasaNum}>{selectedAsana.vinyasaCount}</Text>
-                <Text style={st.modalVinyasaLabel}> vinyasas</Text>
+                <Text style={st.modalVinyasaLabel}> {t('library.asanas.vinyasas')}</Text>
               </View>
             </LinearGradient>
 
             {/* Content */}
             <ScrollView style={st.modalBody} contentContainerStyle={st.modalBodyContent} showsVerticalScrollIndicator={false}>
               <View style={st.modalSection}>
-                <Text style={st.modalSectionTitle}>Description</Text>
-                <Text style={st.modalText}>{selectedAsana.description}</Text>
+                <Text style={[st.modalSectionTitle, isRTL && { textAlign: 'right' }]}>{t('library.asanas.description')}</Text>
+                <Text style={[st.modalText, isRTL && { textAlign: 'right' }]}>{selectedAsana.description}</Text>
               </View>
 
               <View style={st.modalSection}>
-                <Text style={st.modalSectionTitle}>Benefits</Text>
-                <Text style={st.modalText}>{selectedAsana.benefits}</Text>
+                <Text style={[st.modalSectionTitle, isRTL && { textAlign: 'right' }]}>{t('library.asanas.benefits')}</Text>
+                <Text style={[st.modalText, isRTL && { textAlign: 'right' }]}>{selectedAsana.benefits}</Text>
               </View>
 
               <View style={st.modalSection}>
-                <View style={st.modalDrishtiRow}>
+                <View style={[st.modalDrishtiRow, isRTL && { flexDirection: 'row-reverse' }]}>
                   <Ionicons name="eye-outline" size={16} color={colors.sage} />
-                  <Text style={st.modalSectionTitle}>Drishti</Text>
+                  <Text style={[st.modalSectionTitle, isRTL && { textAlign: 'right' }]}>{t('library.asanas.drishti')}</Text>
                 </View>
-                <Text style={st.modalText}>{selectedAsana.drishti}</Text>
+                <Text style={[st.modalText, isRTL && { textAlign: 'right' }]}>{selectedAsana.drishti}</Text>
               </View>
             </ScrollView>
           </SafeAreaView>
