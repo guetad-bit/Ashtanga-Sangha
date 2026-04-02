@@ -394,6 +394,20 @@ const he = {
       description: 'תיאור',
       benefits: 'יתרונות',
       drishti: 'דרישטי',
+      drishtis: {
+        'Nasagrai (nose tip)': 'נאסגראי (קצה האף)',
+        'Broomadhya (third eye)': 'ברומדהיה (עין שלישית)',
+        'Hastagrai (hand)': 'הסטגראי (כף יד)',
+        'Padayoragrai (toes)': 'פאדיורגראי (אצבעות רגל)',
+        'Angusta ma dyai (thumbs)': 'אנגוסטה מה דיאי (אגודלים)',
+        'Parsva (far side)': 'פארשווה (צד רחוק)',
+        'Parsva (side)': 'פארשווה (צד)',
+        'Padayoragrai (toes) / Parsva (side)': 'פאדיורגראי (אצבעות רגל) / פארשווה (צד)',
+        'Broomadhya (third eye) / Urdhva (upward)': 'ברומדהיה (עין שלישית) / אורדהווה (למעלה)',
+        'Angusta ma dyai (A) / Hastagrai (B)': 'אנגוסטה מה דיאי (A) / הסטגראי (B)',
+        'Various — nasagrai (nose), angusta ma dyai (thumbs), nabi chakra (navel)': 'מגוון — נאסגראי (אף), אנגוסטה מה דיאי (אגודלים), נאבי צ׳אקרה (טבור)',
+        'Various — angusta ma dyai, nasagrai': 'מגוון — אנגוסטה מה דיאי, נאסגראי',
+      },
       poses: {
         // ── Opening ──
         'Surya Namaskara A': {
