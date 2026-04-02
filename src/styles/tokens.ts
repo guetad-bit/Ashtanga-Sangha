@@ -98,18 +98,18 @@ export const typography = {
 
   // Body — DM Sans
   bodyLg: { fontFamily: 'DMSans_400Regular', fontSize: 16, lineHeight: 24 },
-  bodyMd: { fontFamily: 'DMSans_400Regular', fontSize: 14, lineHeight: 22 },
-  bodySm: { fontFamily: 'DMSans_400Regular', fontSize: 14, lineHeight: 20 },
-  bodyXs: { fontFamily: 'DMSans_400Regular', fontSize: 14, lineHeight: 20 },
+  bodyMd: { fontFamily: 'DMSans_400Regular', fontSize: 15, lineHeight: 22 },
+  bodySm: { fontFamily: 'DMSans_400Regular', fontSize: 15, lineHeight: 22 },
+  bodyXs: { fontFamily: 'DMSans_400Regular', fontSize: 15, lineHeight: 22 },
 
   // Medium weight
-  labelLg: { fontFamily: 'DMSans_500Medium', fontSize: 15, lineHeight: 22 },
-  labelMd: { fontFamily: 'DMSans_500Medium', fontSize: 14, lineHeight: 20 },
-  labelSm: { fontFamily: 'DMSans_500Medium', fontSize: 14, lineHeight: 20 },
+  labelLg: { fontFamily: 'DMSans_500Medium', fontSize: 16, lineHeight: 22 },
+  labelMd: { fontFamily: 'DMSans_500Medium', fontSize: 15, lineHeight: 22 },
+  labelSm: { fontFamily: 'DMSans_500Medium', fontSize: 15, lineHeight: 22 },
 
   // Bold / semibold
   headingLg: { fontFamily: 'DMSans_600SemiBold', fontSize: 17, lineHeight: 24 },
-  headingMd: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, lineHeight: 22 },
-  headingSm: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, lineHeight: 20 },
-  headingXs: { fontFamily: 'DMSans_600SemiBold', fontSize: 14, lineHeight: 20 },
+  headingMd: { fontFamily: 'DMSans_600SemiBold', fontSize: 16, lineHeight: 22 },
+  headingSm: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, lineHeight: 22 },
+  headingXs: { fontFamily: 'DMSans_600SemiBold', fontSize: 15, lineHeight: 22 },
 } as const;

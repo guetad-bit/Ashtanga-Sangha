@@ -960,7 +960,7 @@ const s = StyleSheet.create({
   },
   weekDays: { flexDirection: 'row' as any, justifyContent: 'space-around' as any, marginBottom: 24 },
   weekDayCol: { alignItems: 'center' as any, gap: 8 },
-  weekDayLabel: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.muted },
+  weekDayLabel: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: moss.muted },
   weekDayCircle: {
     width: 36, height: 36, borderRadius: 18,
     alignItems: 'center' as any, justifyContent: 'center' as any,
@@ -982,7 +982,7 @@ const s = StyleSheet.create({
     height: '100%' as any, borderRadius: 4,
     backgroundColor: moss.accent,
   },
-  goalHint: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.muted },
+  goalHint: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.muted },
   moonBadge: {
     marginTop: 14,
     backgroundColor: moss.orangeLight,
@@ -1007,8 +1007,8 @@ const s = StyleSheet.create({
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 20,
     color: moss.ink, lineHeight: 26,
   },
-  circleSubtitle: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.muted, marginTop: 2 },
-  circleViewAll: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.muted, marginTop: 4 },
+  circleSubtitle: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.muted, marginTop: 2 },
+  circleViewAll: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: moss.muted, marginTop: 4 },
   circleScroll: { paddingTop: 12, paddingBottom: 4, gap: 6 },
   circleMember: {
     alignItems: 'center' as any,
@@ -1030,7 +1030,7 @@ const s = StyleSheet.create({
     minWidth: 60, justifyContent: 'center' as any,
   },
   circleBadgeText: { fontSize: 8, fontWeight: '600' as any },
-  circleMemberName: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.ink },
+  circleMemberName: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: moss.ink },
 
   /* ── Sangha Feed ── */
   feedSection: {
@@ -1052,11 +1052,11 @@ const s = StyleSheet.create({
   },
   feedAvatar: { width: 40, height: 40, borderRadius: 20 },
   feedUserName: { fontFamily: 'DMSans_700Bold', fontSize: 15, color: moss.ink },
-  feedTimeAgo: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.muted },
+  feedTimeAgo: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.muted },
   feedCaption: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.ink, marginBottom: 10 },
   feedStats: { flexDirection: 'row' as any, gap: 14, alignItems: 'center' as any },
-  feedHeart: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.heartRed },
-  feedComment: { fontFamily: 'DMSans_500Medium', fontSize: 14, color: moss.muted },
+  feedHeart: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: moss.heartRed },
+  feedComment: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: moss.muted },
   feedCardImage: { width: 130, height: 'auto' as any, minHeight: 120 },
   feedSeeAll: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: moss.muted, marginTop: 12, marginBottom: 4 },
 
@@ -1080,8 +1080,8 @@ const s = StyleSheet.create({
     backgroundColor: moss.accentFaint, borderRadius: 999,
     paddingHorizontal: 10, paddingVertical: 3,
   },
-  asanaSeriesText: { fontSize: 14, fontWeight: '600' as any, color: moss.accent },
-  asanaHint: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.muted },
+  asanaSeriesText: { fontSize: 15, fontWeight: '600' as any, color: moss.accent },
+  asanaHint: { fontFamily: 'DMSans_400Regular', fontSize: 16, color: moss.muted },
   asanaImageWrap: { position: 'relative' as any, height: 200, backgroundColor: moss.bg },
   asanaImage: { width: '100%' as any, height: '100%' as any },
   asanaImageOverlay: {
@@ -1096,28 +1096,28 @@ const s = StyleSheet.create({
     lineHeight: 26,
   },
   asanaSubtitle: {
-    fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.muted,
+    fontFamily: 'DMSans_400Regular', fontSize: 16, color: moss.inkMid,
   },
   asanaDetails: { padding: 16, paddingTop: 14 },
   asanaTags: { flexDirection: 'row' as any, flexWrap: 'wrap' as any, gap: 8, marginBottom: 14 },
   asanaTag: {
     backgroundColor: moss.beige, borderRadius: 999,
-    paddingHorizontal: 10, paddingVertical: 4,
+    paddingHorizontal: 12, paddingVertical: 6,
   },
-  asanaTagText: { fontSize: 14, fontWeight: '500' as any, color: moss.inkMid },
+  asanaTagText: { fontSize: 16, fontWeight: '500' as any, color: moss.ink },
   asanaTips: {
     backgroundColor: moss.accentFaint, borderRadius: 12,
-    padding: 14, marginBottom: 14,
+    padding: 16, marginBottom: 14,
   },
-  asanaTipsTitle: { fontSize: 14, fontWeight: '600' as any, color: moss.accent, marginBottom: 6 },
-  asanaTipsBody: { fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.inkMid, lineHeight: 18 },
+  asanaTipsTitle: { fontSize: 16, fontWeight: '600' as any, color: moss.accent, marginBottom: 6 },
+  asanaTipsBody: { fontFamily: 'DMSans_400Regular', fontSize: 16, color: moss.ink, lineHeight: 24 },
   asanaStatsRow: { flexDirection: 'row' as any, gap: 12 },
   asanaStat: {
     flex: 1, backgroundColor: moss.beige, borderRadius: 12,
-    paddingVertical: 10, paddingHorizontal: 14, alignItems: 'center' as any,
+    paddingVertical: 12, paddingHorizontal: 14, alignItems: 'center' as any,
   },
-  asanaStatNum: { fontSize: 20, fontWeight: '700' as any, color: moss.ink },
-  asanaStatLabel: { fontSize: 14, color: moss.muted, fontWeight: '500' as any },
+  asanaStatNum: { fontSize: 22, fontWeight: '700' as any, color: moss.ink },
+  asanaStatLabel: { fontSize: 15, color: moss.inkMid, fontWeight: '500' as any },
 
   /* ── Hero state variants ── */
   heroContentOnMat: {
