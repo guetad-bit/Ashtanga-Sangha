@@ -384,6 +384,9 @@ const en = {
         content: 'Nine drishtis are used throughout practice: Nasagrai (nose tip), Broomadhya (third eye), Nabi chakra (navel), Hastagrai (hand), Padayoragrai (toes), Parsva drishti (far right/left), Angusta ma dyai (thumbs), Urdhva drishti (upward). The gaze steadies the mind and directs prana. Where the eyes go, the mind follows.',
       },
     },
+    counting: {
+      intro: 'In Mysore-style practice, the teacher counts vinyasas in Sanskrit. Learning these numbers helps you follow the count and deepen your connection to the tradition.',
+    },
     breathing: {
       ujjayi: {
         title: 'Ujjayi Pranayama',

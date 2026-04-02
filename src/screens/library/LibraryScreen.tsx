@@ -796,10 +796,8 @@ export default function LibraryScreen() {
         {/* ── COUNTING ── */}
         {activeCategory === 'counting' && (
           <>
-            <Text style={st.countingIntro}>
-              In Mysore-style practice, the teacher counts vinyasas in Sanskrit.
-              Learning these numbers helps you follow the count and deepen your
-              connection to the tradition.
+            <Text style={[st.countingIntro, isRTL && { textAlign: 'right' }]}>
+              {t('library.counting.intro')}
             </Text>
             <View style={st.countingGrid}>
               {COUNTING.map((c) => (
