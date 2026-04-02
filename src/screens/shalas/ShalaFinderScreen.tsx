@@ -132,7 +132,8 @@ function PracticeCalendar({ logs, year, month }: { logs: PracticeLog[]; year: nu
       dayCount[d.getDate()] = (dayCount[d.getDate()] || 0) + 1;
     }
   });
-  const monthName = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const locale = i18n.language === 'he' ? 'he-IL' : 'en-US';
+  const monthName = new Date(year, month).toLocaleDateString(locale, { month: 'long', year: 'numeric' });
   const dayLabels = t('home.dayLabels', { returnObjects: true }) as string[];
 
   return (
@@ -176,7 +177,8 @@ function PracticeCalendar({ logs, year, month }: { logs: PracticeLog[]; year: nu
 const DURATION_OPTIONS = [5, 10, 15, 20, 30, 45, 60, 75, 90, 120];
 
 export default function MyLogScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'he';
   const router = useRouter();
   const { user, practiceLogs, setPracticeLogs, removePracticeLog, updatePracticeLog: updateLogInStore } = useAppStore();
   const SERIES_LABELS = getSeriesLabels(t);
@@ -292,8 +294,8 @@ export default function MyLogScreen() {
     <SafeAreaView style={st.safe} edges={['top']}>
       <AppHeader />
       {/* Stats row */}
-      <View style={st.statsRow}>
-        <View style={st.statsPill}>
+      <View style={[st.statsRowTop, isRTL && { justifyContent: 'flex-start' }]}>
+        <View style={[st.statsPill, isRTL && { flexDirection: 'row-reverse' }]}>
           <Text style={st.statsPillText}>{t('myLog.sessions', { count: totalPractices })}</Text>
           <View style={st.statsPillDot} />
           <Text style={st.statsPillText}>{t('myLog.hours', { hours: totalHours })}</Text>
@@ -307,7 +309,7 @@ export default function MyLogScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={warm.accent} />}
       >
         {/* ââ Stats Row ââ */}
-        <View style={st.statsRow}>
+        <View style={[st.statsRow, isRTL && { flexDirection: 'row-reverse' }]}>
           <View style={st.statCard}>
             <View style={[st.statIcon, { backgroundColor: warm.orangeLight }]}>
               <Ionicons name="flame" size={18} color={warm.orange} />
@@ -335,8 +337,8 @@ export default function MyLogScreen() {
         <PracticeCalendar logs={safeLogs} year={calYear} month={calMonth} />
 
         {/* ââ This Month Summary ââ */}
-        <View style={st.monthBanner}>
-          <View style={st.monthBannerLeft}>
+        <View style={[st.monthBanner, isRTL && { flexDirection: 'row-reverse' }]}>
+          <View style={[st.monthBannerLeft, isRTL && { flexDirection: 'row-reverse' }]}>
             <Ionicons name="calendar" size={18} color={warm.accent} />
             <Text style={st.monthBannerText}>
               <Text style={st.monthBannerBold}>{thisMonthLogs.length}</Text> {t('myLog.practicesLabel')}
@@ -372,7 +374,7 @@ export default function MyLogScreen() {
                     activeOpacity={0.7}
                     onPress={() => toggleExpand(log.id)}
                   >
-                    <View style={st.logRow}>
+                    <View style={[st.logRow, isRTL && { flexDirection: 'row-reverse' }]}>
                       <View style={[st.logIconWrap, { backgroundColor: sc.bg }]}>
                         <Ionicons
                           name={(SERIES_ICONS[log.series] || 'fitness-outline') as any}
@@ -380,9 +382,9 @@ export default function MyLogScreen() {
                           color={sc.fg}
                         />
                       </View>
-                      <View style={st.logInfo}>
-                        <Text style={st.logSeries}>{SERIES_LABELS[log.series] || log.series}</Text>
-                        <Text style={st.logMeta}>{formatDate(log.loggedAt)} Â· {formatTime(log.loggedAt)}</Text>
+                      <View style={[st.logInfo, isRTL && { alignItems: 'flex-end' }]}>
+                        <Text style={[st.logSeries, isRTL && { textAlign: 'right' }]}>{SERIES_LABELS[log.series] || log.series}</Text>
+                        <Text style={st.logMeta}>{formatDate(log.loggedAt)} · {formatTime(log.loggedAt)}</Text>
                       </View>
                       <View style={st.logDurationBadge}>
                         <Text style={st.logDurationText}>{log.durationMin}m</Text>
@@ -391,43 +393,43 @@ export default function MyLogScreen() {
                     </View>
                     {isExpanded && (
                       <View style={st.logExpanded}>
-                        <View style={st.logDetailRow}>
+                        <View style={[st.logDetailRow, isRTL && { flexDirection: "row-reverse" }]}>
                           <Ionicons name="time-outline" size={16} color={warm.muted} />
                           <Text style={st.logDetailLabel}>{t('myLog.duration')}</Text>
                           <Text style={st.logDetailValue}>{t('myLog.minutes', { count: log.durationMin })}</Text>
                         </View>
-                        <View style={st.logDetailRow}>
+                        <View style={[st.logDetailRow, isRTL && { flexDirection: "row-reverse" }]}>
                           <Ionicons name="barbell-outline" size={16} color={warm.muted} />
                           <Text style={st.logDetailLabel}>{t('practiceLog.series')}</Text>
                           <Text style={st.logDetailValue}>{SERIES_LABELS[log.series] || log.series}</Text>
                         </View>
-                        <View style={st.logDetailRow}>
+                        <View style={[st.logDetailRow, isRTL && { flexDirection: "row-reverse" }]}>
                           <Ionicons name="calendar-outline" size={16} color={warm.muted} />
                           <Text style={st.logDetailLabel}>{t('myLog.logged')}</Text>
                           <Text style={st.logDetailValue}>
-                            {new Date(log.loggedAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                            {new Date(log.loggedAt).toLocaleDateString(isRTL ? 'he-IL' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                           </Text>
                         </View>
                         {/* ââ Edit / Delete Actions ââ */}
                         {log.feeling && (
-                          <View style={st.logDetailRow}>
+                          <View style={[st.logDetailRow, isRTL && { flexDirection: "row-reverse" }]}>
                             <Ionicons name={FEELING_ICONS[log.feeling] || 'leaf'} size={18} color={FEELING_COLORS[log.feeling] || warm.primary} />
                             <Text style={st.logDetailLabel}>{t('myLog.feeling')}</Text>
                             <Text style={st.logDetailValue}>{FEELING_LABELS[log.feeling] || log.feeling}</Text>
                           </View>
                         )}
                         {log.notes && (
-                          <View style={st.logNotesWrap}>
+                          <View style={[st.logNotesWrap, isRTL && { flexDirection: "row-reverse" }]}>
                             <Ionicons name="document-text-outline" size={16} color={warm.muted} />
-                            <Text style={st.logNotesText}>{log.notes}</Text>
+                            <Text style={[st.logNotesText, isRTL && { textAlign: "right" }]}>{log.notes}</Text>
                           </View>
                         )}
-<View style={st.logActions}>
-                          <TouchableOpacity style={st.editBtn} onPress={() => handleEditOpen(log)}>
+<View style={[st.logActions, isRTL && { flexDirection: "row-reverse" }]}>
+                          <TouchableOpacity style={[st.editBtn, isRTL && { flexDirection: "row-reverse" }]} onPress={() => handleEditOpen(log)}>
                             <Ionicons name="pencil-outline" size={15} color={warm.blue} />
                             <Text style={st.editBtnText}>{t('myLog.edit')}</Text>
                           </TouchableOpacity>
-                          <TouchableOpacity style={st.deleteBtn} onPress={() => setDeletingId(log.id)}>
+                          <TouchableOpacity style={[st.deleteBtn, isRTL && { flexDirection: "row-reverse" }]} onPress={() => setDeletingId(log.id)}>
                             <Ionicons name="trash-outline" size={15} color={warm.red} />
                             <Text style={st.deleteBtnText}>{t('myLog.delete')}</Text>
                           </TouchableOpacity>
@@ -588,7 +590,7 @@ const st = StyleSheet.create({
   topBarLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   topBarRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   brandText: { fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18, color: warm.ink },
-  statsRow: {
+  statsRowTop: {
     flexDirection: 'row', justifyContent: 'flex-end',
     paddingHorizontal: 20, paddingBottom: 8,
   },
