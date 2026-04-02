@@ -100,6 +100,20 @@ const FAKE_USERS_FEED: {
   { id: 'fake-david', name: 'David Stern', avatarUrl: 'https://i.pravatar.cc/150?img=14', series: 'intermediate', streak: 730, bio: 'Former Wall Street, now yoga teacher in Brooklyn. 15 years.', feedCaption: 'Kapo day. The backbend that changed everything. Trust the breath. 🔥', feedImage: '', feedTime: new Date(Date.now() - 10 * 3600000).toISOString(), feedLikes: 28, feedComments: 6 },
 ];
 
+/* Only show fake posts that have images */
+const FAKE_POSTS_WITH_IMAGES = FAKE_USERS_FEED.filter((u) => !!u.feedImage);
+
+function fakeTimeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 5) return 'Just now';
+  if (mins < 60) return `${mins}m`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d`;
+}
+
 export default function CommunityScreen() {
   const router = useRouter();
   const { user, userPosts, isPracticing, practiceLogs } = useAppStore();
@@ -373,24 +387,36 @@ export default function CommunityScreen() {
                 }}
               />
             ))}
-            {/* Demo posts — always visible */}
-            {FAKE_USERS_FEED.map((u) => (
-              <PostCard
-                key={u.id}
-                postId={u.id}
-                userId={u.id}
-                userName={u.name}
-                userAvatar={u.avatarUrl}
-                imageUrl={u.feedImage || undefined}
-                caption={u.feedCaption}
-                likesCount={u.feedLikes}
-                commentsCount={u.feedComments}
-                isLiked={false}
-                createdAt={u.feedTime}
-                tags={[]}
-                isOwner={false}
-                onUserPress={() => openProfile(u.name)}
-              />
+            {/* Demo posts — always visible, lightweight cards */}
+            {FAKE_POSTS_WITH_IMAGES.map((u) => (
+              <TouchableOpacity key={u.id} activeOpacity={0.85} onPress={() => openProfile(u.name)}
+                style={{ backgroundColor: moss.cardBg, borderRadius: 16, borderWidth: 1, borderColor: moss.divider, marginHorizontal: spacing.lg, marginBottom: 14, overflow: 'hidden', ...shadows.md }}>
+                {/* Header */}
+                <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, paddingBottom: 10 }, isRTL && { flexDirection: 'row-reverse' }]}>
+                  <Image source={{ uri: u.avatarUrl }} style={{ width: 42, height: 42, borderRadius: 21 }} />
+                  <View style={[{ flex: 1 }, isRTL && { alignItems: 'flex-end' }]}>
+                    <Text style={{ fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: '#2A2420' }}>{u.name}</Text>
+                    <Text style={{ fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#7A6E60' }}>{fakeTimeAgo(u.feedTime)}</Text>
+                  </View>
+                </View>
+                {/* Caption */}
+                <Text style={[{ fontFamily: 'DMSans_400Regular', fontSize: 16, color: '#2A2420', lineHeight: 24, paddingHorizontal: 14, paddingBottom: 10 }, isRTL && { textAlign: 'right' }]}>
+                  {u.feedCaption}
+                </Text>
+                {/* Image */}
+                <Image source={{ uri: u.feedImage }} style={{ width: '100%', height: 260, backgroundColor: moss.divider }} resizeMode="cover" />
+                {/* Footer */}
+                <View style={[{ flexDirection: 'row', alignItems: 'center', padding: 12, gap: 16 }, isRTL && { flexDirection: 'row-reverse' }]}>
+                  <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 6 }, isRTL && { flexDirection: 'row-reverse' }]}>
+                    <Ionicons name="heart-outline" size={18} color="#C4956A" />
+                    <Text style={{ fontFamily: 'DMSans_500Medium', fontSize: 15, color: '#4A3F36' }}>{u.feedLikes}</Text>
+                  </View>
+                  <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 6 }, isRTL && { flexDirection: 'row-reverse' }]}>
+                    <Ionicons name="chatbubble-outline" size={16} color="#7A6E60" />
+                    <Text style={{ fontFamily: 'DMSans_500Medium', fontSize: 15, color: '#4A3F36' }}>{u.feedComments}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
             ))}
           </>
         )}
