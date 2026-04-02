@@ -507,6 +507,8 @@ const PHILOSOPHY_KEYS = [
   'yogaSutras', 'moonDays', 'mysoreStyle', 'drishti',
 ] as const;
 
+const MANTRA_KEYS = ['opening', 'openingPatanjali', 'closing'] as const;
+
 const BREATHING_KEYS = [
   'ujjayi', 'nadiShodhana', 'kapalabhati', 'kumbhaka',
 ] as const;
@@ -782,14 +784,24 @@ export default function LibraryScreen() {
         {/* ── MANTRAS ── */}
         {activeCategory === 'mantras' && MANTRAS.map((mantra, i) => (
           <View key={i} style={st.mantraCard}>
-            <Text style={st.mantraContext}>{mantra.context}</Text>
+            <Text style={[st.mantraContext, isRTL && { textAlign: 'right' }]}>
+              {t(`library.mantras.${MANTRA_KEYS[i]}.context`)}
+            </Text>
             <View style={st.mantraDivider} />
-            <Text style={st.mantraLabel}>Sanskrit</Text>
+            <Text style={[st.mantraLabel, isRTL && { textAlign: 'right' }]}>
+              {t('library.mantras.labelSanskrit')}
+            </Text>
             <Text style={st.mantraSanskrit}>{mantra.sanskrit}</Text>
-            <Text style={st.mantraLabel}>Transliteration</Text>
+            <Text style={[st.mantraLabel, isRTL && { textAlign: 'right' }]}>
+              {t('library.mantras.labelTransliteration')}
+            </Text>
             <Text style={st.mantraTranslit}>{mantra.transliteration}</Text>
-            <Text style={st.mantraLabel}>Translation</Text>
-            <Text style={st.mantraEnglish}>{mantra.english}</Text>
+            <Text style={[st.mantraLabel, isRTL && { textAlign: 'right' }]}>
+              {t('library.mantras.labelTranslation')}
+            </Text>
+            <Text style={[st.mantraEnglish, isRTL && { textAlign: 'right' }]}>
+              {t(`library.mantras.${MANTRA_KEYS[i]}.english`)}
+            </Text>
           </View>
         ))}
 

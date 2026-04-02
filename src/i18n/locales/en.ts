@@ -384,6 +384,23 @@ const en = {
         content: 'Nine drishtis are used throughout practice: Nasagrai (nose tip), Broomadhya (third eye), Nabi chakra (navel), Hastagrai (hand), Padayoragrai (toes), Parsva drishti (far right/left), Angusta ma dyai (thumbs), Urdhva drishti (upward). The gaze steadies the mind and directs prana. Where the eyes go, the mind follows.',
       },
     },
+    mantras: {
+      labelSanskrit: 'Sanskrit',
+      labelTransliteration: 'Transliteration',
+      labelTranslation: 'Translation',
+      opening: {
+        english: 'I bow to the lotus feet of the gurus,\nWho awaken insight into the happiness of pure being,\nWho are the jungle physicians,\nPacifying delusion, the poison of saṃsāra.',
+        context: 'Opening Mantra — chanted at the beginning of practice. It honors the lineage of teachers and sets the intention for practice.',
+      },
+      openingPatanjali: {
+        english: 'Who has the form of a man up to the shoulders,\nHolding a conch, a disc, and a sword,\nWhite with a thousand heads,\nI bow to Patanjali.',
+        context: 'Second part of the Opening Mantra — honors Patanjali, the sage who codified the Yoga Sutras.',
+      },
+      closing: {
+        english: 'May all beings be governed with justice,\nMay the leaders protect the earth,\nMay there always be auspiciousness for all,\nMay all the worlds be happy.',
+        context: 'Closing Mantra (Mangala Mantra) — chanted at the end of practice. A prayer for universal well-being.',
+      },
+    },
     counting: {
       intro: 'In Mysore-style practice, the teacher counts vinyasas in Sanskrit. Learning these numbers helps you follow the count and deepen your connection to the tradition.',
     },
