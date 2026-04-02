@@ -507,6 +507,8 @@ const PHILOSOPHY_KEYS = [
   'yogaSutras', 'moonDays', 'mysoreStyle', 'drishti',
 ] as const;
 
+const SEQUENCE_KEYS = ['primary', 'intermediate', 'advancedA', 'advancedB'] as const;
+
 const MANTRA_KEYS = ['opening', 'openingPatanjali', 'closing'] as const;
 
 const BREATHING_KEYS = [
@@ -735,22 +737,30 @@ export default function LibraryScreen() {
         {activeCategory === 'sequences' && SEQUENCES.map((seq, i) => (
           <View key={i} style={st.seqCard}>
             <View style={st.seqBadge}>
-              <Text style={st.seqBadgeText}>Series {i + 1}</Text>
+              <Text style={st.seqBadgeText}>{t('library.sequences.seriesBadge', { number: i + 1 })}</Text>
             </View>
-            <Text style={st.seqTitle}>{seq.title}</Text>
-            <Text style={st.seqSubtitle}>{seq.subtitle}</Text>
-            <Text style={st.seqDesc}>{seq.description}</Text>
-            <View style={st.seqMeta}>
+            <Text style={[st.seqTitle, isRTL && { textAlign: 'right' }]}>
+              {t(`library.sequences.${SEQUENCE_KEYS[i]}.title`)}
+            </Text>
+            <Text style={[st.seqSubtitle, isRTL && { textAlign: 'right' }]}>
+              {t(`library.sequences.${SEQUENCE_KEYS[i]}.subtitle`)}
+            </Text>
+            <Text style={[st.seqDesc, isRTL && { textAlign: 'right' }]}>
+              {t(`library.sequences.${SEQUENCE_KEYS[i]}.description`)}
+            </Text>
+            <View style={[st.seqMeta, isRTL && { flexDirection: 'row-reverse' }]}>
               <View style={st.seqMetaItem}>
-                <Text style={st.seqMetaLabel}>Postures</Text>
+                <Text style={st.seqMetaLabel}>{t('library.sequences.posturesLabel')}</Text>
                 <Text style={st.seqMetaValue}>{seq.asanaCount}</Text>
               </View>
               <View style={st.seqMetaItem}>
-                <Text style={st.seqMetaLabel}>Duration</Text>
+                <Text style={st.seqMetaLabel}>{t('library.sequences.durationLabel')}</Text>
                 <Text style={st.seqMetaValue}>{seq.duration}</Text>
               </View>
             </View>
-            <Text style={st.seqFocus}>{seq.focus}</Text>
+            <Text style={[st.seqFocus, isRTL && { textAlign: 'right' }]}>
+              {t(`library.sequences.${SEQUENCE_KEYS[i]}.focus`)}
+            </Text>
           </View>
         ))}
 

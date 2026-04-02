@@ -384,6 +384,35 @@ const en = {
         content: 'Nine drishtis are used throughout practice: Nasagrai (nose tip), Broomadhya (third eye), Nabi chakra (navel), Hastagrai (hand), Padayoragrai (toes), Parsva drishti (far right/left), Angusta ma dyai (thumbs), Urdhva drishti (upward). The gaze steadies the mind and directs prana. Where the eyes go, the mind follows.',
       },
     },
+    sequences: {
+      seriesBadge: 'Series {{number}}',
+      posturesLabel: 'Postures',
+      durationLabel: 'Duration',
+      primary: {
+        title: 'Primary Series (Yoga Chikitsa)',
+        subtitle: 'Yoga Therapy — Detoxification & Alignment',
+        description: 'The first series purifies and aligns the body. It consists of forward folds, twists, and hip openers that build a strong foundation. "Chikitsa" means therapy — this series heals the physical body.',
+        focus: 'Forward folds, hip openers, twists, foundational strength',
+      },
+      intermediate: {
+        title: 'Intermediate Series (Nadi Shodhana)',
+        subtitle: 'Nerve Cleansing — Backbends & Strength',
+        description: 'The second series purifies the nervous system through deep backbends, leg-behind-head postures, and arm balances. "Nadi Shodhana" means nerve cleansing.',
+        focus: 'Deep backbends, arm balances, leg-behind-head, nerve purification',
+      },
+      advancedA: {
+        title: 'Advanced A (Sthira Bhaga)',
+        subtitle: 'Divine Stability — Arm Balances',
+        description: 'The third series demands exceptional strength and flexibility. Features complex arm balances, deep backbends, and challenging transitions. Only attempted after mastering Intermediate.',
+        focus: 'Advanced arm balances, extreme flexibility, mental fortitude',
+      },
+      advancedB: {
+        title: 'Advanced B (Sthira Bhaga)',
+        subtitle: 'Divine Stability — Culmination',
+        description: 'The fourth series is practiced by very few. It combines the most demanding postures requiring complete mastery of body, breath, and mind.',
+        focus: 'Peak difficulty, complete integration of practice',
+      },
+    },
     mantras: {
       labelSanskrit: 'Sanskrit',
       labelTransliteration: 'Transliteration',
