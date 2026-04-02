@@ -1107,7 +1107,7 @@ const st = StyleSheet.create({
     color: colors.ink, marginBottom: 2,
   },
   seqSubtitle: { ...typography.bodySm, color: colors.sage, fontStyle: 'italic', marginBottom: spacing.sm },
-  seqDesc: { ...typography.bodyMd, color: colors.inkMid, lineHeight: 21, marginBottom: spacing.md },
+  seqDesc: { ...typography.bodyMd, fontSize: 16, color: colors.ink, lineHeight: 24, marginBottom: spacing.md },
   seqMeta: { flexDirection: 'row', gap: spacing.xl, marginBottom: spacing.sm },
   seqMetaItem: { alignItems: 'center' },
   seqMetaLabel: { ...typography.labelSm, color: colors.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
@@ -1128,7 +1128,7 @@ const st = StyleSheet.create({
   philoSub: { ...typography.bodyXs, color: colors.sage, marginTop: 2 },
   philoArrow: { fontSize: 22, color: colors.muted, marginLeft: spacing.sm },
   philoContent: {
-    ...typography.bodyMd, color: colors.inkMid, lineHeight: 22,
+    ...typography.bodyMd, fontSize: 16, color: colors.ink, lineHeight: 24,
     marginTop: spacing.md,
   },
 
@@ -1152,15 +1152,15 @@ const st = StyleSheet.create({
     color: colors.ink,
   },
   mantraTranslit: {
-    ...typography.bodyMd, color: colors.inkMid, lineHeight: 22, fontStyle: 'italic',
+    ...typography.bodyMd, fontSize: 16, color: colors.ink, lineHeight: 24, fontStyle: 'italic',
   },
   mantraEnglish: {
-    ...typography.bodyMd, color: colors.inkMid, lineHeight: 22,
+    ...typography.bodyMd, fontSize: 16, color: colors.ink, lineHeight: 24,
   },
 
   // Counting
   countingIntro: {
-    ...typography.bodyMd, color: colors.inkMid, lineHeight: 21,
+    ...typography.bodyMd, fontSize: 16, color: colors.ink, lineHeight: 24,
     marginBottom: spacing.lg,
   },
   countingGrid: {
@@ -1191,13 +1191,13 @@ const st = StyleSheet.create({
     color: colors.ink,
   },
   pranaSub: { ...typography.bodySm, color: colors.sage, fontStyle: 'italic', marginBottom: spacing.sm },
-  pranaDesc: { ...typography.bodyMd, color: colors.inkMid, lineHeight: 21, marginBottom: spacing.md },
+  pranaDesc: { ...typography.bodyMd, fontSize: 16, color: colors.ink, lineHeight: 24, marginBottom: spacing.md },
   pranaHow: {
     backgroundColor: colors.sagePale, borderRadius: radius.lg,
     padding: spacing.lg,
   },
   pranaHowLabel: { ...typography.headingSm, color: colors.sage, marginBottom: spacing.xs },
-  pranaHowText: { ...typography.bodyMd, color: colors.inkMid, lineHeight: 21 },
+  pranaHowText: { ...typography.bodyMd, fontSize: 16, color: colors.ink, lineHeight: 24 },
 
   // Anatomy
   anatomyCard: {
@@ -1209,7 +1209,7 @@ const st = StyleSheet.create({
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18, lineHeight: 24,
     color: colors.ink, marginBottom: spacing.sm,
   },
-  anatomyContent: { ...typography.bodyMd, color: colors.inkMid, lineHeight: 22 },
+  anatomyContent: { ...typography.bodyMd, fontSize: 16, color: colors.ink, lineHeight: 24 },
 
   // History
   historyCard: {
@@ -1228,7 +1228,7 @@ const st = StyleSheet.create({
     color: colors.ink,
   },
   historySub: { ...typography.bodySm, color: colors.sage, fontStyle: 'italic', marginBottom: spacing.sm },
-  historyContent: { ...typography.bodyMd, color: colors.inkMid, lineHeight: 22 },
+  historyContent: { ...typography.bodyMd, fontSize: 16, color: colors.ink, lineHeight: 24 },
 
   // Search bar
   searchWrap: {
@@ -1324,8 +1324,8 @@ const st = StyleSheet.create({
   },
   modalDrishtiRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: spacing.xs },
   modalSectionTitle: {
-    ...typography.headingXs, color: colors.sage, textTransform: 'uppercase',
+    ...typography.headingXs, fontSize: 14, color: colors.inkMid, textTransform: 'uppercase',
     letterSpacing: 0.8, marginBottom: spacing.sm,
   },
-  modalText: { ...typography.bodyMd, color: colors.inkMid, lineHeight: 22 },
+  modalText: { ...typography.bodyMd, fontSize: 16, color: colors.ink, lineHeight: 24 },
 });
