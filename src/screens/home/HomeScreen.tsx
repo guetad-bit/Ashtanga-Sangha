@@ -844,16 +844,16 @@ const s = StyleSheet.create({
   },
   quoteMark: {
     fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 30, color: moss.accent, lineHeight: 30, marginTop: -2,
+    fontSize: 40, color: moss.accent, lineHeight: 40, marginTop: -4,
   },
   quoteBody: { flex: 1 },
   quoteText: {
     fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 15, color: moss.inkMid, lineHeight: 22, fontStyle: 'italic' as any,
+    fontSize: 20, color: moss.ink, lineHeight: 28, fontStyle: 'italic' as any,
   },
   quoteAuthor: {
-    fontFamily: 'DMSans_400Regular',
-    fontSize: 13, color: moss.muted, marginTop: 4,
+    fontFamily: 'DMSans_500Medium',
+    fontSize: 14, color: moss.inkMid, marginTop: 6,
   },
 
   /* ── C4: Outlined action card ── */
