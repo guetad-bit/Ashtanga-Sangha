@@ -421,49 +421,51 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* ═══ 1. HERO CARD ═══ */}
-        <View style={s.heroCard}>
-          <ImageBackground
-            source={practiceState === 'onMat' ? onMatImage : practiceImage}
-            style={s.heroImage}
-            imageStyle={s.heroImageInner}
-          >
-            <View style={s.heroGradient} />
-            <View style={[
-              s.heroContent,
-              practiceState === 'onMat' && s.heroContentOnMat,
-            ]}>
-              {practiceState === 'onMat' ? (
-                <>
-                  <Ionicons name="leaf" size={32} color="rgba(255,255,255,0.85)" />
-                  <Text style={s.heroTitle}>{t('home.onTheMat')}</Text>
-                  <Text style={s.heroSubtitle}>
-                    {elapsedMin < 1 ? t('home.justStarted') : t('home.minIn', { min: elapsedMin })}
-                  </Text>
-                  <TouchableOpacity
-                    style={[s.heroBtn, s.heroBtnFinish]}
-                    onPress={handlePracticeButton}
-                    activeOpacity={0.85}
-                  >
-                    <Text style={[s.heroBtnText, { color: moss.ink }]}>{t('home.doneLogIt')}</Text>
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <>
-                  <Text style={[s.heroTitle, guruWisdom.quote.length > 80 && s.heroTitleSmall]}>{guruWisdom.quote}</Text>
-                  <Text style={s.heroSubtitle}>— {guruWisdom.guru}</Text>
-                  <TouchableOpacity
-                    style={[s.heroBtn, s.heroBtnDefault]}
-                    onPress={handlePracticeButton}
-                    activeOpacity={0.85}
-                  >
-                    <Text style={s.heroBtnText}>{t('home.startPractice')}</Text>
-                  </TouchableOpacity>
-                </>
-              )}
+        {/* ═══ 1. QUOTE STRIP + ACTION CARD (C4) ═══ */}
+        {practiceState === 'onMat' ? (
+          /* On-mat state: green card with timer */
+          <View style={s.onMatCard}>
+            <Ionicons name="leaf" size={28} color="rgba(255,255,255,0.85)" />
+            <Text style={s.onMatTitle}>I'm on the mat!</Text>
+            <Text style={s.onMatSub}>
+              {elapsedMin < 1 ? 'Just started' : `${elapsedMin} min in`}
+            </Text>
+            <TouchableOpacity
+              style={s.onMatBtn}
+              onPress={handlePracticeButton}
+              activeOpacity={0.85}
+            >
+              <Text style={s.onMatBtnText}>I'M DONE — LOG IT</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <>
+            {/* Quote strip */}
+            <View style={s.quoteStrip}>
+              <Text style={s.quoteMark}>"</Text>
+              <View style={s.quoteBody}>
+                <Text style={s.quoteText}>{guruWisdom.quote}</Text>
+                <Text style={s.quoteAuthor}>— {guruWisdom.guru}</Text>
+              </View>
             </View>
-          </ImageBackground>
-        </View>
+
+            {/* Action card — outlined */}
+            <TouchableOpacity
+              style={s.actionCard}
+              onPress={handlePracticeButton}
+              activeOpacity={0.85}
+            >
+              <View style={s.actionIconWrap}>
+                <Ionicons name="play" size={22} color={moss.accent} />
+              </View>
+              <View style={s.actionTextWrap}>
+                <Text style={s.actionTitle}>Start Your Practice</Text>
+                <Text style={s.actionSub}>Tap to begin tracking your session</Text>
+              </View>
+              <Text style={s.actionArrow}>›</Text>
+            </TouchableOpacity>
+          </>
+        )}
 
         {/* ═══ 2. THIS WEEK + GOAL ═══ */}
         <View style={s.weekCard}>
@@ -942,65 +944,85 @@ const s = StyleSheet.create({
   },
 
   /* ── Hero card (10% shorter = 288) ── */
-  heroCard: {
-    marginHorizontal: spacing.lg, marginBottom: spacing.lg,
-    borderRadius: 20, overflow: 'hidden' as any,
-    height: 288,
-    ...shadows.lg,
+  /* ── C4: Quote strip ── */
+  quoteStrip: {
+    marginHorizontal: spacing.lg, marginBottom: 10,
+    backgroundColor: 'rgba(138,158,120,0.06)',
+    borderRadius: 14,
+    padding: 14,
+    paddingLeft: 16,
+    flexDirection: 'row' as any,
+    gap: 10,
+    alignItems: 'flex-start' as any,
   },
-  heroImage: { flex: 1, justifyContent: 'center' as any, alignItems: 'center' as any },
-  heroImageInner: { borderRadius: 20 },
-  heroGradient: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'transparent',
-  },
-  heroContent: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-end' as any,
-    alignItems: 'center' as any,
-    paddingHorizontal: 24,
-    paddingBottom: 28,
-    backgroundColor: 'rgba(138,158,120,0.55)',
-    borderRadius: 20,
-  },
-  heroTitle: {
+  quoteMark: {
     fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 32, lineHeight: 38,
-    color: '#fff', fontStyle: 'italic' as any,
-    textAlign: 'center' as any,
-    marginBottom: 6,
-    textShadowColor: 'rgba(0,0,0,0.4)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 12,
+    fontSize: 30, color: moss.accent, lineHeight: 30, marginTop: -2,
   },
-  heroTitleSmall: {
-    fontSize: 24, lineHeight: 30,
+  quoteBody: { flex: 1 },
+  quoteText: {
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 15, color: moss.inkMid, lineHeight: 22, fontStyle: 'italic' as any,
   },
-  heroSubtitle: {
+  quoteAuthor: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 16, color: 'rgba(255,255,255,0.9)',
-    textAlign: 'center' as any,
-    marginBottom: 24,
-    textShadowColor: 'rgba(0,0,0,0.3)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 6,
+    fontSize: 13, color: moss.muted, marginTop: 4,
   },
-  heroBtn: {
-    borderRadius: 28, paddingVertical: 14, paddingHorizontal: 44,
+
+  /* ── C4: Outlined action card ── */
+  actionCard: {
+    marginHorizontal: spacing.lg, marginBottom: spacing.lg,
+    backgroundColor: moss.cardBg,
+    borderWidth: 2, borderColor: moss.accent,
+    borderRadius: 18,
+    padding: 20,
+    flexDirection: 'row' as any,
+    alignItems: 'center' as any,
+    gap: 14,
+  },
+  actionIconWrap: {
+    width: 50, height: 50, borderRadius: 25,
+    backgroundColor: 'rgba(138,158,120,0.12)',
     alignItems: 'center' as any, justifyContent: 'center' as any,
   },
-  heroBtnDefault: {
-    backgroundColor: '#C4956A',
-    shadowColor: 'rgba(196,149,106,0.45)',
-    shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 16,
+  actionTextWrap: { flex: 1 },
+  actionTitle: {
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 17, color: moss.ink, marginBottom: 2,
   },
-  heroBtnOnMat: {
-    backgroundColor: '#C4956A',
-    shadowColor: 'rgba(196,149,106,0.45)',
-    shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 16,
+  actionSub: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 13, color: moss.muted,
   },
-  heroBtnText: {
-    fontFamily: 'DMSans_700Bold', fontSize: 16, color: '#fff',
+  actionArrow: {
+    fontSize: 22, color: moss.accent,
+  },
+
+  /* ── On-mat state card ── */
+  onMatCard: {
+    marginHorizontal: spacing.lg, marginBottom: spacing.lg,
+    backgroundColor: 'rgba(59,50,40,0.88)',
+    borderRadius: 20,
+    padding: 28,
+    alignItems: 'center' as any,
+  },
+  onMatTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 26, color: '#fff', marginTop: 8, marginBottom: 4,
+  },
+  onMatSub: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 16, color: 'rgba(255,255,255,0.7)', marginBottom: 20,
+  },
+  onMatBtn: {
+    backgroundColor: moss.cardBg, borderRadius: 28,
+    paddingVertical: 14, paddingHorizontal: 44,
+    alignItems: 'center' as any,
+    shadowColor: 'rgba(0,0,0,0.15)',
+    shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 12,
+  },
+  onMatBtnText: {
+    fontFamily: 'DMSans_700Bold', fontSize: 16, color: moss.ink,
     letterSpacing: 1.5, textTransform: 'uppercase' as any,
   },
 
@@ -1181,23 +1203,7 @@ const s = StyleSheet.create({
   asanaStatNum: { fontSize: 22, fontWeight: '700' as any, color: moss.ink },
   asanaStatLabel: { fontSize: 15, color: moss.inkMid, fontWeight: '500' as any },
 
-  /* ── Hero state variants ── */
-  heroContentOnMat: {
-    backgroundColor: 'rgba(59,50,40,0.55)',
-    justifyContent: 'center' as any,
-    paddingBottom: 0,
-  },
-  heroContentDone: {
-    backgroundColor: 'rgba(138,158,120,0.85)',
-  },
-  heroOnMatEmoji: {
-    fontSize: 48, marginBottom: 8,
-  },
-  heroBtnFinish: {
-    backgroundColor: moss.cardBg,
-    shadowColor: 'rgba(0,0,0,0.15)',
-    shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 12,
-  },
+  /* (hero state variants removed — now in onMat styles above) */
 
   /* ── Practice Log Modal (matches journal edit modal) ── */
   logBackdrop: {

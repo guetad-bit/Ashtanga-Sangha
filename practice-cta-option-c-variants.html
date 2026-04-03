@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Option C — Variants</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: #EDEAE4; padding: 24px; }
+  h1 { font-family: 'DM Serif Display', serif; font-size: 28px; color: #3B3228; text-align: center; margin-bottom: 6px; }
+  .page-sub { text-align: center; color: #9B8E7E; font-size: 15px; margin-bottom: 36px; }
+
+  .mockup-section { margin-bottom: 48px; }
+  .option-label {
+    font-weight: 700; font-size: 12px; letter-spacing: 2.5px;
+    text-transform: uppercase; margin-bottom: 10px; padding: 4px 12px;
+    border-radius: 6px; display: inline-block;
+  }
+  .option-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: #3B3228; margin-bottom: 4px; }
+  .option-desc { font-size: 14px; color: #9B8E7E; margin-bottom: 16px; line-height: 1.5; }
+
+  /* Phone frame */
+  .phone {
+    width: 375px; margin: 0 auto; border-radius: 28px;
+    border: 2px solid #D4C4AB; overflow: hidden;
+    box-shadow: 0 12px 40px rgba(59,50,40,0.1);
+  }
+  .phone-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 20px 10px;
+  }
+  .phone-header .logo {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #3B3228; display: flex; align-items: center;
+    justify-content: center; font-size: 13px;
+  }
+  .phone-header .brand {
+    font-family: 'DM Serif Display', serif; font-size: 15px; color: #3B3228;
+  }
+  .welcome { text-align: center; padding: 6px 20px 2px; }
+  .welcome h2 { font-family: 'DM Serif Display', serif; font-size: 21px; color: #3B3228; }
+  .welcome p { font-size: 13px; color: #8A9E78; margin-top: 2px; }
+  .avatars { display: flex; justify-content: center; padding: 6px 0 10px; }
+  .avatars .av {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 2px solid #F6F2EC; margin-left: -7px;
+  }
+  .avatars .av:first-child { margin-left: 0; }
+  .av1 { background: linear-gradient(135deg, #C4956A, #8A9E78); }
+  .av2 { background: linear-gradient(135deg, #9B8E7E, #6E8A5C); }
+  .av3 { background: linear-gradient(135deg, #8A9E78, #C4956A); }
+  .av4 { background: linear-gradient(135deg, #D4C4AB, #8A9E78); }
+  .av5 { background: linear-gradient(135deg, #6E8A5C, #D4C4AB); }
+
+  .tab-bar {
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 10px 0 8px; border-top: 1px solid #E8E0D4;
+  }
+  .tab-item { text-align: center; font-size: 10px; color: #9B8E7E; }
+  .tab-item.active { color: #8A9E78; }
+  .tab-item .ti { font-size: 16px; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+
+<h1>Option C Variants</h1>
+<p class="page-sub">Separated quote + action card — 6 color & layout variations</p>
+
+<!-- ═══════ C1: Original Moss Green ═══════ -->
+<div class="mockup-section">
+  <p class="option-label" style="background:#8A9E78; color:#fff;">C1</p>
+  <p class="option-title">Moss Green — Original</p>
+  <p class="option-desc">Soft green quote strip + bold green action card. Natural, earthy, matches app palette.</p>
+  <div class="phone" style="background:#F6F2EC;">
+    <div class="phone-header" style="background:#F6F2EC;">
+      <div class="logo">🌿</div><span class="brand">Ashtanga Sangha</span>
+    </div>
+    <div class="welcome"><h2>Welcome back, David</h2><p>10 yogis on the mat today</p></div>
+    <div class="avatars"><div class="av av1"></div><div class="av av2"></div><div class="av av3"></div><div class="av av4"></div><div class="av av5"></div></div>
+
+    <!-- Quote strip -->
+    <div style="margin:8px 20px 0; background:rgba(138,158,120,0.1); border-radius:14px; padding:14px 16px; display:flex; gap:10px; align-items:flex-start;">
+      <span style="font-family:'DM Serif Display',serif; font-size:30px; color:#8A9E78; line-height:1; margin-top:-2px;">"</span>
+      <div>
+        <div style="font-family:'DM Serif Display',serif; font-size:14px; color:#5E5245; line-height:1.5; font-style:italic;">The body is your temple. Keep it pure and clean for the soul to reside in.</div>
+        <div style="font-size:12px; color:#9B8E7E; margin-top:4px;">— B.K.S. Iyengar</div>
+      </div>
+    </div>
+
+    <!-- Action card -->
+    <div style="margin:10px 20px 16px; background:linear-gradient(135deg,#8A9E78,#6E8A5C); border-radius:18px; padding:22px 20px; display:flex; align-items:center; gap:14px; cursor:pointer;">
+      <div style="width:50px; height:50px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:22px;">🧘</div>
+      <div style="flex:1;">
+        <div style="font-weight:600; font-size:17px; color:#fff; margin-bottom:2px;">Start Your Practice</div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.75);">Tap to begin tracking your session</div>
+      </div>
+      <span style="font-size:22px; color:rgba(255,255,255,0.5);">›</span>
+    </div>
+
+    <div class="tab-bar" style="background:#F6F2EC;">
+      <div class="tab-item active"><div class="ti">🏠</div>Home</div>
+      <div class="tab-item"><div class="ti">👥</div>Community</div>
+      <div class="tab-item"><div class="ti">📋</div>My Log</div>
+      <div class="tab-item"><div class="ti">📖</div>Library</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ C2: Warm Amber ═══════ -->
+<div class="mockup-section">
+  <p class="option-label" style="background:#C4956A; color:#fff;">C2</p>
+  <p class="option-title">Warm Amber</p>
+  <p class="option-desc">Golden amber action card for a warmer, sunrise-inspired feel. Quote strip in soft sand.</p>
+  <div class="phone" style="background:#F6F2EC;">
+    <div class="phone-header" style="background:#F6F2EC;">
+      <div class="logo">🌿</div><span class="brand">Ashtanga Sangha</span>
+    </div>
+    <div class="welcome"><h2>Welcome back, David</h2><p>10 yogis on the mat today</p></div>
+    <div class="avatars"><div class="av av1"></div><div class="av av2"></div><div class="av av3"></div><div class="av av4"></div><div class="av av5"></div></div>
+
+    <div style="margin:8px 20px 0; background:rgba(196,149,106,0.1); border-radius:14px; padding:14px 16px; display:flex; gap:10px; align-items:flex-start;">
+      <span style="font-family:'DM Serif Display',serif; font-size:30px; color:#C4956A; line-height:1; margin-top:-2px;">"</span>
+      <div>
+        <div style="font-family:'DM Serif Display',serif; font-size:14px; color:#5E5245; line-height:1.5; font-style:italic;">The body is your temple. Keep it pure and clean for the soul to reside in.</div>
+        <div style="font-size:12px; color:#9B8E7E; margin-top:4px;">— B.K.S. Iyengar</div>
+      </div>
+    </div>
+
+    <div style="margin:10px 20px 16px; background:linear-gradient(135deg,#C4956A,#A87B50); border-radius:18px; padding:22px 20px; display:flex; align-items:center; gap:14px;">
+      <div style="width:50px; height:50px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:22px;">☀️</div>
+      <div style="flex:1;">
+        <div style="font-weight:600; font-size:17px; color:#fff; margin-bottom:2px;">Start Your Practice</div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.75);">Tap to begin tracking your session</div>
+      </div>
+      <span style="font-size:22px; color:rgba(255,255,255,0.5);">›</span>
+    </div>
+
+    <div class="tab-bar" style="background:#F6F2EC;">
+      <div class="tab-item active"><div class="ti">🏠</div>Home</div>
+      <div class="tab-item"><div class="ti">👥</div>Community</div>
+      <div class="tab-item"><div class="ti">📋</div>My Log</div>
+      <div class="tab-item"><div class="ti">📖</div>Library</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ C3: Dark Ink ═══════ -->
+<div class="mockup-section">
+  <p class="option-label" style="background:#3B3228; color:#fff;">C3</p>
+  <p class="option-title">Dark Ink</p>
+  <p class="option-desc">Rich dark action card with moss accent text. High contrast, premium feel. Quote in white card.</p>
+  <div class="phone" style="background:#F6F2EC;">
+    <div class="phone-header" style="background:#F6F2EC;">
+      <div class="logo">🌿</div><span class="brand">Ashtanga Sangha</span>
+    </div>
+    <div class="welcome"><h2>Welcome back, David</h2><p>10 yogis on the mat today</p></div>
+    <div class="avatars"><div class="av av1"></div><div class="av av2"></div><div class="av av3"></div><div class="av av4"></div><div class="av av5"></div></div>
+
+    <div style="margin:8px 20px 0; background:#fff; border:1px solid #E8E0D4; border-radius:14px; padding:14px 16px; display:flex; gap:10px; align-items:flex-start;">
+      <span style="font-family:'DM Serif Display',serif; font-size:30px; color:#8A9E78; line-height:1; margin-top:-2px;">"</span>
+      <div>
+        <div style="font-family:'DM Serif Display',serif; font-size:14px; color:#5E5245; line-height:1.5; font-style:italic;">The body is your temple. Keep it pure and clean for the soul to reside in.</div>
+        <div style="font-size:12px; color:#9B8E7E; margin-top:4px;">— B.K.S. Iyengar</div>
+      </div>
+    </div>
+
+    <div style="margin:10px 20px 16px; background:linear-gradient(135deg,#3B3228,#5E5245); border-radius:18px; padding:22px 20px; display:flex; align-items:center; gap:14px;">
+      <div style="width:50px; height:50px; border-radius:50%; background:rgba(138,158,120,0.25); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <div style="width:0; height:0; border-left:16px solid #8A9E78; border-top:10px solid transparent; border-bottom:10px solid transparent; margin-left:3px;"></div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-weight:600; font-size:17px; color:#fff; margin-bottom:2px;">Start Your Practice</div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.5);">Tap to begin tracking your session</div>
+      </div>
+      <span style="font-size:22px; color:rgba(255,255,255,0.3);">›</span>
+    </div>
+
+    <div class="tab-bar" style="background:#F6F2EC;">
+      <div class="tab-item active"><div class="ti">🏠</div>Home</div>
+      <div class="tab-item"><div class="ti">👥</div>Community</div>
+      <div class="tab-item"><div class="ti">📋</div>My Log</div>
+      <div class="tab-item"><div class="ti">📖</div>Library</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ C4: Outlined / Minimal ═══════ -->
+<div class="mockup-section">
+  <p class="option-label" style="background:#E8E0D4; color:#3B3228;">C4</p>
+  <p class="option-title">Outlined Minimal</p>
+  <p class="option-desc">White action card with green border and icon. Clean, minimal, lets the quote breathe.</p>
+  <div class="phone" style="background:#F6F2EC;">
+    <div class="phone-header" style="background:#F6F2EC;">
+      <div class="logo">🌿</div><span class="brand">Ashtanga Sangha</span>
+    </div>
+    <div class="welcome"><h2>Welcome back, David</h2><p>10 yogis on the mat today</p></div>
+    <div class="avatars"><div class="av av1"></div><div class="av av2"></div><div class="av av3"></div><div class="av av4"></div><div class="av av5"></div></div>
+
+    <div style="margin:8px 20px 0; background:rgba(138,158,120,0.06); border-radius:14px; padding:14px 16px; display:flex; gap:10px; align-items:flex-start;">
+      <span style="font-family:'DM Serif Display',serif; font-size:30px; color:#8A9E78; line-height:1; margin-top:-2px;">"</span>
+      <div>
+        <div style="font-family:'DM Serif Display',serif; font-size:14px; color:#5E5245; line-height:1.5; font-style:italic;">The body is your temple. Keep it pure and clean for the soul to reside in.</div>
+        <div style="font-size:12px; color:#9B8E7E; margin-top:4px;">— B.K.S. Iyengar</div>
+      </div>
+    </div>
+
+    <div style="margin:10px 20px 16px; background:#fff; border:2px solid #8A9E78; border-radius:18px; padding:20px; display:flex; align-items:center; gap:14px;">
+      <div style="width:50px; height:50px; border-radius:50%; background:rgba(138,158,120,0.12); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:22px;">🧘</div>
+      <div style="flex:1;">
+        <div style="font-weight:600; font-size:17px; color:#3B3228; margin-bottom:2px;">Start Your Practice</div>
+        <div style="font-size:13px; color:#9B8E7E;">Tap to begin tracking your session</div>
+      </div>
+      <span style="font-size:22px; color:#8A9E78;">›</span>
+    </div>
+
+    <div class="tab-bar" style="background:#F6F2EC;">
+      <div class="tab-item active"><div class="ti">🏠</div>Home</div>
+      <div class="tab-item"><div class="ti">👥</div>Community</div>
+      <div class="tab-item"><div class="ti">📋</div>My Log</div>
+      <div class="tab-item"><div class="ti">📖</div>Library</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ C5: Stacked / Full Width Button ═══════ -->
+<div class="mockup-section">
+  <p class="option-label" style="background:#6E8A5C; color:#fff;">C5</p>
+  <p class="option-title">Stacked with Full Button</p>
+  <p class="option-desc">Quote on top, large standalone button below. Maximum clarity — impossible to miss.</p>
+  <div class="phone" style="background:#F6F2EC;">
+    <div class="phone-header" style="background:#F6F2EC;">
+      <div class="logo">🌿</div><span class="brand">Ashtanga Sangha</span>
+    </div>
+    <div class="welcome"><h2>Welcome back, David</h2><p>10 yogis on the mat today</p></div>
+    <div class="avatars"><div class="av av1"></div><div class="av av2"></div><div class="av av3"></div><div class="av av4"></div><div class="av av5"></div></div>
+
+    <div style="margin:8px 20px 0; background:rgba(138,158,120,0.08); border-radius:14px; padding:14px 16px; display:flex; gap:10px; align-items:flex-start;">
+      <span style="font-family:'DM Serif Display',serif; font-size:30px; color:#8A9E78; line-height:1; margin-top:-2px;">"</span>
+      <div>
+        <div style="font-family:'DM Serif Display',serif; font-size:14px; color:#5E5245; line-height:1.5; font-style:italic;">The body is your temple. Keep it pure and clean for the soul to reside in.</div>
+        <div style="font-size:12px; color:#9B8E7E; margin-top:4px;">— B.K.S. Iyengar</div>
+      </div>
+    </div>
+
+    <div style="margin:12px 20px 4px; text-align:center;">
+      <div style="font-weight:600; font-size:13px; letter-spacing:1px; color:#9B8E7E; text-transform:uppercase; margin-bottom:8px;">Ready to practice?</div>
+    </div>
+    <div style="margin:0 20px 16px;">
+      <div style="background:#8A9E78; border-radius:16px; padding:18px; text-align:center; cursor:pointer; box-shadow:0 4px 16px rgba(110,138,92,0.3);">
+        <div style="font-weight:700; font-size:18px; color:#fff; letter-spacing:0.5px;">🧘  Start Your Practice</div>
+      </div>
+    </div>
+
+    <div class="tab-bar" style="background:#F6F2EC;">
+      <div class="tab-item active"><div class="ti">🏠</div>Home</div>
+      <div class="tab-item"><div class="ti">👥</div>Community</div>
+      <div class="tab-item"><div class="ti">📋</div>My Log</div>
+      <div class="tab-item"><div class="ti">📖</div>Library</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ C6: Gradient Blend ═══════ -->
+<div class="mockup-section">
+  <p class="option-label" style="background:linear-gradient(135deg,#8A9E78,#C4956A); color:#fff;">C6</p>
+  <p class="option-title">Gradient Blend — Moss to Amber</p>
+  <p class="option-desc">Green-to-gold gradient on the action card. Combines the earthy and warm tones. Quote in a bordered card.</p>
+  <div class="phone" style="background:#F6F2EC;">
+    <div class="phone-header" style="background:#F6F2EC;">
+      <div class="logo">🌿</div><span class="brand">Ashtanga Sangha</span>
+    </div>
+    <div class="welcome"><h2>Welcome back, David</h2><p>10 yogis on the mat today</p></div>
+    <div class="avatars"><div class="av av1"></div><div class="av av2"></div><div class="av av3"></div><div class="av av4"></div><div class="av av5"></div></div>
+
+    <div style="margin:8px 20px 0; background:#fff; border:1px solid #E8E0D4; border-radius:14px; padding:14px 16px; display:flex; gap:10px; align-items:flex-start;">
+      <span style="font-family:'DM Serif Display',serif; font-size:30px; color:#C4956A; line-height:1; margin-top:-2px;">"</span>
+      <div>
+        <div style="font-family:'DM Serif Display',serif; font-size:14px; color:#5E5245; line-height:1.5; font-style:italic;">The body is your temple. Keep it pure and clean for the soul to reside in.</div>
+        <div style="font-size:12px; color:#9B8E7E; margin-top:4px;">— B.K.S. Iyengar</div>
+      </div>
+    </div>
+
+    <div style="margin:10px 20px 16px; background:linear-gradient(135deg,#8A9E78 0%,#A8B47A 50%,#C4956A 100%); border-radius:18px; padding:22px 20px; display:flex; align-items:center; gap:14px;">
+      <div style="width:50px; height:50px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:22px;">✨</div>
+      <div style="flex:1;">
+        <div style="font-weight:600; font-size:17px; color:#fff; margin-bottom:2px;">Start Your Practice</div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.8);">Tap to begin tracking your session</div>
+      </div>
+      <span style="font-size:22px; color:rgba(255,255,255,0.5);">›</span>
+    </div>
+
+    <div class="tab-bar" style="background:#F6F2EC;">
+      <div class="tab-item active"><div class="ti">🏠</div>Home</div>
+      <div class="tab-item"><div class="ti">👥</div>Community</div>
+      <div class="tab-item"><div class="ti">📋</div>My Log</div>
+      <div class="tab-item"><div class="ti">📖</div>Library</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
