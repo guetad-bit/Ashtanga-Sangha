@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1">
+<title>Community Page Redesign</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:#F6F2EC; max-width:390px; margin:0 auto; min-height:100vh; }
+
+  /* Header */
+  .header { background:#fff; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; }
+  .header h1 { font-family:'DM Serif Display',serif; font-size:22px; color:#3B3228; }
+  .header-right { display:flex; gap:14px; align-items:center; }
+  .header-avatar { width:38px; height:38px; border-radius:19px; border:2px solid #8A9E78; object-fit:cover; }
+
+  /* Members strip */
+  .members-section { background:#fff; padding-bottom:14px; border-bottom:1px solid #E8E0D4; }
+  .members-header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px 12px; }
+  .members-title { font-family:'DM Serif Display',serif; font-size:18px; color:#3B3228; }
+  .online-badge { display:flex; align-items:center; gap:6px; background:#DCE8D3; border-radius:20px; padding:4px 10px; }
+  .online-dot { width:7px; height:7px; border-radius:50%; background:#8A9E78; }
+  .online-text { font-size:12px; font-weight:500; color:#8A9E78; }
+  .members-scroll { display:flex; gap:14px; padding:0 20px; overflow-x:auto; }
+  .members-scroll::-webkit-scrollbar { display:none; }
+  .member-bubble { display:flex; flex-direction:column; align-items:center; width:62px; flex-shrink:0; }
+  .member-ring { width:52px; height:52px; border-radius:26px; border:2px solid #8A9E78; display:flex; align-items:center; justify-content:center; margin-bottom:4px; }
+  .member-avatar { width:44px; height:44px; border-radius:22px; object-fit:cover; }
+  .member-name { font-size:12px; font-weight:500; color:#5E5245; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%; }
+
+  /* Feed header */
+  .feed-header { display:flex; justify-content:space-between; align-items:center; padding:18px 20px 12px; }
+  .feed-title { font-family:'DM Serif Display',serif; font-size:18px; color:#3B3228; }
+  .new-post-btn { display:flex; align-items:center; gap:5px; cursor:pointer; }
+  .new-post-btn svg { width:18px; height:18px; color:#8A9E78; }
+  .new-post-text { font-size:14px; font-weight:600; color:#8A9E78; }
+
+  /* Post cards */
+  .post-card { background:#fff; border-radius:16px; border:1px solid #E8E0D4; margin:0 20px 12px; overflow:hidden; }
+  .post-header { padding:14px 14px 8px; display:flex; align-items:center; gap:10px; }
+  .post-avatar { width:38px; height:38px; border-radius:19px; object-fit:cover; }
+  .post-name { font-size:15px; font-weight:600; color:#3B3228; }
+  .post-time { font-size:12px; color:#9B8E7E; margin-top:1px; }
+  .post-caption { font-size:15px; color:#3B3228; line-height:22px; padding:0 14px 10px; }
+  .post-image { width:100%; height:240px; object-fit:cover; background:#E8E0D4; }
+  .post-footer { display:flex; align-items:center; padding:12px; gap:16px; }
+  .post-stat { display:flex; align-items:center; gap:5px; font-size:13px; font-weight:500; color:#5E5245; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>Sangha</h1>
+  <div class="header-right">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <img class="header-avatar" src="https://i.pravatar.cc/150?img=32" alt="avatar">
+  </div>
+</div>
+
+<!-- Members strip -->
+<div class="members-section">
+  <div class="members-header">
+    <div class="members-title">Sangha Members</div>
+    <div class="online-badge">
+      <div class="online-dot"></div>
+      <span class="online-text">12 practicing</span>
+    </div>
+  </div>
+  <div class="members-scroll">
+    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=1"></div><div class="member-name">Noa</div></div>
+    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=3"></div><div class="member-name">Ori</div></div>
+    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=5"></div><div class="member-name">Michal</div></div>
+    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=8"></div><div class="member-name">Yotam</div></div>
+    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=9"></div><div class="member-name">Rinat</div></div>
+    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=11"></div><div class="member-name">Daniel</div></div>
+    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=10"></div><div class="member-name">Talia</div></div>
+    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=12"></div><div class="member-name">Ido</div></div>
+    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=16"></div><div class="member-name">Shira</div></div>
+    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=13"></div><div class="member-name">Amir</div></div>
+  </div>
+</div>
+
+<!-- Feed header -->
+<div class="feed-header">
+  <div class="feed-title">Sangha Feed</div>
+  <div class="new-post-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#8A9E78" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    <span class="new-post-text">New Post</span>
+  </div>
+</div>
+
+<!-- Post 1 — with image -->
+<div class="post-card">
+  <div class="post-header">
+    <img class="post-avatar" src="https://i.pravatar.cc/150?img=13">
+    <div>
+      <div class="post-name">Amir Hadad</div>
+      <div class="post-time">1h</div>
+    </div>
+  </div>
+  <div class="post-caption">Baby woke up mid-Navasana. Did the rest with her on my belly 😂</div>
+  <div class="post-footer">
+    <div class="post-stat"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 42</div>
+    <div class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9B8E7E" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 14</div>
+  </div>
+</div>
+
+<!-- Post 2 — with image -->
+<div class="post-card">
+  <div class="post-header">
+    <img class="post-avatar" src="https://i.pravatar.cc/150?img=1">
+    <div>
+      <div class="post-name">Noa Levi</div>
+      <div class="post-time">2h</div>
+    </div>
+  </div>
+  <div class="post-caption">Perfect morning practice 🌅 Primary series flowed beautifully today</div>
+  <img class="post-image" src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=400&fit=crop">
+  <div class="post-footer">
+    <div class="post-stat"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 12</div>
+    <div class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9B8E7E" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 3</div>
+  </div>
+</div>
+
+<!-- Post 3 — text only -->
+<div class="post-card">
+  <div class="post-header">
+    <img class="post-avatar" src="https://i.pravatar.cc/150?img=9">
+    <div>
+      <div class="post-name">Rinat Shimoni</div>
+      <div class="post-time">3h</div>
+    </div>
+  </div>
+  <div class="post-caption">Discovered that aligning the hips in Trikonasana changes everything</div>
+  <div class="post-footer">
+    <div class="post-stat"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 8</div>
+    <div class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9B8E7E" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 2</div>
+  </div>
+</div>
+
+<!-- Post 4 — text only -->
+<div class="post-card">
+  <div class="post-header">
+    <img class="post-avatar" src="https://i.pravatar.cc/150?img=10">
+    <div>
+      <div class="post-name">Talia Wolf</div>
+      <div class="post-time">4h</div>
+    </div>
+  </div>
+  <div class="post-caption">40-minute practice between the garden and the barn. That is all you need 🌿</div>
+  <div class="post-footer">
+    <div class="post-stat"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 22</div>
+    <div class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9B8E7E" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 6</div>
+  </div>
+</div>
+
+</body>
+</html>

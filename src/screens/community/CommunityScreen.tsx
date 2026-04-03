@@ -1,11 +1,10 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, Image,
-  StyleSheet, RefreshControl, TextInput, Dimensions, Modal, Pressable,
+  StyleSheet, RefreshControl, Dimensions, Modal, Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next';
 import { colors, spacing, radius, typography, shadows } from '@/styles/tokens';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useAppStore } from '@/store/useAppStore';
@@ -13,15 +12,12 @@ import { useAppStore } from '@/store/useAppStore';
 import AppHeader from '@/components/AppHeader';
 import { getPracticingNow, getFeed, deletePost, followUser, unfollowUser, getFollowing, getUserLikes, supabase } from '@/lib/supabase';
 
-/* ── Stone & Moss light palette ──────────────────────────────────────── */
+/* Stone & Moss light palette */
 const moss = {
   headerBg:    '#FFFFFF',
   headerText:  '#3B3228',
   pageBg:      '#F6F2EC',
   cardBg:      '#FFFFFF',
-  searchBg:    '#EDE6DA',
-  searchBorder:'#E8E0D4',
-  searchText:  '#9B8E7E',
   ink:         '#3B3228',
   inkMid:      '#5E5245',
   muted:       '#9B8E7E',
@@ -30,12 +26,9 @@ const moss = {
   accentLight: '#DCE8D3',
   sage:        '#8A9E78',
   sageBg:      '#DCE8D3',
-  gold:        '#D4C4AB',
-  goldBg:      '#EDE6DA',
   amber:       '#C4956A',
   amberBg:     '#FFF5EC',
   terra:       '#8B7355',
-  terraBg:     '#F5EDE3',
   divider:     '#E8E0D4',
   greenBadge:  '#8A9E78',
   heartRed:    '#C4956A',
@@ -44,8 +37,6 @@ const moss = {
 };
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-
-type Tab = 'latest' | 'people';
 
 interface PracticingUser {
   id: string;
@@ -129,11 +120,7 @@ function fakeTimeAgo(iso: string): string {
 export default function CommunityScreen() {
   const router = useRouter();
   const { user, userPosts, isPracticing, practiceLogs } = useAppStore();
-  const { t, i18n } = useTranslation();
-  const isRTL = i18n.language === 'he';
-  const [activeTab, setActiveTab] = useState<Tab>('latest');
   const [refreshing, setRefreshing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [livePractitioners, setLivePractitioners] = useState<PracticingUser[]>([]);
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
@@ -141,7 +128,6 @@ export default function CommunityScreen() {
   const [followingIds, setFollowingIds] = useState<Set<string>>(new Set());
   const [likedPostIds, setLikedPostIds] = useState<Set<string>>(new Set());
 
-  // Load who the current user follows
   const fetchFollowing = useCallback(async () => {
     if (!user?.id) return;
     const { data } = await getFollowing(user.id);
@@ -194,7 +180,6 @@ export default function CommunityScreen() {
     if (data) setMembers(data as Member[]);
   }, [user?.id]);
 
-  // Refetch feed every time screen gains focus (e.g. returning from NewPostScreen)
   useFocusEffect(
     useCallback(() => {
       fetchPracticing();
@@ -211,38 +196,29 @@ export default function CommunityScreen() {
     setRefreshing(false);
   }, []);
 
-  // Check if current user practiced today (from local state)
   const todayStr = new Date().toISOString().slice(0, 10);
   const practicedToday = practiceLogs.some((log) => log.loggedAt?.slice(0, 10) === todayStr);
 
-  // Current user on mat (from local state — same logic as HomeScreen)
   const meOnMat = (isPracticing || practicedToday) && user
     ? [{ id: user.id, name: user.name, avatarUrl: user.avatarUrl ?? null, location: null, series: user.series ?? 'primary', streak: 0 }]
     : [];
 
-  // Combine current user + real practitioners from DB + fake demo users
   const fakeOnMat = FAKE_USERS_FEED.map((u) => ({
     id: u.id, name: u.name, avatarUrl: u.avatarUrl,
     location: null, series: 'primary', streak: 0,
   }));
-  const dbPractitioners = livePractitioners
-    .filter((p) => p.id !== user?.id); // exclude current user (already in meOnMat)
+  const dbPractitioners = livePractitioners.filter((p) => p.id !== user?.id);
   const allPeople = [
     ...meOnMat,
     ...dbPractitioners.map((p) => ({
-      id: p.id,
-      name: p.name ?? 'Practitioner',
-      avatarUrl: p.avatar_url,
-      location: p.location ?? null,
-      series: p.series,
-      streak: p.streak ?? 0,
+      id: p.id, name: p.name ?? 'Practitioner', avatarUrl: p.avatar_url,
+      location: p.location ?? null, series: p.series, streak: p.streak ?? 0,
     })),
     ...fakeOnMat,
   ];
 
-  /* ── Merged & sorted feed (real + local + fake) ── */
+  /* Merged & sorted feed (real + local + fake) */
   const allFeedPosts: UnifiedPost[] = [
-    // Real Supabase posts
     ...feedPosts.map((p) => ({
       id: p.id,
       userName: p.profiles?.name ?? 'Practitioner',
@@ -253,7 +229,6 @@ export default function CommunityScreen() {
       commentsCount: p.comments_count ?? 0,
       createdAt: p.created_at,
     })),
-    // Local posts
     ...userPosts.map((p) => ({
       id: p.id,
       userName: p.userName,
@@ -264,7 +239,6 @@ export default function CommunityScreen() {
       commentsCount: 0,
       createdAt: p.createdAt,
     })),
-    // Fake posts with images
     ...FAKE_POSTS_WITH_IMAGES.map((u) => ({
       id: u.id,
       userName: u.name,
@@ -277,23 +251,21 @@ export default function CommunityScreen() {
     })),
   ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-  /* ── Render helpers ───────────────────────────────────────────────────── */
-
-  const renderPartnerAvatar = (p: typeof allPeople[0], index: number) => (
-    <TouchableOpacity key={p.id + index} style={s.partnerItem} activeOpacity={0.7} onPress={() => openProfile(p.name)}>
-      <View style={s.partnerAvatarRing}>
+  /* Render helpers */
+  const renderMemberBubble = (p: typeof allPeople[0], index: number) => (
+    <TouchableOpacity key={p.id + index} style={s.memberBubble} activeOpacity={0.7} onPress={() => openProfile(p.name)}>
+      <View style={s.memberRing}>
         {p.avatarUrl ? (
-          <Image source={{ uri: p.avatarUrl }} style={s.partnerAvatar} />
+          <Image source={{ uri: p.avatarUrl }} style={s.memberAvatar} />
         ) : (
-          <View style={[s.partnerAvatar, { backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center' }]}>
-            <Text style={{ fontSize: 22, color: moss.white, fontWeight: '600' }}>
+          <View style={[s.memberAvatar, { backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center' }]}>
+            <Text style={{ fontSize: 18, color: moss.white, fontWeight: '600' }}>
               {p.name.charAt(0)}
             </Text>
           </View>
         )}
       </View>
-      <Text style={s.partnerName} numberOfLines={1}>{p.name.split(' ')[0]}</Text>
-      {p.location && <Text style={s.partnerLocation} numberOfLines={1}>{p.location}</Text>}
+      <Text style={s.memberName} numberOfLines={1}>{p.name.split(' ')[0]}</Text>
     </TouchableOpacity>
   );
 
@@ -301,37 +273,6 @@ export default function CommunityScreen() {
     <SafeAreaView style={s.safe} edges={['top']}>
       <AppHeader />
 
-      {/* ── Search bar ── */}
-      <View style={s.searchWrap}>
-        <View style={[s.searchBar, isRTL && { flexDirection: 'row-reverse' }]}>
-          <Ionicons name="search-outline" size={18} color={moss.muted} />
-          <TextInput
-            style={[s.searchInput, isRTL && { textAlign: 'right', writingDirection: 'rtl' }]}
-            placeholder={t('community.searchMembers')}
-            placeholderTextColor={moss.muted}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
-      </View>
-
-      {/* ── Underline tabs ── */}
-      <View style={s.tabRow}>
-        {(['people', 'latest'] as Tab[]).map((tab) => (
-          <TouchableOpacity
-            key={tab}
-            style={[s.tab, activeTab === tab && s.tabActive]}
-            onPress={() => setActiveTab(tab)}
-            activeOpacity={0.7}
-          >
-            <Text style={[s.tabText, activeTab === tab && s.tabTextActive]}>
-              {tab === 'latest' ? t('community.latest') : t('community.people')}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* ── Scrollable content ── */}
       <ScrollView
         style={s.scroll}
         contentContainerStyle={s.scrollContent}
@@ -339,142 +280,72 @@ export default function CommunityScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={moss.accent} />}
       >
 
-        {/* ═══════════ LATEST TAB ═══════════ */}
-        {activeTab === 'latest' && (
-          <>
-            {/* On the mat right now */}
-            <View style={[s.sectionHeader, isRTL && { flexDirection: 'row-reverse' }]}>
-              <Text style={[s.sectionTitle, isRTL && { textAlign: 'right' }]}>{t('community.onTheMatNow')}</Text>
+        {/* Members strip */}
+        <View style={s.membersSection}>
+          <View style={s.membersSectionHeader}>
+            <Text style={s.membersSectionTitle}>Sangha Members</Text>
+            <View style={s.onlineBadge}>
+              <View style={s.onlineDot} />
+              <Text style={s.onlineText}>{allPeople.length} practicing</Text>
             </View>
-            <View style={s.partnersCard}>
-              {allPeople.length > 0 ? (
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={s.partnersScroll}
-                >
-                  {allPeople.slice(0, 4).map((p, i) => renderPartnerAvatar(p, i))}
-                  {allPeople.length > 4 && (
-                    <TouchableOpacity style={s.partnerItem} activeOpacity={0.7}>
-                      <View style={[s.partnerAvatarRing, { borderColor: moss.greenBadge }]}>
-                        <View style={[s.partnerAvatar, { backgroundColor: moss.greenBadge, alignItems: 'center', justifyContent: 'center' }]}>
-                          <Text style={{ color: moss.white, fontFamily: 'DMSans_600SemiBold', fontSize: 14 }}>More</Text>
-                        </View>
-                      </View>
-                      <Text style={s.partnerName}>{t('community.more')}</Text>
-                    </TouchableOpacity>
-                  )}
-                  {allPeople.length > 3 && (
-                    <View style={s.arrowWrap}>
-                      <Ionicons name="chevron-forward" size={20} color={moss.mutedLight} />
-                    </View>
-                  )}
-                </ScrollView>
-              ) : (
-                <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.xl }}>
-                  <Text style={{ color: moss.muted, fontSize: 14, textAlign: isRTL ? 'right' : 'left' }}>{t('community.noPractitioners')}</Text>
-                </View>
-              )}
-            </View>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={s.membersScroll}
+          >
+            {allPeople.map((p, i) => renderMemberBubble(p, i))}
+          </ScrollView>
+        </View>
 
-            {/* Sangha Feed */}
-            <View style={[s.sectionHeader, isRTL && { flexDirection: 'row-reverse' }]}>
-              <Text style={[s.sectionTitle, isRTL && { textAlign: 'right' }]}>{t('community.sanghaFeed')}</Text>
-              <TouchableOpacity onPress={() => router.push('/new-post')} activeOpacity={0.7}>
-                <Text style={s.sectionLink}>{t('community.newPost')}</Text>
+        {/* Feed header with new post link */}
+        <View style={s.feedHeader}>
+          <Text style={s.feedTitle}>Sangha Feed</Text>
+          <TouchableOpacity onPress={() => router.push('/new-post')} activeOpacity={0.7} style={s.newPostBtn}>
+            <Ionicons name="add-circle-outline" size={18} color={moss.accent} />
+            <Text style={s.newPostText}>New Post</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Feed posts */}
+        {allFeedPosts.map((p) => (
+          <View key={p.id} style={s.postCard}>
+            <View style={s.postHeader}>
+              <TouchableOpacity onPress={() => openProfile(p.userName)} activeOpacity={0.7} style={s.postAuthor}>
+                <Image source={{ uri: p.userAvatar }} style={s.postAvatar} />
+                <View>
+                  <Text style={s.postName}>{p.userName}</Text>
+                  <Text style={s.postTime}>{fakeTimeAgo(p.createdAt)}</Text>
+                </View>
               </TouchableOpacity>
             </View>
-
-            {/* All posts — sorted newest first */}
-            {allFeedPosts.map((p) => (
-              <View key={p.id} style={s.fakePostCard}>
-                <View style={[s.fakePostHeader, isRTL && { flexDirection: 'row-reverse' }]}>
-                  <Image source={{ uri: p.userAvatar }} style={s.fakePostAvatar} />
-                  <View style={[s.fakePostHeaderInfo, isRTL && { alignItems: 'flex-end' }]}>
-                    <Text style={s.fakePostName}>{p.userName}</Text>
-                    <Text style={s.fakePostTime}>{fakeTimeAgo(p.createdAt)}</Text>
-                  </View>
-                </View>
-                <Text style={[s.fakePostCaption, isRTL && { textAlign: 'right' }]}>
-                  {p.caption}
-                </Text>
-                {p.imageUrl ? (
-                  <Image source={{ uri: p.imageUrl }} style={s.fakePostImage} resizeMode="cover" />
-                ) : null}
-                <View style={[s.fakePostFooter, isRTL && { flexDirection: 'row-reverse' }]}>
-                  <View style={[s.fakePostStat, isRTL && { flexDirection: 'row-reverse' }]}>
-                    <Ionicons name="heart-outline" size={18} color="#C4956A" />
-                    <Text style={s.fakePostStatText}>{p.likesCount}</Text>
-                  </View>
-                  <View style={[s.fakePostStat, isRTL && { flexDirection: 'row-reverse' }]}>
-                    <Ionicons name="chatbubble-outline" size={16} color="#7A6E60" />
-                    <Text style={s.fakePostStatText}>{p.commentsCount}</Text>
-                  </View>
-                </View>
+            <Text style={s.postCaption}>{p.caption}</Text>
+            {p.imageUrl ? (
+              <Image source={{ uri: p.imageUrl }} style={s.postImage} resizeMode="cover" />
+            ) : null}
+            <View style={s.postFooter}>
+              <View style={s.postStat}>
+                <Ionicons name="heart-outline" size={17} color={moss.amber} />
+                <Text style={s.postStatText}>{p.likesCount}</Text>
               </View>
-            ))}
-          </>
-        )}
+              <View style={s.postStat}>
+                <Ionicons name="chatbubble-outline" size={15} color={moss.muted} />
+                <Text style={s.postStatText}>{p.commentsCount}</Text>
+              </View>
+            </View>
+          </View>
+        ))}
 
-        {/* ═══════════ PEOPLE TAB ═══════════ */}
-        {activeTab === 'people' && (
-          <>
-            {/* Community Members */}
-            <View style={[s.sectionHeader, isRTL && { flexDirection: 'row-reverse' }]}>
-              <Text style={[s.sectionTitle, isRTL && { textAlign: 'right' }]}>{t('community.communityMembers')}</Text>
-            </View>
-            <View style={s.peopleCard}>
-              {/* Real members from Supabase */}
-              {members.map((m) => (
-                <TouchableOpacity key={m.id} style={s.personRow} activeOpacity={0.7} onPress={() => openProfile(m.name)}>
-                  <View style={s.personAvatarWrap}>
-                    {m.avatar_url ? (
-                      <Image source={{ uri: m.avatar_url }} style={s.personAvatar} />
-                    ) : (
-                      <View style={[s.personAvatar, { backgroundColor: moss.terra, alignItems: 'center', justifyContent: 'center' }]}>
-                        <Text style={{ fontSize: 16, color: moss.white, fontWeight: '600' }}>{m.name.charAt(0)}</Text>
-                      </View>
-                    )}
-                  </View>
-                  <View style={s.personInfo}>
-                    <Text style={s.personName}>{m.name}</Text>
-                    <Text style={s.personMeta}>
-                      {m.series} {m.location ? `· ${m.location}` : ''}
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    style={followingIds.has(m.id) ? s.followBtnActive : s.followBtn}
-                    activeOpacity={0.7}
-                    onPress={() => toggleFollow(m.id)}
-                  >
-                    <Text style={followingIds.has(m.id) ? s.followTextActive : s.followText}>
-                      {followingIds.has(m.id) ? t('community.following') : t('community.follow')}
-                    </Text>
-                  </TouchableOpacity>
-                </TouchableOpacity>
-              ))}
-              {/* Demo users */}
-              {FAKE_USERS_FEED.map((u) => (
-                <TouchableOpacity key={u.id} style={s.personRow} activeOpacity={0.7} onPress={() => openProfile(u.name)}>
-                  <View style={s.personAvatarWrap}>
-                    <Image source={{ uri: u.avatarUrl }} style={s.personAvatar} />
-                  </View>
-                  <View style={s.personInfo}>
-                    <Text style={s.personName}>{u.name}</Text>
-                    <Text style={s.personMeta}>{u.series}</Text>
-                  </View>
-                  <TouchableOpacity style={s.followBtn} activeOpacity={0.7}>
-                    <Text style={s.followText}>{t('community.follow')}</Text>
-                  </TouchableOpacity>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </>
+        {allFeedPosts.length === 0 && (
+          <View style={s.emptyState}>
+            <Ionicons name="leaf-outline" size={36} color={moss.mutedLight} />
+            <Text style={s.emptyText}>No posts yet. Be the first to share!</Text>
+          </View>
         )}
 
       </ScrollView>
 
-      {/* ── Profile card modal ── */}
+      {/* Profile card modal */}
       <Modal visible={!!profileCard} transparent animationType="fade" onRequestClose={() => setProfileCard(null)}>
         <Pressable style={s.profileBackdrop} onPress={() => setProfileCard(null)}>
           <View style={s.profileCard}>
@@ -490,13 +361,13 @@ export default function CommunityScreen() {
                   {profileCard.streak > 0 && (
                     <View style={[s.profileBadge, { backgroundColor: moss.amberBg }]}>
                       <Ionicons name="flame-outline" size={13} color={moss.amber} />
-                      <Text style={[s.profileBadgeText, { color: moss.amber }]}>{t('community.dayStreak', { count: profileCard.streak })}</Text>
+                      <Text style={[s.profileBadgeText, { color: moss.amber }]}>{profileCard.streak}-day streak</Text>
                     </View>
                   )}
                 </View>
                 <Text style={s.profileBio}>{profileCard.bio}</Text>
                 <TouchableOpacity style={s.profileCloseBtn} onPress={() => setProfileCard(null)} activeOpacity={0.7}>
-                  <Text style={s.profileCloseBtnText}>{t('community.close')}</Text>
+                  <Text style={s.profileCloseBtnText}>Close</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -507,341 +378,180 @@ export default function CommunityScreen() {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/* STYLES                                                                     */
-/* ═══════════════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* STYLES                                                                    */
+/* ══════════════════════════════════════════════════════════════════════════ */
 
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: moss.pageBg },
-
-  /* ── Header ─────────────────────────────────────────────────────────────── */
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: moss.headerBg,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md + 2,
-  },
-  headerTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 22,
-    color: moss.headerText,
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.lg,
-  },
-  headerIcon: { position: 'relative' },
-  headerAvatar: { width: 46, height: 46, borderRadius: 23, borderWidth: 2, borderColor: moss.ring },
-  notifDot: {
-    position: 'absolute',
-    top: -2,
-    right: -2,
-    width: 9,
-    height: 9,
-    borderRadius: 4.5,
-    backgroundColor: moss.heartRed,
-    borderWidth: 1.5,
-    borderColor: moss.headerBg,
-  },
-
-  /* ── Search ───────────────────────────────────────────────────────────────── */
-  searchWrap: {
-    backgroundColor: moss.headerBg,
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.md,
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: moss.searchBg,
-    borderRadius: radius.lg,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: 10,
-    gap: spacing.sm,
-    borderWidth: 1,
-    borderColor: moss.searchBorder,
-  },
-  searchInput: {
-    flex: 1,
-    fontFamily: 'DMSans_400Regular',
-    fontSize: 16,
-    color: '#2A2420',
-    padding: 0,
-  },
-
-  /* ── Tabs (underline style) ─────────────────────────────────────────────── */
-  tabRow: {
-    flexDirection: 'row',
-    backgroundColor: moss.pageBg,
-    borderBottomWidth: 1,
-    borderBottomColor: moss.divider,
-    paddingHorizontal: spacing.xl,
-  },
-  tab: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: spacing.md + 2,
-    borderBottomWidth: 2.5,
-    borderBottomColor: 'transparent',
-  },
-  tabActive: {
-    borderBottomColor: moss.accent,
-  },
-  tabText: {
-    fontFamily: 'DMSans_500Medium',
-    fontSize: 16,
-    color: '#4A3F36',
-  },
-  tabTextActive: {
-    fontFamily: 'DMSans_600SemiBold',
-    color: '#2A2420',
-  },
-
-  /* ── Scroll ─────────────────────────────────────────────────────────────── */
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
 
-  /* ── Section headers ────────────────────────────────────────────────────── */
-  sectionHeader: {
+  /* Members strip */
+  membersSection: {
+    backgroundColor: moss.white,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: moss.divider,
+  },
+  membersSectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    marginTop: spacing.xl,
-    marginBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingTop: 16,
+    paddingBottom: 12,
   },
-  sectionTitle: {
+  membersSectionTitle: {
     fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 18,
     color: moss.ink,
   },
-  sectionLink: {
-    fontFamily: 'DMSans_500Medium',
-    fontSize: 16,
-    color: moss.accent,
-  },
-
-  /* ── Find Practicing Partners ───────────────────────────────────────────── */
-  partnersCard: {
-    marginHorizontal: spacing.lg,
-    backgroundColor: moss.cardBg,
-    borderRadius: radius['2xl'],
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: moss.divider,
-    shadowColor: '#8A9E78',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  partnersScroll: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.lg,
-    gap: spacing.xl,
-  },
-  partnerItem: { alignItems: 'center', width: 72 },
-  partnerAvatarRing: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    borderWidth: 2.5,
-    borderColor: moss.ring,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.xs,
-  },
-  partnerAvatar: { width: 54, height: 54, borderRadius: 27 },
-  partnerName: {
-    fontFamily: 'DMSans_600SemiBold',
-    fontSize: 15,
-    color: '#2A2420',
-    textAlign: 'center',
-  },
-  partnerLocation: {
-    fontFamily: 'DMSans_400Regular',
-    fontSize: 15,
-    color: '#4A3F36',
-    textAlign: 'center',
-    marginTop: 1,
-  },
-  arrowWrap: {
-    justifyContent: 'center',
-    paddingLeft: spacing.sm,
-  },
-
-  /* ── Popular Discussions ────────────────────────────────────────────────── */
-  discussionsScroll: {
-    paddingHorizontal: spacing.lg,
-    gap: spacing.md,
-  },
-  discussionCard: {
-    width: SCREEN_WIDTH * 0.38,
-    borderRadius: radius.xl,
-    padding: spacing.lg,
-    minHeight: 90,
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: moss.divider,
-  },
-  discussionTitle: {
-    fontFamily: 'DMSans_600SemiBold',
-    fontSize: 16,
-    lineHeight: 22,
-    color: '#2A2420',
-    marginBottom: spacing.sm,
-  },
-  discussionReplies: {
-    fontFamily: 'DMSans_500Medium',
-    fontSize: 15,
-    color: '#4A3F36',
-  },
-
-  /* ── People tab ─────────────────────────────────────────────────────────── */
-  liveBadge: {
+  onlineBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 6,
     backgroundColor: moss.sageBg,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 3,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
   },
-  liveDot: {
+  onlineDot: {
     width: 7,
     height: 7,
     borderRadius: 3.5,
-    backgroundColor: moss.sage,
+    backgroundColor: moss.accent,
   },
-  liveText: {
+  onlineText: {
     fontFamily: 'DMSans_500Medium',
-    fontSize: 15,
-    color: moss.sage,
-  },
-  peopleCard: {
-    marginHorizontal: spacing.lg,
-    backgroundColor: moss.cardBg,
-    borderRadius: radius['2xl'],
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: moss.divider,
-    shadowColor: '#8A9E78',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  personRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    gap: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: moss.divider,
-  },
-  personAvatarWrap: { position: 'relative' },
-  personAvatar: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: moss.accentLight,
-  },
-  onlineDot: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 13,
-    height: 13,
-    borderRadius: 6.5,
-    backgroundColor: moss.greenBadge,
-    borderWidth: 2,
-    borderColor: moss.cardBg,
-  },
-  personInfo: { flex: 1 },
-  personName: {
-    fontFamily: 'DMSans_600SemiBold',
-    fontSize: 16,
-    color: '#2A2420',
-  },
-  personMeta: {
-    fontFamily: 'DMSans_400Regular',
-    fontSize: 15,
-    color: '#4A3F36',
-    marginTop: 2,
-  },
-  followBtn: {
-    borderRadius: radius.full,
-    borderWidth: 1.5,
-    borderColor: moss.accent,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: 5,
-  },
-  followText: {
-    fontFamily: 'DMSans_600SemiBold',
-    fontSize: 15,
+    fontSize: 12,
     color: moss.accent,
   },
-  followBtnActive: {
-    borderRadius: radius.full,
-    backgroundColor: moss.accentLight,
-    borderWidth: 1.5,
-    borderColor: moss.accent,
+  membersScroll: {
     paddingHorizontal: spacing.lg,
-    paddingVertical: 5,
+    gap: 14,
   },
-  followTextActive: {
+  memberBubble: {
+    alignItems: 'center',
+    width: 62,
+  },
+  memberRing: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    borderWidth: 2,
+    borderColor: moss.ring,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  memberAvatar: { width: 44, height: 44, borderRadius: 22 },
+  memberName: {
+    fontFamily: 'DMSans_500Medium',
+    fontSize: 12,
+    color: moss.inkMid,
+    textAlign: 'center',
+  },
+
+  /* Feed header */
+  feedHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    marginTop: 18,
+    marginBottom: 12,
+  },
+  feedTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 18,
+    color: moss.ink,
+  },
+  newPostBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  newPostText: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 15,
+    fontSize: 14,
     color: moss.accent,
   },
 
-  /* ── Topics tab ─────────────────────────────────────────────────────────── */
-  topicRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: spacing.lg,
-    marginBottom: spacing.md,
+  /* Post cards */
+  postCard: {
     backgroundColor: moss.cardBg,
-    borderRadius: radius.xl,
-    padding: spacing.lg,
-    borderLeftWidth: 4,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: moss.divider,
-    shadowColor: '#8A9E78',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 1,
+    marginHorizontal: spacing.lg,
+    marginBottom: 12,
+    overflow: 'hidden' as any,
   },
-  topicTitle: {
+  postHeader: {
+    padding: 14,
+    paddingBottom: 8,
+  },
+  postAuthor: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  postAvatar: { width: 38, height: 38, borderRadius: 19 },
+  postName: {
     fontFamily: 'DMSans_600SemiBold',
     fontSize: 15,
     color: moss.ink,
-    marginBottom: 3,
   },
-  topicMeta: {
+  postTime: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 12,
+    color: moss.muted,
+    marginTop: 1,
+  },
+  postCaption: {
     fontFamily: 'DMSans_400Regular',
     fontSize: 15,
-    color: '#4A3F36',
+    color: moss.ink,
+    lineHeight: 22,
+    paddingHorizontal: 14,
+    paddingBottom: 10,
+  },
+  postImage: {
+    width: '100%' as any,
+    height: 240,
+    backgroundColor: moss.divider,
+  },
+  postFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    gap: 16,
+  },
+  postStat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  postStatText: {
+    fontFamily: 'DMSans_500Medium',
+    fontSize: 13,
+    color: moss.inkMid,
   },
 
-  /* ── Empty state ────────────────────────────────────────────────────────── */
+  /* Empty state */
   emptyState: {
     alignItems: 'center',
-    paddingVertical: spacing['3xl'],
-    gap: spacing.md,
+    paddingVertical: 48,
+    gap: 12,
   },
   emptyText: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 16,
-    color: '#4A3F36',
+    fontSize: 15,
+    color: moss.muted,
   },
 
-  /* ── Profile card modal ── */
+  /* Profile card modal */
   profileBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
@@ -888,15 +598,15 @@ const s = StyleSheet.create({
   },
   profileBadgeText: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 16,
+    fontSize: 14,
     color: moss.accent,
   },
   profileBio: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 16,
-    color: '#2A2420',
+    fontSize: 15,
+    color: moss.ink,
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: 22,
     marginBottom: 18,
   },
   profileCloseBtn: {
@@ -907,50 +617,7 @@ const s = StyleSheet.create({
   },
   profileCloseBtnText: {
     fontFamily: 'DMSans_600SemiBold',
-    fontSize: 16,
+    fontSize: 15,
     color: moss.white,
   },
-
-  /* ── Fake post cards (lightweight, no modals) ── */
-  fakePostCard: {
-    backgroundColor: moss.cardBg,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: moss.divider,
-    marginHorizontal: spacing.lg,
-    marginBottom: 14,
-    overflow: 'hidden' as any,
-  },
-  fakePostHeader: {
-    flexDirection: 'row' as any,
-    alignItems: 'center' as any,
-    gap: 12,
-    padding: 14,
-    paddingBottom: 10,
-  },
-  fakePostAvatar: { width: 42, height: 42, borderRadius: 21 },
-  fakePostHeaderInfo: { flex: 1 },
-  fakePostName: { fontFamily: 'DMSans_600SemiBold', fontSize: 16, color: '#2A2420' },
-  fakePostTime: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: '#7A6E60' },
-  fakePostCaption: {
-    fontFamily: 'DMSans_400Regular',
-    fontSize: 16,
-    color: '#2A2420',
-    lineHeight: 24,
-    paddingHorizontal: 14,
-    paddingBottom: 10,
-  },
-  fakePostImage: { width: '100%' as any, height: 260, backgroundColor: moss.divider },
-  fakePostFooter: {
-    flexDirection: 'row' as any,
-    alignItems: 'center' as any,
-    padding: 12,
-    gap: 16,
-  },
-  fakePostStat: {
-    flexDirection: 'row' as any,
-    alignItems: 'center' as any,
-    gap: 6,
-  },
-  fakePostStatText: { fontFamily: 'DMSans_500Medium', fontSize: 15, color: '#4A3F36' },
 });
