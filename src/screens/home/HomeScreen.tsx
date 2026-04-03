@@ -527,65 +527,7 @@ export default function HomeScreen() {
           )}
         </View>
 
-        {/* ═══ 3. YOUR CIRCLE ═══ */}
-        <View style={s.circleSection}>
-          <View style={[s.circleHeader, isRTL && { flexDirection: 'row-reverse' }]}>
-            <View style={isRTL ? { alignItems: 'flex-end' } : undefined}>
-              <Text style={s.circleTitle}>{t('home.yourCircle')}</Text>
-              <Text style={[s.circleSubtitle, isRTL && { textAlign: 'right' }]}>{t('home.circleSubtitle')}</Text>
-            </View>
-            <TouchableOpacity activeOpacity={0.7} onPress={() => router.push('/(tabs)/community')}>
-              <Text style={s.circleViewAll}>{t('home.viewAll')}</Text>
-            </TouchableOpacity>
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[s.circleScroll, isRTL && { flexDirection: 'row-reverse' }]}>
-            {/* Real members from Supabase */}
-            {realMembers.map((rm) => (
-              <TouchableOpacity key={rm.id} style={s.circleMember} activeOpacity={0.7} onPress={() => setProfileCard({ name: rm.name, avatarUrl: rm.avatar_url ?? 'https://i.pravatar.cc/150', series: rm.series, streak: rm.streak, bio: rm.bio ?? '' })}>
-                <View style={s.circleMemberAvatarWrap}>
-                  <View style={[s.circleMemberRing, { borderColor: rm.streak > 30 ? moss.amber : moss.accent }]}>
-                    {rm.avatar_url ? (
-                      <Image source={{ uri: rm.avatar_url }} style={s.circleMemberAvatar} />
-                    ) : (
-                      <View style={[s.circleMemberAvatar, { backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center' }]}>
-                        <Text style={{ fontSize: 22, color: '#fff', fontWeight: '600' }}>{rm.name.charAt(0)}</Text>
-                      </View>
-                    )}
-                  </View>
-                  {rm.streak > 0 && (
-                    <View style={[s.circleBadge, { backgroundColor: '#FFF5EC' }]}>
-                      <Ionicons name="flame-outline" size={10} color={moss.amber} />
-                      <Text style={[s.circleBadgeText, { color: moss.amber }]}>{rm.streak}d</Text>
-                    </View>
-                  )}
-                </View>
-                <Text style={s.circleMemberName}>{rm.name.split(' ')[0]}</Text>
-              </TouchableOpacity>
-            ))}
-            {/* Fake demo users */}
-            {FAKE_USERS.map((m) => {
-              const bc = badgeColor(m.badge);
-              return (
-                <TouchableOpacity key={m.id} style={s.circleMember} activeOpacity={0.7} onPress={() => openProfile(m.name)}>
-                  <View style={s.circleMemberAvatarWrap}>
-                    <View style={[s.circleMemberRing, { borderColor: bc.ring }]}>
-                      <Image source={{ uri: m.avatarUrl }} style={s.circleMemberAvatar} />
-                    </View>
-                    <View style={[s.circleBadge, { backgroundColor: bc.bg }]}>
-                      {m.badge === 'practiced' && <Ionicons name="checkmark" size={9} color={moss.accent} />}
-                      {m.badge === 'streak' && <Ionicons name="flame-outline" size={10} color={moss.amber} />}
-                      {m.badge === 'series' && <Ionicons name="leaf-outline" size={10} color={moss.accent} />}
-                      <Text style={[s.circleBadgeText, { color: bc.text }]}>{m.badgeText}</Text>
-                    </View>
-                  </View>
-                  <Text style={s.circleMemberName}>{m.name}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </View>
-
-        {/* ═══ 4. SANGHA FEED (2 most recent) ═══ */}
+        {/* ═══ 3. SANGHA FEED (2 most recent) ═══ */}
         <View style={s.feedSection}>
           {homeFeed.map((post) => {
             const timeAgo = getTimeAgo(post.createdAt);
@@ -642,62 +584,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* ═══ 5. ASANA OF THE DAY ═══ */}
-        <View style={s.asanaCard}>
-          <View style={s.asanaHeader}>
-            <View style={[s.asanaHeaderTop, isRTL && { flexDirection: 'row-reverse' }]}>
-              <Text style={s.asanaTitle}>{t('home.asanaOfTheDay')}</Text>
-              <View style={s.asanaSeriesBadge}>
-                <Text style={s.asanaSeriesText}>{asana.series}</Text>
-              </View>
-            </View>
-            <Text style={[s.asanaHint, isRTL && { textAlign: 'right' }]}>{t('home.asanaFocus')}</Text>
-          </View>
-
-          {/* Asana image */}
-          <View style={s.asanaImageWrap}>
-            <Image source={asana.image} style={s.asanaImage} resizeMode="contain" />
-            <View style={s.asanaImageOverlay} />
-            <View style={s.asanaImageText}>
-              <Text style={s.asanaName}>{asana.name}</Text>
-              <Text style={s.asanaSubtitle}>{asana.subtitle}</Text>
-            </View>
-          </View>
-
-          {/* Details */}
-          <View style={s.asanaDetails}>
-            {/* Benefit tags */}
-            <View style={s.asanaTags}>
-              {asana.benefits.map((tag) => (
-                <View key={tag} style={s.asanaTag}>
-                  <Text style={s.asanaTagText}>{tag}</Text>
-                </View>
-              ))}
-            </View>
-
-            {/* Key tips */}
-            <View style={s.asanaTips}>
-              <Text style={[s.asanaTipsTitle, isRTL && { textAlign: 'right' }]}>{t('home.keyTips')}</Text>
-              <Text style={[s.asanaTipsBody, isRTL && { textAlign: 'right' }]}>{asana.tips}</Text>
-            </View>
-
-            {/* Stats row */}
-            <View style={s.asanaStatsRow}>
-              <View style={s.asanaStat}>
-                <Text style={s.asanaStatNum}>{asana.breaths}</Text>
-                <Text style={s.asanaStatLabel}>{t('home.breathsLabel')}</Text>
-              </View>
-              <View style={s.asanaStat}>
-                <Text style={s.asanaStatNum}>{asana.sides}</Text>
-                <Text style={s.asanaStatLabel}>{t('home.sidesLabel')}</Text>
-              </View>
-              <View style={[s.asanaStat, { backgroundColor: moss.amberBg }]}>
-                <Text style={[s.asanaStatNum, { color: moss.amber }]}>{asana.difficulty}</Text>
-                <Text style={s.asanaStatLabel}>{t('home.difficultyLabel')}</Text>
-              </View>
-            </View>
-          </View>
-        </View>
+        {/* (Asana of the Day removed) */}
 
       </ScrollView>
 
