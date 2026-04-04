@@ -3,49 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=390, initial-scale=1">
-<title>Community Page Redesign</title>
+<title>Community — Instagram Style</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans',sans-serif; background:#F6F2EC; max-width:390px; margin:0 auto; min-height:100vh; }
+  body { font-family:'DM Sans',sans-serif; background:#fff; max-width:390px; margin:0 auto; min-height:100vh; }
 
   /* Header */
-  .header { background:#fff; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; }
-  .header h1 { font-family:'DM Serif Display',serif; font-size:22px; color:#3B3228; }
-  .header-right { display:flex; gap:14px; align-items:center; }
-  .header-avatar { width:38px; height:38px; border-radius:19px; border:2px solid #8A9E78; object-fit:cover; }
+  .header { background:#fff; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #EFEFEF; }
+  .header h1 { font-family:'DM Sans',sans-serif; font-weight:600; font-size:20px; color:#262626; }
+  .header-right { display:flex; gap:16px; align-items:center; }
+  .header-avatar { width:30px; height:30px; border-radius:15px; object-fit:cover; }
 
-  /* Members strip */
-  .members-section { background:#fff; padding-bottom:14px; border-bottom:1px solid #E8E0D4; }
-  .members-header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px 12px; }
-  .members-title { font-family:'DM Serif Display',serif; font-size:18px; color:#3B3228; }
-  .online-badge { display:flex; align-items:center; gap:6px; background:#DCE8D3; border-radius:20px; padding:4px 10px; }
-  .online-dot { width:7px; height:7px; border-radius:50%; background:#8A9E78; }
-  .online-text { font-size:12px; font-weight:500; color:#8A9E78; }
-  .members-scroll { display:flex; gap:14px; padding:0 20px; overflow-x:auto; }
-  .members-scroll::-webkit-scrollbar { display:none; }
-  .member-bubble { display:flex; flex-direction:column; align-items:center; width:62px; flex-shrink:0; }
-  .member-ring { width:52px; height:52px; border-radius:26px; border:2px solid #8A9E78; display:flex; align-items:center; justify-content:center; margin-bottom:4px; }
-  .member-avatar { width:44px; height:44px; border-radius:22px; object-fit:cover; }
-  .member-name { font-size:12px; font-weight:500; color:#5E5245; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%; }
+  /* Stories */
+  .stories { display:flex; gap:14px; padding:12px; overflow-x:auto; border-bottom:1px solid #EFEFEF; }
+  .stories::-webkit-scrollbar { display:none; }
+  .story { display:flex; flex-direction:column; align-items:center; width:68px; flex-shrink:0; }
+  .story-ring { width:66px; height:66px; border-radius:33px; background:linear-gradient(135deg, #DE0046, #F7A34B); display:flex; align-items:center; justify-content:center; margin-bottom:4px; }
+  .story-ring-inner { width:60px; height:60px; border-radius:30px; border:2.5px solid #fff; overflow:hidden; }
+  .story-ring-inner img { width:100%; height:100%; object-fit:cover; }
+  .story-name { font-size:11px; color:#262626; text-align:center; max-width:68px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-  /* Feed header */
-  .feed-header { display:flex; justify-content:space-between; align-items:center; padding:18px 20px 12px; }
-  .feed-title { font-family:'DM Serif Display',serif; font-size:18px; color:#3B3228; }
-  .new-post-btn { display:flex; align-items:center; gap:5px; cursor:pointer; }
-  .new-post-btn svg { width:18px; height:18px; color:#8A9E78; }
-  .new-post-text { font-size:14px; font-weight:600; color:#8A9E78; }
+  /* Post */
+  .post { border-bottom:1px solid #EFEFEF; margin-bottom:4px; background:#fff; }
+  .post-header { display:flex; align-items:center; padding:12px; gap:10px; }
+  .post-header img { width:34px; height:34px; border-radius:17px; object-fit:cover; }
+  .post-header-info { flex:1; }
+  .post-header-name { font-size:13px; font-weight:600; color:#262626; }
+  .post-header-location { font-size:11px; color:#8E8E8E; margin-top:1px; }
+  .post-dots { color:#262626; font-size:18px; cursor:pointer; letter-spacing:2px; }
+  .post-image { width:100%; aspect-ratio:1; object-fit:cover; background:#EFEFEF; display:block; }
+  .text-post-card { margin:0 12px 4px; background:#F8F5F0; border-radius:14px; padding:18px; min-height:80px; display:flex; align-items:center; }
+  .text-post-content { font-size:16px; color:#262626; line-height:24px; }
 
-  /* Post cards */
-  .post-card { background:#fff; border-radius:16px; border:1px solid #E8E0D4; margin:0 20px 12px; overflow:hidden; }
-  .post-header { padding:14px 14px 8px; display:flex; align-items:center; gap:10px; }
-  .post-avatar { width:38px; height:38px; border-radius:19px; object-fit:cover; }
-  .post-name { font-size:15px; font-weight:600; color:#3B3228; }
-  .post-time { font-size:12px; color:#9B8E7E; margin-top:1px; }
-  .post-caption { font-size:15px; color:#3B3228; line-height:22px; padding:0 14px 10px; }
-  .post-image { width:100%; height:240px; object-fit:cover; background:#E8E0D4; }
-  .post-footer { display:flex; align-items:center; padding:12px; gap:16px; }
-  .post-stat { display:flex; align-items:center; gap:5px; font-size:13px; font-weight:500; color:#5E5245; }
+  /* Actions */
+  .actions { display:flex; justify-content:space-between; align-items:center; padding:10px 14px 6px; }
+  .actions-left { display:flex; gap:16px; align-items:center; }
+  .actions svg, .actions-right svg { cursor:pointer; }
+
+  /* Text below post */
+  .likes { font-size:13px; color:#262626; padding:0 14px 4px; }
+  .likes b { font-weight:600; }
+  .caption { font-size:13px; color:#262626; padding:0 14px 4px; line-height:18px; }
+  .caption b { font-weight:600; }
+  .view-comments { font-size:13px; color:#8E8E8E; padding:0 14px 3px; cursor:pointer; }
+  .time { font-size:10px; color:#8E8E8E; text-transform:uppercase; padding:0 14px 12px; letter-spacing:0.3px; }
+
+  /* FAB */
+  .fab { position:fixed; bottom:24px; right:calc(50% - 195px + 20px); width:54px; height:54px; border-radius:27px; background:#8A9E78; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.2); cursor:pointer; z-index:10; }
+  .fab svg { width:28px; height:28px; }
 </style>
 </head>
 <body>
@@ -54,106 +60,126 @@
 <div class="header">
   <h1>Sangha</h1>
   <div class="header-right">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-    <img class="header-avatar" src="https://i.pravatar.cc/150?img=32" alt="avatar">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
   </div>
 </div>
 
-<!-- Members strip -->
-<div class="members-section">
-  <div class="members-header">
-    <div class="members-title">Sangha Members</div>
-    <div class="online-badge">
-      <div class="online-dot"></div>
-      <span class="online-text">12 practicing</span>
-    </div>
-  </div>
-  <div class="members-scroll">
-    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=1"></div><div class="member-name">Noa</div></div>
-    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=3"></div><div class="member-name">Ori</div></div>
-    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=5"></div><div class="member-name">Michal</div></div>
-    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=8"></div><div class="member-name">Yotam</div></div>
-    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=9"></div><div class="member-name">Rinat</div></div>
-    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=11"></div><div class="member-name">Daniel</div></div>
-    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=10"></div><div class="member-name">Talia</div></div>
-    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=12"></div><div class="member-name">Ido</div></div>
-    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=16"></div><div class="member-name">Shira</div></div>
-    <div class="member-bubble"><div class="member-ring"><img class="member-avatar" src="https://i.pravatar.cc/150?img=13"></div><div class="member-name">Amir</div></div>
-  </div>
+<!-- Stories -->
+<div class="stories">
+  <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=32"></div></div><div class="story-name">You</div></div>
+  <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=1"></div></div><div class="story-name">Noa</div></div>
+  <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=3"></div></div><div class="story-name">Ori</div></div>
+  <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=5"></div></div><div class="story-name">Michal</div></div>
+  <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=8"></div></div><div class="story-name">Yotam</div></div>
+  <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=9"></div></div><div class="story-name">Rinat</div></div>
+  <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=11"></div></div><div class="story-name">Daniel</div></div>
+  <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=10"></div></div><div class="story-name">Talia</div></div>
 </div>
 
-<!-- Feed header -->
-<div class="feed-header">
-  <div class="feed-title">Sangha Feed</div>
-  <div class="new-post-btn">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#8A9E78" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-    <span class="new-post-text">New Post</span>
-  </div>
-</div>
-
-<!-- Post 1 — with image -->
-<div class="post-card">
+<!-- Post 1 — text only -->
+<div class="post">
   <div class="post-header">
-    <img class="post-avatar" src="https://i.pravatar.cc/150?img=13">
-    <div>
-      <div class="post-name">Amir Hadad</div>
-      <div class="post-time">1h</div>
+    <img src="https://i.pravatar.cc/150?img=13">
+    <div class="post-header-info">
+      <div class="post-header-name">amir_hadad</div>
     </div>
+    <span class="post-dots">...</span>
   </div>
-  <div class="post-caption">Baby woke up mid-Navasana. Did the rest with her on my belly 😂</div>
-  <div class="post-footer">
-    <div class="post-stat"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 42</div>
-    <div class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9B8E7E" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 14</div>
+  <div class="text-post-card">
+    <div class="text-post-content">Baby woke up mid-Navasana. Did the rest with her on my belly</div>
   </div>
+  <div class="actions">
+    <div class="actions-left">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="#ED4956" stroke="#ED4956" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </div>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+  </div>
+  <div class="likes">Liked by <b>noa</b> and <b>42 others</b></div>
+  <div class="view-comments">View all 14 comments</div>
+  <div class="time">1h ago</div>
 </div>
 
 <!-- Post 2 — with image -->
-<div class="post-card">
+<div class="post">
   <div class="post-header">
-    <img class="post-avatar" src="https://i.pravatar.cc/150?img=1">
-    <div>
-      <div class="post-name">Noa Levi</div>
-      <div class="post-time">2h</div>
+    <img src="https://i.pravatar.cc/150?img=1">
+    <div class="post-header-info">
+      <div class="post-header-name">noa_levi</div>
+      <div class="post-header-location">Tel Aviv, Israel</div>
     </div>
+    <span class="post-dots">...</span>
   </div>
-  <div class="post-caption">Perfect morning practice 🌅 Primary series flowed beautifully today</div>
-  <img class="post-image" src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=400&fit=crop">
-  <div class="post-footer">
-    <div class="post-stat"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 12</div>
-    <div class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9B8E7E" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 3</div>
+  <img class="post-image" src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=600&fit=crop">
+  <div class="actions">
+    <div class="actions-left">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </div>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
   </div>
+  <div class="likes">Liked by <b>michal</b> and <b>12 others</b></div>
+  <div class="caption"><b>noa_levi</b>  Perfect morning practice. Primary series flowed beautifully today</div>
+  <div class="view-comments">View all 3 comments</div>
+  <div class="time">2h ago</div>
 </div>
 
 <!-- Post 3 — text only -->
-<div class="post-card">
+<div class="post">
   <div class="post-header">
-    <img class="post-avatar" src="https://i.pravatar.cc/150?img=9">
-    <div>
-      <div class="post-name">Rinat Shimoni</div>
-      <div class="post-time">3h</div>
+    <img src="https://i.pravatar.cc/150?img=9">
+    <div class="post-header-info">
+      <div class="post-header-name">rinat_shimoni</div>
     </div>
+    <span class="post-dots">...</span>
   </div>
-  <div class="post-caption">Discovered that aligning the hips in Trikonasana changes everything</div>
-  <div class="post-footer">
-    <div class="post-stat"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 8</div>
-    <div class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9B8E7E" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 2</div>
+  <div class="text-post-card">
+    <div class="text-post-content">Discovered that aligning the hips in Trikonasana changes everything</div>
   </div>
+  <div class="actions">
+    <div class="actions-left">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </div>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+  </div>
+  <div class="likes">Liked by <b>ori</b> and <b>8 others</b></div>
+  <div class="view-comments">View all 2 comments</div>
+  <div class="time">3h ago</div>
 </div>
 
-<!-- Post 4 — text only -->
-<div class="post-card">
+<!-- Post 4 — with image -->
+<div class="post">
   <div class="post-header">
-    <img class="post-avatar" src="https://i.pravatar.cc/150?img=10">
-    <div>
-      <div class="post-name">Talia Wolf</div>
-      <div class="post-time">4h</div>
+    <img src="https://i.pravatar.cc/150?img=8">
+    <div class="post-header-info">
+      <div class="post-header-name">yotam_barak</div>
+      <div class="post-header-location">Eilat, Israel</div>
     </div>
+    <span class="post-dots">...</span>
   </div>
-  <div class="post-caption">40-minute practice between the garden and the barn. That is all you need 🌿</div>
-  <div class="post-footer">
-    <div class="post-stat"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 22</div>
-    <div class="post-stat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9B8E7E" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 6</div>
+  <img class="post-image" src="https://images.unsplash.com/photo-1588286840104-8957b019727f?w=600&h=600&fit=crop">
+  <div class="actions">
+    <div class="actions-left">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </div>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#262626" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
   </div>
+  <div class="likes">Liked by <b>sarah</b> and <b>31 others</b></div>
+  <div class="caption"><b>yotam_barak</b>  Sun salutations on the reef beach. Nothing like practicing with sand under your feet</div>
+  <div class="view-comments">View all 9 comments</div>
+  <div class="time">18h ago</div>
+</div>
+
+<!-- FAB -->
+<div class="fab">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </div>
 
 </body>
