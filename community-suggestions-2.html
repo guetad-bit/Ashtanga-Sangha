@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1300, initial-scale=1">
+<title>Community Screen — 3 More Suggestions (Homepage-Inspired)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:#F0EDE8; padding:40px 30px; }
+  h1 { font-family:'DM Serif Display',serif; font-size:28px; color:#3B3228; text-align:center; margin-bottom:6px; }
+  .subtitle { text-align:center; color:#8E8E8E; font-size:14px; margin-bottom:36px; }
+  .grid { display:flex; gap:30px; justify-content:center; flex-wrap:wrap; }
+  .phone { width:375px; background:#F6F2EC; border-radius:36px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,0.12); border:8px solid #1a1a1a; flex-shrink:0; }
+  .phone-inner { max-height:780px; overflow-y:auto; }
+  .phone-inner::-webkit-scrollbar { display:none; }
+  .label { text-align:center; margin-top:16px; margin-bottom:4px; }
+  .label h2 { font-family:'DM Serif Display',serif; font-size:18px; color:#3B3228; }
+  .label p { font-size:12px; color:#8E8E8E; margin-top:4px; max-width:360px; margin-left:auto; margin-right:auto; line-height:18px; }
+
+  /* Palette */
+  :root {
+    --ink:#3B3228; --inkMid:#5E5245; --muted:#9B8E7E; --accent:#8A9E78;
+    --accentLight:#DCE8D3; --amber:#C4956A; --amberBg:#FFF5EC;
+    --pageBg:#F6F2EC; --cardBg:#FFFFFF; --divider:#E8E0D4; --beige:#EDE6DA;
+    --heartRed:#ED4956;
+  }
+
+  /* Header (shared AppHeader style) */
+  .header { background:#fff; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; }
+  .header h3 { font-family:'DM Serif Display',serif; font-size:22px; color:var(--ink); }
+  .header-right { display:flex; gap:14px; align-items:center; }
+  .header-avatar { width:38px; height:38px; border-radius:19px; border:2px solid var(--accent); object-fit:cover; }
+
+  /* Stories */
+  .stories { display:flex; gap:12px; padding:10px 14px; overflow-x:auto; background:#fff; border-bottom:1px solid var(--divider); }
+  .stories::-webkit-scrollbar { display:none; }
+  .story { display:flex; flex-direction:column; align-items:center; width:64px; flex-shrink:0; }
+  .story-ring { width:60px; height:60px; border-radius:30px; background:linear-gradient(135deg,#DE0046,#F7A34B); display:flex; align-items:center; justify-content:center; margin-bottom:3px; }
+  .story-ring-inner { width:54px; height:54px; border-radius:27px; border:2.5px solid #fff; overflow:hidden; }
+  .story-ring-inner img { width:100%; height:100%; object-fit:cover; }
+  .story-name { font-size:10px; color:var(--ink); text-align:center; }
+
+  /* Post card — homepage style rounded card */
+  .post-card { background:var(--cardBg); border-radius:16px; border:1px solid var(--divider); margin:0 14px 12px; overflow:hidden; }
+  .post-h { display:flex; align-items:center; padding:12px 14px 8px; gap:10px; }
+  .post-h img { width:34px; height:34px; border-radius:17px; }
+  .post-h-info { flex:1; }
+  .post-h-name { font-size:13px; font-weight:600; color:var(--ink); }
+  .post-h-loc { font-size:11px; color:var(--muted); }
+  .post-h-dots { color:var(--muted); font-size:16px; letter-spacing:2px; }
+  .post-img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
+  .post-actions { display:flex; justify-content:space-between; padding:10px 14px 6px; }
+  .post-actions-left { display:flex; gap:14px; align-items:center; }
+  .likes { font-size:12px; color:var(--ink); padding:0 14px 3px; }
+  .likes b { font-weight:600; }
+  .caption { font-size:13px; color:var(--ink); padding:0 14px 4px; line-height:18px; }
+  .caption b { font-weight:600; }
+  .comments { font-size:11px; color:var(--muted); padding:0 14px 2px; }
+  .time { font-size:10px; color:var(--muted); text-transform:uppercase; padding:0 14px 12px; letter-spacing:0.3px; }
+
+  /* ═══════════════════════════════════════ */
+  /* SUGGESTION D: Sangha Pulse Card        */
+  /* ═══════════════════════════════════════ */
+  .pulse-card { background:var(--cardBg); border-radius:16px; border:1px solid var(--divider); margin:14px 14px 12px; padding:16px; }
+  .pulse-title { font-family:'DM Serif Display',serif; font-size:16px; color:var(--ink); margin-bottom:12px; }
+  .pulse-stats { display:flex; gap:0; }
+  .pulse-stat { flex:1; text-align:center; position:relative; }
+  .pulse-stat:not(:last-child)::after { content:''; position:absolute; right:0; top:4px; bottom:4px; width:1px; background:var(--divider); }
+  .pulse-stat-num { font-family:'DM Serif Display',serif; font-size:24px; color:var(--accent); }
+  .pulse-stat-label { font-size:10px; color:var(--muted); font-weight:500; margin-top:2px; }
+  .pulse-avatars { display:flex; margin-top:12px; padding-top:12px; border-top:1px solid var(--divider); align-items:center; gap:6px; }
+  .pulse-av { width:28px; height:28px; border-radius:14px; border:2px solid #fff; object-fit:cover; margin-left:-8px; }
+  .pulse-av:first-child { margin-left:0; }
+  .pulse-av-text { font-size:11px; color:var(--muted); margin-left:4px; }
+
+  /* ═══════════════════════════════════════ */
+  /* SUGGESTION E: Quote Card in Feed       */
+  /* ═══════════════════════════════════════ */
+  .quote-feed-card { background:var(--cardBg); border-radius:16px; border:1px solid var(--divider); margin:0 14px 12px; overflow:hidden; }
+  .quote-feed-inner { background:rgba(138,158,120,0.06); padding:18px 16px; display:flex; gap:10px; align-items:flex-start; }
+  .quote-mark { font-family:'DM Serif Display',serif; font-size:36px; color:var(--accent); line-height:36px; margin-top:-4px; }
+  .quote-text { font-family:'DM Serif Display',serif; font-size:17px; color:var(--ink); line-height:24px; font-style:italic; }
+  .quote-author { font-size:12px; color:var(--inkMid); margin-top:6px; font-weight:500; }
+  .quote-feed-footer { display:flex; justify-content:space-between; align-items:center; padding:10px 16px; border-top:1px solid var(--divider); }
+  .quote-feed-share { display:flex; align-items:center; gap:5px; }
+  .quote-feed-share span { font-size:12px; color:var(--accent); font-weight:600; }
+  .quote-feed-label { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:500; }
+
+  /* ═══════════════════════════════════════ */
+  /* SUGGESTION F: Post as Rounded Cards     */
+  /* + Compact 2-col Grid Top Posts          */
+  /* ═══════════════════════════════════════ */
+  .section-header { display:flex; justify-content:space-between; align-items:center; padding:16px 14px 10px; }
+  .section-title { font-family:'DM Serif Display',serif; font-size:16px; color:var(--ink); }
+  .section-link { font-size:13px; color:var(--accent); font-weight:600; }
+
+  .grid-posts { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 14px 14px; }
+  .grid-post { background:var(--cardBg); border-radius:14px; border:1px solid var(--divider); overflow:hidden; }
+  .grid-post-img { width:100%; aspect-ratio:1; object-fit:cover; display:block; }
+  .grid-post-info { padding:8px 10px; }
+  .grid-post-row { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+  .grid-post-av { width:20px; height:20px; border-radius:10px; object-fit:cover; }
+  .grid-post-name { font-size:11px; font-weight:600; color:var(--ink); }
+  .grid-post-caption { font-size:11px; color:var(--inkMid); line-height:15px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .grid-post-likes { font-size:10px; color:var(--muted); margin-top:4px; display:flex; align-items:center; gap:3px; }
+
+  /* Full-width post below grid — same card style */
+  .full-post-card { background:var(--cardBg); border-radius:16px; border:1px solid var(--divider); margin:0 14px 12px; overflow:hidden; }
+</style>
+</head>
+<body>
+
+<h1>Community Screen — 3 More Ideas</h1>
+<p class="subtitle">Bringing the homepage's warm card-based aesthetic into the community feed</p>
+
+<div class="grid">
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- SUGGESTION D: Sangha Pulse Card -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div>
+  <div class="phone"><div class="phone-inner">
+    <div class="header"><h3>Sangha</h3><div class="header-right"><img class="header-avatar" src="https://i.pravatar.cc/150?img=32"></div></div>
+    <div class="stories">
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=1"></div></div><div class="story-name">Noa</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=3"></div></div><div class="story-name">Ori</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=5"></div></div><div class="story-name">Michal</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=8"></div></div><div class="story-name">Yotam</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=9"></div></div><div class="story-name">Rinat</div></div>
+    </div>
+
+    <!-- Sangha Pulse -->
+    <div class="pulse-card">
+      <div class="pulse-title">Sangha Pulse</div>
+      <div class="pulse-stats">
+        <div class="pulse-stat"><div class="pulse-stat-num">7</div><div class="pulse-stat-label">On the mat</div></div>
+        <div class="pulse-stat"><div class="pulse-stat-num">34</div><div class="pulse-stat-label">Practiced today</div></div>
+        <div class="pulse-stat"><div class="pulse-stat-num">89</div><div class="pulse-stat-label">This week</div></div>
+      </div>
+      <div class="pulse-avatars">
+        <img class="pulse-av" src="https://i.pravatar.cc/150?img=1">
+        <img class="pulse-av" src="https://i.pravatar.cc/150?img=5">
+        <img class="pulse-av" src="https://i.pravatar.cc/150?img=12">
+        <img class="pulse-av" src="https://i.pravatar.cc/150?img=9">
+        <img class="pulse-av" src="https://i.pravatar.cc/150?img=13">
+        <span class="pulse-av-text">Noa, Michal & 5 others on the mat now</span>
+      </div>
+    </div>
+
+    <!-- Feed in rounded cards -->
+    <div class="post-card">
+      <div class="post-h"><img src="https://i.pravatar.cc/150?img=13"><div class="post-h-info"><div class="post-h-name">amir_hadad</div><div class="post-h-loc">Ramat Gan, Israel</div></div><span class="post-h-dots">...</span></div>
+      <img class="post-img" src="https://images.unsplash.com/photo-1492725764893-90b379c2b6e7?w=400&h=300&fit=crop">
+      <div class="post-actions"><div class="post-actions-left"><svg width="22" height="22" viewBox="0 0 24 24" fill="#ED4956" stroke="#ED4956" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="likes">Liked by <b>noa</b> and <b>42 others</b></div>
+      <div class="caption"><b>amir_hadad</b> Baby woke up mid-Navasana. Did the rest with her on my belly</div>
+      <div class="comments">View all 14 comments</div>
+      <div class="time">1h ago</div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-h"><img src="https://i.pravatar.cc/150?img=1"><div class="post-h-info"><div class="post-h-name">noa_levi</div><div class="post-h-loc">Tel Aviv, Israel</div></div><span class="post-h-dots">...</span></div>
+      <img class="post-img" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop">
+      <div class="post-actions"><div class="post-actions-left"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="likes">Liked by <b>michal</b> and <b>12 others</b></div>
+      <div class="caption"><b>noa_levi</b> Perfect morning practice. Primary series flowed beautifully today</div>
+      <div class="time">2h ago</div>
+    </div>
+  </div></div>
+  <div class="label">
+    <h2>D — Sangha Pulse Card</h2>
+    <p>A compact stats card (like the homepage "This Week" card) showing live community activity: on the mat, practiced today, this week. Stacked avatar row shows who's live.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- SUGGESTION E: Quote Cards in Feed -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div>
+  <div class="phone"><div class="phone-inner">
+    <div class="header"><h3>Sangha</h3><div class="header-right"><img class="header-avatar" src="https://i.pravatar.cc/150?img=32"></div></div>
+    <div class="stories">
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=1"></div></div><div class="story-name">Noa</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=3"></div></div><div class="story-name">Ori</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=5"></div></div><div class="story-name">Michal</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=8"></div></div><div class="story-name">Yotam</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=9"></div></div><div class="story-name">Rinat</div></div>
+    </div>
+
+    <!-- Post -->
+    <div style="height:14px"></div>
+    <div class="post-card">
+      <div class="post-h"><img src="https://i.pravatar.cc/150?img=13"><div class="post-h-info"><div class="post-h-name">amir_hadad</div><div class="post-h-loc">Ramat Gan, Israel</div></div><span class="post-h-dots">...</span></div>
+      <img class="post-img" src="https://images.unsplash.com/photo-1492725764893-90b379c2b6e7?w=400&h=300&fit=crop">
+      <div class="post-actions"><div class="post-actions-left"><svg width="22" height="22" viewBox="0 0 24 24" fill="#ED4956" stroke="#ED4956" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="likes">Liked by <b>noa</b> and <b>42 others</b></div>
+      <div class="caption"><b>amir_hadad</b> Baby woke up mid-Navasana. Did the rest with her on my belly</div>
+      <div class="time">1h ago</div>
+    </div>
+
+    <!-- Quote card mixed into feed -->
+    <div class="quote-feed-card">
+      <div class="quote-feed-inner">
+        <div class="quote-mark">"</div>
+        <div>
+          <div class="quote-text">Do your practice and all is coming.</div>
+          <div class="quote-author">— Sri K. Pattabhi Jois</div>
+        </div>
+      </div>
+      <div class="quote-feed-footer">
+        <div class="quote-feed-label">Daily Inspiration</div>
+        <div class="quote-feed-share"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A9E78" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Share</span></div>
+      </div>
+    </div>
+
+    <!-- Post -->
+    <div class="post-card">
+      <div class="post-h"><img src="https://i.pravatar.cc/150?img=1"><div class="post-h-info"><div class="post-h-name">noa_levi</div><div class="post-h-loc">Tel Aviv, Israel</div></div><span class="post-h-dots">...</span></div>
+      <img class="post-img" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop">
+      <div class="post-actions"><div class="post-actions-left"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="likes">Liked by <b>michal</b> and <b>12 others</b></div>
+      <div class="caption"><b>noa_levi</b> Perfect morning practice. Primary series flowed beautifully today</div>
+      <div class="time">2h ago</div>
+    </div>
+
+    <!-- Another post -->
+    <div class="post-card">
+      <div class="post-h"><img src="https://i.pravatar.cc/150?img=8"><div class="post-h-info"><div class="post-h-name">yotam_barak</div><div class="post-h-loc">Eilat, Israel</div></div><span class="post-h-dots">...</span></div>
+      <img class="post-img" src="https://images.unsplash.com/photo-1476673160081-cf065607f449?w=400&h=300&fit=crop">
+      <div class="post-actions"><div class="post-actions-left"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="likes">Liked by <b>sarah</b> and <b>31 others</b></div>
+      <div class="caption"><b>yotam_barak</b> Sun salutations on the reef beach</div>
+      <div class="time">18h ago</div>
+    </div>
+  </div></div>
+  <div class="label">
+    <h2>E — Quote Cards in Feed</h2>
+    <p>The homepage's quote strip design appears as cards sprinkled between posts. Same serif font, quotation mark, sage background. Shareable. Makes the feed feel more "Sangha" and less generic social.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- SUGGESTION F: Trending Grid + Full Cards -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div>
+  <div class="phone"><div class="phone-inner">
+    <div class="header"><h3>Sangha</h3><div class="header-right"><img class="header-avatar" src="https://i.pravatar.cc/150?img=32"></div></div>
+    <div class="stories">
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=1"></div></div><div class="story-name">Noa</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=3"></div></div><div class="story-name">Ori</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=5"></div></div><div class="story-name">Michal</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=8"></div></div><div class="story-name">Yotam</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=9"></div></div><div class="story-name">Rinat</div></div>
+    </div>
+
+    <!-- Trending section header -->
+    <div class="section-header">
+      <div class="section-title">Trending</div>
+      <div class="section-link">See all</div>
+    </div>
+
+    <!-- 2-col grid -->
+    <div class="grid-posts">
+      <div class="grid-post">
+        <img class="grid-post-img" src="https://images.unsplash.com/photo-1492725764893-90b379c2b6e7?w=300&h=300&fit=crop">
+        <div class="grid-post-info">
+          <div class="grid-post-row"><img class="grid-post-av" src="https://i.pravatar.cc/150?img=13"><div class="grid-post-name">amir_hadad</div></div>
+          <div class="grid-post-caption">Baby woke up mid-Navasana</div>
+          <div class="grid-post-likes"><svg width="11" height="11" viewBox="0 0 24 24" fill="#ED4956" stroke="#ED4956" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 42</div>
+        </div>
+      </div>
+      <div class="grid-post">
+        <img class="grid-post-img" src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=300&h=300&fit=crop">
+        <div class="grid-post-info">
+          <div class="grid-post-row"><img class="grid-post-av" src="https://i.pravatar.cc/150?img=12"><div class="grid-post-name">ido_nachum</div></div>
+          <div class="grid-post-caption">After 18 years, Supta Kurmasana still teaches me</div>
+          <div class="grid-post-likes"><svg width="11" height="11" viewBox="0 0 24 24" fill="#ED4956" stroke="#ED4956" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 35</div>
+        </div>
+      </div>
+      <div class="grid-post">
+        <img class="grid-post-img" src="https://images.unsplash.com/photo-1476673160081-cf065607f449?w=300&h=300&fit=crop">
+        <div class="grid-post-info">
+          <div class="grid-post-row"><img class="grid-post-av" src="https://i.pravatar.cc/150?img=8"><div class="grid-post-name">yotam_barak</div></div>
+          <div class="grid-post-caption">Sun salutations on the reef beach</div>
+          <div class="grid-post-likes"><svg width="11" height="11" viewBox="0 0 24 24" fill="#ED4956" stroke="#ED4956" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 31</div>
+        </div>
+      </div>
+      <div class="grid-post">
+        <img class="grid-post-img" src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&h=300&fit=crop">
+        <div class="grid-post-info">
+          <div class="grid-post-row"><img class="grid-post-av" src="https://i.pravatar.cc/150?img=14"><div class="grid-post-name">david_stern</div></div>
+          <div class="grid-post-caption">Kapo day. Trust the breath.</div>
+          <div class="grid-post-likes"><svg width="11" height="11" viewBox="0 0 24 24" fill="#ED4956" stroke="#ED4956" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 28</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent section -->
+    <div class="section-header">
+      <div class="section-title">Recent</div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-h"><img src="https://i.pravatar.cc/150?img=1"><div class="post-h-info"><div class="post-h-name">noa_levi</div><div class="post-h-loc">Tel Aviv, Israel</div></div><span class="post-h-dots">...</span></div>
+      <img class="post-img" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop">
+      <div class="post-actions"><div class="post-actions-left"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="likes">Liked by <b>michal</b> and <b>12 others</b></div>
+      <div class="caption"><b>noa_levi</b> Perfect morning practice. Primary series flowed beautifully today</div>
+      <div class="time">2h ago</div>
+    </div>
+  </div></div>
+  <div class="label">
+    <h2>F — Trending Grid + Cards</h2>
+    <p>Top posts in a compact 2-column grid (most liked), then full-width cards below for "Recent". Rounded cards on cream background match the homepage aesthetic. Feels like a curated magazine.</p>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

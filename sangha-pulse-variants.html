@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1300, initial-scale=1">
+<title>Sangha Pulse — 3 Variations</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:#F0EDE8; padding:40px 30px; }
+  h1 { font-family:'DM Serif Display',serif; font-size:28px; color:#3B3228; text-align:center; margin-bottom:6px; }
+  .subtitle { text-align:center; color:#8E8E8E; font-size:14px; margin-bottom:36px; }
+  .grid { display:flex; gap:30px; justify-content:center; flex-wrap:wrap; }
+  .phone { width:375px; background:#F6F2EC; border-radius:36px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,0.12); border:8px solid #1a1a1a; flex-shrink:0; }
+  .phone-inner { max-height:780px; overflow-y:auto; }
+  .phone-inner::-webkit-scrollbar { display:none; }
+  .label { text-align:center; margin-top:16px; margin-bottom:4px; }
+  .label h2 { font-family:'DM Serif Display',serif; font-size:18px; color:#3B3228; }
+  .label p { font-size:12px; color:#8E8E8E; margin-top:4px; max-width:360px; margin-left:auto; margin-right:auto; line-height:18px; }
+
+  :root {
+    --ink:#3B3228; --inkMid:#5E5245; --muted:#9B8E7E; --accent:#8A9E78;
+    --accentLight:#DCE8D3; --amber:#C4956A; --amberBg:#FFF5EC;
+    --pageBg:#F6F2EC; --cardBg:#FFFFFF; --divider:#E8E0D4; --beige:#EDE6DA;
+  }
+
+  /* Header */
+  .header { background:#fff; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; }
+  .header h3 { font-family:'DM Serif Display',serif; font-size:22px; color:var(--ink); }
+  .header-avatar { width:38px; height:38px; border-radius:19px; border:2px solid var(--accent); object-fit:cover; }
+
+  /* Stories */
+  .stories { display:flex; gap:12px; padding:10px 14px; overflow-x:auto; background:#fff; border-bottom:1px solid var(--divider); }
+  .stories::-webkit-scrollbar { display:none; }
+  .story { display:flex; flex-direction:column; align-items:center; width:64px; flex-shrink:0; }
+  .story-ring { width:60px; height:60px; border-radius:30px; background:linear-gradient(135deg,#DE0046,#F7A34B); display:flex; align-items:center; justify-content:center; margin-bottom:3px; }
+  .story-ring-inner { width:54px; height:54px; border-radius:27px; border:2.5px solid #fff; overflow:hidden; }
+  .story-ring-inner img { width:100%; height:100%; object-fit:cover; }
+  .story-name { font-size:10px; color:var(--ink); text-align:center; }
+
+  /* Post card */
+  .post-card { background:var(--cardBg); border-radius:16px; border:1px solid var(--divider); margin:0 14px 12px; overflow:hidden; }
+  .post-h { display:flex; align-items:center; padding:12px 14px 8px; gap:10px; }
+  .post-h img { width:34px; height:34px; border-radius:17px; object-fit:cover; }
+  .post-h-info { flex:1; }
+  .post-h-name { font-size:13px; font-weight:600; color:var(--ink); }
+  .post-h-loc { font-size:11px; color:var(--muted); }
+  .post-img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
+  .post-actions { display:flex; justify-content:space-between; padding:10px 14px 6px; }
+  .post-actions-left { display:flex; gap:14px; align-items:center; }
+  .likes { font-size:12px; color:var(--ink); padding:0 14px 3px; }
+  .likes b { font-weight:600; }
+  .caption { font-size:13px; color:var(--ink); padding:0 14px 4px; line-height:18px; }
+  .caption b { font-weight:600; }
+  .time { font-size:10px; color:var(--muted); text-transform:uppercase; padding:0 14px 12px; letter-spacing:0.3px; }
+
+  /* ═══════════════════════════════════════ */
+  /* D1 — Classic Stats Card               */
+  /* ═══════════════════════════════════════ */
+  .d1-card { background:var(--cardBg); border-radius:16px; border:1px solid var(--divider); margin:14px 14px 12px; padding:16px; }
+  .d1-title-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .d1-title { font-family:'DM Serif Display',serif; font-size:16px; color:var(--ink); }
+  .d1-live-dot { display:flex; align-items:center; gap:5px; }
+  .d1-live-dot .dot { width:8px; height:8px; border-radius:4px; background:var(--accent); animation:pulse 1.5s infinite; }
+  .d1-live-dot span { font-size:11px; color:var(--accent); font-weight:600; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .d1-stats { display:flex; gap:0; margin-bottom:14px; }
+  .d1-stat { flex:1; text-align:center; position:relative; }
+  .d1-stat:not(:last-child)::after { content:''; position:absolute; right:0; top:6px; bottom:6px; width:1px; background:var(--divider); }
+  .d1-num { font-family:'DM Serif Display',serif; font-size:28px; color:var(--accent); line-height:1.1; }
+  .d1-label { font-size:10px; color:var(--muted); font-weight:500; margin-top:3px; text-transform:uppercase; letter-spacing:0.5px; }
+  .d1-avatars { display:flex; align-items:center; padding-top:14px; border-top:1px solid var(--divider); }
+  .d1-av { width:30px; height:30px; border-radius:15px; border:2.5px solid #fff; object-fit:cover; }
+  .d1-av:not(:first-child) { margin-left:-10px; }
+  .d1-av-text { font-size:11px; color:var(--muted); margin-left:8px; line-height:14px; }
+
+  /* ═══════════════════════════════════════ */
+  /* D2 — Horizontal Scroll Stat Chips     */
+  /* ═══════════════════════════════════════ */
+  .d2-wrap { padding:12px 0; }
+  .d2-scroll { display:flex; gap:10px; padding:0 14px; overflow-x:auto; }
+  .d2-scroll::-webkit-scrollbar { display:none; }
+  .d2-chip { background:var(--cardBg); border-radius:14px; border:1px solid var(--divider); padding:12px 16px; min-width:130px; flex-shrink:0; display:flex; flex-direction:column; gap:4px; }
+  .d2-chip-icon { width:32px; height:32px; border-radius:16px; display:flex; align-items:center; justify-content:center; margin-bottom:4px; }
+  .d2-chip-num { font-family:'DM Serif Display',serif; font-size:22px; color:var(--ink); line-height:1.1; }
+  .d2-chip-label { font-size:11px; color:var(--muted); font-weight:500; }
+  .d2-chip-avatars { display:flex; margin-top:4px; }
+  .d2-chip-av { width:20px; height:20px; border-radius:10px; border:2px solid #fff; object-fit:cover; }
+  .d2-chip-av:not(:first-child) { margin-left:-6px; }
+
+  .d2-chip.green .d2-chip-icon { background:var(--accentLight); }
+  .d2-chip.amber .d2-chip-icon { background:var(--amberBg); }
+  .d2-chip.beige .d2-chip-icon { background:var(--beige); }
+
+  /* ═══════════════════════════════════════ */
+  /* D3 — Full-Width Gradient Banner       */
+  /* ═══════════════════════════════════════ */
+  .d3-banner { margin:14px 14px 12px; border-radius:16px; overflow:hidden; background:linear-gradient(135deg, #3B3228 0%, #5E5245 100%); padding:18px 16px; color:#fff; position:relative; }
+  .d3-bg-pattern { position:absolute; top:0; right:0; bottom:0; width:40%; opacity:0.06; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Ccircle cx='40' cy='40' r='30' fill='none' stroke='white' stroke-width='1'/%3E%3Ccircle cx='40' cy='40' r='15' fill='none' stroke='white' stroke-width='1'/%3E%3C/svg%3E") repeat; }
+  .d3-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; position:relative; z-index:1; }
+  .d3-title { font-family:'DM Serif Display',serif; font-size:18px; color:#fff; }
+  .d3-subtitle { font-size:11px; color:rgba(255,255,255,0.6); margin-top:2px; }
+  .d3-live-badge { display:flex; align-items:center; gap:5px; background:rgba(138,158,120,0.4); border-radius:20px; padding:4px 10px; }
+  .d3-live-badge .dot { width:7px; height:7px; border-radius:3.5px; background:#8A9E78; animation:pulse 1.5s infinite; }
+  .d3-live-badge span { font-size:11px; color:#DCE8D3; font-weight:600; }
+  .d3-stats { display:flex; gap:0; position:relative; z-index:1; }
+  .d3-stat { flex:1; text-align:center; position:relative; }
+  .d3-stat:not(:last-child)::after { content:''; position:absolute; right:0; top:4px; bottom:4px; width:1px; background:rgba(255,255,255,0.15); }
+  .d3-num { font-family:'DM Serif Display',serif; font-size:30px; color:#fff; line-height:1.1; }
+  .d3-num-label { font-size:10px; color:rgba(255,255,255,0.55); font-weight:500; margin-top:3px; text-transform:uppercase; letter-spacing:0.5px; }
+  .d3-footer { display:flex; align-items:center; margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.12); position:relative; z-index:1; }
+  .d3-av { width:26px; height:26px; border-radius:13px; border:2px solid rgba(255,255,255,0.3); object-fit:cover; }
+  .d3-av:not(:first-child) { margin-left:-8px; }
+  .d3-footer-text { font-size:11px; color:rgba(255,255,255,0.65); margin-left:8px; }
+  .d3-footer-text b { color:rgba(255,255,255,0.9); font-weight:600; }
+</style>
+</head>
+<body>
+
+<h1>Sangha Pulse — 3 Variations</h1>
+<p class="subtitle">Each shows a different visual treatment for the community activity card</p>
+
+<div class="grid">
+
+<!-- ═══ D1: Classic Stats Card ═══ -->
+<div>
+  <div class="phone"><div class="phone-inner">
+    <div class="header"><h3>Sangha</h3><div><img class="header-avatar" src="https://i.pravatar.cc/150?img=32"></div></div>
+    <div class="stories">
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=1"></div></div><div class="story-name">Noa</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=3"></div></div><div class="story-name">Ori</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=5"></div></div><div class="story-name">Michal</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=8"></div></div><div class="story-name">Yotam</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=9"></div></div><div class="story-name">Rinat</div></div>
+    </div>
+
+    <div class="d1-card">
+      <div class="d1-title-row">
+        <div class="d1-title">Sangha Pulse</div>
+        <div class="d1-live-dot"><div class="dot"></div><span>Live</span></div>
+      </div>
+      <div class="d1-stats">
+        <div class="d1-stat"><div class="d1-num">7</div><div class="d1-label">On the mat</div></div>
+        <div class="d1-stat"><div class="d1-num">34</div><div class="d1-label">Today</div></div>
+        <div class="d1-stat"><div class="d1-num">89</div><div class="d1-label">This week</div></div>
+      </div>
+      <div class="d1-avatars">
+        <img class="d1-av" src="https://i.pravatar.cc/150?img=1">
+        <img class="d1-av" src="https://i.pravatar.cc/150?img=5">
+        <img class="d1-av" src="https://i.pravatar.cc/150?img=12">
+        <img class="d1-av" src="https://i.pravatar.cc/150?img=9">
+        <img class="d1-av" src="https://i.pravatar.cc/150?img=13">
+        <span class="d1-av-text">Noa, Michal & 5 more<br>on the mat now</span>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-h"><img src="https://i.pravatar.cc/150?img=13"><div class="post-h-info"><div class="post-h-name">amir_hadad</div><div class="post-h-loc">Ramat Gan, Israel</div></div></div>
+      <img class="post-img" src="https://images.unsplash.com/photo-1492725764893-90b379c2b6e7?w=400&h=300&fit=crop">
+      <div class="post-actions"><div class="post-actions-left"><svg width="22" height="22" viewBox="0 0 24 24" fill="#ED4956" stroke="#ED4956" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="likes">Liked by <b>noa</b> and <b>42 others</b></div>
+      <div class="caption"><b>amir_hadad</b> Baby woke up mid-Navasana. Did the rest with her on my belly</div>
+      <div class="time">1h ago</div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-h"><img src="https://i.pravatar.cc/150?img=1"><div class="post-h-info"><div class="post-h-name">noa_levi</div><div class="post-h-loc">Tel Aviv, Israel</div></div></div>
+      <img class="post-img" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop">
+      <div class="post-actions"><div class="post-actions-left"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="likes">Liked by <b>michal</b> and <b>12 others</b></div>
+      <div class="caption"><b>noa_levi</b> Perfect morning practice. Primary series flowed beautifully today</div>
+      <div class="time">2h ago</div>
+    </div>
+  </div></div>
+  <div class="label">
+    <h2>D1 — Classic White Card</h2>
+    <p>Clean white card matching the homepage "This Week" style. Big serif numbers, three stat columns with dividers, pulsing "Live" dot, and overlapping avatars showing who's on the mat.</p>
+  </div>
+</div>
+
+<!-- ═══ D2: Horizontal Scroll Chips ═══ -->
+<div>
+  <div class="phone"><div class="phone-inner">
+    <div class="header"><h3>Sangha</h3><div><img class="header-avatar" src="https://i.pravatar.cc/150?img=32"></div></div>
+    <div class="stories">
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=1"></div></div><div class="story-name">Noa</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=3"></div></div><div class="story-name">Ori</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=5"></div></div><div class="story-name">Michal</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=8"></div></div><div class="story-name">Yotam</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=9"></div></div><div class="story-name">Rinat</div></div>
+    </div>
+
+    <div class="d2-wrap">
+      <div class="d2-scroll">
+        <div class="d2-chip green">
+          <div class="d2-chip-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A9E78" stroke-width="2"><path d="M6.5 6.5c1.5-1.5 4-2 6-.5 2-1.5 4.5-1 6 .5 1.5 1.5 2 4 .5 6l-6.5 6.5-6.5-6.5c-1.5-2-1-4.5.5-6z"/></svg></div>
+          <div class="d2-chip-num">7</div>
+          <div class="d2-chip-label">On the mat now</div>
+          <div class="d2-chip-avatars">
+            <img class="d2-chip-av" src="https://i.pravatar.cc/150?img=1">
+            <img class="d2-chip-av" src="https://i.pravatar.cc/150?img=5">
+            <img class="d2-chip-av" src="https://i.pravatar.cc/150?img=12">
+            <img class="d2-chip-av" src="https://i.pravatar.cc/150?img=9">
+          </div>
+        </div>
+        <div class="d2-chip amber">
+          <div class="d2-chip-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+          <div class="d2-chip-num">34</div>
+          <div class="d2-chip-label">Practiced today</div>
+          <div class="d2-chip-avatars">
+            <img class="d2-chip-av" src="https://i.pravatar.cc/150?img=13">
+            <img class="d2-chip-av" src="https://i.pravatar.cc/150?img=3">
+            <img class="d2-chip-av" src="https://i.pravatar.cc/150?img=10">
+          </div>
+        </div>
+        <div class="d2-chip beige">
+          <div class="d2-chip-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9B8E7E" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div class="d2-chip-num">89</div>
+          <div class="d2-chip-label">This week</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-h"><img src="https://i.pravatar.cc/150?img=13"><div class="post-h-info"><div class="post-h-name">amir_hadad</div><div class="post-h-loc">Ramat Gan, Israel</div></div></div>
+      <img class="post-img" src="https://images.unsplash.com/photo-1492725764893-90b379c2b6e7?w=400&h=300&fit=crop">
+      <div class="post-actions"><div class="post-actions-left"><svg width="22" height="22" viewBox="0 0 24 24" fill="#ED4956" stroke="#ED4956" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="likes">Liked by <b>noa</b> and <b>42 others</b></div>
+      <div class="caption"><b>amir_hadad</b> Baby woke up mid-Navasana. Did the rest with her on my belly</div>
+      <div class="time">1h ago</div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-h"><img src="https://i.pravatar.cc/150?img=1"><div class="post-h-info"><div class="post-h-name">noa_levi</div><div class="post-h-loc">Tel Aviv, Israel</div></div></div>
+      <img class="post-img" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop">
+      <div class="post-actions"><div class="post-actions-left"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="likes">Liked by <b>michal</b> and <b>12 others</b></div>
+      <div class="caption"><b>noa_levi</b> Perfect morning practice. Primary series flowed beautifully today</div>
+      <div class="time">2h ago</div>
+    </div>
+  </div></div>
+  <div class="label">
+    <h2>D2 — Scrollable Stat Chips</h2>
+    <p>Three horizontal scrollable mini-cards, each with its own icon, color, and avatar cluster. Compact, tappable, and doesn't take much vertical space. Each chip could link to a detail view.</p>
+  </div>
+</div>
+
+<!-- ═══ D3: Dark Gradient Banner ═══ -->
+<div>
+  <div class="phone"><div class="phone-inner">
+    <div class="header"><h3>Sangha</h3><div><img class="header-avatar" src="https://i.pravatar.cc/150?img=32"></div></div>
+    <div class="stories">
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=1"></div></div><div class="story-name">Noa</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=3"></div></div><div class="story-name">Ori</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=5"></div></div><div class="story-name">Michal</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=8"></div></div><div class="story-name">Yotam</div></div>
+      <div class="story"><div class="story-ring"><div class="story-ring-inner"><img src="https://i.pravatar.cc/150?img=9"></div></div><div class="story-name">Rinat</div></div>
+    </div>
+
+    <div class="d3-banner">
+      <div class="d3-bg-pattern"></div>
+      <div class="d3-top">
+        <div>
+          <div class="d3-title">Sangha Pulse</div>
+          <div class="d3-subtitle">Your community this week</div>
+        </div>
+        <div class="d3-live-badge"><div class="dot"></div><span>7 Live</span></div>
+      </div>
+      <div class="d3-stats">
+        <div class="d3-stat"><div class="d3-num">7</div><div class="d3-num-label">On the mat</div></div>
+        <div class="d3-stat"><div class="d3-num">34</div><div class="d3-num-label">Today</div></div>
+        <div class="d3-stat"><div class="d3-num">89</div><div class="d3-num-label">This week</div></div>
+      </div>
+      <div class="d3-footer">
+        <img class="d3-av" src="https://i.pravatar.cc/150?img=1">
+        <img class="d3-av" src="https://i.pravatar.cc/150?img=5">
+        <img class="d3-av" src="https://i.pravatar.cc/150?img=12">
+        <img class="d3-av" src="https://i.pravatar.cc/150?img=9">
+        <img class="d3-av" src="https://i.pravatar.cc/150?img=13">
+        <span class="d3-footer-text"><b>Noa</b>, <b>Michal</b> & 5 more practicing</span>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-h"><img src="https://i.pravatar.cc/150?img=13"><div class="post-h-info"><div class="post-h-name">amir_hadad</div><div class="post-h-loc">Ramat Gan, Israel</div></div></div>
+      <img class="post-img" src="https://images.unsplash.com/photo-1492725764893-90b379c2b6e7?w=400&h=300&fit=crop">
+      <div class="post-actions"><div class="post-actions-left"><svg width="22" height="22" viewBox="0 0 24 24" fill="#ED4956" stroke="#ED4956" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="likes">Liked by <b>noa</b> and <b>42 others</b></div>
+      <div class="caption"><b>amir_hadad</b> Baby woke up mid-Navasana. Did the rest with her on my belly</div>
+      <div class="time">1h ago</div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-h"><img src="https://i.pravatar.cc/150?img=1"><div class="post-h-info"><div class="post-h-name">noa_levi</div><div class="post-h-loc">Tel Aviv, Israel</div></div></div>
+      <img class="post-img" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop">
+      <div class="post-actions"><div class="post-actions-left"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B3228" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="likes">Liked by <b>michal</b> and <b>12 others</b></div>
+      <div class="caption"><b>noa_levi</b> Perfect morning practice. Primary series flowed beautifully today</div>
+      <div class="time">2h ago</div>
+    </div>
+  </div></div>
+  <div class="label">
+    <h2>D3 — Dark Gradient Banner</h2>
+    <p>A bold, warm dark-ink gradient card with white typography. Feels premium and creates a strong visual anchor. Subtle circle pattern in the background. "7 Live" badge in moss green. High contrast and eye-catching.</p>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

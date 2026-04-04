@@ -273,6 +273,64 @@ export default function CommunityScreen() {
           </ScrollView>
         </View>
 
+        {/* ── Sangha Pulse (D3 dark banner) ── */}
+        <View style={s.pulseOuter}>
+          <LinearGradient
+            colors={['#3B3228', '#5E5245']}
+            start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+            style={s.pulseBanner}
+          >
+            {/* Top row: title + live badge */}
+            <View style={s.pulseTop}>
+              <View>
+                <Text style={s.pulseTitle}>Sangha Pulse</Text>
+                <Text style={s.pulseSubtitle}>Your community this week</Text>
+              </View>
+              <View style={s.pulseLiveBadge}>
+                <View style={s.pulseLiveDot} />
+                <Text style={s.pulseLiveText}>{allStories.length} Live</Text>
+              </View>
+            </View>
+
+            {/* Stats row */}
+            <View style={s.pulseStats}>
+              <View style={s.pulseStat}>
+                <Text style={s.pulseNum}>{allStories.length}</Text>
+                <Text style={s.pulseLabel}>On the mat</Text>
+              </View>
+              <View style={s.pulseDivider} />
+              <View style={s.pulseStat}>
+                <Text style={s.pulseNum}>34</Text>
+                <Text style={s.pulseLabel}>Today</Text>
+              </View>
+              <View style={s.pulseDivider} />
+              <View style={s.pulseStat}>
+                <Text style={s.pulseNum}>89</Text>
+                <Text style={s.pulseLabel}>This week</Text>
+              </View>
+            </View>
+
+            {/* Avatar footer */}
+            <View style={s.pulseFooter}>
+              <View style={s.pulseAvatars}>
+                {allStories.slice(0, 5).map((p, i) => (
+                  <Image
+                    key={p.id + i}
+                    source={{ uri: p.avatarUrl || 'https://i.pravatar.cc/150' }}
+                    style={[s.pulseAv, i > 0 && { marginLeft: -8 }]}
+                  />
+                ))}
+              </View>
+              <Text style={s.pulseFooterText}>
+                <Text style={s.pulseFooterBold}>{allStories[0]?.name.split(' ')[0]}</Text>
+                {', '}
+                <Text style={s.pulseFooterBold}>{allStories[1]?.name.split(' ')[0]}</Text>
+                {` & ${Math.max(0, allStories.length - 2)} more practicing`}
+              </Text>
+            </View>
+          </LinearGradient>
+        </View>
+
         {/* ── Feed ── */}
         {allFeedPosts.map((p) => {
           const isLiked = localLiked.has(p.id);
@@ -437,6 +495,111 @@ const s = StyleSheet.create({
     color: moss.ink,
     textAlign: 'center',
     maxWidth: 68,
+  },
+
+  /* Sangha Pulse D3 */
+  pulseOuter: {
+    paddingHorizontal: 14,
+    paddingTop: 14,
+    paddingBottom: 2,
+  },
+  pulseBanner: {
+    borderRadius: 16,
+    padding: 18,
+    overflow: 'hidden',
+  },
+  pulseTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  pulseTitle: {
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 18,
+    color: '#FFFFFF',
+  },
+  pulseSubtitle: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.55)',
+    marginTop: 2,
+  },
+  pulseLiveBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(138,158,120,0.4)',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  pulseLiveDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+    backgroundColor: '#8A9E78',
+  },
+  pulseLiveText: {
+    fontFamily: 'DMSans_600SemiBold',
+    fontSize: 11,
+    color: '#DCE8D3',
+  },
+  pulseStats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  pulseStat: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  pulseDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+  },
+  pulseNum: {
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 30,
+    color: '#FFFFFF',
+    lineHeight: 34,
+  },
+  pulseLabel: {
+    fontFamily: 'DMSans_500Medium',
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.5)',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginTop: 2,
+  },
+  pulseFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 14,
+    paddingTop: 14,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.12)',
+  },
+  pulseAvatars: {
+    flexDirection: 'row',
+  },
+  pulseAv: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  pulseFooterText: {
+    fontFamily: 'DMSans_400Regular',
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.6)',
+    marginLeft: 8,
+    flex: 1,
+  },
+  pulseFooterBold: {
+    fontFamily: 'DMSans_600SemiBold',
+    color: 'rgba(255,255,255,0.9)',
   },
 
   /* Post */
