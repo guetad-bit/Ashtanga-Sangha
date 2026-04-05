@@ -230,7 +230,7 @@ export default function CommunityScreen() {
     return (
       <TouchableOpacity key={p.id + index} style={s.storyItem} activeOpacity={0.7} onPress={() => !isMe && openProfile(p.name)}>
         <LinearGradient
-          colors={['#DE0046', '#F7A34B']}
+          colors={['#8A9E78', '#6B8A5E']}
           start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }}
           style={s.storyRing}
         >
