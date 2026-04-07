@@ -52,24 +52,6 @@ interface Member {
   level: string; streak: number; location: string | null; bio: string | null;
 }
 
-const FAKE_USERS_FEED: {
-  id: string; name: string; avatarUrl: string; series: string; streak: number; bio: string;
-  feedCaption: string; feedImage: string; feedTime: string; feedLikes: number; feedComments: number;
-  location?: string;
-}[] = [
-  { id: 'fake-noa', name: 'Noa Levi', avatarUrl: 'https://i.pravatar.cc/150?img=1', series: 'primary', streak: 142, bio: 'Yoga teacher. 6 years of Ashtanga practice at a shala in Tel Aviv.', feedCaption: 'Perfect morning practice. Primary series flowed beautifully today', feedImage: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&h=600&fit=crop', feedTime: new Date(Date.now() - 2 * 3600000).toISOString(), feedLikes: 12, feedComments: 3, location: 'Tel Aviv, Israel' },
-  { id: 'fake-ori', name: 'Ori Cohen', avatarUrl: 'https://i.pravatar.cc/150?img=3', series: 'primary', streak: 8, bio: 'Software developer. Started Ashtanga 8 months ago.', feedCaption: 'Finally caught my toes in Janu Sirsasana! Small wins matter', feedImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=600&fit=crop', feedTime: new Date(Date.now() - 5 * 3600000).toISOString(), feedLikes: 18, feedComments: 7, location: 'Herzliya, Israel' },
-  { id: 'fake-michal', name: 'Michal Avraham', avatarUrl: 'https://i.pravatar.cc/150?img=5', series: 'intermediate', streak: 365, bio: 'Psychologist, mother of three. 12 years of practice.', feedCaption: 'Kapotasana — every day is a new beginning. The breath is the key', feedImage: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=600&h=600&fit=crop', feedTime: new Date(Date.now() - 8 * 3600000).toISOString(), feedLikes: 24, feedComments: 5, location: 'Jerusalem, Israel' },
-  { id: 'fake-yotam', name: 'Yotam Barak', avatarUrl: 'https://i.pravatar.cc/150?img=8', series: 'sun_sals', streak: 21, bio: 'Diving instructor in Eilat. Practices on the beach at sunrise.', feedCaption: 'Sun salutations on the reef beach. Nothing like practicing with sand under your feet', feedImage: 'https://images.unsplash.com/photo-1476673160081-cf065607f449?w=600&h=600&fit=crop', feedTime: new Date(Date.now() - 18 * 3600000).toISOString(), feedLikes: 31, feedComments: 9, location: 'Eilat, Israel' },
-  { id: 'fake-rinat', name: 'Rinat Shimoni', avatarUrl: 'https://i.pravatar.cc/150?img=9', series: 'primary', streak: 56, bio: 'Architect from Haifa. Home practitioner for 4 years.', feedCaption: 'Home practice corner ready. Mat down, incense lit, phone off', feedImage: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=600&h=600&fit=crop', feedTime: new Date(Date.now() - 3 * 3600000).toISOString(), feedLikes: 8, feedComments: 2, location: 'Haifa, Israel' },
-  { id: 'fake-daniel', name: 'Daniel Friedman', avatarUrl: 'https://i.pravatar.cc/150?img=11', series: 'primary', streak: 34, bio: 'Chef and restaurant owner. Practices at 10am after night shifts.', feedCaption: 'Late practice + healthy breakfast = perfect day', feedImage: 'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&h=600&fit=crop', feedTime: new Date(Date.now() - 26 * 3600000).toISOString(), feedLikes: 15, feedComments: 4, location: 'Jaffa, Israel' },
-  { id: 'fake-talia', name: 'Talia Wolf', avatarUrl: 'https://i.pravatar.cc/150?img=10', series: 'short', streak: 89, bio: 'Organic farmer in the Galilee. Mother of 4.', feedCaption: '40-minute practice between the garden and the barn. That is all you need', feedImage: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=600&fit=crop', feedTime: new Date(Date.now() - 4 * 3600000).toISOString(), feedLikes: 22, feedComments: 6, location: 'Galilee, Israel' },
-  { id: 'fake-ido', name: 'Ido Nachum', avatarUrl: 'https://i.pravatar.cc/150?img=12', series: 'primary', streak: 512, bio: 'Family doctor. 18 years of practice. Travels to Mysore every two years.', feedCaption: 'After 18 years, Supta Kurmasana still teaches me something new every time', feedImage: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600&h=600&fit=crop', feedTime: new Date(Date.now() - 6 * 3600000).toISOString(), feedLikes: 35, feedComments: 11, location: 'Mysore, India' },
-  { id: 'fake-shira', name: 'Shira Mizrahi', avatarUrl: 'https://i.pravatar.cc/150?img=16', series: 'sun_sals', streak: 3, bio: 'Art student. 3 months into Ashtanga. Draws postures in her sketchbook.', feedCaption: 'Drew Virabhadrasana B today. Mixing art and practice', feedImage: 'https://images.unsplash.com/photo-1552196563-55cd4e45efb3?w=600&h=600&fit=crop', feedTime: new Date(Date.now() - 48 * 3600000).toISOString(), feedLikes: 27, feedComments: 8, location: 'Bezalel, Jerusalem' },
-  { id: 'fake-amir', name: 'Amir Hadad', avatarUrl: 'https://i.pravatar.cc/150?img=13', series: 'primary', streak: 12, bio: 'Lawyer and new dad. Trying to keep up the routine with a baby at home.', feedCaption: 'Baby woke up mid-Navasana. Did the rest with her on my belly', feedImage: 'https://images.unsplash.com/photo-1492725764893-90b379c2b6e7?w=600&h=600&fit=crop', feedTime: new Date(Date.now() - 1 * 3600000).toISOString(), feedLikes: 42, feedComments: 14, location: 'Ramat Gan, Israel' },
-  { id: 'fake-sarah', name: 'Sarah Mitchell', avatarUrl: 'https://i.pravatar.cc/150?img=20', series: 'primary', streak: 204, bio: 'Yoga teacher in London. 3 months in Mysore with Sharath.', feedCaption: 'Morning Mysore at the shala. Nothing beats practicing together', feedImage: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=600&h=600&fit=crop', feedTime: new Date(Date.now() - 7 * 3600000).toISOString(), feedLikes: 19, feedComments: 4, location: 'London, UK' },
-  { id: 'fake-david', name: 'David Stern', avatarUrl: 'https://i.pravatar.cc/150?img=14', series: 'intermediate', streak: 730, bio: 'Former Wall Street, now yoga teacher in Brooklyn. 15 years.', feedCaption: 'Kapo day. The backbend that changed everything. Trust the breath.', feedImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=600&fit=crop', feedTime: new Date(Date.now() - 10 * 3600000).toISOString(), feedLikes: 28, feedComments: 6, location: 'Brooklyn, NY' },
-];
 
 interface UnifiedPost {
   id: string; userName: string; userAvatar: string; caption: string;
@@ -90,12 +72,6 @@ function timeAgo(iso: string): string {
   return `${weeks}w`;
 }
 
-/* Pick a random "liked by" name from the fake users for each post */
-function getLikedByName(postId: string): string {
-  const names = FAKE_USERS_FEED.map(u => u.name.split(' ')[0].toLowerCase());
-  const idx = Math.abs(postId.split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % names.length;
-  return names[idx];
-}
 
 export default function CommunityScreen() {
   const router = useRouter();
@@ -127,11 +103,11 @@ export default function CommunityScreen() {
   }, [user?.id, followingIds]);
 
   const openProfile = useCallback((name: string) => {
-    const fakeUser = FAKE_USERS_FEED.find((u) => u.name === name);
-    if (fakeUser) {
-      setProfileCard({ name: fakeUser.name, avatarUrl: fakeUser.avatarUrl, series: fakeUser.series, streak: fakeUser.streak, bio: fakeUser.bio });
+    const member = members.find((m) => m.name === name);
+    if (member) {
+      setProfileCard({ name: member.name, avatarUrl: member.avatar_url ?? '', series: member.series, streak: member.streak, bio: member.bio ?? '' });
     }
-  }, []);
+  }, [members]);
 
   const toggleLocalLike = useCallback((postId: string) => {
     setLocalLiked(prev => {
@@ -187,9 +163,6 @@ export default function CommunityScreen() {
     ? [{ id: user.id, name: user.name, avatarUrl: user.avatarUrl ?? null, series: user.series ?? 'primary', streak: 0 }]
     : [];
 
-  const fakeStories = FAKE_USERS_FEED.map((u) => ({
-    id: u.id, name: u.name, avatarUrl: u.avatarUrl, series: 'primary', streak: 0,
-  }));
   const dbPractitioners = livePractitioners.filter((p) => p.id !== user?.id);
   const allStories = [
     ...meOnMat,
@@ -197,30 +170,36 @@ export default function CommunityScreen() {
       id: p.id, name: p.name ?? 'Practitioner', avatarUrl: p.avatar_url,
       series: p.series, streak: p.streak ?? 0,
     })),
-    ...fakeStories,
+    ...members.map((m) => ({
+      id: m.id, name: m.name, avatarUrl: m.avatar_url,
+      series: m.series, streak: m.streak ?? 0,
+    })),
   ];
+
+  /* Sangha Pulse data — real data only */
+  const onMatCount = allStories.length;
+  const practicedTodayCount = (practicedToday ? 1 : 0) + dbPractitioners.length;
+  const weekStart = new Date();
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  weekStart.setHours(0, 0, 0, 0);
+  const realLogsThisWeek = practiceLogs.filter(log => new Date(log.loggedAt ?? '') >= weekStart).length;
+  const thisWeekCount = realLogsThisWeek + dbPractitioners.length + members.length;
 
   /* Merged & sorted feed */
   const allFeedPosts: UnifiedPost[] = [
     ...feedPosts.map((p) => ({
       id: p.id, userName: p.profiles?.name ?? 'Practitioner',
-      userAvatar: p.profiles?.avatar_url ?? 'https://i.pravatar.cc/150',
+      userAvatar: p.profiles?.avatar_url ?? 'https://ui-avatars.com/api/?background=8A9E78&color=fff&name=P',
       caption: p.caption ?? '', imageUrl: p.image_url,
       likesCount: p.likes_count ?? 0, commentsCount: p.comments_count ?? 0,
       createdAt: p.created_at, location: p.location,
     })),
     ...userPosts.map((p) => ({
       id: p.id, userName: p.userName,
-      userAvatar: p.userAvatar ?? 'https://i.pravatar.cc/150',
+      userAvatar: p.userAvatar ?? 'https://ui-avatars.com/api/?background=8A9E78&color=fff&name=P',
       caption: p.caption, imageUrl: p.imageUri ?? null,
       likesCount: p.likesCount ?? 0, commentsCount: 0,
       createdAt: p.createdAt, location: null,
-    })),
-    ...FAKE_USERS_FEED.map((u) => ({
-      id: u.id, userName: u.name, userAvatar: u.avatarUrl,
-      caption: u.feedCaption, imageUrl: u.feedImage || null,
-      likesCount: u.feedLikes, commentsCount: u.feedComments,
-      createdAt: u.feedTime, location: u.location ?? null,
     })),
   ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
@@ -288,24 +267,24 @@ export default function CommunityScreen() {
               </View>
               <View style={s.pulseLiveBadge}>
                 <View style={s.pulseLiveDot} />
-                <Text style={s.pulseLiveText}>{allStories.length} Live</Text>
+                <Text style={s.pulseLiveText}>{onMatCount} Live</Text>
               </View>
             </View>
 
             {/* Stats row */}
             <View style={s.pulseStats}>
               <View style={s.pulseStat}>
-                <Text style={s.pulseNum}>{allStories.length}</Text>
+                <Text style={s.pulseNum}>{onMatCount}</Text>
                 <Text style={s.pulseLabel}>On the mat</Text>
               </View>
               <View style={s.pulseDivider} />
               <View style={s.pulseStat}>
-                <Text style={s.pulseNum}>34</Text>
+                <Text style={s.pulseNum}>{practicedTodayCount}</Text>
                 <Text style={s.pulseLabel}>Today</Text>
               </View>
               <View style={s.pulseDivider} />
               <View style={s.pulseStat}>
-                <Text style={s.pulseNum}>89</Text>
+                <Text style={s.pulseNum}>{thisWeekCount}</Text>
                 <Text style={s.pulseLabel}>This week</Text>
               </View>
             </View>
@@ -316,7 +295,7 @@ export default function CommunityScreen() {
                 {allStories.slice(0, 5).map((p, i) => (
                   <Image
                     key={p.id + i}
-                    source={{ uri: p.avatarUrl || 'https://i.pravatar.cc/150' }}
+                    source={{ uri: p.avatarUrl || 'https://ui-avatars.com/api/?background=8A9E78&color=fff&name=P' }}
                     style={[s.pulseAv, i > 0 && { marginLeft: -8 }]}
                   />
                 ))}
@@ -383,7 +362,7 @@ export default function CommunityScreen() {
 
               {/* Likes */}
               <Text style={s.likesText}>
-                Liked by <Text style={s.bold}>{getLikedByName(p.id)}</Text> and <Text style={s.bold}>{displayLikes.toLocaleString()} others</Text>
+                <Text style={s.bold}>{displayLikes.toLocaleString()} {displayLikes === 1 ? 'like' : 'likes'}</Text>
               </Text>
 
               {/* Caption */}
