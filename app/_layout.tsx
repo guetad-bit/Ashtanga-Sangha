@@ -20,7 +20,16 @@ export default function RootLayout() {
   // Check if there's an existing session on app start
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      // Give the auth listener a moment to process
+      // DEMO MODE: auto-login with a guest profile if no session
+      if (!session) {
+        useAppStore.getState().setUser({
+          id: 'demo-user',
+          name: 'Guest Yogi',
+          email: 'guest@sangha.app',
+          series: 'primary' as any,
+          level: 'beginner' as any,
+        });
+      }
       setTimeout(() => setIsReady(true), 500);
     });
   }, []);
