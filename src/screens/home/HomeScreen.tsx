@@ -346,7 +346,7 @@ export default function HomeScreen() {
         </View>
 
         {/* Log practice CTA */}
-        <TouchableOpacity activeOpacity={0.85} onPress={handlePracticeButton} style={{ marginHorizontal: 20, marginBottom: 14 }}>
+        <TouchableOpacity activeOpacity={0.85} onPress={handlePracticeButton} style={{ marginHorizontal: 20, marginBottom: 10 }}>
           <LinearGradient colors={[clay.clay, clay.clayDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.logCard}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Ionicons name={practiceState === 'onMat' ? 'checkmark-circle' : 'book-outline'} size={28} color="#fff" />
@@ -357,6 +357,23 @@ export default function HomeScreen() {
               <Ionicons name="chevron-forward" size={22} color="rgba(255,255,255,0.8)" />
             </View>
           </LinearGradient>
+        </TouchableOpacity>
+
+        {/* Practice Mode entry */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => router.push('/practice-mode' as any)}
+          style={{
+            marginHorizontal: 20, marginBottom: 14, paddingVertical: 14, paddingHorizontal: 18,
+            borderRadius: 16, borderWidth: 1, borderColor: clay.border, backgroundColor: clay.card,
+            flexDirection: 'row', alignItems: 'center',
+          }}>
+          <Ionicons name="leaf-outline" size={22} color={clay.clayDark} />
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: clay.ink }}>Practice Mode</Text>
+            <Text style={{ fontSize: 12, color: clay.muted, marginTop: 2 }}>Distraction-free guided sequence</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={clay.muted} />
         </TouchableOpacity>
 
         {/* Moon + friends row */}
@@ -452,8 +469,10 @@ export default function HomeScreen() {
 
                 <View style={s.fcActions}>
                   <TouchableOpacity style={s.fcAct}>
-                    <Ionicons name="heart-outline" size={18} color={clay.heart} />
-                    <Text style={[s.fcActText, { color: clay.heart, marginLeft: 5 }]}>{post.likes_count ?? 0}</Text>
+                    <Ionicons name={(post.likes_count ?? 0) > 0 ? "flower" : "flower-outline"} size={18} color={clay.heart} />
+                    <Text style={[s.fcActText, { color: clay.heart, marginLeft: 6 }]}>
+                      {(post.likes_count ?? 0) === 0 ? 'Offer gratitude' : 'Received with gratitude'}
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={s.fcAct}>
                     <Ionicons name="chatbubble-outline" size={17} color={clay.muted} />

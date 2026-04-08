@@ -69,6 +69,7 @@ export default function RootLayout() {
       <Stack.Screen name="auth" />
       <Stack.Screen name="new-post" options={{ presentation: 'modal' }} />
       <Stack.Screen name="log-practice" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="practice-mode" options={{ presentation: 'fullScreenModal', animation: 'fade' }} />
     </Stack>
   );
 }

@@ -343,9 +343,9 @@ export default function CommunityScreen() {
                 <View style={s.actionsLeft}>
                   <TouchableOpacity activeOpacity={0.6} onPress={() => toggleLocalLike(p.id)}>
                     <Ionicons
-                      name={isLiked ? 'heart' : 'heart-outline'}
+                      name={isLiked ? 'flower' : 'flower-outline'}
                       size={26}
-                      color={isLiked ? moss.heartRed : moss.ink}
+                      color={isLiked ? moss.accent : moss.ink}
                     />
                   </TouchableOpacity>
                   <TouchableOpacity activeOpacity={0.6}>
@@ -360,9 +360,15 @@ export default function CommunityScreen() {
                 </TouchableOpacity>
               </View>
 
-              {/* Likes */}
+              {/* Gratitude */}
               <Text style={s.likesText}>
-                <Text style={s.bold}>{displayLikes.toLocaleString()} {displayLikes === 1 ? 'like' : 'likes'}</Text>
+                <Text style={s.bold}>
+                  {displayLikes === 0
+                    ? 'Offer gratitude 🙏'
+                    : displayLikes === 1
+                    ? 'Received with gratitude'
+                    : `Received with gratitude by ${displayLikes} practitioners`}
+                </Text>
               </Text>
 
               {/* Caption */}
