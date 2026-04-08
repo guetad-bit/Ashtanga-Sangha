@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1">
+<title>Profile Redesign — 3 Options</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #E8E0D4; font-family: 'DM Sans', sans-serif; padding: 32px 16px; display: flex; flex-direction: column; align-items: center; gap: 48px; }
+  h1 { font-family: 'DM Serif Display', serif; color: #3B3228; font-size: 28px; text-align: center; }
+  h1 span { color: #8A9E78; }
+  .subtitle { color: #5E5245; font-size: 15px; text-align: center; margin-top: 4px; max-width: 500px; }
+
+  .option-label {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: #3B3228;
+    margin-bottom: 4px; text-align: center;
+  }
+  .option-label span { color: #8A9E78; font-weight: normal; }
+  .option-desc { color: #5E5245; font-size: 14px; text-align: center; margin-bottom: 16px; max-width: 360px; }
+
+  /* Phone frame */
+  .phone {
+    width: 390px; min-height: 700px;
+    background: #F6F2EC;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(59,50,40,0.18);
+    border: 3px solid #E8E0D4;
+    position: relative;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 48px; padding: 14px 24px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 14px; font-weight: 600; color: #3B3228;
+  }
+
+  /* Shared header */
+  .app-header {
+    padding: 8px 20px 12px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .app-header .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: #3B3228;
+  }
+  .app-header .icons { display: flex; gap: 16px; }
+  .app-header .icon-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(138,158,120,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: #3B3228;
+  }
+
+  /* Scrollable area */
+  .content { overflow-y: auto; padding-bottom: 90px; }
+
+  /* Tab bar */
+  .tab-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 80px; background: #fff;
+    border-top: 1px solid #EDE9E3;
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 0 8px;
+  }
+  .tab-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .tab-item .tab-icon { font-size: 22px; }
+  .tab-item .tab-label { font-size: 10px; color: #9B8E7E; font-weight: 600; }
+  .tab-item.active .tab-label { color: #8A9E78; }
+
+  /* ═══════════════════════════════════════════════ */
+  /* OPTION A — Instagram-style Profile             */
+  /* ═══════════════════════════════════════════════ */
+
+  .a-profile-top {
+    text-align: center; padding: 20px 20px 0;
+  }
+  .a-avatar-ring {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: linear-gradient(135deg, #8A9E78, #6B8A5E);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px;
+  }
+  .a-avatar {
+    width: 92px; height: 92px; border-radius: 50%;
+    border: 3px solid #F6F2EC;
+    object-fit: cover;
+  }
+  .a-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px; color: #3B3228;
+  }
+  .a-location { color: #9B8E7E; font-size: 13px; margin-top: 2px; }
+  .a-bio { color: #5E5245; font-size: 14px; margin-top: 8px; line-height: 1.5; padding: 0 20px; }
+
+  .a-stats-row {
+    display: flex; justify-content: space-around;
+    padding: 20px 16px;
+    margin: 16px 20px 0;
+    background: #fff; border-radius: 16px;
+    border: 1px solid #EDE9E3;
+  }
+  .a-stat { text-align: center; }
+  .a-stat-num { font-family: 'DM Serif Display', serif; font-size: 22px; color: #3B3228; }
+  .a-stat-label { font-size: 12px; color: #9B8E7E; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+  .a-stat-divider { width: 1px; background: #EDE9E3; }
+
+  .a-badges {
+    display: flex; gap: 8px; justify-content: center;
+    margin-top: 16px; flex-wrap: wrap; padding: 0 20px;
+  }
+  .a-badge {
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(138,158,120,0.1);
+    border: 1px solid rgba(138,158,120,0.25);
+    border-radius: 20px;
+    padding: 6px 14px; font-size: 13px; color: #3B3228; font-weight: 600;
+  }
+
+  .a-btn-row {
+    display: flex; gap: 10px; padding: 16px 20px 0;
+  }
+  .a-edit-btn {
+    flex: 1; padding: 12px; border-radius: 12px;
+    border: 1.5px solid #8A9E78; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    font-size: 14px; color: #3B3228; cursor: pointer;
+    text-align: center;
+  }
+  .a-share-btn {
+    width: 44px; height: 44px; border-radius: 12px;
+    border: 1.5px solid #E8E0D4; background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; cursor: pointer;
+  }
+
+  .a-section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; color: #3B3228;
+    padding: 20px 20px 12px;
+  }
+
+  .a-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2px; padding: 0 2px;
+  }
+  .a-grid-item {
+    aspect-ratio: 1; overflow: hidden;
+  }
+  .a-grid-item img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+
+  /* ═══════════════════════════════════════════════ */
+  /* OPTION B — Wellness Dashboard Profile          */
+  /* ═══════════════════════════════════════════════ */
+
+  .b-cover {
+    height: 140px;
+    background: linear-gradient(135deg, #3B3228, #5E5245);
+    position: relative;
+  }
+  .b-cover-pattern {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 20% 80%, rgba(138,158,120,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(196,149,106,0.15) 0%, transparent 50%);
+  }
+  .b-avatar-section {
+    display: flex; align-items: flex-end; gap: 16px;
+    padding: 0 20px; margin-top: -44px; position: relative; z-index: 2;
+  }
+  .b-avatar-wrap { position: relative; }
+  .b-avatar {
+    width: 88px; height: 88px; border-radius: 50%;
+    border: 4px solid #F6F2EC; object-fit: cover;
+  }
+  .b-camera {
+    position: absolute; bottom: 0; right: 0;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #8A9E78; border: 2px solid #F6F2EC;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: #fff;
+  }
+  .b-name-area { padding-bottom: 8px; }
+  .b-name { font-family: 'DM Serif Display', serif; font-size: 22px; color: #3B3228; }
+  .b-tagline { color: #9B8E7E; font-size: 13px; }
+
+  .b-streak-banner {
+    margin: 16px 20px; padding: 16px 20px;
+    background: linear-gradient(135deg, #8A9E78, #6B8A5E);
+    border-radius: 16px; color: #fff;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .b-streak-fire { font-size: 36px; }
+  .b-streak-text h3 { font-family: 'DM Serif Display', serif; font-size: 20px; margin-bottom: 2px; }
+  .b-streak-text p { font-size: 13px; opacity: 0.85; }
+
+  .b-stats-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; padding: 0 20px; margin-bottom: 16px;
+  }
+  .b-stat-card {
+    background: #fff; border-radius: 16px; padding: 16px;
+    border: 1px solid #EDE9E3;
+  }
+  .b-stat-card .icon { font-size: 24px; margin-bottom: 8px; }
+  .b-stat-card .num { font-family: 'DM Serif Display', serif; font-size: 26px; color: #3B3228; }
+  .b-stat-card .label { font-size: 12px; color: #9B8E7E; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .b-section { margin: 0 20px 16px; }
+  .b-section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; color: #3B3228; margin-bottom: 12px;
+  }
+  .b-about-card {
+    background: #fff; border-radius: 16px; padding: 16px 20px;
+    border: 1px solid #EDE9E3;
+  }
+  .b-about-text { color: #5E5245; font-size: 14px; line-height: 1.6; }
+
+  .b-detail-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid #F0ECE6;
+  }
+  .b-detail-row:last-child { border-bottom: none; }
+  .b-detail-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(138,158,120,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .b-detail-info { flex: 1; }
+  .b-detail-label { font-size: 12px; color: #9B8E7E; font-weight: 600; text-transform: uppercase; }
+  .b-detail-value { font-size: 15px; color: #3B3228; font-weight: 500; margin-top: 1px; }
+
+  /* ═══════════════════════════════════════════════ */
+  /* OPTION C — Zen Minimal Profile                 */
+  /* ═══════════════════════════════════════════════ */
+
+  .c-hero {
+    position: relative; height: 200px; overflow: hidden;
+  }
+  .c-hero img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .c-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(246,242,236,0.9) 90%, #F6F2EC 100%);
+  }
+
+  .c-avatar-float {
+    width: 96px; height: 96px; border-radius: 50%;
+    border: 4px solid #F6F2EC;
+    margin: -52px auto 0; position: relative; z-index: 2;
+    object-fit: cover;
+    box-shadow: 0 4px 20px rgba(59,50,40,0.12);
+  }
+
+  .c-name-center {
+    text-align: center; padding: 12px 20px 0;
+  }
+  .c-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; color: #3B3228;
+  }
+  .c-subtitle {
+    color: #9B8E7E; font-size: 14px; margin-top: 4px;
+  }
+  .c-bio {
+    color: #5E5245; font-size: 14px; line-height: 1.6;
+    margin-top: 10px; text-align: center; padding: 0 32px;
+  }
+
+  .c-edit-btn {
+    display: block; margin: 16px auto 0;
+    padding: 10px 28px; border-radius: 24px;
+    border: 1.5px solid #8A9E78; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    font-size: 14px; color: #3B3228; cursor: pointer;
+  }
+
+  .c-journey-card {
+    margin: 20px 20px 0; padding: 20px;
+    background: #fff; border-radius: 20px;
+    border: 1px solid #EDE9E3;
+  }
+  .c-journey-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; color: #3B3228; margin-bottom: 16px;
+  }
+
+  .c-timeline { position: relative; padding-left: 28px; }
+  .c-timeline::before {
+    content: ''; position: absolute; left: 8px; top: 4px; bottom: 4px;
+    width: 2px; background: linear-gradient(to bottom, #8A9E78, #E8E0D4);
+  }
+  .c-timeline-item { position: relative; margin-bottom: 20px; }
+  .c-timeline-item:last-child { margin-bottom: 0; }
+  .c-timeline-dot {
+    position: absolute; left: -24px; top: 4px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #8A9E78; border: 2px solid #F6F2EC;
+  }
+  .c-timeline-dot.current { background: #C4956A; box-shadow: 0 0 0 4px rgba(196,149,106,0.2); }
+  .c-timeline-date { font-size: 12px; color: #9B8E7E; font-weight: 600; }
+  .c-timeline-text { font-size: 14px; color: #3B3228; font-weight: 500; margin-top: 2px; }
+
+  .c-mini-stats {
+    display: flex; gap: 12px; margin: 16px 20px 0;
+  }
+  .c-mini-stat {
+    flex: 1; background: #fff; border-radius: 16px;
+    padding: 16px 12px; text-align: center;
+    border: 1px solid #EDE9E3;
+  }
+  .c-mini-stat .num { font-family: 'DM Serif Display', serif; font-size: 24px; color: #3B3228; }
+  .c-mini-stat .label { font-size: 11px; color: #9B8E7E; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  .c-quote {
+    margin: 16px 20px; padding: 20px;
+    background: linear-gradient(135deg, #3B3228, #5E5245);
+    border-radius: 16px; text-align: center;
+  }
+  .c-quote-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px; color: #fff; line-height: 1.5;
+    font-style: italic;
+  }
+  .c-quote-attr { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<h1>Profile Screen — <span>3 Redesign Options</span></h1>
+<p class="subtitle">Choose the direction that feels right for your Ashtanga Sangha community</p>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- OPTION A — Instagram-style Profile                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+<p class="option-label"><span>A</span> — Instagram-Style Profile</p>
+<p class="option-desc">Stats bar, grid of practice photos, clean and familiar layout. Social-first feel matching the new Community page.</p>
+
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>☰</span></div>
+  <div class="app-header">
+    <div class="logo">Ashtanga Sangha</div>
+    <div class="icons">
+      <div class="icon-btn">⚙</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="a-profile-top">
+      <div class="a-avatar-ring">
+        <img class="a-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face" alt="avatar">
+      </div>
+      <div class="a-name">Noa Levi</div>
+      <div class="a-location">📍 Tel Aviv, Israel</div>
+      <div class="a-bio">Dedicated Ashtanga practitioner since 2019. Primary series daily, working on intermediate. Teaching & sharing the practice 🧘‍♀️</div>
+    </div>
+
+    <div class="a-stats-row">
+      <div class="a-stat">
+        <div class="a-stat-num">156</div>
+        <div class="a-stat-label">Practices</div>
+      </div>
+      <div class="a-stat-divider"></div>
+      <div class="a-stat">
+        <div class="a-stat-num">23</div>
+        <div class="a-stat-label">Day Streak</div>
+      </div>
+      <div class="a-stat-divider"></div>
+      <div class="a-stat">
+        <div class="a-stat-num">12</div>
+        <div class="a-stat-label">Connections</div>
+      </div>
+    </div>
+
+    <div class="a-badges">
+      <div class="a-badge">🌿 Primary Series</div>
+      <div class="a-badge">🔥 Intermediate</div>
+      <div class="a-badge">🧘 Regular</div>
+    </div>
+
+    <div class="a-btn-row">
+      <div class="a-edit-btn">✏️ Edit Profile</div>
+      <div class="a-share-btn">↗</div>
+    </div>
+
+    <div class="a-section-title">My Practice</div>
+    <div class="a-grid">
+      <div class="a-grid-item"><img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&h=300&fit=crop" alt=""></div>
+      <div class="a-grid-item"><img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&h=300&fit=crop" alt=""></div>
+      <div class="a-grid-item"><img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=300&h=300&fit=crop" alt=""></div>
+      <div class="a-grid-item"><img src="https://images.unsplash.com/photo-1588286840104-8957b019727f?w=300&h=300&fit=crop" alt=""></div>
+      <div class="a-grid-item"><img src="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?w=300&h=300&fit=crop" alt=""></div>
+      <div class="a-grid-item"><img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=300&h=300&fit=crop" alt=""></div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab-item"><span class="tab-icon">🏠</span><span class="tab-label">Home</span></div>
+    <div class="tab-item"><span class="tab-icon">🧘</span><span class="tab-label">Practice</span></div>
+    <div class="tab-item"><span class="tab-icon">👥</span><span class="tab-label">Community</span></div>
+    <div class="tab-item active"><span class="tab-icon">👤</span><span class="tab-label">Profile</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- OPTION B — Wellness Dashboard Profile                              -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+<p class="option-label"><span>B</span> — Wellness Dashboard</p>
+<p class="option-desc">Practice-focused with streak banner, stat cards, and detailed practice info. Data-rich and motivating.</p>
+
+<div class="phone">
+  <div class="status-bar"><span>9:41</span><span>☰</span></div>
+  <div class="content">
+    <div class="b-cover"><div class="b-cover-pattern"></div></div>
+
+    <div class="b-avatar-section">
+      <div class="b-avatar-wrap">
+        <img class="b-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face" alt="avatar">
+        <div class="b-camera">📷</div>
+      </div>
+      <div class="b-name-area">
+        <div class="b-name">Noa Levi</div>
+        <div class="b-tagline">📍 Tel Aviv · Primary & Intermediate</div>
+      </div>
+    </div>
+
+    <div class="b-streak-banner">
+      <div class="b-streak-fire">🔥</div>
+      <div class="b-streak-text">
+        <h3>23 Day Streak!</h3>
+        <p>Your longest streak was 31 days. Keep going!</p>
+      </div>
+    </div>
+
+    <div class="b-stats-grid">
+      <div class="b-stat-card">
+        <div class="icon">🧘</div>
+        <div class="num">156</div>
+        <div class="label">Total Practices</div>
+      </div>
+      <div class="b-stat-card">
+        <div class="icon">⏱</div>
+        <div class="num">234h</div>
+        <div class="label">On the Mat</div>
+      </div>
+      <div class="b-stat-card">
+        <div class="icon">📅</div>
+        <div class="num">5</div>
+        <div class="label">This Week</div>
+      </div>
+      <div class="b-stat-card">
+        <div class="icon">🌙</div>
+        <div class="num">14</div>
+        <div class="label">Moon Days</div>
+      </div>
+    </div>
+
+    <div class="b-section">
+      <div class="b-section-title">About</div>
+      <div class="b-about-card">
+        <p class="b-about-text">Dedicated Ashtanga practitioner since 2019. Primary series daily, working on intermediate. Teaching & sharing the practice.</p>
+        <div class="b-detail-row">
+          <div class="b-detail-icon">🌿</div>
+          <div class="b-detail-info">
+            <div class="b-detail-label">Current Series</div>
+            <div class="b-detail-value">Primary + Intermediate</div>
+          </div>
+        </div>
+        <div class="b-detail-row">
+          <div class="b-detail-icon">📊</div>
+          <div class="b-detail-info">
+            <div class="b-detail-label">Level</div>
+            <div class="b-detail-value">Regular Practitioner</div>
+          </div>
+        </div>
+        <div class="b-detail-row">
+          <div class="b-detail-icon">❤️</div>
+          <div class="b-detail-info">
+            <div class="b-detail-label">Favorite Asana</div>
+            <div class="b-detail-value">Marichyasana D</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab-item"><span class="tab-icon">🏠</span><span class="tab-label">Home</span></div>
+    <div class="tab-item"><span class="tab-icon">🧘</span><span class="tab-label">Practice</span></div>
+    <div class="tab-item"><span class="tab-icon">👥</span><span class="tab-label">Community</span></div>
+    <div class="tab-item active"><span class="tab-icon">👤</span><span class="tab-label">Profile</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- OPTION C — Zen Minimal with Journey Timeline                       -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+<p class="option-label"><span>C</span> — Zen Journey</p>
+<p class="option-desc">Cover photo, floating avatar, practice journey timeline, and an inspirational quote. Peaceful and personal.</p>
+
+<div class="phone">
+  <div class="status-bar" style="position:absolute;z-index:10;color:#fff;width:100%;"><span>9:41</span><span>☰</span></div>
+  <div class="content">
+    <div class="c-hero">
+      <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=400&fit=crop" alt="cover">
+      <div class="c-hero-overlay"></div>
+    </div>
+    <img class="c-avatar-float" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face" alt="avatar">
+
+    <div class="c-name-center">
+      <div class="c-name">Noa Levi</div>
+      <div class="c-subtitle">📍 Tel Aviv · Ashtanga Practitioner</div>
+      <div class="c-bio">Dedicated to the practice since 2019. Finding stillness in movement, one breath at a time.</div>
+      <button class="c-edit-btn">✏️ Edit Profile</button>
+    </div>
+
+    <div class="c-mini-stats">
+      <div class="c-mini-stat">
+        <div class="num">156</div>
+        <div class="label">Practices</div>
+      </div>
+      <div class="c-mini-stat">
+        <div class="num">23</div>
+        <div class="label">Streak</div>
+      </div>
+      <div class="c-mini-stat">
+        <div class="num">5y</div>
+        <div class="label">Journey</div>
+      </div>
+    </div>
+
+    <div class="c-journey-card">
+      <div class="c-journey-title">My Practice Journey</div>
+      <div class="c-timeline">
+        <div class="c-timeline-item">
+          <div class="c-timeline-dot current"></div>
+          <div class="c-timeline-date">Now</div>
+          <div class="c-timeline-text">Working on Intermediate Series</div>
+        </div>
+        <div class="c-timeline-item">
+          <div class="c-timeline-dot"></div>
+          <div class="c-timeline-date">2023</div>
+          <div class="c-timeline-text">Completed Full Primary Series</div>
+        </div>
+        <div class="c-timeline-item">
+          <div class="c-timeline-dot"></div>
+          <div class="c-timeline-date">2021</div>
+          <div class="c-timeline-text">Started daily Mysore practice</div>
+        </div>
+        <div class="c-timeline-item">
+          <div class="c-timeline-dot"></div>
+          <div class="c-timeline-date">2019</div>
+          <div class="c-timeline-text">First Ashtanga class ✨</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="c-quote">
+      <div class="c-quote-text">"Do your practice and all is coming."</div>
+      <div class="c-quote-attr">— Sri K. Pattabhi Jois</div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab-item"><span class="tab-icon">🏠</span><span class="tab-label">Home</span></div>
+    <div class="tab-item"><span class="tab-icon">🧘</span><span class="tab-label">Practice</span></div>
+    <div class="tab-item"><span class="tab-icon">👥</span><span class="tab-label">Community</span></div>
+    <div class="tab-item active"><span class="tab-icon">👤</span><span class="tab-label">Profile</span></div>
+  </div>
+</div>
+
+</body>
+</html>

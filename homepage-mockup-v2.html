@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sangha — Home v2</title>
+<style>
+  :root {
+    --clay: #C26B4D;
+    --clay-dark: #A85737;
+    --clay-soft: #E8B896;
+    --sand: #F5EFE6;
+    --bg: #FAF6EF;
+    --card: #FFFFFF;
+    --ink: #2B2018;
+    --muted: #8B7F72;
+    --border: #EADFCF;
+    --gold: #D4A574;
+    --sage: #8A9E78;
+    --success: #6B8E5A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #E8DFD0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Helvetica, Arial, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  body { padding: 40px 20px; display: flex; justify-content: center; }
+
+  .phone {
+    width: 420px;
+    background: var(--bg);
+    border-radius: 32px;
+    box-shadow: 0 30px 80px rgba(43,32,24,.25), 0 4px 12px rgba(43,32,24,.08);
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,.05);
+  }
+
+  /* ---------- Top header ---------- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--clay) 0%, var(--clay-dark) 100%);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 22px;
+  }
+  .brand-text .name {
+    font-family: "Georgia", "Times New Roman", serif;
+    font-size: 24px; font-weight: 700; letter-spacing: .5px; line-height: 1;
+  }
+  .brand-text .tag {
+    font-size: 9px; letter-spacing: 2px; color: var(--muted); margin-top: 4px; text-transform: uppercase;
+  }
+  .top-right { display: flex; align-items: center; gap: 10px; }
+  .bell-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(43,32,24,.06);
+    font-size: 16px;
+  }
+  .bell-dot {
+    position: absolute; top: 8px; right: 8px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--clay); border: 2px solid #fff;
+  }
+  .avatar-sm {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, #C9A384 0%, #8B6B4A 100%);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(43,32,24,.1);
+  }
+
+  /* ---------- Tabs ---------- */
+  .tabs {
+    display: flex;
+    margin: 8px 20px 16px;
+    background: #EADFCF;
+    border-radius: 12px;
+    padding: 4px;
+  }
+  .tab {
+    flex: 1; text-align: center;
+    padding: 10px 6px;
+    font-size: 13px; font-weight: 600;
+    color: var(--muted);
+    border-radius: 9px;
+    cursor: pointer;
+  }
+  .tab.active {
+    background: #fff;
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgba(43,32,24,.08);
+  }
+
+  /* ---------- Stats row ---------- */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr 1fr;
+    gap: 10px;
+    padding: 0 20px 14px;
+  }
+  .streak-card {
+    background: linear-gradient(135deg, #E8B896 0%, #D4A574 100%);
+    border-radius: 16px;
+    padding: 14px 12px;
+    color: var(--ink);
+    position: relative;
+  }
+  .streak-flame { font-size: 22px; }
+  .streak-label { font-size: 10px; font-weight: 600; color: #7A4B2E; margin-top: 2px; }
+  .streak-num { font-size: 22px; font-weight: 800; color: #5C3620; line-height: 1.1; margin-top: 2px; }
+  .streak-sub { font-size: 9px; color: #7A4B2E; margin-top: 4px; display: flex; align-items: center; gap: 2px; }
+
+  .weekly-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 3px rgba(43,32,24,.04);
+    border: 1px solid var(--border);
+  }
+  .weekly-title { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .weekly-stats { display: flex; justify-content: space-between; align-items: flex-end; gap: 4px; }
+  .w-item { text-align: center; flex: 1; }
+  .w-num { font-size: 18px; font-weight: 800; color: var(--ink); line-height: 1; }
+  .w-lbl { font-size: 9px; color: var(--muted); margin-top: 3px; }
+
+  .log-card {
+    background: linear-gradient(135deg, var(--clay) 0%, var(--clay-dark) 100%);
+    border-radius: 16px;
+    padding: 14px 12px;
+    color: #fff;
+    display: flex; flex-direction: column; justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(194,107,77,.3);
+  }
+  .log-icon { font-size: 18px; }
+  .log-title { font-size: 14px; font-weight: 700; line-height: 1.1; margin-top: 4px; }
+  .log-sub { font-size: 10px; opacity: .85; margin-top: 2px; display: flex; justify-content: space-between; align-items: center; }
+
+  /* ---------- Moon + friends ---------- */
+  .row2 {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 10px;
+    padding: 0 20px 14px;
+  }
+  .moon-card, .friends-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .moon-icon {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #D8D2C3 0%, #7A7266 70%, #3A342B 100%);
+    flex-shrink: 0;
+  }
+  .moon-title { font-size: 12px; font-weight: 700; }
+  .moon-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .moon-cta { font-size: 9px; color: var(--clay); font-weight: 600; margin-top: 3px; }
+  .friends-avatars { display: flex; }
+  .friends-avatars div {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--clay-soft);
+    border: 2px solid #fff;
+    margin-left: -8px;
+  }
+  .friends-avatars div:first-child { margin-left: 0; background: #8B6B4A; }
+  .friends-avatars div:nth-child(2) { background: #C9A384; }
+  .friends-avatars div:nth-child(3) { background: #7A6855; }
+  .friends-title { font-size: 11px; font-weight: 700; line-height: 1.2; }
+  .friends-sub { font-size: 9px; color: var(--muted); }
+
+  /* ---------- Quote banner ---------- */
+  .quote-banner {
+    margin: 0 20px 16px;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    height: 110px;
+    background: linear-gradient(135deg, #D4B896 0%, #A68868 50%, #7A6855 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .quote-banner::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 80% 100%, rgba(0,0,0,.2), transparent 60%),
+      radial-gradient(ellipse at 20% 0%, rgba(255,255,255,.15), transparent 50%);
+  }
+  .quote-text {
+    position: relative;
+    color: #fff;
+    font-family: "Georgia", serif;
+    font-style: italic;
+    font-size: 13px;
+    text-align: center;
+    padding: 0 30px;
+    line-height: 1.5;
+    text-shadow: 0 1px 4px rgba(0,0,0,.25);
+  }
+  .quote-divider {
+    display: block;
+    width: 30px;
+    height: 1px;
+    background: rgba(255,255,255,.6);
+    margin: 6px auto 0;
+  }
+
+  /* ---------- Feed card ---------- */
+  .feed-card {
+    background: #fff;
+    margin: 0 20px 14px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(43,32,24,.04);
+  }
+  .fc-head { display: flex; align-items: flex-start; gap: 12px; }
+  .fc-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .fc-avatar.a1 { background: linear-gradient(135deg, #D4A584 0%, #8B6B4A 100%); }
+  .fc-avatar.a2 { background: linear-gradient(135deg, #C9A384 0%, #7A5540 100%); }
+  .fc-dot {
+    position: absolute; bottom: 0; right: 0;
+    width: 12px; height: 12px; border-radius: 50%;
+    border: 2px solid #fff;
+  }
+  .fc-dot.green { background: var(--success); }
+  .fc-dot.orange { background: var(--clay); }
+  .fc-meta { flex: 1; }
+  .fc-name { font-size: 15px; font-weight: 700; }
+  .fc-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .fc-more { color: var(--muted); font-size: 18px; padding: 2px 4px; cursor: pointer; }
+
+  .fc-series-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+  .fc-series { font-size: 17px; font-weight: 800; }
+  .fc-chip { font-size: 10px; padding: 3px 8px; border-radius: 20px; background: #E8DFD0; color: #6B5540; font-weight: 600; }
+  .fc-chip.primary { background: #D6E3D0; color: #4A6B3A; }
+
+  .fc-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .fc-stat { display: flex; flex-direction: column; gap: 2px; }
+  .fc-stat-ico { font-size: 12px; color: var(--muted); }
+  .fc-stat-val { font-size: 14px; font-weight: 800; }
+  .fc-stat-lbl { font-size: 9px; color: var(--muted); }
+  .fc-stat.complete .fc-stat-val { color: var(--success); font-size: 13px; }
+
+  .fc-note {
+    font-size: 12px;
+    font-style: italic;
+    color: #4A3D32;
+    line-height: 1.5;
+    margin: 6px 0 12px;
+  }
+
+  .fc-progress-wrap {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 4px;
+  }
+  .fc-bar {
+    flex: 1; height: 6px; background: var(--sand); border-radius: 3px; overflow: hidden;
+  }
+  .fc-bar-fill {
+    height: 100%; background: linear-gradient(90deg, var(--clay) 0%, var(--clay-dark) 100%);
+    border-radius: 3px;
+  }
+  .fc-pct { font-size: 13px; font-weight: 800; }
+  .fc-pct-sub { font-size: 10px; color: var(--muted); }
+
+  .fc-actions { display: flex; align-items: center; gap: 16px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .fc-act { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); font-weight: 600; }
+  .fc-act.liked { color: var(--clay); }
+  .fc-liked-by { flex: 1; display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--muted); }
+  .fc-liked-avs { display: flex; }
+  .fc-liked-avs div {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--clay-soft);
+    border: 1.5px solid #fff;
+    margin-left: -6px;
+  }
+  .fc-liked-avs div:first-child { margin-left: 0; background: #C9A384; }
+  .fc-liked-avs div:nth-child(2) { background: #8B6B4A; }
+  .fc-right-acts { display: flex; align-items: center; gap: 14px; color: var(--muted); font-size: 14px; }
+
+  /* ---------- Practitioners Near You ---------- */
+  .near-section { padding: 4px 20px 16px; }
+  .near-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .near-title { font-size: 15px; font-weight: 800; }
+  .near-view { font-size: 12px; color: var(--clay); font-weight: 600; }
+  .near-scroll {
+    display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px;
+  }
+  .near-card {
+    min-width: 115px;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    padding: 10px;
+    display: flex; flex-direction: column; gap: 6px;
+    flex-shrink: 0;
+  }
+  .near-img {
+    width: 100%; height: 80px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--clay-soft) 0%, #A68868 100%);
+  }
+  .near-img.p2 { background: linear-gradient(135deg, #B8926D 0%, #7A5540 100%); }
+  .near-img.p3 { background: linear-gradient(135deg, #D4B896 0%, #8B6B4A 100%); }
+  .near-name { font-size: 12px; font-weight: 700; }
+  .near-sub { font-size: 9px; color: var(--muted); }
+  .near-streak { font-size: 9px; color: var(--clay); font-weight: 600; display: flex; align-items: center; gap: 2px; }
+  .near-connect {
+    margin-top: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 5px 0;
+    text-align: center;
+    background: var(--sand);
+    color: var(--clay-dark);
+    border-radius: 7px;
+  }
+  .near-find {
+    min-width: 115px;
+    background: var(--sand);
+    border: 1.5px dashed var(--clay-soft);
+    border-radius: 14px;
+    padding: 12px 10px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .near-find-ico { font-size: 20px; }
+  .near-find-txt { font-size: 10px; color: var(--muted); font-weight: 600; line-height: 1.3; }
+
+  /* ---------- Bottom nav ---------- */
+  .bottom-nav {
+    display: flex; align-items: center; justify-content: space-around;
+    background: #fff;
+    padding: 14px 20px 20px;
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: var(--muted); font-weight: 600; }
+  .nav-item.active { color: var(--clay); }
+  .nav-ico { font-size: 18px; }
+  .nav-center {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--clay) 0%, var(--clay-dark) 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 24px;
+    margin-top: -32px;
+    box-shadow: 0 8px 20px rgba(194,107,77,.4);
+    border: 4px solid #fff;
+  }
+</style>
+</head>
+<body>
+  <div class="phone">
+
+    <!-- Header -->
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">🪷</div>
+        <div class="brand-text">
+          <div class="name">Sangha</div>
+          <div class="tag">Ashtanga · Community · Growth</div>
+        </div>
+      </div>
+      <div class="top-right">
+        <div class="bell-btn">🔔<span class="bell-dot"></span></div>
+        <div class="avatar-sm"></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active">Following</div>
+      <div class="tab">Moon Days</div>
+      <div class="tab">My Practice</div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-row">
+      <div class="streak-card">
+        <div class="streak-flame">🔥</div>
+        <div class="streak-label">7 Day Streak</div>
+        <div class="streak-num">6 Days</div>
+        <div class="streak-sub">Keep the fire alive ›</div>
+      </div>
+      <div class="weekly-card">
+        <div class="weekly-title">Weekly Summary</div>
+        <div class="weekly-stats">
+          <div class="w-item"><div class="w-num">12</div><div class="w-lbl">Practices</div></div>
+          <div class="w-item"><div class="w-num">14h 20m</div><div class="w-lbl">Total Time</div></div>
+          <div class="w-item"><div class="w-num">423</div><div class="w-lbl">Poses</div></div>
+        </div>
+      </div>
+      <div class="log-card">
+        <div>
+          <div class="log-icon">📖</div>
+          <div class="log-title">Log Practice</div>
+        </div>
+        <div class="log-sub"><span>Start your journey</span><span>›</span></div>
+      </div>
+    </div>
+
+    <!-- Moon + friends -->
+    <div class="row2">
+      <div class="moon-card">
+        <div class="moon-icon"></div>
+        <div style="flex:1">
+          <div class="moon-title">New Moon Apr 8</div>
+          <div class="moon-sub">Rest, reflect, and allow. 3 days to go.</div>
+        </div>
+        <div class="moon-cta">Learn More ›</div>
+      </div>
+      <div class="friends-card">
+        <div class="friends-avatars">
+          <div></div><div></div><div></div>
+        </div>
+        <div>
+          <div class="friends-title">12 friends practicing</div>
+          <div class="friends-sub">this week</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quote banner -->
+    <div class="quote-banner">
+      <div class="quote-text">
+        "We practice not to perform,<br/>
+        but to belong — to ourselves, and to each other."
+        <span class="quote-divider"></span>
+      </div>
+    </div>
+
+    <!-- Feed card 1 -->
+    <div class="feed-card">
+      <div class="fc-head">
+        <div class="fc-avatar a1"><div class="fc-dot green"></div></div>
+        <div class="fc-meta">
+          <div class="fc-name">Sarah Mitchell</div>
+          <div class="fc-sub">Mysore Practice · Ashtanga Yoga Shala, Mysore · 2h ago</div>
+        </div>
+        <div class="fc-more">⋯</div>
+      </div>
+      <div class="fc-series-row">
+        <div class="fc-series">Full Primary Series</div>
+        <div class="fc-chip">Mysore</div>
+      </div>
+      <div class="fc-stats">
+        <div class="fc-stat"><span class="fc-stat-ico">⏱</span><span class="fc-stat-val">1h 32m</span><span class="fc-stat-lbl">Duration</span></div>
+        <div class="fc-stat"><span class="fc-stat-ico">🪷</span><span class="fc-stat-val">42 / 42</span><span class="fc-stat-lbl">Poses Completed</span></div>
+        <div class="fc-stat"><span class="fc-stat-ico">💨</span><span class="fc-stat-val">6.0</span><span class="fc-stat-lbl">Avg Breath / Pose</span></div>
+        <div class="fc-stat complete"><span class="fc-stat-ico">✓</span><span class="fc-stat-val">Complete</span><span class="fc-stat-lbl">Great Practice</span></div>
+      </div>
+      <div class="fc-note">"First time completing full Primary without assists! Supta Kurmasana finally clicked. Grateful for this practice and this community." 🙏</div>
+      <div class="fc-actions">
+        <div class="fc-act liked">♥ 34</div>
+        <div class="fc-act">💬 5</div>
+        <div class="fc-liked-by">
+          <div class="fc-liked-avs"><div></div><div></div><div></div></div>
+          <span>You, Elena, Ravi +31</span>
+        </div>
+        <div class="fc-right-acts"><span>💬</span><span>↗</span><span>🔖</span></div>
+      </div>
+    </div>
+
+    <!-- Feed card 2 -->
+    <div class="feed-card">
+      <div class="fc-head">
+        <div class="fc-avatar a2"><div class="fc-dot orange"></div></div>
+        <div class="fc-meta">
+          <div class="fc-name">David Park</div>
+          <div class="fc-sub">Home Practice · 4h ago · Home Studio</div>
+        </div>
+        <div class="fc-more">⋯</div>
+      </div>
+      <div class="fc-series-row">
+        <div class="fc-series">Half Primary</div>
+        <div class="fc-chip primary">Primary</div>
+      </div>
+      <div class="fc-stats">
+        <div class="fc-stat"><span class="fc-stat-ico">⏱</span><span class="fc-stat-val">52m</span><span class="fc-stat-lbl">Duration</span></div>
+        <div class="fc-stat"><span class="fc-stat-ico">🪷</span><span class="fc-stat-val">24 / 42</span><span class="fc-stat-lbl">Poses Completed</span></div>
+        <div class="fc-stat"><span class="fc-stat-ico">💨</span><span class="fc-stat-val">5.5</span><span class="fc-stat-lbl">Avg Breath / Pose</span></div>
+        <div class="fc-stat"><div class="fc-progress-wrap"><div class="fc-bar"><div class="fc-bar-fill" style="width:57%"></div></div></div><span class="fc-pct">57%</span><span class="fc-pct-sub">Keep going</span></div>
+      </div>
+      <div class="fc-note">"Focused on hip openers today. Marichyasana D work in progress."</div>
+      <div class="fc-actions">
+        <div class="fc-act liked">♥ 8</div>
+        <div class="fc-act">💬 2</div>
+        <div class="fc-liked-by" style="flex:1"></div>
+        <div class="fc-right-acts"><span>💬</span><span>↗</span><span>🔖</span></div>
+      </div>
+    </div>
+
+    <!-- Practitioners Near You -->
+    <div class="near-section">
+      <div class="near-head">
+        <div class="near-title">Practitioners Near You</div>
+        <div class="near-view">View All</div>
+      </div>
+      <div class="near-scroll">
+        <div class="near-card">
+          <div class="near-img"></div>
+          <div class="near-name">Mika Tanaka</div>
+          <div class="near-sub">Primary · 2.3 km</div>
+          <div class="near-streak">🔥 42 day streak</div>
+          <div class="near-connect">Connect</div>
+        </div>
+        <div class="near-card">
+          <div class="near-img p2"></div>
+          <div class="near-name">Ravi Sharma</div>
+          <div class="near-sub">Intermediate · 4.1 km</div>
+          <div class="near-streak">🔥 18 day streak</div>
+          <div class="near-connect">Connect</div>
+        </div>
+        <div class="near-card">
+          <div class="near-img p3"></div>
+          <div class="near-name">Lisa Wong</div>
+          <div class="near-sub">Primary · 5.6 km</div>
+          <div class="near-streak">🔥 7 day streak</div>
+          <div class="near-connect">Connect</div>
+        </div>
+        <div class="near-find">
+          <div class="near-find-ico">👥</div>
+          <div class="near-find-txt">Find more<br/>practitioners<br/>in your area ›</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+      <div class="nav-item active"><div class="nav-ico">🏠</div>Home</div>
+      <div class="nav-item"><div class="nav-ico">🧭</div>Explore</div>
+      <div class="nav-center">📖</div>
+      <div class="nav-item"><div class="nav-ico">📊</div>Progress</div>
+      <div class="nav-item"><div class="nav-ico">👤</div>You</div>
+    </div>
+
+  </div>
+</body>
+</html>

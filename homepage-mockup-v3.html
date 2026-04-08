@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sangha — Home v3</title>
+<style>
+  :root {
+    --bg: #EEF1E6;
+    --card: #FFFFFF;
+    --sand: #E8EFDC;
+    --sand-2: #D6E0C2;
+    --ink: #1F2A1A;
+    --ink-2: #344028;
+    --muted: #7A8870;
+    --muted-2: #A8B59B;
+    --border: #DAE3CB;
+    --clay: #5A8A3F;
+    --clay-dk: #3F6B27;
+    --clay-soft: #B8D49A;
+    --gold: #9DBF6E;
+    --gold-soft: #C8DDA0;
+    --sage: #6E9456;
+    --sage-soft: #D0E0BA;
+    --moon-1: #D8E0C8;
+    --moon-2: #5A6B48;
+    --moon-3: #1F2A1A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #C8D6B0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  body { padding: 40px 20px; display: flex; justify-content: center; }
+
+  .phone {
+    width: 430px;
+    background: var(--bg);
+    border-radius: 36px;
+    box-shadow: 0 30px 80px rgba(43,32,24,.25), 0 4px 12px rgba(43,32,24,.08);
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,.05);
+  }
+
+  /* ───────── Top header ───────── */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 22px 14px;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .lotus {
+    width: 46px; height: 46px;
+    background: linear-gradient(135deg, #5A8A3F 0%, #3F6B27 100%);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 4px 10px rgba(90,138,63,.3);
+  }
+  .brand-name {
+    font-family: "Georgia", "Times New Roman", serif;
+    font-size: 28px; font-weight: 700; letter-spacing: .3px; line-height: 1;
+    color: var(--ink);
+  }
+  .brand-tag {
+    font-size: 9px; letter-spacing: 2.4px; color: var(--muted);
+    margin-top: 5px; text-transform: uppercase; font-weight: 600;
+  }
+  .top-right { display: flex; align-items: center; gap: 12px; }
+  .icon-btn {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(43,32,24,.07);
+    font-size: 18px;
+  }
+  .icon-dot {
+    position: absolute; top: 9px; right: 9px;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--clay); border: 2px solid #fff;
+  }
+  .me-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background:
+      radial-gradient(ellipse at 50% 30%, #C8DDA0 0%, transparent 50%),
+      linear-gradient(135deg, #6E9456 0%, #2A4519 100%);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(43,32,24,.12);
+  }
+
+  /* ───────── Tabs ───────── */
+  .tabs {
+    display: flex;
+    margin: 6px 22px 18px;
+    background: #D6E0C2;
+    border-radius: 14px;
+    padding: 5px;
+  }
+  .tab {
+    flex: 1; text-align: center;
+    padding: 12px 6px;
+    font-size: 14px; font-weight: 600;
+    color: var(--muted);
+    border-radius: 11px;
+    cursor: pointer;
+  }
+  .tab.active {
+    background: #fff;
+    color: var(--ink);
+    box-shadow: 0 2px 6px rgba(43,32,24,.08);
+  }
+
+  /* ───────── Stats row ───────── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1.05fr 1.4fr 1.05fr;
+    gap: 11px;
+    padding: 0 22px 14px;
+  }
+
+  .streak-card {
+    background: linear-gradient(135deg, #DDEBC2 0%, #B8D49A 60%, #9DBF6E 100%);
+    border-radius: 18px;
+    padding: 16px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .streak-card::after {
+    content: ""; position: absolute; right: -20px; top: -20px;
+    width: 70px; height: 70px; border-radius: 50%;
+    background: rgba(255,255,255,.18);
+  }
+  .streak-flame { font-size: 26px; position: relative; z-index: 2; }
+  .streak-label { font-size: 11px; font-weight: 700; color: #3F6B27; margin-top: 4px; }
+  .streak-num { font-size: 26px; font-weight: 800; color: #2A4519; line-height: 1.05; margin-top: 2px; letter-spacing: -.5px; }
+  .streak-sub { font-size: 9.5px; color: #3F6B27; margin-top: 5px; font-weight: 600; }
+
+  .weekly-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+  }
+  .weekly-title { font-size: 12px; color: var(--ink-2); margin-bottom: 10px; font-weight: 600; }
+  .weekly-stats { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; }
+  .w-item { text-align: center; flex: 1; }
+  .w-num { font-size: 20px; font-weight: 800; color: var(--ink); line-height: 1; letter-spacing: -.5px; }
+  .w-num.small { font-size: 17px; }
+  .w-lbl { font-size: 9.5px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+
+  .log-card {
+    background: linear-gradient(135deg, #5A8A3F 0%, #3F6B27 100%);
+    border-radius: 18px;
+    padding: 16px 14px;
+    color: #fff;
+    display: flex; flex-direction: column; justify-content: space-between;
+    box-shadow: 0 6px 14px rgba(90,138,63,.35);
+    position: relative; overflow: hidden;
+  }
+  .log-card::before {
+    content: ""; position: absolute; left: -25px; bottom: -25px;
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(255,255,255,.1);
+  }
+  .log-icon-wrap {
+    width: 28px; height: 28px;
+    background: rgba(255,255,255,.22);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    position: relative; z-index: 2;
+  }
+  .log-title { font-size: 16px; font-weight: 800; line-height: 1.1; margin-top: 8px; position: relative; z-index: 2; }
+  .log-sub { font-size: 10px; opacity: .9; margin-top: 3px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2; }
+
+  /* ───────── Moon + friends ───────── */
+  .row2 {
+    display: grid;
+    grid-template-columns: 1.55fr 1fr;
+    gap: 11px;
+    padding: 0 22px 16px;
+  }
+  .moon-card, .friends-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .moon-icon {
+    width: 38px; height: 38px; border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 30%, var(--moon-1) 0%, var(--moon-2) 60%, var(--moon-3) 100%);
+    flex-shrink: 0;
+    box-shadow: inset -3px -3px 6px rgba(0,0,0,.25);
+  }
+  .moon-info { flex: 1; min-width: 0; }
+  .moon-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .moon-sub { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+  .moon-cta { font-size: 10px; color: var(--clay); font-weight: 700; flex-shrink: 0; }
+
+  .friends-card { gap: 10px; }
+  .friends-avatars { display: flex; flex-shrink: 0; }
+  .friends-avatars div {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 2.5px solid #fff;
+    margin-left: -10px;
+  }
+  .friends-avatars div:nth-child(1) { background: linear-gradient(135deg,#6E9456,#2A4519); margin-left: 0; }
+  .friends-avatars div:nth-child(2) { background: linear-gradient(135deg,#9DBF6E,#5A8A3F); }
+  .friends-avatars div:nth-child(3) { background: linear-gradient(135deg,#7A8870,#3F4F2E); }
+  .friends-info { flex: 1; min-width: 0; }
+  .friends-title { font-size: 12px; font-weight: 800; color: var(--ink); line-height: 1.2; }
+  .friends-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+  /* ───────── Quote banner ───────── */
+  .quote-banner {
+    margin: 0 22px 18px;
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    padding: 26px 32px;
+    background:
+      linear-gradient(135deg, rgba(157,191,110,.85) 0%, rgba(63,107,39,.92) 100%),
+      radial-gradient(ellipse at 80% 110%, #2A4519 0%, transparent 60%),
+      linear-gradient(180deg, #B8D49A 0%, #3F6B27 100%);
+  }
+  .quote-banner::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 75% 100%, rgba(0,0,0,.25), transparent 55%);
+    pointer-events: none;
+  }
+  .quote-text {
+    position: relative;
+    color: #fff;
+    font-family: "Georgia", serif;
+    font-style: italic;
+    font-size: 14.5px;
+    text-align: center;
+    line-height: 1.55;
+    text-shadow: 0 1px 6px rgba(0,0,0,.3);
+    z-index: 2;
+  }
+  .quote-divider {
+    display: block;
+    width: 36px;
+    height: 1px;
+    background: rgba(255,255,255,.7);
+    margin: 10px auto 0;
+    position: relative;
+    z-index: 2;
+  }
+  .quote-heart {
+    color: rgba(255,255,255,.8);
+    text-align: center;
+    font-size: 11px;
+    margin-top: 4px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ───────── Feed card ───────── */
+  .feed-card {
+    background: #fff;
+    margin: 0 22px 16px;
+    border-radius: 22px;
+    border: 1px solid var(--border);
+    padding: 18px;
+    box-shadow: 0 1px 4px rgba(43,32,24,.05);
+  }
+  .fc-head { display: flex; align-items: flex-start; gap: 13px; }
+  .fc-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    position: relative; flex-shrink: 0;
+    border: 2px solid #fff;
+  }
+  .fc-avatar.a1 { background: radial-gradient(ellipse at 50% 35%, #C8DDA0 0%, transparent 50%), linear-gradient(135deg, #6E9456 0%, #2A4519 100%); }
+  .fc-avatar.a2 { background: radial-gradient(ellipse at 50% 35%, #B8D49A 0%, transparent 50%), linear-gradient(135deg, #5A8A3F 0%, #2A4519 100%); }
+  .fc-dot {
+    position: absolute; bottom: 0; right: 0;
+    width: 13px; height: 13px; border-radius: 50%;
+    border: 2.5px solid #fff;
+  }
+  .fc-dot.green { background: #5A8A3F; }
+  .fc-dot.orange { background: #9DBF6E; }
+  .fc-meta { flex: 1; min-width: 0; }
+  .fc-name { font-size: 16px; font-weight: 800; color: var(--ink); }
+  .fc-sub { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+  .fc-more { color: var(--muted); font-size: 18px; padding: 2px 4px; cursor: pointer; }
+
+  .fc-series-row { display: flex; align-items: center; gap: 9px; margin-top: 14px; }
+  .fc-series { font-size: 19px; font-weight: 800; letter-spacing: -.3px; color: var(--ink); }
+  .fc-chip {
+    font-size: 11px; padding: 4px 11px; border-radius: 22px;
+    background: var(--sage-soft); color: #4A6B3A; font-weight: 700;
+  }
+  .fc-chip.primary { background: #DDEBC2; color: #3F6B27; }
+
+  .fc-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 6px;
+    margin: 14px 0 12px;
+  }
+  .fc-stat {
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .fc-stat .ico-row {
+    display: flex; align-items: center; gap: 5px;
+    color: var(--muted); font-size: 13px;
+  }
+  .fc-stat-val {
+    font-size: 16px; font-weight: 800; color: var(--ink); line-height: 1;
+  }
+  .fc-stat-lbl { font-size: 9.5px; color: var(--muted); margin-top: 2px; font-weight: 500; }
+  .fc-stat.complete .fc-stat-val { color: #5A8A3F; font-size: 14px; }
+  .fc-stat.complete .check { color: #5A8A3F; font-size: 16px; font-weight: 800; }
+
+  .fc-progress-row {
+    display: flex; align-items: center; gap: 10px;
+    margin: 6px 0 12px;
+  }
+  .fc-bar { flex: 1; height: 7px; background: #E0EBCC; border-radius: 4px; overflow: hidden; }
+  .fc-bar-fill { height: 100%; background: linear-gradient(90deg, #B8D49A 0%, #5A8A3F 100%); border-radius: 4px; }
+  .fc-pct { font-size: 15px; font-weight: 800; color: var(--ink); }
+  .fc-pct-sub { font-size: 11px; color: var(--muted); }
+
+  .fc-note {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--ink-2);
+    line-height: 1.55;
+    margin: 4px 0 14px;
+  }
+
+  .fc-actions {
+    display: flex; align-items: center; gap: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .fc-act {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--muted); font-weight: 700;
+  }
+  .fc-act.liked { color: var(--clay); }
+  .fc-act .ic { font-size: 16px; }
+  .fc-liked-by {
+    flex: 1;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: var(--muted);
+    margin-left: 10px;
+  }
+  .fc-liked-avs { display: flex; }
+  .fc-liked-avs div {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid #fff;
+    margin-left: -7px;
+  }
+  .fc-liked-avs div:nth-child(1) { background: linear-gradient(135deg,#9DBF6E,#5A8A3F); margin-left: 0; }
+  .fc-liked-avs div:nth-child(2) { background: linear-gradient(135deg,#6E9456,#2A4519); }
+  .fc-liked-avs div:nth-child(3) { background: linear-gradient(135deg,#B8D49A,#6E9456); }
+  .fc-right-acts {
+    display: flex; align-items: center; gap: 14px;
+    color: var(--muted); font-size: 16px;
+  }
+
+  /* ───────── Practitioners Near You ───────── */
+  .near-section { padding: 6px 22px 18px; }
+  .near-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .near-title { font-size: 17px; font-weight: 800; color: var(--ink); letter-spacing: -.3px; }
+  .near-view { font-size: 13px; color: var(--clay); font-weight: 700; }
+  .near-scroll {
+    display: flex; gap: 11px; overflow-x: auto;
+    padding-bottom: 4px;
+    margin: 0 -22px;
+    padding-left: 22px;
+    padding-right: 22px;
+    scrollbar-width: none;
+  }
+  .near-scroll::-webkit-scrollbar { display: none; }
+
+  .near-card {
+    min-width: 130px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 11px;
+    display: flex; flex-direction: column; gap: 4px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(43,32,24,.04);
+  }
+  .near-img {
+    width: 100%; height: 96px; border-radius: 12px;
+    background: linear-gradient(135deg, #B8D49A 0%, #5A8A3F 100%);
+    margin-bottom: 4px;
+  }
+  .near-img.p2 { background: linear-gradient(135deg, #9DBF6E 0%, #2A4519 100%); }
+  .near-img.p3 { background: linear-gradient(135deg, #C8DDA0 0%, #3F6B27 100%); }
+  .near-name { font-size: 13px; font-weight: 800; color: var(--ink); }
+  .near-sub { font-size: 10px; color: var(--muted); }
+  .near-streak { font-size: 10px; color: var(--clay); font-weight: 700; display: flex; align-items: center; gap: 3px; margin-top: 2px; }
+  .near-connect {
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 6px 0;
+    text-align: center;
+    background: #E8EFDC;
+    color: var(--clay);
+    border-radius: 9px;
+  }
+  .near-find {
+    min-width: 130px;
+    background: #E8EFDC;
+    border: 1.5px dashed var(--clay-soft);
+    border-radius: 16px;
+    padding: 14px 10px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .near-find-ico { font-size: 24px; }
+  .near-find-txt { font-size: 11px; color: var(--muted); font-weight: 700; line-height: 1.4; }
+
+  /* ───────── Bottom nav ───────── */
+  .bottom-nav {
+    display: flex; align-items: center; justify-content: space-around;
+    background: #fff;
+    padding: 16px 22px 24px;
+    border-top: 1px solid var(--border);
+    position: relative;
+    margin-top: 6px;
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    font-size: 11px; color: var(--muted-2); font-weight: 700;
+    flex: 1;
+  }
+  .nav-item.active { color: var(--clay); }
+  .nav-ico { font-size: 20px; }
+  .nav-center {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .nav-fab {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: linear-gradient(135deg, #5A8A3F 0%, #3F6B27 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 26px;
+    margin-top: -34px;
+    box-shadow: 0 10px 22px rgba(90,138,63,.45);
+    border: 4px solid #fff;
+  }
+  .nav-fab-label {
+    font-size: 11px; font-weight: 800; color: var(--clay); margin-top: 5px;
+  }
+</style>
+</head>
+<body>
+  <div class="phone">
+
+    <!-- Header -->
+    <div class="topbar">
+      <div class="brand">
+        <div class="lotus">🪷</div>
+        <div>
+          <div class="brand-name">Sangha</div>
+          <div class="brand-tag">Ashtanga · Community · Growth</div>
+        </div>
+      </div>
+      <div class="top-right">
+        <div class="icon-btn">🔔<span class="icon-dot"></span></div>
+        <div class="me-avatar"></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active">Following</div>
+      <div class="tab">Moon Days</div>
+      <div class="tab">My Practice</div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-row">
+      <div class="streak-card">
+        <div class="streak-flame">🔥</div>
+        <div class="streak-label">7 Day Streak</div>
+        <div class="streak-num">6 Days</div>
+        <div class="streak-sub">Keep the fire alive ›</div>
+      </div>
+
+      <div class="weekly-card">
+        <div class="weekly-title">Weekly Summary</div>
+        <div class="weekly-stats">
+          <div class="w-item"><div class="w-num">12</div><div class="w-lbl">Practices</div></div>
+          <div class="w-item"><div class="w-num small">14h 20m</div><div class="w-lbl">Total Time</div></div>
+          <div class="w-item"><div class="w-num">423</div><div class="w-lbl">Poses</div></div>
+        </div>
+      </div>
+
+      <div class="log-card">
+        <div class="log-icon-wrap">📖</div>
+        <div class="log-title">Log Practice</div>
+        <div class="log-sub"><span>Start your journey</span><span>›</span></div>
+      </div>
+    </div>
+
+    <!-- Moon + friends -->
+    <div class="row2">
+      <div class="moon-card">
+        <div class="moon-icon"></div>
+        <div class="moon-info">
+          <div class="moon-title">New Moon Apr 8</div>
+          <div class="moon-sub">Rest, reflect, allow. 3 days to go.</div>
+        </div>
+        <div class="moon-cta">Learn More ›</div>
+      </div>
+      <div class="friends-card">
+        <div class="friends-avatars">
+          <div></div><div></div><div></div>
+        </div>
+        <div class="friends-info">
+          <div class="friends-title">12 friends practicing</div>
+          <div class="friends-sub">this week</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quote banner -->
+    <div class="quote-banner">
+      <div class="quote-text">
+        "We practice not to perform,<br/>
+        but to belong — to ourselves, and to each other."
+      </div>
+      <div class="quote-divider"></div>
+      <div class="quote-heart">♡</div>
+    </div>
+
+    <!-- Feed card 1 -->
+    <div class="feed-card">
+      <div class="fc-head">
+        <div class="fc-avatar a1"><div class="fc-dot green"></div></div>
+        <div class="fc-meta">
+          <div class="fc-name">Sarah Mitchell</div>
+          <div class="fc-sub">Mysore Practice · Ashtanga Yoga Shala, Mysore · 2h ago</div>
+        </div>
+        <div class="fc-more">⋯</div>
+      </div>
+      <div class="fc-series-row">
+        <div class="fc-series">Full Primary Series</div>
+        <div class="fc-chip">Mysore</div>
+      </div>
+      <div class="fc-stats">
+        <div class="fc-stat">
+          <div class="ico-row">⏱</div>
+          <div class="fc-stat-val">1h 32m</div>
+          <div class="fc-stat-lbl">Duration</div>
+        </div>
+        <div class="fc-stat">
+          <div class="ico-row">🪷</div>
+          <div class="fc-stat-val">42 / 42</div>
+          <div class="fc-stat-lbl">Poses Completed</div>
+        </div>
+        <div class="fc-stat">
+          <div class="ico-row">💨</div>
+          <div class="fc-stat-val">6.0</div>
+          <div class="fc-stat-lbl">Avg Breath / Pose</div>
+        </div>
+        <div class="fc-stat complete">
+          <div class="check">✓</div>
+          <div class="fc-stat-val">Complete</div>
+          <div class="fc-stat-lbl">Great Practice</div>
+        </div>
+      </div>
+      <div class="fc-note">"First time completing full Primary without assists! Supta Kurmasana finally clicked. Grateful for this practice and this community." 🙏</div>
+      <div class="fc-actions">
+        <div class="fc-act liked"><span class="ic">♥</span> 34</div>
+        <div class="fc-act"><span class="ic">💬</span> 5</div>
+        <div class="fc-liked-by">
+          <div class="fc-liked-avs"><div></div><div></div><div></div></div>
+          <span>You, Elena, Ravi +31</span>
+        </div>
+        <div class="fc-right-acts"><span>↗</span><span>🔖</span></div>
+      </div>
+    </div>
+
+    <!-- Feed card 2 -->
+    <div class="feed-card">
+      <div class="fc-head">
+        <div class="fc-avatar a2"><div class="fc-dot orange"></div></div>
+        <div class="fc-meta">
+          <div class="fc-name">David Park</div>
+          <div class="fc-sub">Home Practice · 4h ago · Home Studio</div>
+        </div>
+        <div class="fc-more">⋯</div>
+      </div>
+      <div class="fc-series-row">
+        <div class="fc-series">Half Primary</div>
+        <div class="fc-chip primary">Primary</div>
+      </div>
+      <div class="fc-stats">
+        <div class="fc-stat">
+          <div class="ico-row">⏱</div>
+          <div class="fc-stat-val">52m</div>
+          <div class="fc-stat-lbl">Duration</div>
+        </div>
+        <div class="fc-stat">
+          <div class="ico-row">🪷</div>
+          <div class="fc-stat-val">24 / 42</div>
+          <div class="fc-stat-lbl">Poses Completed</div>
+        </div>
+        <div class="fc-stat">
+          <div class="ico-row">💨</div>
+          <div class="fc-stat-val">5.5</div>
+          <div class="fc-stat-lbl">Avg Breath / Pose</div>
+        </div>
+        <div class="fc-stat">
+          <div class="ico-row">📈</div>
+          <div class="fc-stat-val" style="color:var(--clay)">57%</div>
+          <div class="fc-stat-lbl">Keep going</div>
+        </div>
+      </div>
+      <div class="fc-progress-row">
+        <div class="fc-bar"><div class="fc-bar-fill" style="width:57%"></div></div>
+      </div>
+      <div class="fc-note">"Focused on hip openers today. Marichyasana D work in progress."</div>
+      <div class="fc-actions">
+        <div class="fc-act liked"><span class="ic">♥</span> 8</div>
+        <div class="fc-act"><span class="ic">💬</span> 2</div>
+        <div class="fc-liked-by"></div>
+        <div class="fc-right-acts"><span>↗</span><span>🔖</span></div>
+      </div>
+    </div>
+
+    <!-- Practitioners Near You -->
+    <div class="near-section">
+      <div class="near-head">
+        <div class="near-title">Practitioners Near You</div>
+        <div class="near-view">View All</div>
+      </div>
+      <div class="near-scroll">
+        <div class="near-card">
+          <div class="near-img"></div>
+          <div class="near-name">Mika Tanaka</div>
+          <div class="near-sub">Primary · 2.3 km</div>
+          <div class="near-streak">🔥 42 day streak</div>
+          <div class="near-connect">Connect</div>
+        </div>
+        <div class="near-card">
+          <div class="near-img p2"></div>
+          <div class="near-name">Ravi Sharma</div>
+          <div class="near-sub">Intermediate · 4.1 km</div>
+          <div class="near-streak">🔥 18 day streak</div>
+          <div class="near-connect">Connect</div>
+        </div>
+        <div class="near-card">
+          <div class="near-img p3"></div>
+          <div class="near-name">Lisa Wong</div>
+          <div class="near-sub">Primary · 5.6 km</div>
+          <div class="near-streak">🔥 7 day streak</div>
+          <div class="near-connect">Connect</div>
+        </div>
+        <div class="near-find">
+          <div class="near-find-ico">👥</div>
+          <div class="near-find-txt">Find more<br/>practitioners<br/>in your area ›</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+      <div class="nav-item active"><div class="nav-ico">🏠</div>Home</div>
+      <div class="nav-item"><div class="nav-ico">🧭</div>Explore</div>
+      <div class="nav-center">
+        <div class="nav-fab">📖</div>
+        <div class="nav-fab-label">Practice</div>
+      </div>
+      <div class="nav-item"><div class="nav-ico">📊</div>Progress</div>
+      <div class="nav-item"><div class="nav-ico">👤</div>You</div>
+    </div>
+
+  </div>
+</body>
+</html>
