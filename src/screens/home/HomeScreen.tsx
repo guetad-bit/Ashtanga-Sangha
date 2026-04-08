@@ -13,7 +13,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { getWeeklyRhythm, calculateStreak } from '@/utils/practiceStreak';
 import { daysUntilNextMoonDay } from '@/utils/moonDay';
 import { getPracticeLogs, getPracticingNow, setPracticingNow, getFeed, logPractice, supabase } from '@/lib/supabase';
-import { MOCK_SANGHA_POSTS, MOCK_PRACTICING_NOW } from '@/data/mockSanghaUsers';
+import { MOCK_SANGHA_POSTS, MOCK_PRACTICING_NOW, MOCK_NEAR_YOU } from '@/data/mockSanghaUsers';
 
 interface PracticingUser {
   id: string;
@@ -463,10 +463,19 @@ export default function HomeScreen() {
             <Text style={s.emptySub}>Be the first to log your practice.</Text>
           </View>
         ) : (
-          homeFeed.map((post) => {
+          homeFeed.map((post: any) => {
             const seriesKey = (post.profiles as any)?.series ?? 'primary';
             const chip = SERIES_CHIPS[seriesKey] ?? SERIES_CHIPS.primary;
             const seriesName = SERIES_LABELS[seriesKey] ?? 'Practice';
+            const hasStats = typeof post.duration_min === 'number';
+            const complete = post.status === 'complete';
+            const pct = post.poses_total ? Math.round(((post.poses_done ?? 0) / post.poses_total) * 100) : 0;
+            const durTxt = post.duration_min
+              ? post.duration_min >= 60
+                ? `${Math.floor(post.duration_min / 60)}h ${post.duration_min % 60}m`
+                : `${post.duration_min}m`
+              : '';
+            const likers: { name: string; avatar_url: string }[] = post.likers ?? [];
             return (
               <View key={post.id} style={s.feedCard}>
                 <View style={s.fcHead}>
@@ -481,7 +490,7 @@ export default function HomeScreen() {
                   <View style={{ flex: 1, marginLeft: 12 }}>
                     <Text style={s.fcName}>{post.profiles?.name ?? 'Practitioner'}</Text>
                     <Text style={s.fcSub} numberOfLines={1}>
-                      {post.location ? `${post.location} · ` : ''}{getTimeAgo(post.created_at)}
+                      {post.shala ? `${post.shala} · ` : ''}{post.location ? `${post.location} · ` : ''}{getTimeAgo(post.created_at)}
                     </Text>
                   </View>
                   <TouchableOpacity>
@@ -496,6 +505,48 @@ export default function HomeScreen() {
                   </View>
                 </View>
 
+                {hasStats && (
+                  <View style={s.statsGrid}>
+                    <View style={s.statCell}>
+                      <Ionicons name="time-outline" size={16} color={clay.muted} />
+                      <Text style={s.statNum}>{durTxt}</Text>
+                      <Text style={s.statLbl}>Duration</Text>
+                    </View>
+                    <View style={s.statDivider} />
+                    <View style={s.statCell}>
+                      <Ionicons name="flower-outline" size={16} color={clay.muted} />
+                      <Text style={s.statNum}>{post.poses_done} / {post.poses_total}</Text>
+                      <Text style={s.statLbl}>Poses Completed</Text>
+                    </View>
+                    <View style={s.statDivider} />
+                    <View style={s.statCell}>
+                      <Ionicons name="pulse-outline" size={16} color={clay.muted} />
+                      <Text style={s.statNum}>{post.breath_per_pose?.toFixed(1)}</Text>
+                      <Text style={s.statLbl}>Avg Breath / Pose</Text>
+                    </View>
+                    <View style={s.statDivider} />
+                    <View style={[s.statCell, { flex: 1.1 }]}>
+                      {complete ? (
+                        <>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                            <Ionicons name="checkmark-circle" size={16} color={clay.success} />
+                            <Text style={[s.statNum, { color: clay.success }]}>Complete</Text>
+                          </View>
+                          <Text style={s.statLbl}>{post.progress_label ?? 'Great Practice'}</Text>
+                        </>
+                      ) : (
+                        <>
+                          <Text style={[s.statNum, { color: clay.clayDark }]}>{pct}%</Text>
+                          <View style={s.progTrack}>
+                            <View style={[s.progFill, { width: `${pct}%` }]} />
+                          </View>
+                          <Text style={s.statLbl}>{post.progress_label ?? 'Keep going'}</Text>
+                        </>
+                      )}
+                    </View>
+                  </View>
+                )}
+
                 {post.image_url ? (
                   <Image source={{ uri: post.image_url }} style={s.fcImage} />
                 ) : null}
@@ -506,15 +557,34 @@ export default function HomeScreen() {
 
                 <View style={s.fcActions}>
                   <TouchableOpacity style={s.fcAct}>
-                    <Ionicons name={(post.likes_count ?? 0) > 0 ? "flower" : "flower-outline"} size={18} color={clay.heart} />
-                    <Text style={[s.fcActText, { color: clay.heart, marginLeft: 6 }]}>
-                      {(post.likes_count ?? 0) === 0 ? 'Offer gratitude' : 'Received with gratitude'}
+                    <Ionicons name={(post.likes_count ?? 0) > 0 ? 'flower' : 'flower-outline'} size={18} color={clay.heart} />
+                    <Text style={[s.fcActText, { color: clay.heart, marginLeft: 5, fontWeight: '700' }]}>
+                      {post.likes_count ?? 0}
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={s.fcAct}>
                     <Ionicons name="chatbubble-outline" size={17} color={clay.muted} />
                     <Text style={[s.fcActText, { marginLeft: 5 }]}>{post.comments_count ?? 0}</Text>
                   </TouchableOpacity>
+
+                  {likers.length > 0 && (
+                    <View style={s.likersRow}>
+                      <View style={{ flexDirection: 'row' }}>
+                        {likers.slice(0, 3).map((lk, i) => (
+                          <Image
+                            key={i}
+                            source={{ uri: lk.avatar_url }}
+                            style={[s.likerAv, { marginLeft: i === 0 ? 0 : -8, zIndex: 3 - i }]}
+                          />
+                        ))}
+                      </View>
+                      <Text style={s.likersTxt} numberOfLines={1}>
+                        You, {likers[0].name.split(' ')[0]}
+                        {(post.likes_count ?? 0) > 2 ? ` +${(post.likes_count ?? 0) - 2}` : ''}
+                      </Text>
+                    </View>
+                  )}
+
                   <View style={{ flex: 1 }} />
                   <TouchableOpacity>
                     <Ionicons name="share-outline" size={18} color={clay.muted} style={{ marginRight: 14 }} />
@@ -529,44 +599,41 @@ export default function HomeScreen() {
         )}
 
         {/* Practitioners Near You */}
-        {realMembers.length > 0 && (
-          <View style={s.nearSection}>
-            <View style={s.nearHead}>
-              <Text style={s.nearTitle}>Practitioners Near You</Text>
-              <TouchableOpacity onPress={() => router.push('/community' as any)}>
-                <Text style={s.nearView}>View All</Text>
-              </TouchableOpacity>
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingRight: 20 }}>
-              {realMembers.slice(0, 6).map((m) => (
-                <TouchableOpacity
-                  key={m.id}
-                  style={s.nearCard}
-                  activeOpacity={0.8}
-                  onPress={() => openProfile(m.name)}
-                >
-                  {m.avatar_url ? (
-                    <Image source={{ uri: m.avatar_url }} style={s.nearImg} />
-                  ) : (
-                    <LinearGradient colors={['#D4B896', '#8B6B4A']} style={s.nearImg} />
-                  )}
-                  <Text style={s.nearName} numberOfLines={1}>{m.name}</Text>
-                  <Text style={s.nearSub} numberOfLines={1}>{SERIES_LABELS[m.series] ?? m.series}</Text>
-                  {m.streak > 0 && (
-                    <Text style={s.nearStreak}>🔥 {m.streak} day streak</Text>
-                  )}
-                  <View style={s.nearConnect}>
-                    <Text style={s.nearConnectText}>Connect</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-              <TouchableOpacity style={s.nearFind} activeOpacity={0.8} onPress={() => router.push('/community' as any)}>
-                <Ionicons name="people-outline" size={24} color={clay.muted} />
-                <Text style={s.nearFindTxt}>Find more practitioners</Text>
-              </TouchableOpacity>
-            </ScrollView>
+        <View style={s.nearSection}>
+          <View style={s.nearHead}>
+            <Text style={s.nearTitle}>Practitioners Near You</Text>
+            <TouchableOpacity onPress={() => router.push('/community' as any)}>
+              <Text style={s.nearView}>View All</Text>
+            </TouchableOpacity>
           </View>
-        )}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingRight: 20 }}>
+            {MOCK_NEAR_YOU.map((m) => (
+              <TouchableOpacity
+                key={m.id}
+                style={s.nearCard}
+                activeOpacity={0.85}
+                onPress={() => openProfile(m.name)}
+              >
+                <Image source={{ uri: m.avatar_url }} style={s.nearImg} />
+                <Text style={s.nearName} numberOfLines={1}>{m.name}</Text>
+                <Text style={s.nearSub} numberOfLines={1}>
+                  {(SERIES_LABELS[m.series] ?? m.series).replace(' Series', '')} · {m.distance_km} km
+                </Text>
+                <View style={s.nearStreakRow}>
+                  <Text style={s.nearFlame}>🔥</Text>
+                  <Text style={s.nearStreak}>{m.streak} day streak</Text>
+                </View>
+                <View style={s.nearConnect}>
+                  <Text style={s.nearConnectText}>Connect</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity style={s.nearFind} activeOpacity={0.8} onPress={() => router.push('/community' as any)}>
+              <Ionicons name="people-outline" size={22} color={clay.muted} />
+              <Text style={s.nearFindTxt}>Find more{'\n'}practitioners{'\n'}in your area</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
 
         <View style={{ height: 40 }} />
       </ScrollView>
@@ -812,6 +879,22 @@ const s = StyleSheet.create({
   fcImage: { width: '100%', height: 180, borderRadius: 12, marginTop: 12, backgroundColor: clay.sand },
   fcNote: { fontSize: 12, fontStyle: 'italic', color: clay.inkMid, lineHeight: 18, marginTop: 12 },
 
+  statsGrid: {
+    flexDirection: 'row', alignItems: 'stretch',
+    marginTop: 12, paddingVertical: 10, paddingHorizontal: 4,
+    backgroundColor: clay.sand, borderRadius: 12,
+  },
+  statCell: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 },
+  statDivider: { width: 1, backgroundColor: clay.border, marginVertical: 4 },
+  statNum: { fontSize: 13, fontWeight: '800', color: clay.ink, marginTop: 3 },
+  statLbl: { fontSize: 8.5, color: clay.muted, marginTop: 2, textAlign: 'center', fontWeight: '600' },
+  progTrack: { width: '80%', height: 4, borderRadius: 2, backgroundColor: clay.border, marginTop: 4, overflow: 'hidden' },
+  progFill: { height: '100%', backgroundColor: clay.clay, borderRadius: 2 },
+
+  likersRow: { flexDirection: 'row', alignItems: 'center', marginLeft: 12 },
+  likerAv: { width: 18, height: 18, borderRadius: 9, borderWidth: 1.5, borderColor: '#fff' },
+  likersTxt: { fontSize: 10, color: clay.muted, marginLeft: 6, maxWidth: 120 },
+
   fcActions: { flexDirection: 'row', alignItems: 'center', marginTop: 14, paddingTop: 12, borderTopWidth: 1, borderTopColor: clay.border },
   fcAct: { flexDirection: 'row', alignItems: 'center', marginRight: 16 },
   fcActText: { fontSize: 12, color: clay.muted, fontWeight: '600' },
@@ -820,14 +903,16 @@ const s = StyleSheet.create({
   nearHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, paddingRight: 20 },
   nearTitle: { fontSize: 15, fontWeight: '800', color: clay.ink },
   nearView: { fontSize: 12, color: clay.clay, fontWeight: '600' },
-  nearCard: { width: 130, backgroundColor: '#fff', borderRadius: 14, borderWidth: 1, borderColor: clay.border, padding: 10, marginRight: 10 },
-  nearImg: { width: '100%', height: 80, borderRadius: 10, backgroundColor: clay.sand },
-  nearName: { fontSize: 12, fontWeight: '700', color: clay.ink, marginTop: 8 },
-  nearSub: { fontSize: 9, color: clay.muted, marginTop: 2 },
-  nearStreak: { fontSize: 9, color: clay.clay, fontWeight: '600', marginTop: 3 },
-  nearConnect: { marginTop: 6, backgroundColor: clay.sand, borderRadius: 7, paddingVertical: 5, alignItems: 'center' },
-  nearConnectText: { fontSize: 10, fontWeight: '700', color: clay.clayDark },
-  nearFind: { width: 130, backgroundColor: clay.sand, borderRadius: 14, borderWidth: 1.5, borderStyle: 'dashed', borderColor: clay.claySoft, padding: 12, alignItems: 'center', justifyContent: 'center', marginRight: 10, minHeight: 160 },
+  nearCard: { width: 140, backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: clay.border, padding: 10, marginRight: 10 },
+  nearImg: { width: '100%', height: 110, borderRadius: 12, backgroundColor: clay.sand },
+  nearName: { fontSize: 13, fontWeight: '800', color: clay.ink, marginTop: 8 },
+  nearSub: { fontSize: 10, color: clay.muted, marginTop: 2 },
+  nearStreakRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
+  nearFlame: { fontSize: 10 },
+  nearStreak: { fontSize: 10, color: clay.clayDark, fontWeight: '700', marginLeft: 3 },
+  nearConnect: { marginTop: 8, backgroundColor: clay.sand, borderRadius: 8, paddingVertical: 6, alignItems: 'center', borderWidth: 1, borderColor: clay.border },
+  nearConnectText: { fontSize: 11, fontWeight: '700', color: clay.clayDark },
+  nearFind: { width: 130, backgroundColor: clay.sand, borderRadius: 16, borderWidth: 1.5, borderStyle: 'dashed', borderColor: clay.claySoft, padding: 12, alignItems: 'center', justifyContent: 'center', marginRight: 10, minHeight: 210 },
   nearFindTxt: { fontSize: 10, color: clay.muted, fontWeight: '600', textAlign: 'center', marginTop: 6, lineHeight: 14 },
 
   logBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end' },
