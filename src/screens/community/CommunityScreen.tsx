@@ -12,6 +12,7 @@ import { useAppStore } from '@/store/useAppStore';
 
 import AppHeader from '@/components/AppHeader';
 import { getPracticingNow, getFeed, deletePost, followUser, unfollowUser, getFollowing, getUserLikes, supabase } from '@/lib/supabase';
+import { MOCK_SANGHA_POSTS, MOCK_PRACTICING_NOW } from '@/data/mockSanghaUsers';
 
 /* Stone & Moss palette */
 const moss = {
@@ -120,12 +121,14 @@ export default function CommunityScreen() {
 
   const fetchPracticing = useCallback(async () => {
     const { data } = await getPracticingNow();
-    if (data) setLivePractitioners(data as PracticingUser[]);
+    const real = (data ?? []) as PracticingUser[];
+    setLivePractitioners([...real, ...(MOCK_PRACTICING_NOW as any as PracticingUser[])]);
   }, []);
 
   const fetchFeed = useCallback(async () => {
     const { data } = await getFeed(user?.id ?? '');
-    if (data) setFeedPosts(data as FeedPost[]);
+    const real = (data ?? []) as FeedPost[];
+    setFeedPosts([...real, ...(MOCK_SANGHA_POSTS as any as FeedPost[])]);
   }, [user?.id]);
 
   const fetchLikes = useCallback(async () => {

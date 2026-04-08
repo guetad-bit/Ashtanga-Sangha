@@ -13,6 +13,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { getWeeklyRhythm, calculateStreak } from '@/utils/practiceStreak';
 import { daysUntilNextMoonDay } from '@/utils/moonDay';
 import { getPracticeLogs, getPracticingNow, setPracticingNow, getFeed, logPractice, supabase } from '@/lib/supabase';
+import { MOCK_SANGHA_POSTS, MOCK_PRACTICING_NOW } from '@/data/mockSanghaUsers';
 
 interface PracticingUser {
   id: string;
@@ -225,12 +226,14 @@ export default function HomeScreen() {
 
   const fetchPracticing = async () => {
     const { data } = await getPracticingNow();
-    if (data) setLivePractitioners(data as PracticingUser[]);
+    const real = (data ?? []) as PracticingUser[];
+    setLivePractitioners([...real, ...(MOCK_PRACTICING_NOW as any as PracticingUser[])]);
   };
 
   const fetchFeed = async () => {
     const { data } = await getFeed(user?.id ?? '');
-    if (data) setFeedPosts(data as FeedPost[]);
+    const real = (data ?? []) as FeedPost[];
+    setFeedPosts([...real, ...(MOCK_SANGHA_POSTS as any as FeedPost[])]);
   };
 
   const fetchMembers = async () => {
