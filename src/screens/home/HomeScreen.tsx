@@ -317,47 +317,81 @@ export default function HomeScreen() {
           ))}
         </View>
 
-        {/* Stats row */}
-        <View style={s.statsRow}>
-          <LinearGradient colors={[clay.claySoft, clay.gold]} style={s.streakCard}>
-            <Text style={s.streakFlame}>🔥</Text>
-            <Text style={s.streakLabel}>{streak > 0 ? `${streak} Day Streak` : 'Start a streak'}</Text>
-            <Text style={s.streakNum}>{streak > 0 ? `${streak} ${streak === 1 ? 'Day' : 'Days'}` : '0 Days'}</Text>
-            <Text style={s.streakSub}>Keep the fire alive ›</Text>
-          </LinearGradient>
-
-          <View style={s.weeklyCard}>
-            <Text style={s.weeklyTitle}>Weekly Summary</Text>
-            <View style={s.weeklyStats}>
-              <View style={s.wItem}>
-                <Text style={s.wNum}>{practicesThisWeek}</Text>
-                <Text style={s.wLbl}>Practices</Text>
-              </View>
-              <View style={s.wItem}>
-                <Text style={s.wNum}>{formatDuration(weekMinutes)}</Text>
-                <Text style={s.wLbl}>Total Time</Text>
-              </View>
-              <View style={s.wItem}>
-                <Text style={s.wNum}>{weekPoses}</Text>
-                <Text style={s.wLbl}>Poses</Text>
-              </View>
-            </View>
+        {/* On the mat right now */}
+        <View style={s.nowBanner}>
+          <View style={s.nowDotWrap}>
+            <View style={s.nowDot} />
           </View>
+          <View style={{ flex: 1, marginRight: 8 }}>
+            <Text style={s.nowTitle} numberOfLines={1}>
+              {livePractitioners.length > 0 ? `${livePractitioners.length} are on the mat right now` : 'No one on the mat now'}
+            </Text>
+            <Text style={s.nowSub} numberOfLines={1}>Silent presence. Shared energy</Text>
+          </View>
+          <View style={s.nowAvatars}>
+            {livePractitioners.slice(0, 3).map((p, i) => (
+              <LinearGradient
+                key={p.id}
+                colors={i % 2 === 0 ? ['#D4B896', '#8B6B4A'] : ['#A8B59B', '#6E7F5C']}
+                style={[s.nowAv, { marginLeft: i === 0 ? 0 : -10 }]}
+              />
+            ))}
+            {livePractitioners.length > 3 && (
+              <View style={[s.nowAv, s.nowAvMore, { marginLeft: -10 }]}>
+                <Text style={s.nowAvMoreTxt}>+{livePractitioners.length - 3}</Text>
+              </View>
+            )}
+          </View>
+          <TouchableOpacity style={s.joinBtn} onPress={handlePracticeButton} activeOpacity={0.8}>
+            <Text style={s.joinBtnTxt}>Join Practice</Text>
+            <Ionicons name="chevron-forward" size={14} color={clay.inkMid} />
+          </TouchableOpacity>
         </View>
 
-        {/* Log practice CTA */}
-        <TouchableOpacity activeOpacity={0.85} onPress={handlePracticeButton} style={{ marginHorizontal: 20, marginBottom: 10 }}>
-          <LinearGradient colors={[clay.clay, clay.clayDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.logCard}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Ionicons name={practiceState === 'onMat' ? 'checkmark-circle' : 'book-outline'} size={28} color="#fff" />
-              <View style={{ flex: 1, marginLeft: 12 }}>
-                <Text style={s.logTitleTxt}>{practiceState === 'onMat' ? 'Finish Practice' : 'Log Practice'}</Text>
-                <Text style={s.logSubTxt}>{practiceState === 'onMat' ? 'Save your session' : 'Start your journey'}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={22} color="rgba(255,255,255,0.8)" />
+        {/* 3 card row: Streak / Weekly / Begin Practice */}
+        <View style={s.row3}>
+          {/* Streak */}
+          <View style={[s.card3, { flex: 1 }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <LinearGradient colors={['#D8DCC9', '#A8B59B']} style={s.leaf}>
+                <Ionicons name="leaf" size={13} color="#fff" />
+              </LinearGradient>
+              <Text style={s.streakLbl}>Current Streak</Text>
             </View>
-          </LinearGradient>
-        </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 8, gap: 5 }}>
+              <Text style={s.streakBig}>{streak}</Text>
+              <Text style={s.streakUnit}>DAYS</Text>
+            </View>
+            <Text style={s.streakMicro}>Every day is a step forward</Text>
+          </View>
+
+          {/* Weekly */}
+          <View style={[s.card3, { flex: 1 }]}>
+            <Text style={s.wTitle}>Weekly Summary</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 6 }}>
+              <View style={s.wIcn}><Text style={{ fontSize: 11 }}>👥</Text></View>
+              <Text style={s.wBig}>{formatDuration(weekMinutes) || '0:00'}</Text>
+              <View style={s.wIcn}><Text style={{ fontSize: 11 }}>🪷</Text></View>
+            </View>
+            <View style={s.wMini}>
+              <Text style={s.wMiniTxt}>Practices</Text>
+              <Text style={s.wMiniTxt}>Total Time</Text>
+              <Text style={s.wMiniTxt}>Poses</Text>
+            </View>
+          </View>
+
+          {/* Begin Practice */}
+          <TouchableOpacity style={{ flex: 1.15 }} activeOpacity={0.88} onPress={handlePracticeButton}>
+            <LinearGradient colors={[clay.clay, clay.clayDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.beginCard}>
+              <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.7)" style={s.beginChev} />
+              <View style={s.beginIcn}>
+                <Text style={{ fontSize: 20 }}>🧘</Text>
+              </View>
+              <Text style={s.beginTitle}>{practiceState === 'onMat' ? 'Finish' : 'Begin'} Practice</Text>
+              <Text style={s.beginSub}>{practiceState === 'onMat' ? 'Save your session' : 'Step on the mat'}</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
 
         {/* Practice Mode entry */}
         <TouchableOpacity
@@ -688,6 +722,57 @@ const s = StyleSheet.create({
   logCard: { borderRadius: 16, padding: 16, shadowColor: clay.clay, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 4 },
   logTitleTxt: { fontSize: 16, fontWeight: '700', color: '#fff' },
   logSubTxt: { fontSize: 11, color: 'rgba(255,255,255,0.85)', marginTop: 2 },
+
+  // On the mat banner
+  nowBanner: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: '#fff', marginHorizontal: 20, marginBottom: 12,
+    borderRadius: 14, borderWidth: 1, borderColor: clay.border,
+    paddingVertical: 12, paddingHorizontal: 14,
+  },
+  nowDotWrap: {
+    width: 26, height: 26, borderRadius: 13,
+    backgroundColor: '#E8F0DE', alignItems: 'center', justifyContent: 'center', marginRight: 10,
+  },
+  nowDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#6E7F5C' },
+  nowTitle: { fontSize: 13, fontWeight: '700', color: clay.ink },
+  nowSub: { fontSize: 10, color: clay.muted, marginTop: 2 },
+  nowAvatars: { flexDirection: 'row', alignItems: 'center', marginRight: 10 },
+  nowAv: { width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: '#fff' },
+  nowAvMore: { backgroundColor: clay.sandDark, alignItems: 'center', justifyContent: 'center' },
+  nowAvMoreTxt: { fontSize: 9, fontWeight: '700', color: clay.inkMid },
+  joinBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 2,
+    backgroundColor: clay.sand, borderRadius: 20,
+    paddingVertical: 7, paddingHorizontal: 11,
+  },
+  joinBtnTxt: { fontSize: 11, fontWeight: '700', color: clay.inkMid },
+
+  // 3-card row
+  row3: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 14, gap: 10 },
+  card3: {
+    backgroundColor: '#fff', borderRadius: 16, padding: 12,
+    borderWidth: 1, borderColor: clay.border, minHeight: 108,
+  },
+  leaf: { width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
+  streakLbl: { fontSize: 9, fontWeight: '700', color: clay.muted, letterSpacing: 0.5, textTransform: 'uppercase' },
+  streakBig: { fontSize: 30, fontWeight: '800', color: clay.ink, lineHeight: 32 },
+  streakUnit: { fontSize: 9, fontWeight: '700', color: clay.muted, letterSpacing: 1 },
+  streakMicro: { fontSize: 9, color: clay.muted, marginTop: 6, lineHeight: 12 },
+  wTitle: { fontSize: 10, fontWeight: '700', color: clay.muted, letterSpacing: 0.5, textTransform: 'uppercase', textAlign: 'center' },
+  wIcn: { width: 18, height: 18, borderRadius: 9, backgroundColor: clay.sand, alignItems: 'center', justifyContent: 'center' },
+  wBig: { fontSize: 18, fontWeight: '800', color: clay.ink },
+  wMini: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 },
+  wMiniTxt: { fontSize: 7.5, color: clay.muted, fontWeight: '600' },
+  beginCard: {
+    flex: 1, borderRadius: 16, padding: 12, minHeight: 108,
+    justifyContent: 'flex-end',
+    shadowColor: clay.clay, shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.25, shadowRadius: 8, elevation: 3,
+  },
+  beginChev: { position: 'absolute', top: 10, right: 10 },
+  beginIcn: { marginBottom: 4 },
+  beginTitle: { fontSize: 13, fontWeight: '800', color: '#fff' },
+  beginSub: { fontSize: 10, color: 'rgba(255,255,255,0.85)', marginTop: 2 },
 
   row2: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 14 },
   infoCard: { backgroundColor: '#fff', borderRadius: 14, padding: 12, borderWidth: 1, borderColor: clay.border, flexDirection: 'row', alignItems: 'center', marginRight: 10 },
