@@ -8,11 +8,11 @@ import LogPracticeModal from '@/components/LogPracticeModal';
 
 const clay = {
   bg: '#FFFFFF',
-  border: '#DAE3CB',
-  muted: '#7A8870',
-  mutedLight: '#A8B59B',
-  clay: '#5A8A3F',
-  clayDark: '#3F6B27',
+  border: '#E8DFD0',
+  muted: '#8A7A68',
+  mutedLight: '#B5A793',
+  clay: '#C26B4D',
+  clayDark: '#A5502F',
 };
 
 const HIDDEN_TABS = ['gatherings', 'profile'];

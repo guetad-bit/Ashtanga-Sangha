@@ -2,45 +2,45 @@
 // Single source of truth for all design tokens — Stone & Moss theme
 
 export const colors = {
-  // Background palette — soft sage parchment
-  sky: '#EEF1E6',
+  // Background palette — warm parchment
+  sky: '#F5EFE6',
   skyMid: '#FFFFFF',
-  skyDeep: '#E8EFDC',
+  skyDeep: '#EFE3D3',
 
-  // Primary greens → (primary actions, links, focus)
-  blue: '#5A8A3F',
-  blueL: '#6E9456',
-  blueDeep: '#3F6B27',
+  // Primary clay → (primary actions, links, focus)
+  blue: '#C26B4D',
+  blueL: '#D88060',
+  blueDeep: '#A5502F',
 
-  // Secondary sage fills
-  sand: '#D6E0C2',
-  sandMid: '#B8D49A',
-  sandDeep: '#E4EEDF',
+  // Secondary wood fills
+  sand: '#EFE3D3',
+  sandMid: '#D4C4AB',
+  sandDeep: '#F7F1E7',
 
-  // Sage palette → (success, nature accents)
-  sage: '#6E9456',
-  sageL: '#DDEBC2',
-  sagePale: '#E8EFDC',
+  // Sage palette → (subtle nature accents)
+  sage: '#A8B59B',
+  sageL: '#DCE8D3',
+  sagePale: '#F0F5EB',
 
-  // Accent → (soft highlight for CTAs)
-  orange: '#5A8A3F',
-  orangeL: '#9DBF6E',
-  orangePale: '#DDEBC2',
+  // Accent → (warm terracotta for CTAs)
+  orange: '#C26B4D',
+  orangeL: '#E8B8A0',
+  orangePale: '#F7F1E7',
 
-  // Ink palette → Dark text (deep forest)
-  ink: '#1F2A1A',
-  inkMid: '#344028',
+  // Ink palette → Dark text (warm brown)
+  ink: '#2A2420',
+  inkMid: '#4A3F36',
 
   // Muted — secondary text, placeholders
-  muted: '#7A8870',
-  mutedL: '#A8B59B',
+  muted: '#8A7A68',
+  mutedL: '#B5A793',
 
   // Base (card and page)
   white: '#FFFFFF',
-  page: '#EEF1E6',
+  page: '#F5EFE6',
 
   // Light backgrounds
-  obDark: '#EEF1E6',
+  obDark: '#F5EFE6',
   obDarkMid: '#FFFFFF',
 } as const;
 

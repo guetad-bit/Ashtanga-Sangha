@@ -36,24 +36,24 @@ interface FeedPost {
   profiles: { name: string; avatar_url: string | null; series?: string | null } | null;
 }
 
-/* ── Sage & Moss palette ─────────────────────────────────────────── */
+/* ── Clay & Terracotta palette ───────────────────────────────────── */
 const clay = {
-  bg: '#EEF1E6',
-  sand: '#E8EFDC',
-  sandDark: '#D6E0C2',
+  bg: '#F5EFE6',
+  sand: '#F7F1E7',
+  sandDark: '#EFE3D3',
   card: '#FFFFFF',
-  ink: '#1F2A1A',
-  inkMid: '#344028',
-  muted: '#7A8870',
-  mutedLight: '#A8B59B',
-  border: '#DAE3CB',
-  clay: '#5A8A3F',
-  clayDark: '#3F6B27',
-  claySoft: '#B8D49A',
-  gold: '#9DBF6E',
-  sage: '#6E9456',
-  success: '#5A8A3F',
-  heart: '#5A8A3F',
+  ink: '#2A2420',
+  inkMid: '#4A3F36',
+  muted: '#8A7A68',
+  mutedLight: '#B5A793',
+  border: '#E8DFD0',
+  clay: '#C26B4D',
+  clayDark: '#A5502F',
+  claySoft: '#E8B8A0',
+  gold: '#C4956A',
+  sage: '#A8B59B',
+  success: '#6E7F5C',
+  heart: '#C26B4D',
 };
 
 const GURU_WISDOM = [
@@ -82,15 +82,15 @@ const SERIES_LABELS: Record<string, string> = {
 };
 
 const SERIES_CHIPS: Record<string, { label: string; bg: string; fg: string }> = {
-  primary: { label: 'Primary', bg: '#DDEBC2', fg: '#3F6B27' },
-  full_primary: { label: 'Mysore', bg: '#E4EEDF', fg: '#3F6B27' },
-  half_primary: { label: 'Primary', bg: '#DDEBC2', fg: '#3F6B27' },
-  intermediate: { label: 'Intermediate', bg: '#C8DDA0', fg: '#2A4519' },
-  advanced_a: { label: 'Advanced A', bg: '#B8D49A', fg: '#2A4519' },
-  advanced_b: { label: 'Advanced B', bg: '#B8D49A', fg: '#2A4519' },
-  led_class: { label: 'Led Class', bg: '#E8EFDC', fg: '#344028' },
-  sun_sals: { label: 'Sun Sals', bg: '#E4EEDF', fg: '#6E9456' },
-  short: { label: 'Short', bg: '#E8EFDC', fg: '#344028' },
+  primary: { label: 'Primary', bg: '#F0E8D8', fg: '#8A5A3A' },
+  full_primary: { label: 'Mysore', bg: '#F5EFE6', fg: '#8A5A3A' },
+  half_primary: { label: 'Primary', bg: '#F0E8D8', fg: '#8A5A3A' },
+  intermediate: { label: 'Intermediate', bg: '#E8B8A0', fg: '#5C3620' },
+  advanced_a: { label: 'Advanced A', bg: '#E8B8A0', fg: '#5C3620' },
+  advanced_b: { label: 'Advanced B', bg: '#E8B8A0', fg: '#5C3620' },
+  led_class: { label: 'Led Class', bg: '#F7F1E7', fg: '#4A3F36' },
+  sun_sals: { label: 'Sun Sals', bg: '#F5EFE6', fg: '#8A7A68' },
+  short: { label: 'Short', bg: '#F7F1E7', fg: '#4A3F36' },
 };
 
 function getTimeAgo(dateStr: string): string {
@@ -293,7 +293,7 @@ export default function HomeScreen() {
               {user?.avatarUrl ? (
                 <Image source={{ uri: user.avatarUrl }} style={s.avatarSm} />
               ) : (
-                <LinearGradient colors={['#9DBF6E', '#3F6B27']} style={s.avatarSm} />
+                <LinearGradient colors={['#C9A384', '#8B6B4A']} style={s.avatarSm} />
               )}
             </TouchableOpacity>
           </View>
@@ -379,7 +379,7 @@ export default function HomeScreen() {
         {/* Moon + friends row */}
         <View style={s.row2}>
           <View style={[s.infoCard, { flex: 1.6 }]}>
-            <LinearGradient colors={['#D8E0C8', '#1F2A1A']} style={s.moonIcon} />
+            <LinearGradient colors={['#E8DFD0', '#8A7A68']} style={s.moonIcon} />
             <View style={{ flex: 1, marginLeft: 10 }}>
               <Text style={s.moonTitle}>New Moon · {moonLabel}</Text>
               <Text style={s.moonSub}>Rest, reflect, allow. {daysToMoon === 0 ? 'Today' : `${daysToMoon} days`}</Text>
@@ -394,7 +394,7 @@ export default function HomeScreen() {
                   {m.avatar_url ? (
                     <Image source={{ uri: m.avatar_url }} style={s.friendsDotImg} />
                   ) : (
-                    <LinearGradient colors={['#B8D49A', '#3F6B27']} style={s.friendsDotImg} />
+                    <LinearGradient colors={['#D4A584', '#8B6B4A']} style={s.friendsDotImg} />
                   )}
                 </View>
               ))}
@@ -408,7 +408,7 @@ export default function HomeScreen() {
 
         {/* Quote banner */}
         <LinearGradient
-          colors={['#9DBF6E', '#6E9456', '#3F6B27']}
+          colors={['#D8C3A8', '#A68868', '#7A6855']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={s.quoteBanner}
@@ -437,7 +437,7 @@ export default function HomeScreen() {
                     {post.profiles?.avatar_url ? (
                       <Image source={{ uri: post.profiles.avatar_url }} style={s.fcAvatar} />
                     ) : (
-                      <LinearGradient colors={['#9DBF6E', '#2A4519']} style={s.fcAvatar} />
+                      <LinearGradient colors={['#C9A384', '#7A5540']} style={s.fcAvatar} />
                     )}
                     <View style={[s.fcDot, { backgroundColor: clay.success }]} />
                   </TouchableOpacity>
@@ -511,7 +511,7 @@ export default function HomeScreen() {
                   {m.avatar_url ? (
                     <Image source={{ uri: m.avatar_url }} style={s.nearImg} />
                   ) : (
-                    <LinearGradient colors={['#B8D49A', '#2A4519']} style={s.nearImg} />
+                    <LinearGradient colors={['#D4B896', '#8B6B4A']} style={s.nearImg} />
                   )}
                   <Text style={s.nearName} numberOfLines={1}>{m.name}</Text>
                   <Text style={s.nearSub} numberOfLines={1}>{SERIES_LABELS[m.series] ?? m.series}</Text>
@@ -622,7 +622,7 @@ export default function HomeScreen() {
                 {profileCard.avatarUrl ? (
                   <Image source={{ uri: profileCard.avatarUrl }} style={s.profileAvatar} />
                 ) : (
-                  <LinearGradient colors={['#B8D49A', '#3F6B27']} style={s.profileAvatar} />
+                  <LinearGradient colors={['#D4A584', '#8B6B4A']} style={s.profileAvatar} />
                 )}
                 <Text style={s.profileName}>{profileCard.name}</Text>
                 <View style={s.profileBadgeRow}>
@@ -631,7 +631,7 @@ export default function HomeScreen() {
                     <Text style={s.profileBadgeText}>{profileCard.series}</Text>
                   </View>
                   {profileCard.streak > 0 && (
-                    <View style={[s.profileBadge, { backgroundColor: '#DDEBC2' }]}>
+                    <View style={[s.profileBadge, { backgroundColor: '#F0E8D8' }]}>
                       <Ionicons name="flame-outline" size={13} color={clay.clay} />
                       <Text style={[s.profileBadgeText, { color: clay.clay }]}>{profileCard.streak}-day streak</Text>
                     </View>
@@ -675,9 +675,9 @@ const s = StyleSheet.create({
   statsRow: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 14 },
   streakCard: { flex: 1, borderRadius: 16, padding: 14, marginRight: 10 },
   streakFlame: { fontSize: 22 },
-  streakLabel: { fontSize: 10, fontWeight: '600', color: '#3F6B27', marginTop: 4 },
-  streakNum: { fontSize: 22, fontWeight: '800', color: '#2A4519', marginTop: 2 },
-  streakSub: { fontSize: 9, color: '#3F6B27', marginTop: 4 },
+  streakLabel: { fontSize: 10, fontWeight: '600', color: '#7A4B2E', marginTop: 4 },
+  streakNum: { fontSize: 22, fontWeight: '800', color: '#5C3620', marginTop: 2 },
+  streakSub: { fontSize: 9, color: '#7A4B2E', marginTop: 4 },
   weeklyCard: { flex: 1.3, backgroundColor: '#fff', borderRadius: 16, padding: 14, borderWidth: 1, borderColor: clay.border },
   weeklyTitle: { fontSize: 11, color: clay.muted, marginBottom: 8 },
   weeklyStats: { flexDirection: 'row', justifyContent: 'space-between' },
@@ -764,7 +764,7 @@ const s = StyleSheet.create({
   profileAvatar: { width: 84, height: 84, borderRadius: 42, marginBottom: 12 },
   profileName: { fontSize: 18, fontWeight: '800', color: clay.ink, marginBottom: 10 },
   profileBadgeRow: { flexDirection: 'row', marginBottom: 12, flexWrap: 'wrap', justifyContent: 'center' },
-  profileBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 14, backgroundColor: '#E4EEDF', marginHorizontal: 4, marginBottom: 4 },
+  profileBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 14, backgroundColor: '#F5EFE6', marginHorizontal: 4, marginBottom: 4 },
   profileBadgeText: { fontSize: 11, fontWeight: '600', color: clay.sage, marginLeft: 5 },
   profileBio: { fontSize: 12, color: clay.inkMid, textAlign: 'center', lineHeight: 18, marginBottom: 16 },
   profileCloseBtn: { paddingHorizontal: 24, paddingVertical: 10, borderRadius: 12, backgroundColor: clay.sand },

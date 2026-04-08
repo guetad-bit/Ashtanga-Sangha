@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sangha — Home</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5EFE6;
+    --bg2:#EFE7DB;
+    --card:#FFFFFF;
+    --cardSoft:#F7F1E7;
+    --ink:#2A2420;
+    --inkMid:#4A3F36;
+    --muted:#8A7A68;
+    --mutedL:#B5A793;
+    --border:#E8DFD0;
+    --sage:#A8B59B;
+    --sageDark:#6E7F5C;
+    --clay:#C26B4D;
+    --clayDark:#A5502F;
+    --claySoft:#E8B8A0;
+    --heart:#C26B4D;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:#e8dfd0;
+    font-family:'Inter',-apple-system,sans-serif;
+    min-height:100vh;
+    display:flex;justify-content:center;
+    padding:20px;
+    color:var(--ink);
+  }
+  .phone{
+    width:390px;max-width:100%;
+    background:var(--bg);
+    border-radius:40px;
+    overflow:hidden;
+    box-shadow:0 30px 80px rgba(60,40,20,.25);
+    position:relative;
+    padding-bottom:90px;
+  }
+  .scroll{max-height:calc(100vh - 40px);overflow-y:auto}
+  .scroll::-webkit-scrollbar{display:none}
+
+  /* ── Header ── */
+  .header{
+    padding:24px 22px 14px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .logo{width:42px;height:42px;flex-shrink:0}
+  .brand h1{
+    font-family:'DM Serif Display',serif;
+    font-size:30px;font-weight:400;color:var(--ink);
+    line-height:1;
+  }
+  .brand p{
+    font-size:9px;letter-spacing:2.5px;color:var(--muted);
+    margin-top:4px;font-weight:500;
+  }
+  .header-right{
+    margin-left:auto;display:flex;align-items:center;gap:12px;
+  }
+  .bell{
+    width:36px;height:36px;display:grid;place-items:center;
+    color:var(--inkMid);position:relative;
+  }
+  .bell::after{
+    content:'';position:absolute;top:6px;right:6px;
+    width:8px;height:8px;background:var(--clay);border-radius:50%;
+    border:1.5px solid var(--bg);
+  }
+  .avatar-hd{
+    width:44px;height:44px;border-radius:50%;
+    background:linear-gradient(135deg,#C4956A,#8B6B4A);
+    border:2px solid #fff;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+  }
+
+  /* ── Tab bar ── */
+  .tabs{
+    margin:0 20px 16px;
+    background:var(--cardSoft);
+    border-radius:18px;
+    padding:6px;
+    display:flex;
+    border:1px solid var(--border);
+  }
+  .tab{
+    flex:1;text-align:center;
+    padding:12px 8px;
+    font-size:14px;font-weight:500;
+    color:var(--muted);
+    border-radius:12px;
+    position:relative;
+  }
+  .tab.active{
+    background:#fff;
+    color:var(--ink);
+    box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .tab.active::after{
+    content:'';position:absolute;bottom:6px;left:50%;
+    transform:translateX(-50%);
+    width:22px;height:2px;background:var(--sageDark);border-radius:2px;
+  }
+
+  /* ── Practicing Now ── */
+  .now{
+    margin:0 20px 14px;
+    background:var(--cardSoft);
+    border-radius:18px;
+    padding:14px 16px;
+    display:flex;align-items:center;gap:12px;
+    border:1px solid var(--border);
+  }
+  .now-dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--sageDark);flex-shrink:0;
+    box-shadow:0 0 0 4px rgba(110,127,92,.2);
+  }
+  .now-text{flex:1;min-width:0}
+  .now-text b{font-size:14px;color:var(--ink);font-weight:600;display:block}
+  .now-text span{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+  .now-avatars{display:flex;margin-right:4px}
+  .now-avatars .av{
+    width:28px;height:28px;border-radius:50%;
+    border:2px solid var(--cardSoft);
+    margin-left:-10px;
+    background-size:cover;background-position:center;
+  }
+  .now-avatars .av:nth-child(1){background:linear-gradient(135deg,#D4B896,#8B6B4A)}
+  .now-avatars .av:nth-child(2){background:linear-gradient(135deg,#A8B59B,#6E7F5C)}
+  .now-avatars .av:nth-child(3){background:linear-gradient(135deg,#C4956A,#7A5540)}
+  .now-avatars .av:nth-child(4){background:linear-gradient(135deg,#D4A584,#8B6B4A);
+    display:grid;place-items:center;font-size:9px;color:#fff;font-weight:600}
+  .join-btn{
+    background:#EFE3D3;
+    padding:10px 14px;
+    border-radius:12px;
+    font-size:13px;font-weight:600;color:var(--inkMid);
+    display:flex;align-items:center;gap:4px;
+    border:1px solid var(--border);
+  }
+
+  /* ── 3 Cards Row ── */
+  .row3{
+    display:grid;
+    grid-template-columns:1fr 1fr 1.2fr;
+    gap:10px;
+    margin:0 20px 14px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:14px;
+  }
+  .streak-card{padding:14px 12px}
+  .streak-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .leaf{
+    width:26px;height:26px;border-radius:50%;
+    background:linear-gradient(135deg,#D8DCC9,#A8B59B);
+    display:grid;place-items:center;color:#fff;font-size:14px;
+  }
+  .streak-lbl{font-size:10px;color:var(--muted);font-weight:500;letter-spacing:.3px}
+  .streak-big{
+    display:flex;align-items:baseline;gap:5px;margin-top:2px;
+  }
+  .streak-big b{font-size:28px;font-weight:700;color:var(--ink);font-family:'DM Serif Display',serif}
+  .streak-big span{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px}
+  .streak-sub{font-size:9px;color:var(--mutedL);margin-top:6px;line-height:1.3}
+
+  .weekly-card{padding:12px 10px;text-align:center}
+  .weekly-lbl{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:8px}
+  .weekly-mid{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    margin-bottom:8px;
+  }
+  .weekly-mid .icn{
+    width:20px;height:20px;border-radius:6px;
+    background:#F0E8D8;display:grid;place-items:center;font-size:10px;
+  }
+  .weekly-mid b{font-size:22px;font-weight:700;color:var(--ink);font-family:'DM Serif Display',serif}
+  .weekly-mini{display:flex;justify-content:space-around;padding-top:6px;border-top:1px solid #F0E8D8}
+  .weekly-mini div{font-size:8px;color:var(--muted);text-align:center}
+
+  .begin-card{
+    background:linear-gradient(135deg,#C26B4D 0%,#A5502F 100%);
+    color:#fff;padding:14px;position:relative;overflow:hidden;
+    display:flex;flex-direction:column;justify-content:space-between;
+    border:none;
+  }
+  .begin-card::after{
+    content:'›';position:absolute;top:12px;right:14px;
+    font-size:22px;color:rgba(255,255,255,.7);
+  }
+  .begin-icn{
+    width:36px;height:36px;border-radius:10px;
+    background:rgba(255,255,255,.18);
+    display:grid;place-items:center;margin-bottom:8px;
+    font-size:18px;
+  }
+  .begin-card h3{font-size:16px;font-weight:600;letter-spacing:.2px}
+  .begin-card p{font-size:11px;opacity:.85;margin-top:2px}
+
+  /* ── Moon + Friends row ── */
+  .row2{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    margin:0 20px 16px;
+  }
+  .moon-card{
+    background:transparent;border:none;padding:2px 4px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .moon-icon{
+    width:32px;height:32px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,#E8DFD0,#8A7A68);
+    flex-shrink:0;
+  }
+  .moon-text b{display:block;font-size:13px;font-weight:600;color:var(--ink)}
+  .moon-text span{font-size:11px;color:var(--muted);line-height:1.4}
+  .friends-card{
+    background:var(--cardSoft);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:10px 12px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .friends-avs{display:flex}
+  .friends-avs .av{
+    width:24px;height:24px;border-radius:50%;
+    margin-left:-8px;border:2px solid var(--cardSoft);
+  }
+  .friends-avs .av:nth-child(1){background:linear-gradient(135deg,#D4A584,#8B6B4A);margin:0}
+  .friends-avs .av:nth-child(2){background:linear-gradient(135deg,#C4956A,#7A5540)}
+  .friends-avs .av:nth-child(3){background:linear-gradient(135deg,#D4B896,#A68868)}
+  .friends-avs .av:nth-child(4){background:linear-gradient(135deg,#B8A88E,#7A6855)}
+  .friends-text{font-size:10px;color:var(--muted);flex:1;line-height:1.3}
+  .friends-card::after{content:'›';color:var(--mutedL);font-size:18px}
+
+  /* ── Quote banner ── */
+  .quote-banner{
+    margin:0 20px 18px;
+    border-radius:20px;overflow:hidden;
+    position:relative;height:140px;
+    background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(120,80,40,.3)),
+               linear-gradient(135deg,#D8C3A8,#A68868 60%,#7A6855);
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:0 32px;
+    color:#fff;
+  }
+  .quote-banner::before{
+    content:'';position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse at 80% 80%,rgba(200,150,100,.4),transparent 50%),
+      radial-gradient(circle at 20% 20%,rgba(255,255,255,.15),transparent 40%);
+  }
+  .quote-banner q{
+    position:relative;
+    font-family:'DM Serif Display',serif;
+    font-size:15px;font-weight:400;
+    line-height:1.5;font-style:italic;
+    display:block;
+    text-shadow:0 2px 6px rgba(0,0,0,.3);
+  }
+  .quote-banner q::before{content:'“';margin-right:2px}
+  .quote-banner q::after{content:'”'}
+  .quote-banner .author{
+    position:relative;
+    font-family:'Inter',sans-serif;font-style:normal;
+    font-size:11px;display:block;margin-top:10px;
+    opacity:.9;letter-spacing:.4px;
+  }
+
+  /* ── Activity Feed ── */
+  .section-header{
+    margin:0 20px 12px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .section-header h2{
+    font-family:'DM Serif Display',serif;
+    font-size:22px;font-weight:400;color:var(--ink);
+  }
+  .view-all{font-size:12px;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:2px}
+
+  .feed-card{
+    margin:0 20px 16px;
+    background:var(--card);
+    border-radius:18px;
+    border:1px solid var(--border);
+    padding:16px;
+  }
+  .feed-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .feed-av{
+    width:44px;height:44px;border-radius:50%;
+    background:linear-gradient(135deg,#D4A584,#8B6B4A);
+    position:relative;flex-shrink:0;
+  }
+  .feed-av::after{
+    content:'';position:absolute;bottom:0;right:0;
+    width:12px;height:12px;border-radius:50%;
+    background:var(--sageDark);border:2px solid #fff;
+  }
+  .feed-name{flex:1;min-width:0}
+  .feed-name b{display:block;font-size:14px;font-weight:600;color:var(--ink)}
+  .feed-meta{font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .chip{
+    background:#F0E8D8;padding:2px 8px;border-radius:10px;
+    font-size:10px;font-weight:500;color:var(--inkMid);
+  }
+  .feed-more{color:var(--mutedL);font-size:18px;align-self:flex-start;padding:4px 0}
+  .feed-caption{
+    font-size:14px;color:var(--inkMid);line-height:1.5;
+    margin:6px 0 12px;
+  }
+  .feed-caption b{font-weight:600;color:var(--ink)}
+  .feed-tags{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .felt-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-top:10px;border-top:1px solid #F5EFE6;
+    font-size:11px;color:var(--muted);
+  }
+  .felt-left{display:flex;align-items:center;gap:6px}
+  .felt-avs{display:flex}
+  .felt-avs .av{
+    width:20px;height:20px;border-radius:50%;
+    border:2px solid #fff;margin-left:-6px;
+  }
+  .felt-avs .av:nth-child(1){background:linear-gradient(135deg,#C4956A,#7A5540);margin:0}
+  .felt-avs .av:nth-child(2){background:linear-gradient(135deg,#A8B59B,#6E7F5C)}
+  .heart-count{display:flex;align-items:center;gap:4px;color:var(--heart);font-weight:600}
+  .feed-actions{display:flex;align-items:center;gap:16px;margin-top:12px;padding-top:10px;border-top:1px solid #F5EFE6}
+  .act{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);font-weight:500}
+  .act.liked{color:var(--heart)}
+  .act-icons-right{margin-left:auto;display:flex;gap:14px;color:var(--muted)}
+
+  /* ── Practitioners Near ── */
+  .near-wrap{padding:0 20px 20px}
+  .near-header{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .near-header h2{
+    font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;
+  }
+  .near-grid{
+    display:grid;grid-template-columns:1fr 1fr 1fr 0.9fr;
+    gap:10px;
+  }
+  .near-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    overflow:hidden;
+    padding:10px 10px 12px;
+    text-align:left;
+  }
+  .near-img{
+    width:100%;aspect-ratio:1;
+    border-radius:12px;
+    margin-bottom:8px;
+  }
+  .near-card:nth-child(1) .near-img{background:linear-gradient(135deg,#C9A384,#8B6B4A)}
+  .near-card:nth-child(2) .near-img{background:linear-gradient(135deg,#D4A584,#8B6B4A)}
+  .near-card:nth-child(3) .near-img{background:linear-gradient(135deg,#D4B896,#8B6B4A)}
+  .near-card b{font-size:12px;font-weight:600;color:var(--ink);display:block}
+  .near-meta{font-size:10px;color:var(--muted);margin-top:2px}
+  .near-streak{
+    font-size:10px;color:var(--clay);margin-top:4px;display:flex;align-items:center;gap:3px;font-weight:600;
+  }
+  .near-connect{
+    background:#F5EFE6;
+    border:none;
+    border-radius:8px;
+    padding:6px 0;
+    font-size:11px;font-weight:600;color:var(--inkMid);
+    margin-top:8px;width:100%;text-align:center;
+  }
+  .near-card.find{
+    background:transparent;
+    border:1.5px dashed var(--border);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:14px 8px;
+    color:var(--muted);
+  }
+  .find-icn{
+    width:36px;height:36px;border-radius:10px;background:#F0E8D8;
+    display:grid;place-items:center;margin-bottom:8px;font-size:16px;color:var(--inkMid);
+  }
+  .find p{font-size:10px;line-height:1.3}
+
+  /* ── Bottom Nav ── */
+  .tab-nav{
+    position:absolute;bottom:0;left:0;right:0;
+    background:#fff;
+    border-top:1px solid var(--border);
+    padding:10px 0 22px;
+    display:flex;align-items:flex-start;
+    border-radius:30px 30px 40px 40px;
+    box-shadow:0 -4px 20px rgba(0,0,0,.05);
+  }
+  .tab-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    font-size:10px;color:var(--mutedL);font-weight:500;
+    padding-top:4px;
+  }
+  .tab-item.active{color:var(--clay)}
+  .tab-item .ic{font-size:22px}
+  .tab-fab{
+    width:62px;height:62px;
+    background:linear-gradient(135deg,#C26B4D,#A5502F);
+    border-radius:50%;
+    display:grid;place-items:center;
+    margin-top:-28px;
+    box-shadow:0 6px 16px rgba(165,80,47,.4);
+    color:#fff;font-size:24px;
+    border:4px solid #fff;
+    flex-shrink:0;
+  }
+  .tab-fab-wrap{
+    flex:1;display:flex;flex-direction:column;align-items:center;
+  }
+  .tab-fab-label{font-size:10px;color:var(--clay);font-weight:600;margin-top:4px}
+
+  /* icon placeholders using css */
+  .ic-bell::before{content:'🔔'}
+  .ic-home::before{content:'⌂';font-size:26px;font-weight:600}
+  .ic-compass::before{content:'◎';font-size:24px}
+  .ic-chart::before{content:'📊'}
+  .ic-user::before{content:'👤'}
+  .ic-mat::before{content:'🧘'}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="scroll">
+
+  <!-- Header -->
+  <div class="header">
+    <svg class="logo" viewBox="0 0 64 64" fill="none">
+      <g stroke="#C26B4D" stroke-width="2" fill="none" stroke-linecap="round">
+        <path d="M32 50 C32 40, 22 32, 14 30 C18 44, 28 50, 32 50 Z" fill="#E8B8A0" fill-opacity=".3"/>
+        <path d="M32 50 C32 40, 42 32, 50 30 C46 44, 36 50, 32 50 Z" fill="#E8B8A0" fill-opacity=".3"/>
+        <path d="M32 50 C28 38, 22 30, 22 22 C28 26, 32 34, 32 50 Z" fill="#E8B8A0" fill-opacity=".3"/>
+        <path d="M32 50 C36 38, 42 30, 42 22 C36 26, 32 34, 32 50 Z" fill="#E8B8A0" fill-opacity=".3"/>
+        <path d="M32 50 C32 40, 32 30, 32 20" />
+      </g>
+    </svg>
+    <div class="brand">
+      <h1>Sangha</h1>
+      <p>ASHTANGA. COMMUNITY. GROWTH</p>
+    </div>
+    <div class="header-right">
+      <div class="bell"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+      <div class="avatar-hd"></div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active">Feed</div>
+    <div class="tab">Moon Days</div>
+    <div class="tab">My Practice</div>
+  </div>
+
+  <!-- Practicing now -->
+  <div class="now">
+    <div class="now-dot"></div>
+    <div class="now-text">
+      <b>6 are on the mat right now</b>
+      <span>Silent presence. Shared energy</span>
+    </div>
+    <div class="now-avatars">
+      <div class="av"></div><div class="av"></div><div class="av"></div><div class="av">+2</div>
+    </div>
+    <div class="join-btn">Join Practice ›</div>
+  </div>
+
+  <!-- 3 Cards -->
+  <div class="row3">
+    <div class="card streak-card">
+      <div class="streak-top">
+        <div class="leaf">🍃</div>
+        <div class="streak-lbl">Current Streak</div>
+      </div>
+      <div class="streak-big"><b>6</b><span>DAYS</span></div>
+      <div class="streak-sub">Every day is a step forward</div>
+    </div>
+
+    <div class="card weekly-card">
+      <div class="weekly-lbl">Weekly Summary</div>
+      <div class="weekly-mid">
+        <div class="icn">👥</div>
+        <b>14:20</b>
+        <div class="icn">🪷</div>
+      </div>
+      <div class="weekly-mini">
+        <div>Practices</div>
+        <div>Total Time</div>
+        <div>Poses</div>
+      </div>
+    </div>
+
+    <div class="card begin-card">
+      <div class="begin-icn">🧘</div>
+      <h3>Begin Practice</h3>
+      <p>Step on the mat</p>
+    </div>
+  </div>
+
+  <!-- Moon + Friends -->
+  <div class="row2">
+    <div class="moon-card">
+      <div class="moon-icon"></div>
+      <div class="moon-text">
+        <b>New Moon Apr 8</b>
+        <span>Rest day. Time to reflect. 3 days away.</span>
+      </div>
+    </div>
+    <div class="friends-card">
+      <div class="friends-avs">
+        <div class="av"></div><div class="av"></div><div class="av"></div><div class="av"></div>
+      </div>
+      <div class="friends-text">+12 friends practiced this week</div>
+    </div>
+  </div>
+
+  <!-- Quote banner -->
+  <div class="quote-banner">
+    <div>
+      <q>We practice not to perform,<br>but to belong — to ourselves, and to each other.</q>
+      <span class="author">— מסורת האשטבה</span>
+    </div>
+  </div>
+
+  <!-- Activity Feed -->
+  <div class="section-header">
+    <h2>Activity Feed</h2>
+    <div class="view-all">View All ›</div>
+  </div>
+
+  <div class="feed-card">
+    <div class="feed-head">
+      <div class="feed-av"></div>
+      <div class="feed-name">
+        <b>Sarah practiced this morning</b>
+        <div class="feed-meta">Full Primary · Mysore · <span class="chip">KPJAYI</span> · 2h ago</div>
+      </div>
+      <div class="feed-more">⋯</div>
+    </div>
+    <div class="feed-caption">"Grateful. <b>Something softened today.</b>"</div>
+    <div class="feed-tags">
+      <span class="chip">Full Primary</span>
+      <span class="chip">Mysore</span>
+      <span class="chip">KPJAYI</span>
+    </div>
+    <div class="felt-row">
+      <div class="felt-left">
+        <div class="felt-avs"><div class="av"></div><div class="av"></div></div>
+        <span>+32 people felt this</span>
+      </div>
+      <div class="heart-count">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.5-7 10-7 10z"/></svg>
+        34
+      </div>
+    </div>
+    <div class="feed-actions">
+      <div class="act liked">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.5-7 10-7 10z"/></svg>
+        34
+      </div>
+      <div class="act">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        5
+      </div>
+      <div class="act-icons-right">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Near You -->
+  <div class="near-wrap">
+    <div class="near-header">
+      <h2>Practitioners Near You</h2>
+      <div class="view-all">View All ›</div>
+    </div>
+    <div class="near-grid">
+      <div class="near-card">
+        <div class="near-img"></div>
+        <b>Mika Tanaka</b>
+        <div class="near-meta">Primary · 1.4 mi</div>
+        <div class="near-streak">🔥 42 day streak</div>
+        <button class="near-connect">Connect</button>
+      </div>
+      <div class="near-card">
+        <div class="near-img"></div>
+        <b>Ravi Sharma</b>
+        <div class="near-meta">Intermediate · 2.5 mi</div>
+        <div class="near-streak">🔥 18 day streak</div>
+        <button class="near-connect">Connect</button>
+      </div>
+      <div class="near-card">
+        <div class="near-img"></div>
+        <b>Lisa Wong</b>
+        <div class="near-meta">Primary · 2.1 mi</div>
+        <div class="near-streak">🔥 7 day streak</div>
+        <button class="near-connect">Connect</button>
+      </div>
+      <div class="near-card find">
+        <div class="find-icn">👥</div>
+        <p>Find more<br>practitioners<br>here ›</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+  <!-- Bottom nav -->
+  <div class="tab-nav">
+    <div class="tab-item active">
+      <div class="ic ic-home"></div>
+      Home
+    </div>
+    <div class="tab-item">
+      <div class="ic ic-compass"></div>
+      Explore
+    </div>
+    <div class="tab-fab-wrap">
+      <div class="tab-fab">🧘</div>
+      <div class="tab-fab-label">Practice</div>
+    </div>
+    <div class="tab-item">
+      <div class="ic ic-chart"></div>
+      Progress
+    </div>
+    <div class="tab-item">
+      <div class="ic ic-user"></div>
+      You
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -9,10 +9,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { PRIMARY_POSE_SEQUENCE } from '@/data/asanaPoses';
 
-const BG = '#0D1A08';
-const INK = '#E8EFDC';
-const MUTED = '#6E9456';
-const ACCENT = '#9DBF6E';
+const BG = '#1C120A';
+const INK = '#F5EFE6';
+const MUTED = '#B5926E';
+const ACCENT = '#C26B4D';
 
 export default function PracticeMode() {
   const router = useRouter();
