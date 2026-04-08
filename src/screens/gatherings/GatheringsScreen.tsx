@@ -977,8 +977,8 @@ const s = StyleSheet.create({
   // Payment placeholder
   bkPaymentCard: {
     flexDirection: 'row', alignItems: 'center', gap: spacing.md,
-    backgroundColor: '#FFF8F0', borderRadius: radius.xl, borderWidth: 1,
-    borderColor: '#F0E6D8', padding: spacing.lg, marginTop: spacing.xl,
+    backgroundColor: '#E8EFDC', borderRadius: radius.xl, borderWidth: 1,
+    borderColor: '#DAE3CB', padding: spacing.lg, marginTop: spacing.xl,
   },
   bkPaymentIcon: { fontSize: 24 },
   bkPaymentTitle: { ...typography.headingSm, color: colors.ink },
