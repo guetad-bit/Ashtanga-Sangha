@@ -37,11 +37,23 @@ export interface MockPost {
   likers?: MockLiker[];
 }
 
-// Curated anjali-mudra (hands-at-heart) photos.
-// Using source.unsplash.com with consistent namaste keywords so every portrait
-// shows practitioners in anjali mudra regardless of which id resolves.
-const ANJALI = (seed: number, w = 400) =>
-  `https://source.unsplash.com/${w}x${w}/?namaste,prayer-hands,yoga&sig=${seed}`;
+// Curated anjali-mudra (hands-at-heart) photos from Unsplash.
+// Rotating a small set of verified yoga/meditation photo ids so every
+// portrait consistently shows a practitioner in anjali mudra.
+const ANJALI_IDS = [
+  'photo-1545389336-cf090694435e',
+  'photo-1506126613408-eca07ce68773',
+  'photo-1575052814086-f385e2e2ad1b',
+  'photo-1593810450967-f9c42742e326',
+  'photo-1552196563-55cd4e45efb3',
+  'photo-1599447421416-3414500d18a5',
+  'photo-1588286840104-8457f03c87a8',
+  'photo-1506629082955-511b1aa562c8',
+];
+const ANJALI = (seed: number, w = 400) => {
+  const id = ANJALI_IDS[Math.abs(seed) % ANJALI_IDS.length];
+  return `https://images.unsplash.com/${id}?w=${w}&h=${w}&q=80&auto=format&fit=crop`;
+};
 
 const PHOTO = (_id: string, w = 600) => ANJALI((w * 7) % 9973, w);
 const AV = (seed: number) => ANJALI(seed, 240);
