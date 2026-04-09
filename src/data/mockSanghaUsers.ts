@@ -37,17 +37,20 @@ export interface MockPost {
   likers?: MockLiker[];
 }
 
-// Unsplash photos — hands at heart / anjali mudra / meditation
-const PHOTO = (id: string, w = 600) =>
-  `https://images.unsplash.com/${id}?w=${w}&q=80&auto=format&fit=crop`;
+// Curated anjali-mudra (hands-at-heart) photos.
+// Using source.unsplash.com with consistent namaste keywords so every portrait
+// shows practitioners in anjali mudra regardless of which id resolves.
+const ANJALI = (seed: number, w = 400) =>
+  `https://source.unsplash.com/${w}x${w}/?namaste,prayer-hands,yoga&sig=${seed}`;
 
-const AV = (id: string) => PHOTO(id, 200);
+const PHOTO = (_id: string, w = 600) => ANJALI((w * 7) % 9973, w);
+const AV = (seed: number) => ANJALI(seed, 240);
 
 export const MOCK_SANGHA_USERS: MockUser[] = [
   {
     id: 'mock-u-01',
     name: 'Maya Shankar',
-    avatar_url: AV('photo-1545389336-cf090694435e'),
+    avatar_url: AV(1),
     series: 'full_primary',
     level: 'Intermediate',
     streak: 47,
@@ -56,7 +59,7 @@ export const MOCK_SANGHA_USERS: MockUser[] = [
   {
     id: 'mock-u-02',
     name: 'Arjun Patel',
-    avatar_url: AV('photo-1506794778202-cad84cf45f1d'),
+    avatar_url: AV(2),
     series: 'primary',
     level: 'Beginner',
     streak: 12,
@@ -65,7 +68,7 @@ export const MOCK_SANGHA_USERS: MockUser[] = [
   {
     id: 'mock-u-03',
     name: 'Sofia Moretti',
-    avatar_url: AV('photo-1438761681033-6461ffad8d80'),
+    avatar_url: AV(3),
     series: 'intermediate',
     level: 'Advanced',
     streak: 183,
@@ -74,7 +77,7 @@ export const MOCK_SANGHA_USERS: MockUser[] = [
   {
     id: 'mock-u-04',
     name: 'Daniel Cohen',
-    avatar_url: AV('photo-1500648767791-00dcc994a43e'),
+    avatar_url: AV(4),
     series: 'full_primary',
     level: 'Intermediate',
     streak: 65,
@@ -83,7 +86,7 @@ export const MOCK_SANGHA_USERS: MockUser[] = [
   {
     id: 'mock-u-05',
     name: 'Priya Iyer',
-    avatar_url: AV('photo-1544005313-94ddf0286df2'),
+    avatar_url: AV(5),
     series: 'primary',
     level: 'Intermediate',
     streak: 29,
@@ -92,7 +95,7 @@ export const MOCK_SANGHA_USERS: MockUser[] = [
   {
     id: 'mock-u-06',
     name: 'Lucas Fernandes',
-    avatar_url: AV('photo-1521119989659-a83eee488004'),
+    avatar_url: AV(6),
     series: 'advanced_a',
     level: 'Advanced',
     streak: 321,
@@ -101,7 +104,7 @@ export const MOCK_SANGHA_USERS: MockUser[] = [
   {
     id: 'mock-u-07',
     name: 'Aya Nakamura',
-    avatar_url: AV('photo-1531123897727-8f129e1688ce'),
+    avatar_url: AV(7),
     series: 'intermediate',
     level: 'Intermediate',
     streak: 88,
@@ -110,7 +113,7 @@ export const MOCK_SANGHA_USERS: MockUser[] = [
   {
     id: 'mock-u-08',
     name: 'Noa Levi',
-    avatar_url: AV('photo-1534528741775-53994a69daeb'),
+    avatar_url: AV(8),
     series: 'half_primary',
     level: 'Beginner',
     streak: 8,
@@ -119,7 +122,7 @@ export const MOCK_SANGHA_USERS: MockUser[] = [
   {
     id: 'mock-u-09',
     name: 'Rohan Desai',
-    avatar_url: AV('photo-1507003211169-0a1dd7228f2d'),
+    avatar_url: AV(9),
     series: 'full_primary',
     level: 'Intermediate',
     streak: 102,
@@ -128,7 +131,7 @@ export const MOCK_SANGHA_USERS: MockUser[] = [
   {
     id: 'mock-u-10',
     name: 'Elena Ricci',
-    avatar_url: AV('photo-1488426862026-3ee34a7d66df'),
+    avatar_url: AV(10),
     series: 'primary',
     level: 'Intermediate',
     streak: 54,
@@ -340,11 +343,11 @@ export const MOCK_SANGHA_POSTS: MockPost[] = [
 
 // "Practitioners Near You" — with distances
 export const MOCK_NEAR_YOU = [
-  { id: 'mock-u-07', name: 'Mika Tanaka', avatar_url: AV('photo-1531123897727-8f129e1688ce'), series: 'primary', level: 'Intermediate', streak: 42, distance_km: 2.3 },
-  { id: 'mock-u-11', name: 'Ravi Sharma', avatar_url: AV('photo-1500648767791-00dcc994a43e'), series: 'intermediate', level: 'Intermediate', streak: 18, distance_km: 4.1 },
-  { id: 'mock-u-12', name: 'Lisa Wong',  avatar_url: AV('photo-1544005313-94ddf0286df2'), series: 'primary', level: 'Beginner',    streak: 7,  distance_km: 5.6 },
-  { id: 'mock-u-13', name: 'Ben Yosef',  avatar_url: AV('photo-1506794778202-cad84cf45f1d'), series: 'half_primary', level: 'Beginner', streak: 11, distance_km: 6.8 },
-  { id: 'mock-u-14', name: 'Chiara Rossi', avatar_url: AV('photo-1488426862026-3ee34a7d66df'), series: 'full_primary', level: 'Intermediate', streak: 94, distance_km: 8.2 },
+  { id: 'mock-u-07', name: 'Mika Tanaka', avatar_url: AV(11), series: 'primary', level: 'Intermediate', streak: 42, distance_km: 2.3 },
+  { id: 'mock-u-11', name: 'Ravi Sharma', avatar_url: AV(12), series: 'intermediate', level: 'Intermediate', streak: 18, distance_km: 4.1 },
+  { id: 'mock-u-12', name: 'Lisa Wong',  avatar_url: AV(13), series: 'primary', level: 'Beginner',    streak: 7,  distance_km: 5.6 },
+  { id: 'mock-u-13', name: 'Ben Yosef',  avatar_url: AV(14), series: 'half_primary', level: 'Beginner', streak: 11, distance_km: 6.8 },
+  { id: 'mock-u-14', name: 'Chiara Rossi', avatar_url: AV(15), series: 'full_primary', level: 'Intermediate', streak: 94, distance_km: 8.2 },
 ];
 
 // "On the mat right now" — subset currently practicing
