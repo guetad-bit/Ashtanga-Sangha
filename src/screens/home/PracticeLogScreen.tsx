@@ -44,7 +44,7 @@ export default function PracticeLogScreen() {
   const [workOnNext, setWorkOnNext] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (saving) return;
     setSaving(true);
     const locationLabel = LOCATION_LABELS[location]?.label ?? 'Home';
@@ -55,10 +55,7 @@ export default function PracticeLogScreen() {
       workOnNext && `🎯 Work on next: ${workOnNext}`,
     ].filter(Boolean).join('\n');
 
-    // Try Supabase but always save locally
-    if (user?.id) {
-      try { await logPractice(user.id, series, duration, fullNotes); } catch {}
-    }
+    // Save locally immediately — no waiting for Supabase
     addPracticeLog({
       id: Date.now().toString(),
       userId: user?.id ?? 'local',
@@ -67,6 +64,12 @@ export default function PracticeLogScreen() {
       durationMin: duration,
       notes: fullNotes || undefined,
     });
+
+    // Fire-and-forget Supabase (don't block UI)
+    if (user?.id) {
+      logPractice(user.id, series, duration, fullNotes).catch(() => {});
+    }
+
     setSaving(false);
     router.back();
   };

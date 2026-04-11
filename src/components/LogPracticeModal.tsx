@@ -84,60 +84,46 @@ export default function LogPracticeModal() {
     if (!isPracticing) resetForm();
   };
 
-  const handleGoOnMat = async () => {
-    setSaving(true);
-    try {
-      if (user?.id) {
-        try { await setPracticingNow(user.id, true); } catch {}
-      }
-      setIsPracticing(true);
-      setStep('on_the_mat');
-    } catch {
-      Alert.alert(t('logModal.error'), t('logModal.somethingWrong'));
-    } finally {
-      setSaving(false);
-    }
+  const handleGoOnMat = () => {
+    // Fire-and-forget Supabase — don't block UI
+    if (user?.id) setPracticingNow(user.id, true).catch(() => {});
+    setIsPracticing(true);
+    setStep('on_the_mat');
   };
 
   const handleFinishPractice = () => {
     setStep('questionnaire');
   };
 
-  const handleSaveLog = async () => {
+  const handleSaveLog = () => {
     setSaving(true);
-    try {
-      const fullNotes = [
-        mood && `Feeling: ${MOOD_OPTIONS(t).find(m => m.value === mood)?.label ?? mood}`,
-        stoppedAt && `Stopped at: ${stoppedAt}`,
-        notes && notes,
-        workingOn && `Working on: ${workingOn}`,
-      ].filter(Boolean).join('\n');
+    const fullNotes = [
+      mood && `Feeling: ${MOOD_OPTIONS(t).find(m => m.value === mood)?.label ?? mood}`,
+      stoppedAt && `Stopped at: ${stoppedAt}`,
+      notes && notes,
+      workingOn && `Working on: ${workingOn}`,
+    ].filter(Boolean).join('\n');
 
-      // Try Supabase but always save locally
-      if (user?.id) {
-        try { await logPractice(user.id, selectedSeries, duration, fullNotes || undefined); } catch {}
-      }
+    // Save locally immediately
+    addPracticeLog({
+      id: Date.now().toString(),
+      userId: user?.id ?? 'local',
+      loggedAt: new Date().toISOString(),
+      series: selectedSeries,
+      durationMin: duration,
+      notes: fullNotes || undefined,
+    });
 
-      addPracticeLog({
-        id: Date.now().toString(),
-        userId: user?.id ?? 'local',
-        loggedAt: new Date().toISOString(),
-        series: selectedSeries,
-        durationMin: duration,
-        notes: fullNotes || undefined,
-      });
-
-      setIsPracticing(false);
-      if (user?.id) {
-        try { await setPracticingNow(user.id, false); } catch {}
-      }
-      setLogModalOpen(false);
-      resetForm();
-    } catch {
-      Alert.alert(t('logModal.error'), t('logModal.somethingWrong'));
-    } finally {
-      setSaving(false);
+    setIsPracticing(false);
+    // Fire-and-forget Supabase
+    if (user?.id) {
+      logPractice(user.id, selectedSeries, duration, fullNotes || undefined).catch(() => {});
+      setPracticingNow(user.id, false).catch(() => {});
     }
+
+    setSaving(false);
+    setLogModalOpen(false);
+    resetForm();
   };
 
   React.useEffect(() => {
