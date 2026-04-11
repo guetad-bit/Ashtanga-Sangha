@@ -1,2 +1,2 @@
-// app/(tabs)/shalas.tsx
-export { default } from '@/screens/shalas/ShalaFinderScreen';
+// app/(tabs)/shalas.tsx — now shows Gatherings
+export { default } from '@/screens/gatherings/GatheringsScreen';

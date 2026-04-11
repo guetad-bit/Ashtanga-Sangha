@@ -28,7 +28,7 @@ function ClayTabBar({ state, descriptors, navigation }: any) {
   const tabMeta: Record<string, { label: string; icon: any; iconFocused: any }> = {
     index:     { label: 'Home',     icon: 'home-outline',        iconFocused: 'home' },
     community: { label: 'Community', icon: 'people-outline',      iconFocused: 'people' },
-    shalas:    { label: 'Progress', icon: 'stats-chart-outline', iconFocused: 'stats-chart' },
+    shalas:    { label: 'Gatherings', icon: 'calendar-outline', iconFocused: 'calendar' },
     library:   { label: 'You',      icon: 'person-outline',      iconFocused: 'person' },
   };
 
