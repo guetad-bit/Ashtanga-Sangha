@@ -45,7 +45,7 @@ export default function PracticeLogScreen() {
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
-    if (!user || saving) return;
+    if (saving) return;
     setSaving(true);
     const locationLabel = LOCATION_LABELS[location]?.label ?? 'Home';
     const fullNotes = [
@@ -55,16 +55,18 @@ export default function PracticeLogScreen() {
       workOnNext && `🎯 Work on next: ${workOnNext}`,
     ].filter(Boolean).join('\n');
 
-    const { error } = await logPractice(user.id, series, duration, fullNotes);
-    if (!error) {
-      addPracticeLog({
-        id: Date.now().toString(),
-        userId: user.id,
-        loggedAt: new Date().toISOString(),
-        series,
-        durationMin: duration,
-      });
+    // Try Supabase but always save locally
+    if (user?.id) {
+      try { await logPractice(user.id, series, duration, fullNotes); } catch {}
     }
+    addPracticeLog({
+      id: Date.now().toString(),
+      userId: user?.id ?? 'local',
+      loggedAt: new Date().toISOString(),
+      series,
+      durationMin: duration,
+      notes: fullNotes || undefined,
+    });
     setSaving(false);
     router.back();
   };

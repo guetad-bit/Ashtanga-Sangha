@@ -6,7 +6,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import LogPracticeModal from '@/components/LogPracticeModal';
 import { useAppStore } from '@/store/useAppStore';
-import { setPracticingNow } from '@/lib/supabase';
 
 const clay = {
   bg: '#FFFFFF',
@@ -24,17 +23,13 @@ const HIDDEN_TABS = ['gatherings', 'profile'];
  */
 function ClayTabBar({ state, descriptors, navigation }: any) {
   const router = useRouter();
-  const { isPracticing, setIsPracticing, user, setLogModalOpen } = useAppStore();
+  const { isPracticing, setLogModalOpen } = useAppStore();
 
   const handlePracticeFAB = () => {
-    if (!isPracticing) {
-      // Begin practice
-      setIsPracticing(true);
-      if (user) setPracticingNow(user.id, true).catch(console.error);
-    } else {
-      // Already practicing — open the log modal to finish
-      setLogModalOpen(true);
-    }
+    // Open the Log Practice modal — it handles the full flow:
+    // idle → select series → go on mat
+    // already practicing → shows "on the mat" → finish → questionnaire
+    setLogModalOpen(true);
   };
 
   const visibleRoutes = state.routes.filter((route: any) => !HIDDEN_TABS.includes(route.name));

@@ -85,13 +85,11 @@ export default function LogPracticeModal() {
   };
 
   const handleGoOnMat = async () => {
-    if (!user) {
-      Alert.alert(t('logModal.notSignedIn'), t('logModal.signInFirst'));
-      return;
-    }
     setSaving(true);
     try {
-      await setPracticingNow(user.id, true);
+      if (user?.id) {
+        try { await setPracticingNow(user.id, true); } catch {}
+      }
       setIsPracticing(true);
       setStep('on_the_mat');
     } catch {
@@ -106,7 +104,6 @@ export default function LogPracticeModal() {
   };
 
   const handleSaveLog = async () => {
-    if (!user) return;
     setSaving(true);
     try {
       const fullNotes = [
@@ -116,21 +113,24 @@ export default function LogPracticeModal() {
         workingOn && `Working on: ${workingOn}`,
       ].filter(Boolean).join('\n');
 
-      const { error } = await logPractice(user.id, selectedSeries, duration, fullNotes || undefined);
-      if (error) {
-        Alert.alert(t('logModal.error'), error.message);
-        setSaving(false);
-        return;
+      // Try Supabase but always save locally
+      if (user?.id) {
+        try { await logPractice(user.id, selectedSeries, duration, fullNotes || undefined); } catch {}
       }
 
       addPracticeLog({
         id: Date.now().toString(),
-        userId: user.id,
+        userId: user?.id ?? 'local',
         loggedAt: new Date().toISOString(),
         series: selectedSeries,
         durationMin: duration,
+        notes: fullNotes || undefined,
       });
 
+      setIsPracticing(false);
+      if (user?.id) {
+        try { await setPracticingNow(user.id, false); } catch {}
+      }
       setLogModalOpen(false);
       resetForm();
     } catch {
@@ -163,15 +163,21 @@ export default function LogPracticeModal() {
         <View style={styles.header}>
           <TouchableOpacity onPress={handleClose} style={styles.closeBtn}>
             <Text style={styles.closeBtnText}>
-              {step === 'questionnaire' ? t('practiceLog.cancel') : t('practiceLog.cancel')}
+              {t('practiceLog.cancel')}
             </Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>
             {step === 'select_series' ? t('practiceLog.logPractice') :
              step === 'on_the_mat' ? t('logModal.onTheMat') :
-             'How Was Your Practice?'}
+             t('practiceLog.logPractice')}
           </Text>
-          <View style={{ width: 60 }} />
+          {step === 'questionnaire' ? (
+            <TouchableOpacity onPress={handleSaveLog} disabled={saving} style={styles.saveHeaderBtn}>
+              <Text style={styles.saveHeaderText}>{t('practiceLog.save')}</Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={{ width: 60 }} />
+          )}
         </View>
 
         <ScrollView
@@ -391,6 +397,8 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSerifDisplay_400Regular', fontSize: 18,
     color: moss.ink,
   },
+  saveHeaderBtn: { width: 60, alignItems: 'flex-end' },
+  saveHeaderText: { ...typography.labelLg, color: moss.accent, fontWeight: '700' },
   scroll: { flex: 1 },
   scrollContent: { padding: spacing.xl, paddingBottom: spacing['4xl'] },
 
