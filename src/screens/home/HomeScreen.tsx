@@ -11,7 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '@/store/useAppStore';
 import { getWeeklyRhythm, calculateStreak } from '@/utils/practiceStreak';
-import { daysUntilNextMoonDay } from '@/utils/moonDay';
+import { daysUntilNextMoonDay, isMoonDay, getMoonDayType, nextMoonDay } from '@/utils/moonDay';
 import { getPracticeLogs, getPracticingNow, setPracticingNow, getFeed, logPractice, supabase } from '@/lib/supabase';
 import { MOCK_SANGHA_POSTS, MOCK_PRACTICING_NOW, MOCK_NEAR_YOU } from '@/data/mockSanghaUsers';
 
@@ -163,6 +163,32 @@ export default function HomeScreen() {
   const moonDate = new Date(now);
   moonDate.setDate(moonDate.getDate() + daysToMoon);
   const moonLabel = moonDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const todayIsMoon = isMoonDay(now);
+  const todayMoonType = getMoonDayType(now);
+
+  // Build upcoming moon days list (next 6)
+  const upcomingMoons: { date: Date; type: 'full' | 'new' | null; label: string; daysAway: number }[] = [];
+  {
+    let cursor = new Date(now);
+    for (let i = 0; i < 6; i++) {
+      const nd = nextMoonDay(cursor);
+      if (!nd) break;
+      const da = Math.ceil((nd.getTime() - now.getTime()) / 86400000);
+      upcomingMoons.push({
+        date: nd,
+        type: getMoonDayType(nd),
+        label: nd.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+        daysAway: da,
+      });
+      cursor = new Date(nd);
+      cursor.setDate(cursor.getDate() + 1);
+    }
+  }
+
+  // My Practice — recent logs sorted newest first
+  const recentLogs = [...practiceLogs]
+    .sort((a, b) => new Date(b.loggedAt ?? '').getTime() - new Date(a.loggedAt ?? '').getTime())
+    .slice(0, 10);
 
   const friendsThisWeek = realMembers.length + livePractitioners.length;
 
@@ -321,266 +347,319 @@ export default function HomeScreen() {
           ))}
         </View>
 
-        {/* On the mat right now */}
-        <View style={s.nowBanner}>
-          <View style={s.nowDotWrap}>
-            <View style={s.nowDot} />
-          </View>
-          <View style={{ flex: 1, marginRight: 8 }}>
-            <Text style={s.nowTitle} numberOfLines={1}>
-              {livePractitioners.length > 0 ? `${livePractitioners.length} are on the mat right now` : 'No one on the mat now'}
-            </Text>
-            <Text style={s.nowSub} numberOfLines={1}>Silent presence. Shared energy</Text>
-          </View>
-          <View style={s.nowAvatars}>
-            {livePractitioners.slice(0, 3).map((p, i) => (
-              <LinearGradient
-                key={p.id}
-                colors={i % 2 === 0 ? ['#D4B896', '#8B6B4A'] : ['#A8B59B', '#6E7F5C']}
-                style={[s.nowAv, { marginLeft: i === 0 ? 0 : -10 }]}
-              />
-            ))}
-            {livePractitioners.length > 3 && (
-              <View style={[s.nowAv, s.nowAvMore, { marginLeft: -10 }]}>
-                <Text style={s.nowAvMoreTxt}>+{livePractitioners.length - 3}</Text>
+        {/* ═══════════════ TAB: Following ═══════════════ */}
+        {activeTab === 'following' && (
+          <>
+            {/* On the mat right now */}
+            <View style={s.nowBanner}>
+              <View style={s.nowDotWrap}><View style={s.nowDot} /></View>
+              <View style={{ flex: 1, marginRight: 8 }}>
+                <Text style={s.nowTitle} numberOfLines={1}>
+                  {livePractitioners.length > 0 ? `${livePractitioners.length} are on the mat right now` : 'No one on the mat now'}
+                </Text>
+                <Text style={s.nowSub} numberOfLines={1}>Silent presence. Shared energy</Text>
               </View>
-            )}
-          </View>
-          <TouchableOpacity style={s.joinBtn} onPress={handlePracticeButton} activeOpacity={0.8}>
-            <Text style={s.joinBtnTxt}>Join Practice</Text>
-            <Ionicons name="chevron-forward" size={14} color={clay.inkMid} />
-          </TouchableOpacity>
-        </View>
-
-        {/* 2 card row: Streak / Begin Practice */}
-        <View style={s.row3}>
-          <View style={[s.card3, { flex: 1 }]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <LinearGradient colors={['#D8DCC9', '#A8B59B']} style={s.leaf}>
-                <Ionicons name="leaf" size={13} color="#fff" />
-              </LinearGradient>
-              <Text style={s.streakLbl}>Current Streak</Text>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 8, gap: 5 }}>
-              <Text style={s.streakBig}>{streak}</Text>
-              <Text style={s.streakUnit}>DAYS</Text>
-            </View>
-            <Text style={s.streakMicro}>{formatDuration(weekMinutes) || '0:00'} this week</Text>
-          </View>
-
-          <TouchableOpacity style={{ flex: 1.2 }} activeOpacity={0.88} onPress={handlePracticeButton}>
-            <LinearGradient colors={[clay.clay, clay.clayDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.beginCard}>
-              <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.7)" style={s.beginChev} />
-              <View style={s.beginIcn}>
-                <Text style={{ fontSize: 20 }}>🧘</Text>
-              </View>
-              <Text style={s.beginTitle}>{practiceState === 'onMat' ? 'Finish' : 'Begin'} Practice</Text>
-              <Text style={s.beginSub}>{practiceState === 'onMat' ? 'Save your session' : 'Step on the mat'}</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-
-        {/* Compact quote */}
-        <LinearGradient
-          colors={['#D8C3A8', '#A68868', '#7A6855']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={s.quoteCompact}
-        >
-          <Text style={s.quoteText} numberOfLines={2}>"{guruWisdom.quote}"</Text>
-          <Text style={s.quoteGuruCompact}>— {guruWisdom.guru}</Text>
-        </LinearGradient>
-
-        {/* Feed */}
-        {homeFeed.length === 0 ? (
-          <View style={s.emptyFeed}>
-            <Ionicons name="leaf-outline" size={32} color={clay.mutedLight} />
-            <Text style={s.emptyText}>No practices shared yet.</Text>
-            <Text style={s.emptySub}>Be the first to log your practice.</Text>
-          </View>
-        ) : (
-          homeFeed.map((post: any) => {
-            const seriesKey = (post.profiles as any)?.series ?? 'primary';
-            const chip = SERIES_CHIPS[seriesKey] ?? SERIES_CHIPS.primary;
-            const seriesName = SERIES_LABELS[seriesKey] ?? 'Practice';
-            const hasStats = typeof post.duration_min === 'number';
-            const complete = post.status === 'complete';
-            const pct = post.poses_total ? Math.round(((post.poses_done ?? 0) / post.poses_total) * 100) : 0;
-            const durTxt = post.duration_min
-              ? post.duration_min >= 60
-                ? `${Math.floor(post.duration_min / 60)}h ${post.duration_min % 60}m`
-                : `${post.duration_min}m`
-              : '';
-            const likers: { name: string; avatar_url: string }[] = post.likers ?? [];
-            return (
-              <View key={post.id} style={s.feedCard}>
-                <View style={s.fcHead}>
-                  <TouchableOpacity activeOpacity={0.7} onPress={() => openProfile(post.profiles?.name ?? '')}>
-                    {post.profiles?.avatar_url ? (
-                      <Image source={{ uri: post.profiles.avatar_url }} style={s.fcAvatar} />
-                    ) : (
-                      <LinearGradient colors={['#C9A384', '#7A5540']} style={s.fcAvatar} />
-                    )}
-                    <View style={[s.fcDot, { backgroundColor: clay.success }]} />
-                  </TouchableOpacity>
-                  <View style={{ flex: 1, marginLeft: 12 }}>
-                    <Text style={s.fcName}>{post.profiles?.name ?? 'Practitioner'}</Text>
-                    <Text style={s.fcSub} numberOfLines={1}>
-                      {post.shala ? `${post.shala} · ` : ''}{post.location ? `${post.location} · ` : ''}{getTimeAgo(post.created_at)}
-                    </Text>
-                  </View>
-                  <TouchableOpacity>
-                    <Ionicons name="ellipsis-horizontal" size={18} color={clay.muted} />
-                  </TouchableOpacity>
-                </View>
-
-                <View style={s.fcSeriesRow}>
-                  <Text style={s.fcSeries}>{seriesName}</Text>
-                  <View style={[s.fcChip, { backgroundColor: chip.bg }]}>
-                    <Text style={[s.fcChipText, { color: chip.fg }]}>{chip.label}</Text>
-                  </View>
-                </View>
-
-                {hasStats && (
-                  <View style={s.statsGrid}>
-                    <View style={s.statCell}>
-                      <Ionicons name="time-outline" size={16} color={clay.muted} />
-                      <Text style={s.statNum}>{durTxt}</Text>
-                      <Text style={s.statLbl}>Duration</Text>
-                    </View>
-                    <View style={s.statDivider} />
-                    <View style={s.statCell}>
-                      <Ionicons name="flower-outline" size={16} color={clay.muted} />
-                      <Text style={s.statNum}>{post.poses_done} / {post.poses_total}</Text>
-                      <Text style={s.statLbl}>Poses Completed</Text>
-                    </View>
-                    <View style={s.statDivider} />
-                    <View style={s.statCell}>
-                      <Ionicons name="pulse-outline" size={16} color={clay.muted} />
-                      <Text style={s.statNum}>{post.breath_per_pose?.toFixed(1)}</Text>
-                      <Text style={s.statLbl}>Avg Breath / Pose</Text>
-                    </View>
-                    <View style={s.statDivider} />
-                    <View style={[s.statCell, { flex: 1.1 }]}>
-                      {complete ? (
-                        <>
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                            <Ionicons name="checkmark-circle" size={16} color={clay.success} />
-                            <Text style={[s.statNum, { color: clay.success }]}>Complete</Text>
-                          </View>
-                          <Text style={s.statLbl}>{post.progress_label ?? 'Great Practice'}</Text>
-                        </>
-                      ) : (
-                        <>
-                          <Text style={[s.statNum, { color: clay.clayDark }]}>{pct}%</Text>
-                          <View style={s.progTrack}>
-                            <View style={[s.progFill, { width: `${pct}%` }]} />
-                          </View>
-                          <Text style={s.statLbl}>{post.progress_label ?? 'Keep going'}</Text>
-                        </>
-                      )}
-                    </View>
+              <View style={s.nowAvatars}>
+                {livePractitioners.slice(0, 3).map((p, i) => (
+                  <LinearGradient key={p.id} colors={i % 2 === 0 ? ['#D4B896', '#8B6B4A'] : ['#A8B59B', '#6E7F5C']} style={[s.nowAv, { marginLeft: i === 0 ? 0 : -10 }]} />
+                ))}
+                {livePractitioners.length > 3 && (
+                  <View style={[s.nowAv, s.nowAvMore, { marginLeft: -10 }]}>
+                    <Text style={s.nowAvMoreTxt}>+{livePractitioners.length - 3}</Text>
                   </View>
                 )}
-
-                {post.image_url ? (
-                  <Image source={{ uri: post.image_url }} style={s.fcImage} />
-                ) : null}
-
-                {post.caption ? (
-                  <Text style={s.fcNote}>"{post.caption}"</Text>
-                ) : null}
-
-                <View style={s.fcActions}>
-                  <TouchableOpacity style={s.fcAct}>
-                    <Ionicons name={(post.likes_count ?? 0) > 0 ? 'flower' : 'flower-outline'} size={18} color={clay.heart} />
-                    <Text style={[s.fcActText, { color: clay.heart, marginLeft: 5, fontWeight: '700' }]}>
-                      {post.likes_count ?? 0}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={s.fcAct}>
-                    <Ionicons name="chatbubble-outline" size={17} color={clay.muted} />
-                    <Text style={[s.fcActText, { marginLeft: 5 }]}>{post.comments_count ?? 0}</Text>
-                  </TouchableOpacity>
-
-                  {likers.length > 0 && (
-                    <View style={s.likersRow}>
-                      <View style={{ flexDirection: 'row' }}>
-                        {likers.slice(0, 3).map((lk, i) => (
-                          <Image
-                            key={i}
-                            source={{ uri: lk.avatar_url }}
-                            style={[s.likerAv, { marginLeft: i === 0 ? 0 : -8, zIndex: 3 - i }]}
-                          />
-                        ))}
-                      </View>
-                      <Text style={s.likersTxt} numberOfLines={1}>
-                        You, {likers[0].name.split(' ')[0]}
-                        {(post.likes_count ?? 0) > 2 ? ` +${(post.likes_count ?? 0) - 2}` : ''}
-                      </Text>
-                    </View>
-                  )}
-
-                  <View style={{ flex: 1 }} />
-                  <TouchableOpacity>
-                    <Ionicons name="share-outline" size={18} color={clay.muted} style={{ marginRight: 14 }} />
-                  </TouchableOpacity>
-                  <TouchableOpacity>
-                    <Ionicons name="bookmark-outline" size={17} color={clay.muted} />
-                  </TouchableOpacity>
-                </View>
               </View>
-            );
-          })
-        )}
-
-        {moreCount > 0 && (
-          <TouchableOpacity
-            style={s.seeMore}
-            activeOpacity={0.7}
-            onPress={() => router.push('/community' as any)}
-          >
-            <Text style={s.seeMoreTxt}>See {moreCount} more posts</Text>
-            <Ionicons name="chevron-forward" size={15} color={clay.clay} />
-          </TouchableOpacity>
-        )}
-
-        {/* Practitioners Near You */}
-        <View style={s.nearSection}>
-          <View style={s.nearHead}>
-            <Text style={s.nearTitle}>Practitioners Near You</Text>
-            <TouchableOpacity onPress={() => router.push('/community' as any)}>
-              <Text style={s.nearView}>View All</Text>
-            </TouchableOpacity>
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingRight: 20 }}>
-            {MOCK_NEAR_YOU.map((m) => (
-              <TouchableOpacity
-                key={m.id}
-                style={s.nearCard}
-                activeOpacity={0.85}
-                onPress={() => openProfile(m.name)}
-              >
-                <Image source={{ uri: m.avatar_url }} style={s.nearImg} />
-                <Text style={s.nearName} numberOfLines={1}>{m.name}</Text>
-                <Text style={s.nearSub} numberOfLines={1}>
-                  {(SERIES_LABELS[m.series] ?? m.series).replace(' Series', '')} · {m.distance_km} km
-                </Text>
-                <View style={s.nearStreakRow}>
-                  <Text style={s.nearFlame}>🔥</Text>
-                  <Text style={s.nearStreak}>{m.streak} day streak</Text>
-                </View>
-                <View style={s.nearConnect}>
-                  <Text style={s.nearConnectText}>Connect</Text>
-                </View>
+              <TouchableOpacity style={s.joinBtn} onPress={handlePracticeButton} activeOpacity={0.8}>
+                <Text style={s.joinBtnTxt}>Join Practice</Text>
+                <Ionicons name="chevron-forward" size={14} color={clay.inkMid} />
               </TouchableOpacity>
-            ))}
-            <TouchableOpacity style={s.nearFind} activeOpacity={0.8} onPress={() => router.push('/community' as any)}>
-              <Ionicons name="people-outline" size={22} color={clay.muted} />
-              <Text style={s.nearFindTxt}>Find more{'\n'}practitioners{'\n'}in your area</Text>
+            </View>
+
+            {/* 2 card row */}
+            <View style={s.row3}>
+              <View style={[s.card3, { flex: 1 }]}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <LinearGradient colors={['#D8DCC9', '#A8B59B']} style={s.leaf}>
+                    <Ionicons name="leaf" size={13} color="#fff" />
+                  </LinearGradient>
+                  <Text style={s.streakLbl}>Current Streak</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 8, gap: 5 }}>
+                  <Text style={s.streakBig}>{streak}</Text>
+                  <Text style={s.streakUnit}>DAYS</Text>
+                </View>
+                <Text style={s.streakMicro}>{formatDuration(weekMinutes) || '0:00'} this week</Text>
+              </View>
+              <TouchableOpacity style={{ flex: 1.2 }} activeOpacity={0.88} onPress={handlePracticeButton}>
+                <LinearGradient colors={[clay.clay, clay.clayDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.beginCard}>
+                  <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.7)" style={s.beginChev} />
+                  <View style={s.beginIcn}><Text style={{ fontSize: 20 }}>🧘</Text></View>
+                  <Text style={s.beginTitle}>{practiceState === 'onMat' ? 'Finish' : 'Begin'} Practice</Text>
+                  <Text style={s.beginSub}>{practiceState === 'onMat' ? 'Save your session' : 'Step on the mat'}</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+
+            {/* Compact quote */}
+            <LinearGradient colors={['#D8C3A8', '#A68868', '#7A6855']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.quoteCompact}>
+              <Text style={s.quoteText} numberOfLines={2}>"{guruWisdom.quote}"</Text>
+              <Text style={s.quoteGuruCompact}>— {guruWisdom.guru}</Text>
+            </LinearGradient>
+
+            {/* Feed */}
+            {homeFeed.length === 0 ? (
+              <View style={s.emptyFeed}>
+                <Ionicons name="leaf-outline" size={32} color={clay.mutedLight} />
+                <Text style={s.emptyText}>No practices shared yet.</Text>
+                <Text style={s.emptySub}>Be the first to log your practice.</Text>
+              </View>
+            ) : (
+              homeFeed.map((post: any) => {
+                const seriesKey = (post.profiles as any)?.series ?? 'primary';
+                const chip = SERIES_CHIPS[seriesKey] ?? SERIES_CHIPS.primary;
+                const seriesName = SERIES_LABELS[seriesKey] ?? 'Practice';
+                const hasStats = typeof post.duration_min === 'number';
+                const complete = post.status === 'complete';
+                const pct = post.poses_total ? Math.round(((post.poses_done ?? 0) / post.poses_total) * 100) : 0;
+                const durTxt = post.duration_min ? (post.duration_min >= 60 ? `${Math.floor(post.duration_min / 60)}h ${post.duration_min % 60}m` : `${post.duration_min}m`) : '';
+                const likers: { name: string; avatar_url: string }[] = post.likers ?? [];
+                return (
+                  <View key={post.id} style={s.feedCard}>
+                    <View style={s.fcHead}>
+                      <TouchableOpacity activeOpacity={0.7} onPress={() => openProfile(post.profiles?.name ?? '')}>
+                        {post.profiles?.avatar_url ? <Image source={{ uri: post.profiles.avatar_url }} style={s.fcAvatar} /> : <LinearGradient colors={['#C9A384', '#7A5540']} style={s.fcAvatar} />}
+                        <View style={[s.fcDot, { backgroundColor: clay.success }]} />
+                      </TouchableOpacity>
+                      <View style={{ flex: 1, marginLeft: 12 }}>
+                        <Text style={s.fcName}>{post.profiles?.name ?? 'Practitioner'}</Text>
+                        <Text style={s.fcSub} numberOfLines={1}>{post.shala ? `${post.shala} · ` : ''}{post.location ? `${post.location} · ` : ''}{getTimeAgo(post.created_at)}</Text>
+                      </View>
+                      <TouchableOpacity><Ionicons name="ellipsis-horizontal" size={18} color={clay.muted} /></TouchableOpacity>
+                    </View>
+                    <View style={s.fcSeriesRow}>
+                      <Text style={s.fcSeries}>{seriesName}</Text>
+                      <View style={[s.fcChip, { backgroundColor: chip.bg }]}><Text style={[s.fcChipText, { color: chip.fg }]}>{chip.label}</Text></View>
+                    </View>
+                    {hasStats && (
+                      <View style={s.statsGrid}>
+                        <View style={s.statCell}><Ionicons name="time-outline" size={16} color={clay.muted} /><Text style={s.statNum}>{durTxt}</Text><Text style={s.statLbl}>Duration</Text></View>
+                        <View style={s.statDivider} />
+                        <View style={s.statCell}><Ionicons name="flower-outline" size={16} color={clay.muted} /><Text style={s.statNum}>{post.poses_done} / {post.poses_total}</Text><Text style={s.statLbl}>Poses</Text></View>
+                        <View style={s.statDivider} />
+                        <View style={s.statCell}><Ionicons name="pulse-outline" size={16} color={clay.muted} /><Text style={s.statNum}>{post.breath_per_pose?.toFixed(1)}</Text><Text style={s.statLbl}>Breath/Pose</Text></View>
+                        <View style={s.statDivider} />
+                        <View style={[s.statCell, { flex: 1.1 }]}>
+                          {complete ? (<><View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}><Ionicons name="checkmark-circle" size={16} color={clay.success} /><Text style={[s.statNum, { color: clay.success }]}>Complete</Text></View><Text style={s.statLbl}>{post.progress_label ?? 'Great Practice'}</Text></>) : (<><Text style={[s.statNum, { color: clay.clayDark }]}>{pct}%</Text><View style={s.progTrack}><View style={[s.progFill, { width: `${pct}%` }]} /></View><Text style={s.statLbl}>{post.progress_label ?? 'Keep going'}</Text></>)}
+                        </View>
+                      </View>
+                    )}
+                    {post.image_url ? <Image source={{ uri: post.image_url }} style={s.fcImage} /> : null}
+                    {post.caption ? <Text style={s.fcNote}>"{post.caption}"</Text> : null}
+                    <View style={s.fcActions}>
+                      <TouchableOpacity style={s.fcAct}><Ionicons name={(post.likes_count ?? 0) > 0 ? 'flower' : 'flower-outline'} size={18} color={clay.heart} /><Text style={[s.fcActText, { color: clay.heart, marginLeft: 5, fontWeight: '700' }]}>{post.likes_count ?? 0}</Text></TouchableOpacity>
+                      <TouchableOpacity style={s.fcAct}><Ionicons name="chatbubble-outline" size={17} color={clay.muted} /><Text style={[s.fcActText, { marginLeft: 5 }]}>{post.comments_count ?? 0}</Text></TouchableOpacity>
+                      {likers.length > 0 && (<View style={s.likersRow}><View style={{ flexDirection: 'row' }}>{likers.slice(0, 3).map((lk, i) => (<Image key={i} source={{ uri: lk.avatar_url }} style={[s.likerAv, { marginLeft: i === 0 ? 0 : -8, zIndex: 3 - i }]} />))}</View><Text style={s.likersTxt} numberOfLines={1}>You, {likers[0].name.split(' ')[0]}{(post.likes_count ?? 0) > 2 ? ` +${(post.likes_count ?? 0) - 2}` : ''}</Text></View>)}
+                      <View style={{ flex: 1 }} />
+                      <TouchableOpacity><Ionicons name="share-outline" size={18} color={clay.muted} style={{ marginRight: 14 }} /></TouchableOpacity>
+                      <TouchableOpacity><Ionicons name="bookmark-outline" size={17} color={clay.muted} /></TouchableOpacity>
+                    </View>
+                  </View>
+                );
+              })
+            )}
+
+            {moreCount > 0 && (
+              <TouchableOpacity style={s.seeMore} activeOpacity={0.7} onPress={() => router.push('/community' as any)}>
+                <Text style={s.seeMoreTxt}>See {moreCount} more posts</Text>
+                <Ionicons name="chevron-forward" size={15} color={clay.clay} />
+              </TouchableOpacity>
+            )}
+
+            {/* Practitioners Near You */}
+            <View style={s.nearSection}>
+              <View style={s.nearHead}>
+                <Text style={s.nearTitle}>Practitioners Near You</Text>
+                <TouchableOpacity onPress={() => router.push('/community' as any)}><Text style={s.nearView}>View All</Text></TouchableOpacity>
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingRight: 20 }}>
+                {MOCK_NEAR_YOU.map((m) => (
+                  <TouchableOpacity key={m.id} style={s.nearCard} activeOpacity={0.85} onPress={() => openProfile(m.name)}>
+                    <Image source={{ uri: m.avatar_url }} style={s.nearImg} />
+                    <Text style={s.nearName} numberOfLines={1}>{m.name}</Text>
+                    <Text style={s.nearSub} numberOfLines={1}>{(SERIES_LABELS[m.series] ?? m.series).replace(' Series', '')} · {m.distance_km} km</Text>
+                    <View style={s.nearStreakRow}><Text style={s.nearFlame}>🔥</Text><Text style={s.nearStreak}>{m.streak} day streak</Text></View>
+                    <View style={s.nearConnect}><Text style={s.nearConnectText}>Connect</Text></View>
+                  </TouchableOpacity>
+                ))}
+                <TouchableOpacity style={s.nearFind} activeOpacity={0.8} onPress={() => router.push('/community' as any)}>
+                  <Ionicons name="people-outline" size={22} color={clay.muted} />
+                  <Text style={s.nearFindTxt}>Find more{'\n'}practitioners{'\n'}in your area</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
+          </>
+        )}
+
+        {/* ═══════════════ TAB: Moon Days ═══════════════ */}
+        {activeTab === 'moon' && (
+          <>
+            {/* Today status */}
+            <View style={s.moonHero}>
+              <LinearGradient colors={['#E8DFD0', '#C4A882']} style={s.moonHeroIcon}>
+                <Text style={{ fontSize: 32 }}>{todayIsMoon ? '🌑' : '🌙'}</Text>
+              </LinearGradient>
+              <Text style={s.moonHeroTitle}>
+                {todayIsMoon ? `${todayMoonType === 'full' ? 'Full' : 'New'} Moon — Rest Day` : `Next Moon Day in ${daysToMoon} day${daysToMoon !== 1 ? 's' : ''}`}
+              </Text>
+              <Text style={s.moonHeroSub}>
+                {todayIsMoon
+                  ? 'Ashtanga practitioners honor the rhythm of nature. Rest, reflect, allow.'
+                  : `${moonLabel} · Saturdays are also rest days. Honor the rhythm.`}
+              </Text>
+            </View>
+
+            {/* Weekly rhythm dots */}
+            <View style={s.moonRhythm}>
+              <Text style={s.moonRhythmTitle}>This Week</Text>
+              <View style={s.moonDots}>
+                {rhythm.map((d, i) => {
+                  const dayLabel = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'][i];
+                  const isMoon = d.status === 'rest';
+                  const isSat = i === 6;
+                  return (
+                    <View key={i} style={s.moonDotCol}>
+                      <View style={[s.moonDotCircle, d.status === 'done' ? s.moonDotDone : isMoon || isSat ? s.moonDotRest : s.moonDotEmpty]}>
+                        {d.status === 'done' && <Ionicons name="checkmark" size={12} color="#fff" />}
+                        {(isMoon && d.status !== 'done') && <Text style={{ fontSize: 8 }}>🌙</Text>}
+                        {(isSat && d.status !== 'done' && !isMoon) && <Text style={{ fontSize: 8 }}>🙏</Text>}
+                      </View>
+                      <Text style={s.moonDotLabel}>{dayLabel}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* Upcoming moon days */}
+            <View style={s.moonList}>
+              <Text style={s.moonListTitle}>Upcoming Moon Days</Text>
+              {upcomingMoons.map((m, i) => (
+                <View key={i} style={s.moonListItem}>
+                  <View style={s.moonListIcon}>
+                    <Text style={{ fontSize: 16 }}>{m.type === 'full' ? '🌕' : '🌑'}</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.moonListDate}>{m.label}</Text>
+                    <Text style={s.moonListType}>{m.type === 'full' ? 'Full Moon' : 'New Moon'} · Rest Day</Text>
+                  </View>
+                  <Text style={s.moonListDays}>
+                    {m.daysAway === 0 ? 'Today' : m.daysAway === 1 ? 'Tomorrow' : `${m.daysAway} days`}
+                  </Text>
+                </View>
+              ))}
+            </View>
+
+            {/* Ashtanga rest day info */}
+            <View style={s.moonInfo}>
+              <Ionicons name="information-circle-outline" size={18} color={clay.muted} />
+              <Text style={s.moonInfoTxt}>
+                In the Ashtanga tradition, practitioners rest on Full Moon, New Moon, and Saturdays. Your streak is never broken by rest days.
+              </Text>
+            </View>
+          </>
+        )}
+
+        {/* ═══════════════ TAB: My Practice ═══════════════ */}
+        {activeTab === 'mine' && (
+          <>
+            {/* Stats overview */}
+            <View style={s.mpStats}>
+              <View style={s.mpStatCard}>
+                <LinearGradient colors={['#D8DCC9', '#A8B59B']} style={s.mpStatIcon}>
+                  <Ionicons name="leaf" size={16} color="#fff" />
+                </LinearGradient>
+                <Text style={s.mpStatNum}>{streak}</Text>
+                <Text style={s.mpStatLbl}>Day Streak</Text>
+              </View>
+              <View style={s.mpStatCard}>
+                <View style={[s.mpStatIcon, { backgroundColor: clay.sand }]}>
+                  <Ionicons name="time-outline" size={16} color={clay.clayDark} />
+                </View>
+                <Text style={s.mpStatNum}>{formatDuration(weekMinutes) || '0:00'}</Text>
+                <Text style={s.mpStatLbl}>This Week</Text>
+              </View>
+              <View style={s.mpStatCard}>
+                <View style={[s.mpStatIcon, { backgroundColor: '#FFF5EC' }]}>
+                  <Ionicons name="calendar-outline" size={16} color={clay.clay} />
+                </View>
+                <Text style={s.mpStatNum}>{practicesThisWeek}</Text>
+                <Text style={s.mpStatLbl}>Sessions</Text>
+              </View>
+            </View>
+
+            {/* Weekly rhythm */}
+            <View style={s.mpRhythm}>
+              <Text style={s.mpRhythmTitle}>Weekly Rhythm</Text>
+              <View style={s.mpDots}>
+                {rhythm.map((d, i) => {
+                  const dayLabel = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'][i];
+                  return (
+                    <View key={i} style={s.mpDotCol}>
+                      <View style={[s.mpDot, d.status === 'done' ? s.mpDotDone : d.status === 'rest' ? s.mpDotRest : s.mpDotEmpty]}>
+                        {d.status === 'done' && <Ionicons name="checkmark" size={11} color="#fff" />}
+                      </View>
+                      <Text style={[s.mpDotLabel, d.status === 'done' && { color: clay.ink, fontWeight: '700' }]}>{dayLabel}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* Begin Practice CTA */}
+            <TouchableOpacity activeOpacity={0.88} onPress={handlePracticeButton} style={{ marginHorizontal: 20, marginBottom: 14 }}>
+              <LinearGradient colors={[clay.clay, clay.clayDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ borderRadius: 16, paddingVertical: 16, alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: '800', color: '#fff' }}>{practiceState === 'onMat' ? 'Finish Practice' : 'Begin Practice'}</Text>
+              </LinearGradient>
             </TouchableOpacity>
-          </ScrollView>
-        </View>
+
+            {/* Recent practice logs */}
+            <View style={s.mpLogs}>
+              <Text style={s.mpLogsTitle}>Recent Practice</Text>
+              {recentLogs.length === 0 ? (
+                <View style={s.mpLogsEmpty}>
+                  <Ionicons name="leaf-outline" size={28} color={clay.mutedLight} />
+                  <Text style={s.mpLogsEmptyTxt}>No practice logs yet. Step on the mat!</Text>
+                </View>
+              ) : (
+                recentLogs.map((log) => {
+                  const seriesLabel = SERIES_LABELS[log.series ?? ''] ?? log.series ?? 'Practice';
+                  const logDate = new Date(log.loggedAt ?? '');
+                  const dayStr = logDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                  return (
+                    <View key={log.id} style={s.mpLogRow}>
+                      <View style={s.mpLogDot} />
+                      <View style={{ flex: 1 }}>
+                        <Text style={s.mpLogSeries}>{seriesLabel}</Text>
+                        <Text style={s.mpLogMeta}>{dayStr} · {log.durationMin ?? 0}m{log.feeling ? ` · ${log.feeling}` : ''}</Text>
+                        {log.notes ? <Text style={s.mpLogNote} numberOfLines={2}>"{log.notes}"</Text> : null}
+                      </View>
+                    </View>
+                  );
+                })
+              )}
+            </View>
+
+            {/* Practice Mode link */}
+            <TouchableOpacity activeOpacity={0.8} onPress={() => router.push('/practice-mode' as any)} style={s.mpPracticeMode}>
+              <Ionicons name="leaf-outline" size={20} color={clay.clayDark} />
+              <View style={{ flex: 1, marginLeft: 10 }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: clay.ink }}>Practice Mode</Text>
+                <Text style={{ fontSize: 11, color: clay.muted, marginTop: 1 }}>Distraction-free guided sequence</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={clay.muted} />
+            </TouchableOpacity>
+          </>
+        )}
 
         <View style={{ height: 40 }} />
       </ScrollView>
@@ -902,4 +981,60 @@ const s = StyleSheet.create({
   profileBio: { fontSize: 12, color: clay.inkMid, textAlign: 'center', lineHeight: 18, marginBottom: 16 },
   profileCloseBtn: { paddingHorizontal: 24, paddingVertical: 10, borderRadius: 12, backgroundColor: clay.sand },
   profileCloseBtnText: { fontSize: 13, fontWeight: '700', color: clay.inkMid },
+
+  // ═══ Moon Days tab ═══
+  moonHero: { alignItems: 'center', paddingHorizontal: 20, paddingVertical: 24, marginHorizontal: 20, marginBottom: 14, backgroundColor: '#fff', borderRadius: 18, borderWidth: 1, borderColor: clay.border },
+  moonHeroIcon: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
+  moonHeroTitle: { fontSize: 17, fontWeight: '800', color: clay.ink, textAlign: 'center' },
+  moonHeroSub: { fontSize: 12, color: clay.muted, textAlign: 'center', marginTop: 6, lineHeight: 18, paddingHorizontal: 10 },
+
+  moonRhythm: { marginHorizontal: 20, marginBottom: 14, backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: clay.border, padding: 16 },
+  moonRhythmTitle: { fontSize: 11, fontWeight: '700', color: clay.muted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 },
+  moonDots: { flexDirection: 'row', justifyContent: 'space-between' },
+  moonDotCol: { alignItems: 'center' },
+  moonDotCircle: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
+  moonDotDone: { backgroundColor: clay.success },
+  moonDotRest: { backgroundColor: clay.sand, borderWidth: 1, borderColor: clay.border },
+  moonDotEmpty: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: clay.border },
+  moonDotLabel: { fontSize: 9, color: clay.muted, fontWeight: '600' },
+
+  moonList: { marginHorizontal: 20, marginBottom: 14, backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: clay.border, padding: 16 },
+  moonListTitle: { fontSize: 11, fontWeight: '700', color: clay.muted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 },
+  moonListItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: clay.border },
+  moonListIcon: { width: 36, height: 36, borderRadius: 18, backgroundColor: clay.sand, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  moonListDate: { fontSize: 14, fontWeight: '700', color: clay.ink },
+  moonListType: { fontSize: 11, color: clay.muted, marginTop: 2 },
+  moonListDays: { fontSize: 12, fontWeight: '700', color: clay.clay },
+
+  moonInfo: { flexDirection: 'row', marginHorizontal: 20, marginBottom: 14, padding: 14, backgroundColor: clay.sand, borderRadius: 12, gap: 10, alignItems: 'flex-start' },
+  moonInfoTxt: { flex: 1, fontSize: 11, color: clay.muted, lineHeight: 16 },
+
+  // ═══ My Practice tab ═══
+  mpStats: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 14, gap: 10 },
+  mpStatCard: { flex: 1, backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: clay.border, padding: 14, alignItems: 'center' },
+  mpStatIcon: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  mpStatNum: { fontSize: 20, fontWeight: '800', color: clay.ink },
+  mpStatLbl: { fontSize: 9, color: clay.muted, fontWeight: '600', marginTop: 3, textTransform: 'uppercase', letterSpacing: 0.3 },
+
+  mpRhythm: { marginHorizontal: 20, marginBottom: 14, backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: clay.border, padding: 16 },
+  mpRhythmTitle: { fontSize: 11, fontWeight: '700', color: clay.muted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 },
+  mpDots: { flexDirection: 'row', justifyContent: 'space-between' },
+  mpDotCol: { alignItems: 'center' },
+  mpDot: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
+  mpDotDone: { backgroundColor: clay.success },
+  mpDotRest: { backgroundColor: clay.sand, borderWidth: 1, borderColor: clay.border },
+  mpDotEmpty: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: clay.border },
+  mpDotLabel: { fontSize: 9, color: clay.muted, fontWeight: '600' },
+
+  mpLogs: { marginHorizontal: 20, marginBottom: 14, backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: clay.border, padding: 16 },
+  mpLogsTitle: { fontSize: 11, fontWeight: '700', color: clay.muted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 },
+  mpLogsEmpty: { alignItems: 'center', paddingVertical: 20 },
+  mpLogsEmptyTxt: { fontSize: 12, color: clay.muted, marginTop: 8 },
+  mpLogRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: clay.border },
+  mpLogDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: clay.clay, marginTop: 5, marginRight: 12 },
+  mpLogSeries: { fontSize: 14, fontWeight: '700', color: clay.ink },
+  mpLogMeta: { fontSize: 11, color: clay.muted, marginTop: 2 },
+  mpLogNote: { fontSize: 11, fontStyle: 'italic', color: clay.inkMid, marginTop: 4, lineHeight: 16 },
+
+  mpPracticeMode: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginBottom: 14, paddingVertical: 14, paddingHorizontal: 16, borderRadius: 16, borderWidth: 1, borderColor: clay.border, backgroundColor: '#fff' },
 });
