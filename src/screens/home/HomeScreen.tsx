@@ -377,6 +377,14 @@ export default function HomeScreen() {
 
             {/* 2 card row */}
             <View style={s.row3}>
+              <TouchableOpacity style={{ flex: 1.2 }} activeOpacity={0.88} onPress={handlePracticeButton}>
+                <LinearGradient colors={[clay.clay, clay.clayDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.beginCard}>
+                  <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.7)" style={s.beginChev} />
+                  <View style={s.beginIcn}><Text style={{ fontSize: 20 }}>🧘</Text></View>
+                  <Text style={s.beginTitle}>{practiceState === 'onMat' ? 'Finish' : 'Begin'} Practice</Text>
+                  <Text style={s.beginSub}>{practiceState === 'onMat' ? 'Save your session' : 'Step on the mat'}</Text>
+                </LinearGradient>
+              </TouchableOpacity>
               <View style={[s.card3, { flex: 1 }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                   <LinearGradient colors={['#D8DCC9', '#A8B59B']} style={s.leaf}>
@@ -390,14 +398,6 @@ export default function HomeScreen() {
                 </View>
                 <Text style={s.streakMicro}>{formatDuration(weekMinutes) || '0:00'} this week</Text>
               </View>
-              <TouchableOpacity style={{ flex: 1.2 }} activeOpacity={0.88} onPress={handlePracticeButton}>
-                <LinearGradient colors={[clay.clay, clay.clayDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.beginCard}>
-                  <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.7)" style={s.beginChev} />
-                  <View style={s.beginIcn}><Text style={{ fontSize: 20 }}>🧘</Text></View>
-                  <Text style={s.beginTitle}>{practiceState === 'onMat' ? 'Finish' : 'Begin'} Practice</Text>
-                  <Text style={s.beginSub}>{practiceState === 'onMat' ? 'Save your session' : 'Step on the mat'}</Text>
-                </LinearGradient>
-              </TouchableOpacity>
             </View>
 
             {/* Compact quote */}
