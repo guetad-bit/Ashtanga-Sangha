@@ -1,1 +1,2 @@
-export { default } from '@/screens/library/LibraryScreen';
+// app/(tabs)/library.tsx — now shows YouScreen
+export { default } from '@/screens/you/YouScreen';

@@ -5,6 +5,8 @@ import { Tabs, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import LogPracticeModal from '@/components/LogPracticeModal';
+import { useAppStore } from '@/store/useAppStore';
+import { setPracticingNow } from '@/lib/supabase';
 
 const clay = {
   bg: '#FFFFFF',
@@ -22,6 +24,18 @@ const HIDDEN_TABS = ['gatherings', 'profile'];
  */
 function ClayTabBar({ state, descriptors, navigation }: any) {
   const router = useRouter();
+  const { isPracticing, setIsPracticing, user, setLogModalOpen } = useAppStore();
+
+  const handlePracticeFAB = () => {
+    if (!isPracticing) {
+      // Begin practice
+      setIsPracticing(true);
+      if (user) setPracticingNow(user.id, true).catch(console.error);
+    } else {
+      // Already practicing — open the log modal to finish
+      setLogModalOpen(true);
+    }
+  };
 
   const visibleRoutes = state.routes.filter((route: any) => !HIDDEN_TABS.includes(route.name));
 
@@ -60,21 +74,23 @@ function ClayTabBar({ state, descriptors, navigation }: any) {
     <View style={styles.tabBar}>
       {left.map(renderTab)}
 
-      {/* Center FAB — Practice */}
+      {/* Center FAB — Begin / Finish Practice */}
       <TouchableOpacity
         style={styles.fabWrap}
         activeOpacity={0.85}
-        onPress={() => router.push('/log-practice' as any)}
+        onPress={handlePracticeFAB}
       >
         <LinearGradient
-          colors={[clay.clay, clay.clayDark]}
+          colors={isPracticing ? ['#A8B59B', '#7D9A6E'] : [clay.clay, clay.clayDark]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.fab}
         >
-          <Ionicons name="book-outline" size={26} color="#fff" />
+          <Ionicons name={isPracticing ? 'stop-circle-outline' : 'play'} size={isPracticing ? 28 : 26} color="#fff" />
         </LinearGradient>
-        <Text style={styles.fabLabel}>Practice</Text>
+        <Text style={[styles.fabLabel, isPracticing && { color: '#7D9A6E' }]}>
+          {isPracticing ? 'Finish' : 'Practice'}
+        </Text>
       </TouchableOpacity>
 
       {right.map(renderTab)}
