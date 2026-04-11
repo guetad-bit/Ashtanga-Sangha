@@ -14,14 +14,14 @@ import AppHeader from '@/components/AppHeader';
 import { getPracticingNow, getFeed, deletePost, followUser, unfollowUser, getFollowing, getUserLikes, supabase } from '@/lib/supabase';
 import { MOCK_SANGHA_POSTS, MOCK_PRACTICING_NOW } from '@/data/mockSanghaUsers';
 
-/* Stone & Moss palette */
+/* Clay palette */
 const moss = {
-  pageBg:      '#FFFFFF',
+  pageBg:      '#F5EFE6',
   cardBg:      '#FFFFFF',
-  ink:         '#262626',
-  inkMid:      '#555555',
-  muted:       '#8E8E8E',
-  mutedLight:  '#C7C7C7',
+  ink:         '#2A2420',
+  inkMid:      '#4A3F36',
+  muted:       '#8A7A68',
+  mutedLight:  '#B5A793',
   accent:      '#C26B4D',
   accentLight: '#F7F1E7',
   sage:        '#A8B59B',
@@ -29,12 +29,16 @@ const moss = {
   amber:       '#C4956A',
   amberBg:     '#FFF5EC',
   terra:       '#8B7355',
-  divider:     '#EFEFEF',
-  heartRed:    '#ED4956',
+  divider:     '#E8DFD0',
+  heartRed:    '#C26B4D',
   white:       '#FFFFFF',
-  ring:        '#8A9E78',
-  storyGrad1:  '#DE0046',
-  storyGrad2:  '#F7A34B',
+  ring:        '#C26B4D',
+  storyGrad1:  '#C26B4D',
+  storyGrad2:  '#C4956A',
+  sand:        '#EFE3D3',
+  border:      '#E8DFD0',
+  clayDark:    '#A5502F',
+  success:     '#6E7F5C',
 };
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -212,7 +216,7 @@ export default function CommunityScreen() {
     return (
       <TouchableOpacity key={p.id + index} style={s.storyItem} activeOpacity={0.7} onPress={() => !isMe && openProfile(p.name)}>
         <LinearGradient
-          colors={['#8A9E78', '#6B8A5E']}
+          colors={[moss.accent, moss.clayDark]}
           start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }}
           style={s.storyRing}
         >
@@ -258,7 +262,7 @@ export default function CommunityScreen() {
         {/* ── Sangha Pulse (D3 dark banner) ── */}
         <View style={s.pulseOuter}>
           <LinearGradient
-            colors={['#3B3228', '#5E5245']}
+            colors={['#2A2420', '#4A3F36']}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
             style={s.pulseBanner}
           >
@@ -451,12 +455,12 @@ const s = StyleSheet.create({
   /* Stories strip */
   storiesWrap: {
     borderBottomWidth: 1,
-    borderBottomColor: moss.divider,
-    backgroundColor: moss.white,
+    borderBottomColor: moss.border,
+    backgroundColor: moss.pageBg,
   },
   storiesScroll: {
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
     gap: 14,
   },
   storyItem: { alignItems: 'center', width: 68 },
@@ -478,7 +482,6 @@ const s = StyleSheet.create({
   },
   storyAvatar: { width: '100%' as any, height: '100%' as any, borderRadius: 28 },
   storyName: {
-    fontFamily: 'DMSans_400Regular',
     fontSize: 11,
     color: moss.ink,
     textAlign: 'center',
@@ -489,7 +492,7 @@ const s = StyleSheet.create({
   pulseOuter: {
     paddingHorizontal: 14,
     paddingTop: 14,
-    paddingBottom: 2,
+    paddingBottom: 14,
   },
   pulseBanner: {
     borderRadius: 16,
@@ -503,12 +506,11 @@ const s = StyleSheet.create({
     marginBottom: 16,
   },
   pulseTitle: {
-    fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 18,
+    fontWeight: '800',
     color: '#FFFFFF',
   },
   pulseSubtitle: {
-    fontFamily: 'DMSans_400Regular',
     fontSize: 11,
     color: 'rgba(255,255,255,0.55)',
     marginTop: 2,
@@ -517,7 +519,7 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: 'rgba(138,158,120,0.4)',
+    backgroundColor: 'rgba(194,107,77,0.3)',
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -526,12 +528,11 @@ const s = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 3.5,
-    backgroundColor: '#8A9E78',
+    backgroundColor: moss.accent,
   },
   pulseLiveText: {
-    fontFamily: 'DMSans_600SemiBold',
     fontSize: 11,
-    color: '#DCE8D3',
+    color: '#F7E8DC',
   },
   pulseStats: {
     flexDirection: 'row',
@@ -547,13 +548,12 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
   pulseNum: {
-    fontFamily: 'DMSerifDisplay_400Regular',
     fontSize: 30,
+    fontWeight: '800',
     color: '#FFFFFF',
     lineHeight: 34,
   },
   pulseLabel: {
-    fontFamily: 'DMSans_500Medium',
     fontSize: 10,
     color: 'rgba(255,255,255,0.5)',
     textTransform: 'uppercase',
@@ -579,23 +579,24 @@ const s = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.3)',
   },
   pulseFooterText: {
-    fontFamily: 'DMSans_400Regular',
     fontSize: 11,
     color: 'rgba(255,255,255,0.6)',
     marginLeft: 8,
     flex: 1,
   },
   pulseFooterBold: {
-    fontFamily: 'DMSans_600SemiBold',
     color: 'rgba(255,255,255,0.9)',
   },
 
   /* Post */
   postWrap: {
     backgroundColor: moss.white,
-    borderBottomWidth: 1,
-    borderBottomColor: moss.divider,
-    marginBottom: 4,
+    marginHorizontal: 14,
+    marginBottom: 14,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: moss.border,
+    overflow: 'hidden',
   },
   postHeader: {
     flexDirection: 'row',
@@ -606,20 +607,19 @@ const s = StyleSheet.create({
   postHeaderAvatar: { width: 34, height: 34, borderRadius: 17 },
   postHeaderInfo: { flex: 1 },
   postHeaderName: {
-    fontFamily: 'DMSans_600SemiBold',
     fontSize: 13,
+    fontWeight: '700',
     color: moss.ink,
   },
   postHeaderLocation: {
-    fontFamily: 'DMSans_400Regular',
     fontSize: 11,
     color: moss.muted,
     marginTop: 1,
   },
   postImage: {
-    width: SCREEN_WIDTH,
-    height: SCREEN_WIDTH,
-    backgroundColor: moss.divider,
+    width: '100%' as any,
+    height: 280,
+    backgroundColor: moss.sand,
   },
 
   /* Actions row */
@@ -639,17 +639,13 @@ const s = StyleSheet.create({
 
   /* Likes, caption, comments, time */
   likesText: {
-    fontFamily: 'DMSans_400Regular',
     fontSize: 13,
     color: moss.ink,
     paddingHorizontal: 14,
     marginBottom: 4,
   },
-  bold: {
-    fontFamily: 'DMSans_600SemiBold',
-  },
+  bold: { fontWeight: '700' },
   captionText: {
-    fontFamily: 'DMSans_400Regular',
     fontSize: 13,
     color: moss.ink,
     lineHeight: 18,
@@ -657,14 +653,12 @@ const s = StyleSheet.create({
     marginBottom: 4,
   },
   viewComments: {
-    fontFamily: 'DMSans_400Regular',
     fontSize: 13,
     color: moss.muted,
     paddingHorizontal: 14,
     marginBottom: 3,
   },
   timeText: {
-    fontFamily: 'DMSans_400Regular',
     fontSize: 10,
     color: moss.muted,
     textTransform: 'uppercase',
@@ -684,10 +678,10 @@ const s = StyleSheet.create({
     backgroundColor: moss.accent,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
+    shadowColor: moss.accent,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
     elevation: 6,
   },
 
@@ -709,8 +703,7 @@ const s = StyleSheet.create({
     width: 88, height: 88, borderRadius: 44,
     borderWidth: 3, borderColor: moss.accent, marginBottom: 14,
   },
-  profileName: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 20,
+  profileName: { fontSize: 20, fontWeight: '800',
     color: moss.ink, marginBottom: 10,
   },
   profileBadgeRow: { flexDirection: 'row', gap: 8, marginBottom: 14 },
@@ -718,19 +711,16 @@ const s = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 5,
     backgroundColor: moss.sageBg, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 14,
   },
-  profileBadgeText: { fontFamily: 'DMSans_600SemiBold', fontSize: 13, color: moss.accent },
-  profileBio: {
-    fontFamily: 'DMSans_400Regular', fontSize: 14, color: moss.inkMid,
+  profileBadgeText: { fontSize: 13, fontWeight: '600', color: moss.accent },
+  profileBio: { fontSize: 14, color: moss.inkMid,
     textAlign: 'center', lineHeight: 20, marginBottom: 18,
   },
   profileFollowBtn: {
     backgroundColor: moss.accent, borderRadius: 8,
     paddingHorizontal: 40, paddingVertical: 10, marginBottom: 10,
   },
-  profileFollowBtnText: {
-    fontFamily: 'DMSans_600SemiBold', fontSize: 14, color: moss.white,
+  profileFollowBtnText: { fontSize: 14, color: moss.white,
   },
-  profileCloseText: {
-    fontFamily: 'DMSans_500Medium', fontSize: 13, color: moss.muted, paddingVertical: 6,
+  profileCloseText: { fontSize: 13, color: moss.muted, paddingVertical: 6,
   },
 });
