@@ -71,7 +71,8 @@ export default function PracticeLogScreen() {
     }
 
     setSaving(false);
-    router.back();
+    // router.back() may not work if there's no history (e.g. direct navigation)
+    try { router.back(); } catch { router.replace('/' as any); }
   };
 
   return (
@@ -82,7 +83,7 @@ export default function PracticeLogScreen() {
       >
         {/* Header */}
         <View style={s.header}>
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => { try { router.back(); } catch { router.replace('/' as any); } }}>
             <Text style={s.cancelBtn}>Cancel</Text>
           </TouchableOpacity>
           <Text style={s.headerTitle}>Log Practice</Text>
