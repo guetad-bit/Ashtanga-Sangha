@@ -5,7 +5,7 @@ export const colors = {
   // Background palette — warm parchment
   sky: '#F5EFE6',
   skyMid: '#FFFFFF',
-  skyDeep: '#EFE3D3',
+  skyDeep: '#E8DFD0',
 
   // Primary clay → (primary actions, links, focus)
   blue: '#C26B4D',
@@ -14,7 +14,7 @@ export const colors = {
 
   // Secondary wood fills
   sand: '#EFE3D3',
-  sandMid: '#D4C4AB',
+  sandMid: '#B5A793',
   sandDeep: '#F7F1E7',
 
   // Sage palette → (subtle nature accents)

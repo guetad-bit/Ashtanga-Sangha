@@ -17,15 +17,15 @@ import i18n from '@/i18n';
 
 /* ââ Warm palette (shared with HomeScreen / CommunityScreen) ââ */
 const warm = {
-  bg: '#FAF8F5', cardBg: '#FFFFFF', headerBg: '#FFFFFF',
-  ink: '#3D3229', inkMid: '#5C4F42', muted: '#8B7D6E', mutedLight: '#B5A899',
-  accent: '#C47B3F', accentLight: '#F0E0CC',
-  orange: '#E8834A', orangeLight: '#FFF0E6',
-  sage: '#7A8B5E', sageBg: '#E8EDDF',
-  gold: '#B8944A', goldBg: '#F5EDD8',
-  blue: '#5B8DB8', blueBg: '#E8F0F8',
-  red: '#D46B5E', redBg: '#FDEAE7',
-  divider: '#EDE5D8', white: '#FFFFFF',
+  bg: '#F5EFE6', cardBg: '#FFFFFF', headerBg: '#FFFFFF',
+  ink: '#2A2420', inkMid: '#4A3F36', muted: '#8A7A68', mutedLight: '#B5A793',
+  accent: '#C26B4D', accentLight: '#F7F1E7',
+  orange: '#C26B4D', orangeLight: '#FFF5EC',
+  sage: '#A8B59B', sageBg: '#F0F5EB',
+  gold: '#C4956A', goldBg: '#FFF5EC',
+  blue: '#7A8B6A', blueBg: '#F0F5EB',
+  red: '#C26B4D', redBg: '#FFF0EB',
+  divider: '#E8DFD0', white: '#FFFFFF',
 };
 
 // SERIES_LABELS will be computed inside component using t() to support translations
