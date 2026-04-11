@@ -166,10 +166,11 @@ export default function HomeScreen() {
 
   const friendsThisWeek = realMembers.length + livePractitioners.length;
 
-  const homeFeed = feedPosts
+  const sortedFeed = feedPosts
     .slice()
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    .slice(0, 3);
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  const homeFeed = sortedFeed.slice(0, 1);
+  const moreCount = Math.max(0, sortedFeed.length - 1);
 
   const practiceState = isPracticing ? 'onMat' : 'idle';
 
@@ -351,9 +352,8 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* 3 card row: Streak / Weekly / Begin Practice */}
+        {/* 2 card row: Streak / Begin Practice */}
         <View style={s.row3}>
-          {/* Streak */}
           <View style={[s.card3, { flex: 1 }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               <LinearGradient colors={['#D8DCC9', '#A8B59B']} style={s.leaf}>
@@ -365,26 +365,10 @@ export default function HomeScreen() {
               <Text style={s.streakBig}>{streak}</Text>
               <Text style={s.streakUnit}>DAYS</Text>
             </View>
-            <Text style={s.streakMicro}>Every day is a step forward</Text>
+            <Text style={s.streakMicro}>{formatDuration(weekMinutes) || '0:00'} this week</Text>
           </View>
 
-          {/* Weekly */}
-          <View style={[s.card3, { flex: 1 }]}>
-            <Text style={s.wTitle}>Weekly Summary</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 6 }}>
-              <View style={s.wIcn}><Text style={{ fontSize: 11 }}>👥</Text></View>
-              <Text style={s.wBig}>{formatDuration(weekMinutes) || '0:00'}</Text>
-              <View style={s.wIcn}><Text style={{ fontSize: 11 }}>🪷</Text></View>
-            </View>
-            <View style={s.wMini}>
-              <Text style={s.wMiniTxt}>Practices</Text>
-              <Text style={s.wMiniTxt}>Total Time</Text>
-              <Text style={s.wMiniTxt}>Poses</Text>
-            </View>
-          </View>
-
-          {/* Begin Practice */}
-          <TouchableOpacity style={{ flex: 1.15 }} activeOpacity={0.88} onPress={handlePracticeButton}>
+          <TouchableOpacity style={{ flex: 1.2 }} activeOpacity={0.88} onPress={handlePracticeButton}>
             <LinearGradient colors={[clay.clay, clay.clayDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.beginCard}>
               <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.7)" style={s.beginChev} />
               <View style={s.beginIcn}>
@@ -396,63 +380,15 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Practice Mode entry */}
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => router.push('/practice-mode' as any)}
-          style={{
-            marginHorizontal: 20, marginBottom: 14, paddingVertical: 14, paddingHorizontal: 18,
-            borderRadius: 16, borderWidth: 1, borderColor: clay.border, backgroundColor: clay.card,
-            flexDirection: 'row', alignItems: 'center',
-          }}>
-          <Ionicons name="leaf-outline" size={22} color={clay.clayDark} />
-          <View style={{ flex: 1, marginLeft: 12 }}>
-            <Text style={{ fontSize: 15, fontWeight: '600', color: clay.ink }}>Practice Mode</Text>
-            <Text style={{ fontSize: 12, color: clay.muted, marginTop: 2 }}>Distraction-free guided sequence</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={18} color={clay.muted} />
-        </TouchableOpacity>
-
-        {/* Moon + friends row */}
-        <View style={s.row2}>
-          <View style={[s.infoCard, { flex: 1.6 }]}>
-            <LinearGradient colors={['#E8DFD0', '#8A7A68']} style={s.moonIcon} />
-            <View style={{ flex: 1, marginLeft: 10 }}>
-              <Text style={s.moonTitle}>New Moon · {moonLabel}</Text>
-              <Text style={s.moonSub}>Rest, reflect, allow. {daysToMoon === 0 ? 'Today' : `${daysToMoon} days`}</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={16} color={clay.clay} />
-          </View>
-
-          <View style={[s.infoCard, { flex: 1 }]}>
-            <View style={s.friendsAvatars}>
-              {realMembers.slice(0, 3).map((m, i) => (
-                <View key={m.id} style={[s.friendsDot, { marginLeft: i === 0 ? 0 : -8, zIndex: 3 - i }]}>
-                  {m.avatar_url ? (
-                    <Image source={{ uri: m.avatar_url }} style={s.friendsDotImg} />
-                  ) : (
-                    <LinearGradient colors={['#D4A584', '#8B6B4A']} style={s.friendsDotImg} />
-                  )}
-                </View>
-              ))}
-            </View>
-            <View style={{ flex: 1, marginLeft: 8 }}>
-              <Text style={s.friendsTitle}>{friendsThisWeek} practicing</Text>
-              <Text style={s.friendsSub}>this week</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Quote banner */}
+        {/* Compact quote */}
         <LinearGradient
           colors={['#D8C3A8', '#A68868', '#7A6855']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={s.quoteBanner}
+          style={s.quoteCompact}
         >
-          <Text style={s.quoteText}>"{guruWisdom.quote}"</Text>
-          <View style={s.quoteDivider} />
-          <Text style={s.quoteGuru}>— {guruWisdom.guru}</Text>
+          <Text style={s.quoteText} numberOfLines={2}>"{guruWisdom.quote}"</Text>
+          <Text style={s.quoteGuruCompact}>— {guruWisdom.guru}</Text>
         </LinearGradient>
 
         {/* Feed */}
@@ -596,6 +532,17 @@ export default function HomeScreen() {
               </View>
             );
           })
+        )}
+
+        {moreCount > 0 && (
+          <TouchableOpacity
+            style={s.seeMore}
+            activeOpacity={0.7}
+            onPress={() => router.push('/community' as any)}
+          >
+            <Text style={s.seeMoreTxt}>See {moreCount} more posts</Text>
+            <Ionicons name="chevron-forward" size={15} color={clay.clay} />
+          </TouchableOpacity>
         )}
 
         {/* Practitioners Near You */}
@@ -856,9 +803,22 @@ const s = StyleSheet.create({
   friendsSub: { fontSize: 9, color: clay.muted },
 
   quoteBanner: { marginHorizontal: 20, marginBottom: 16, borderRadius: 16, padding: 20, minHeight: 110, alignItems: 'center', justifyContent: 'center' },
-  quoteText: { fontStyle: 'italic', fontSize: 13, color: '#fff', textAlign: 'center', lineHeight: 20, textShadowColor: 'rgba(0,0,0,0.25)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
+  quoteCompact: {
+    marginHorizontal: 20, marginBottom: 14, borderRadius: 12,
+    paddingVertical: 14, paddingHorizontal: 18,
+    flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap',
+  },
+  quoteText: { fontStyle: 'italic', fontSize: 12, color: '#fff', lineHeight: 18, flex: 1, textShadowColor: 'rgba(0,0,0,0.25)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
   quoteDivider: { width: 30, height: 1, backgroundColor: 'rgba(255,255,255,0.6)', marginTop: 8, marginBottom: 6 },
   quoteGuru: { fontSize: 10, color: 'rgba(255,255,255,0.85)', fontStyle: 'italic' },
+  quoteGuruCompact: { fontSize: 9, color: 'rgba(255,255,255,0.75)', fontStyle: 'italic', marginLeft: 10, alignSelf: 'flex-end' },
+
+  seeMore: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    marginHorizontal: 20, marginBottom: 14, paddingVertical: 12,
+    borderRadius: 12, backgroundColor: '#fff', borderWidth: 1, borderColor: clay.border,
+  },
+  seeMoreTxt: { fontSize: 13, fontWeight: '700', color: clay.clay, marginRight: 4 },
 
   emptyFeed: { marginHorizontal: 20, padding: 32, alignItems: 'center', backgroundColor: '#fff', borderRadius: 16, borderWidth: 1, borderColor: clay.border, marginBottom: 14 },
   emptyText: { fontSize: 13, fontWeight: '600', color: clay.inkMid, marginTop: 8 },
