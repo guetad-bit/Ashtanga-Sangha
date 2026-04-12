@@ -31,6 +31,16 @@ export interface UserProfile {
   teacher?: string;
 }
 
+export interface BookedGathering {
+  gatheringId: string;
+  title: string;
+  date: string;        // ISO or display string
+  location: string;
+  type: string;
+  guideName: string;
+  bookedAt: string;    // ISO timestamp
+}
+
 interface AppState {
   // Auth
   isOnboarded: boolean;
@@ -43,6 +53,9 @@ interface AppState {
 
   // Posts
   userPosts: UserPost[];
+
+  // Bookings
+  bookedGatherings: BookedGathering[];
 
   // UI
   activeTab: 'home' | 'community' | 'practice' | 'explore' | 'gatherings';
@@ -60,6 +73,8 @@ interface AppState {
   updatePracticeLog: (id: string, changes: Partial<PracticeLog>) => void;
   removePracticeLog: (id: string) => void;
   addUserPost: (post: UserPost) => void;
+  addBooking: (booking: BookedGathering) => void;
+  removeBooking: (gatheringId: string) => void;
   setActiveTab: (tab: AppState['activeTab']) => void;
   setLogModalOpen: (v: boolean) => void;
   setIsPracticing: (v: boolean) => void;
@@ -73,6 +88,7 @@ export const useAppStore = create<AppState>((set) => ({
   practiceLogs: [],
   currentStreak: 0,
   userPosts: [],
+  bookedGatherings: [],
   activeTab: 'home',
   isLogModalOpen: false,
   isPracticing: false,
@@ -107,6 +123,16 @@ export const useAppStore = create<AppState>((set) => ({
 
   addUserPost: (post) =>
     set((state) => ({ userPosts: [post, ...state.userPosts] })),
+
+  addBooking: (booking) =>
+    set((state) => ({
+      bookedGatherings: [...state.bookedGatherings, booking],
+    })),
+
+  removeBooking: (gatheringId) =>
+    set((state) => ({
+      bookedGatherings: state.bookedGatherings.filter((b) => b.gatheringId !== gatheringId),
+    })),
 
   setActiveTab: (tab) => set({ activeTab: tab }),
 

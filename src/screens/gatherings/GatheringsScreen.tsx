@@ -1,8 +1,9 @@
 // src/screens/gatherings/GatheringsScreen.tsx
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
   StyleSheet, Image, Platform, LayoutAnimation,
+  Modal, Pressable, Linking, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -297,7 +298,7 @@ const typeBadge: Record<GatheringType, { bg: string; text: string; label: string
 };
 
 /* ─── single gathering card ─── */
-function GatheringCard({ g }: { g: Gathering }) {
+function GatheringCard({ g, onBook }: { g: Gathering; onBook: (g: Gathering) => void }) {
   const [expanded, setExpanded] = useState(false);
   const badge = typeBadge[g.type];
   const spotsPercent = ((g.spotsTotal - g.spotsLeft) / g.spotsTotal) * 100;
@@ -493,7 +494,7 @@ function GatheringCard({ g }: { g: Gathering }) {
               </View>
 
               {/* CTA button */}
-              <TouchableOpacity activeOpacity={0.85} style={s.cta}>
+              <TouchableOpacity activeOpacity={0.85} style={s.cta} onPress={() => onBook(g)}>
                 <LinearGradient
                   colors={[clay.clay, clay.clayDark]}
                   start={{ x: 0, y: 0 }}
@@ -528,15 +529,70 @@ function GatheringCard({ g }: { g: Gathering }) {
   );
 }
 
+/* ─── Google Calendar deep link helper ─── */
+function buildGCalUrl(g: Gathering): string {
+  // Parse a date for the event
+  const dateStr = g.date; // e.g. '2026-04-17'
+  const start = dateStr.replace(/-/g, '');
+  // For single-day events, end = start + 1 day
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + 1);
+  const end = d.toISOString().slice(0, 10).replace(/-/g, '');
+  const title = encodeURIComponent(g.title);
+  const location = encodeURIComponent(`${g.location}, ${g.country}`);
+  const details = encodeURIComponent(`${g.subtitle}\n\nGuide: ${g.guide.name}\nPrice: ${g.price}\n\nBooked via Sangha`);
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&location=${location}&details=${details}`;
+}
+
+/* ─── booking steps ─── */
+type BookingStep = 'confirm' | 'success';
+
 /* ─── main screen ─── */
 export default function GatheringsScreen() {
   const router = useRouter();
-  const { user } = useAppStore();
+  const { user, bookedGatherings, addBooking } = useAppStore();
   const [filter, setFilter] = useState<GatheringType | 'all'>('all');
+  const [bookingGathering, setBookingGathering] = useState<Gathering | null>(null);
+  const [bookingStep, setBookingStep] = useState<BookingStep>('confirm');
 
   const filtered = filter === 'all'
     ? GATHERINGS
     : GATHERINGS.filter((g) => g.type === filter);
+
+  const isBooked = (gId: string) => bookedGatherings.some((b) => b.gatheringId === gId);
+
+  const handleOpenBooking = useCallback((g: Gathering) => {
+    if (isBooked(g.id)) {
+      // Already booked — open Google Calendar
+      Linking.openURL(buildGCalUrl(g)).catch(() => {});
+      return;
+    }
+    setBookingGathering(g);
+    setBookingStep('confirm');
+  }, [bookedGatherings]);
+
+  const handleConfirmBooking = useCallback(() => {
+    if (!bookingGathering) return;
+    addBooking({
+      gatheringId: bookingGathering.id,
+      title: bookingGathering.title,
+      date: bookingGathering.dateRange,
+      location: `${bookingGathering.location}, ${bookingGathering.country}`,
+      type: bookingGathering.type,
+      guideName: bookingGathering.guide.name,
+      bookedAt: new Date().toISOString(),
+    });
+    setBookingStep('success');
+  }, [bookingGathering, addBooking]);
+
+  const handleAddToCalendar = useCallback(() => {
+    if (!bookingGathering) return;
+    Linking.openURL(buildGCalUrl(bookingGathering)).catch(() => {});
+  }, [bookingGathering]);
+
+  const closeBooking = useCallback(() => {
+    setBookingGathering(null);
+  }, []);
 
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
@@ -590,7 +646,7 @@ export default function GatheringsScreen() {
 
         {/* Cards */}
         {filtered.map((g) => (
-          <GatheringCard key={g.id} g={g} />
+          <GatheringCard key={g.id} g={g} onBook={handleOpenBooking} />
         ))}
 
         {filtered.length === 0 && (
@@ -602,6 +658,150 @@ export default function GatheringsScreen() {
 
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      {/* ═══════════ Booking Modal ═══════════ */}
+      <Modal visible={!!bookingGathering} transparent animationType="slide" onRequestClose={closeBooking}>
+        <Pressable style={s.modalBackdrop} onPress={closeBooking}>
+          <Pressable style={s.modalSheet} onPress={(e) => e.stopPropagation()}>
+            {bookingGathering && bookingStep === 'confirm' && (
+              <>
+                {/* Header */}
+                <View style={s.modalHandle} />
+                <Text style={s.modalTitle}>Reserve Your Spot</Text>
+
+                {/* Gathering summary */}
+                <View style={s.modalSummaryCard}>
+                  <Image source={{ uri: img(bookingGathering.imageId, 200) }} style={s.modalThumb} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.modalGatheringTitle}>{bookingGathering.title}</Text>
+                    <View style={s.modalMetaRow}>
+                      <Ionicons name="calendar-outline" size={13} color={clay.muted} />
+                      <Text style={s.modalMetaTxt}>{bookingGathering.dateRange}</Text>
+                    </View>
+                    <View style={s.modalMetaRow}>
+                      <Ionicons name="location-outline" size={13} color={clay.muted} />
+                      <Text style={s.modalMetaTxt}>{bookingGathering.location}, {bookingGathering.country}</Text>
+                    </View>
+                    <View style={s.modalMetaRow}>
+                      <Ionicons name="person-outline" size={13} color={clay.muted} />
+                      <Text style={s.modalMetaTxt}>{bookingGathering.guide.name}</Text>
+                    </View>
+                  </View>
+                </View>
+
+                {/* Price line */}
+                <View style={s.modalPriceLine}>
+                  <Text style={s.modalPriceLabel}>Total</Text>
+                  <Text style={s.modalPriceValue}>{bookingGathering.price}</Text>
+                </View>
+                {bookingGathering.earlyBird && (
+                  <View style={s.modalEarlyBirdRow}>
+                    <Ionicons name="time-outline" size={13} color={clay.sage} />
+                    <Text style={s.modalEarlyBirdTxt}>{bookingGathering.earlyBird}</Text>
+                  </View>
+                )}
+
+                {/* Spots left */}
+                <View style={s.modalSpotsRow}>
+                  <View style={[s.reserveDot, bookingGathering.spotsLeft <= 4 && { backgroundColor: clay.clay }]} />
+                  <Text style={s.modalSpotsTxt}>
+                    {bookingGathering.spotsLeft} of {bookingGathering.spotsTotal} spots remaining
+                  </Text>
+                </View>
+
+                {/* Who's going */}
+                {bookingGathering.participants && bookingGathering.participants.length > 0 && (
+                  <View style={s.modalParticipants}>
+                    <View style={{ flexDirection: 'row' }}>
+                      {bookingGathering.participants.slice(0, 5).map((p, i) => (
+                        <Image key={i} source={{ uri: p.avatar }} style={[s.modalParticipantFace, i > 0 && { marginLeft: -5 }]} />
+                      ))}
+                    </View>
+                    <Text style={s.modalParticipantTxt}>
+                      {bookingGathering.participants.slice(0, 2).map((p) => p.name.split(' ')[0]).join(' & ')}
+                      {bookingGathering.participants.length > 2 ? ` + ${bookingGathering.participants.length - 2} more` : ''} going
+                    </Text>
+                  </View>
+                )}
+
+                {/* Confirm button */}
+                <TouchableOpacity activeOpacity={0.85} onPress={handleConfirmBooking} style={s.modalConfirmBtn}>
+                  <LinearGradient colors={[clay.clay, clay.clayDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.modalConfirmGrad}>
+                    <Ionicons name="checkmark-circle-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
+                    <Text style={s.modalConfirmTxt}>Confirm Reservation</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+
+                {/* Fine print */}
+                <View style={s.modalFinePrint}>
+                  <Ionicons name="shield-checkmark-outline" size={12} color={clay.muted} />
+                  <Text style={s.modalFinePrintTxt}>Free cancellation up to 7 days before · No payment now</Text>
+                </View>
+
+                {/* Cancel link */}
+                <TouchableOpacity onPress={closeBooking} activeOpacity={0.7} style={s.modalCancelBtn}>
+                  <Text style={s.modalCancelTxt}>Cancel</Text>
+                </TouchableOpacity>
+              </>
+            )}
+
+            {bookingGathering && bookingStep === 'success' && (
+              <>
+                <View style={s.modalHandle} />
+
+                {/* Success state */}
+                <View style={s.successIcon}>
+                  <LinearGradient colors={['#D8E4CF', '#A8B59B']} style={s.successCircle}>
+                    <Ionicons name="checkmark" size={32} color="#fff" />
+                  </LinearGradient>
+                </View>
+                <Text style={s.successTitle}>You're in!</Text>
+                <Text style={s.successSub}>
+                  {bookingGathering.title}{'\n'}
+                  <Text style={{ fontWeight: '600' }}>{bookingGathering.dateRange}</Text>
+                  {' · '}{bookingGathering.location}
+                </Text>
+
+                {/* Add to Google Calendar */}
+                <TouchableOpacity activeOpacity={0.85} onPress={handleAddToCalendar} style={s.gcalBtn}>
+                  <View style={s.gcalInner}>
+                    <Ionicons name="logo-google" size={18} color="#4285F4" style={{ marginRight: 10 }} />
+                    <Text style={s.gcalTxt}>Add to Google Calendar</Text>
+                  </View>
+                </TouchableOpacity>
+
+                {/* Also offer Apple calendar */}
+                <TouchableOpacity activeOpacity={0.7} onPress={handleAddToCalendar} style={s.applCalBtn}>
+                  <Ionicons name="calendar-outline" size={16} color={clay.clay} style={{ marginRight: 8 }} />
+                  <Text style={s.applCalTxt}>Add to Apple Calendar</Text>
+                </TouchableOpacity>
+
+                {/* Share with a friend */}
+                <TouchableOpacity activeOpacity={0.7} style={s.shareBtn}>
+                  <Ionicons name="share-social-outline" size={16} color={clay.sub} style={{ marginRight: 8 }} />
+                  <Text style={s.shareBtnTxt}>Share with a friend</Text>
+                </TouchableOpacity>
+
+                {/* Your face is now in the lineup */}
+                <View style={s.successFaces}>
+                  {bookingGathering.participants?.slice(0, 4).map((p, i) => (
+                    <Image key={i} source={{ uri: p.avatar }} style={[s.modalParticipantFace, i > 0 && { marginLeft: -5 }]} />
+                  ))}
+                  <LinearGradient colors={[clay.clay, clay.clayDark]} style={[s.modalParticipantFace, { marginLeft: -5, alignItems: 'center', justifyContent: 'center' }]}>
+                    <Text style={{ fontSize: 10, fontWeight: '700', color: '#fff' }}>You</Text>
+                  </LinearGradient>
+                  <Text style={s.successFacesTxt}>You joined {(bookingGathering.participants?.length ?? 0) + 1} practitioners</Text>
+                </View>
+
+                {/* Done */}
+                <TouchableOpacity activeOpacity={0.85} onPress={closeBooking} style={s.modalDoneBtn}>
+                  <Text style={s.modalDoneTxt}>Done</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -817,4 +1017,95 @@ const s = StyleSheet.create({
   /* empty */
   emptyWrap: { alignItems: 'center', paddingTop: 60, gap: 12 },
   emptyText: { fontSize: 14, color: clay.muted },
+
+  /* ═══════ Booking Modal ═══════ */
+  modalBackdrop: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end',
+  },
+  modalSheet: {
+    backgroundColor: clay.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    paddingHorizontal: 24, paddingBottom: Platform.OS === 'ios' ? 40 : 24, paddingTop: 12,
+    maxHeight: '92%',
+  },
+  modalHandle: {
+    width: 36, height: 4, borderRadius: 2, backgroundColor: clay.border,
+    alignSelf: 'center', marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 20, fontWeight: '800', color: clay.ink, marginBottom: 16,
+  },
+  modalSummaryCard: {
+    flexDirection: 'row', backgroundColor: '#fff', borderRadius: 14,
+    padding: 12, gap: 12, borderWidth: 1, borderColor: clay.border, marginBottom: 16,
+  },
+  modalThumb: { width: 72, height: 72, borderRadius: 10 },
+  modalGatheringTitle: { fontSize: 14, fontWeight: '700', color: clay.ink, marginBottom: 4 },
+  modalMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
+  modalMetaTxt: { fontSize: 12, color: clay.muted },
+
+  modalPriceLine: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingVertical: 12, borderTopWidth: 1, borderTopColor: clay.border,
+  },
+  modalPriceLabel: { fontSize: 14, color: clay.sub },
+  modalPriceValue: { fontSize: 20, fontWeight: '800', color: clay.ink },
+  modalEarlyBirdRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 12 },
+  modalEarlyBirdTxt: { fontSize: 12, color: clay.sage, fontWeight: '600' },
+
+  modalSpotsRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
+  modalSpotsTxt: { fontSize: 12, color: clay.sub },
+
+  modalParticipants: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  modalParticipantFace: { width: 28, height: 28, borderRadius: 14, borderWidth: 1.5, borderColor: '#fff' },
+  modalParticipantTxt: { fontSize: 12, color: clay.sub, flex: 1 },
+
+  modalConfirmBtn: { borderRadius: 14, overflow: 'hidden', marginBottom: 8 },
+  modalConfirmGrad: {
+    paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 14,
+  },
+  modalConfirmTxt: { fontSize: 16, fontWeight: '700', color: '#fff', letterSpacing: 0.3 },
+
+  modalFinePrint: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, marginTop: 4, marginBottom: 8 },
+  modalFinePrintTxt: { fontSize: 10, color: clay.muted },
+
+  modalCancelBtn: { alignItems: 'center', paddingVertical: 10 },
+  modalCancelTxt: { fontSize: 14, color: clay.muted },
+
+  /* ─── Success state ─── */
+  successIcon: { alignItems: 'center', marginTop: 8, marginBottom: 12 },
+  successCircle: {
+    width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center',
+  },
+  successTitle: { fontSize: 24, fontWeight: '800', color: clay.ink, textAlign: 'center', marginBottom: 6 },
+  successSub: { fontSize: 14, color: clay.sub, textAlign: 'center', lineHeight: 20, marginBottom: 20 },
+
+  gcalBtn: {
+    borderRadius: 14, borderWidth: 1.5, borderColor: '#4285F4', marginBottom: 10, overflow: 'hidden',
+  },
+  gcalInner: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14,
+  },
+  gcalTxt: { fontSize: 15, fontWeight: '700', color: '#4285F4' },
+
+  applCalBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    paddingVertical: 12, borderRadius: 14, borderWidth: 1.5, borderColor: clay.border, marginBottom: 10,
+  },
+  applCalTxt: { fontSize: 14, fontWeight: '600', color: clay.clay },
+
+  shareBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    paddingVertical: 10, marginBottom: 16,
+  },
+  shareBtnTxt: { fontSize: 13, color: clay.sub },
+
+  successFaces: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 16,
+  },
+  successFacesTxt: { fontSize: 12, color: clay.muted },
+
+  modalDoneBtn: {
+    backgroundColor: clay.ink, borderRadius: 14, paddingVertical: 14, alignItems: 'center',
+  },
+  modalDoneTxt: { fontSize: 15, fontWeight: '700', color: '#fff' },
 });

@@ -46,7 +46,7 @@ const LEVEL_LABELS: Record<string, string> = {
 
 export default function YouScreen() {
   const router = useRouter();
-  const { user, practiceLogs, currentStreak, userPosts, isPracticing, setIsPracticing } = useAppStore();
+  const { user, practiceLogs, currentStreak, userPosts, isPracticing, setIsPracticing, bookedGatherings } = useAppStore();
 
   const name = user?.name ?? 'Practitioner';
   const initials = name.split(' ').map((n) => n[0]).join('').slice(0, 2);
@@ -166,6 +166,30 @@ export default function YouScreen() {
             ))}
           </View>
         </View>
+
+        {/* Upcoming gatherings */}
+        {bookedGatherings.length > 0 && (
+          <View style={s.section}>
+            <Text style={s.sectionTitle}>My Upcoming</Text>
+            {bookedGatherings.map((b) => (
+              <TouchableOpacity key={b.gatheringId} style={s.upcomingCard} activeOpacity={0.85} onPress={() => router.push('/(tabs)/shalas' as any)}>
+                <View style={s.upcomingIcon}>
+                  <Ionicons
+                    name={b.type === 'retreat' ? 'sunny-outline' : b.type === 'led_class' ? 'body-outline' : b.type === 'workshop' ? 'school-outline' : 'fitness-outline'}
+                    size={18}
+                    color={clay.clay}
+                  />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={s.upcomingTitle}>{b.title}</Text>
+                  <Text style={s.upcomingMeta}>{b.date} · {b.location}</Text>
+                  <Text style={s.upcomingGuide}>with {b.guideName}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={16} color={clay.muted} />
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
 
         {/* Recent practice */}
         <View style={s.section}>
@@ -378,6 +402,20 @@ const s = StyleSheet.create({
     gap: 8,
   },
   emptyText: { fontSize: 13, color: clay.mutedLight },
+
+  /* upcoming gatherings */
+  upcomingCard: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff',
+    borderRadius: 14, padding: 14, gap: 12, marginBottom: 8,
+    borderWidth: 1, borderColor: clay.border,
+  },
+  upcomingIcon: {
+    width: 40, height: 40, borderRadius: 12, backgroundColor: '#FFF4EF',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  upcomingTitle: { fontSize: 14, fontWeight: '700', color: clay.ink },
+  upcomingMeta: { fontSize: 12, color: clay.muted, marginTop: 2 },
+  upcomingGuide: { fontSize: 11, color: clay.sage, fontWeight: '600', marginTop: 1 },
   logRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
