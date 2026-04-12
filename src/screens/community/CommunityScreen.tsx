@@ -10,7 +10,6 @@ import { spacing, radius, shadows } from '@/styles/tokens';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useAppStore } from '@/store/useAppStore';
 
-import AppHeader from '@/components/AppHeader';
 import { getPracticingNow, getFeed, deletePost, followUser, unfollowUser, getFollowing, getUserLikes, supabase } from '@/lib/supabase';
 import { MOCK_SANGHA_POSTS, MOCK_PRACTICING_NOW } from '@/data/mockSanghaUsers';
 
@@ -230,7 +229,24 @@ export default function CommunityScreen() {
 
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
-      <AppHeader />
+      {/* Top brand bar */}
+      <View style={s.topBar}>
+        <Text style={s.brandWord}>sangha</Text>
+        <View style={s.topRight}>
+          <TouchableOpacity style={s.bellBtn} activeOpacity={0.7}>
+            <Ionicons name="notifications-outline" size={18} color={moss.ink} />
+          </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => router.push('/profile' as any)}>
+            {user?.avatarUrl ? (
+              <Image source={{ uri: user.avatarUrl }} style={s.avatarTopSm} />
+            ) : (
+              <View style={[s.avatarTopSm, { backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center' }]}>
+                <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff' }}>{user?.name?.charAt(0) ?? '?'}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
 
       <ScrollView
         style={s.scroll}
@@ -383,6 +399,14 @@ export default function CommunityScreen() {
 /* ══════════════════════════════════════════════════════════════════════════ */
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: moss.pageBg },
+
+  /* top brand bar */
+  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 10, paddingBottom: 8 },
+  brandWord: { fontFamily: 'Georgia', fontSize: 24, fontWeight: '300', letterSpacing: 7, color: moss.accent, paddingLeft: 7 },
+  topRight: { flexDirection: 'row', alignItems: 'center' },
+  bellBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', marginRight: 10 },
+  avatarTopSm: { width: 38, height: 38, borderRadius: 19, borderWidth: 2, borderColor: '#fff' },
+
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
 

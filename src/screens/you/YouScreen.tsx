@@ -79,6 +79,14 @@ export default function YouScreen() {
     <SafeAreaView style={s.safe} edges={['top']}>
       <ScrollView style={s.scroll} contentContainerStyle={s.scrollContent} showsVerticalScrollIndicator={false}>
 
+        {/* Top brand bar */}
+        <View style={s.topBar}>
+          <Text style={s.brandWord}>sangha</Text>
+          <TouchableOpacity style={s.settingsBtn} activeOpacity={0.7}>
+            <Ionicons name="settings-outline" size={20} color={clay.muted} />
+          </TouchableOpacity>
+        </View>
+
         {/* Profile header */}
         <View style={s.profileHeader}>
           {user?.avatarUrl ? (
@@ -213,6 +221,11 @@ const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: clay.bg },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 32 },
+
+  /* top brand bar */
+  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 10, paddingBottom: 4 },
+  brandWord: { fontFamily: 'Georgia', fontSize: 24, fontWeight: '300', letterSpacing: 7, color: clay.clay, paddingLeft: 7 },
+  settingsBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: clay.card, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: clay.border },
 
   /* profile header */
   profileHeader: {

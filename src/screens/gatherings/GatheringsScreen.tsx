@@ -7,6 +7,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import { useAppStore } from '@/store/useAppStore';
 
 /* ─── clay palette ─── */
 const clay = {
@@ -442,6 +444,8 @@ function GatheringCard({ g }: { g: Gathering }) {
 
 /* ─── main screen ─── */
 export default function GatheringsScreen() {
+  const router = useRouter();
+  const { user } = useAppStore();
   const [filter, setFilter] = useState<GatheringType | 'all'>('all');
 
   const filtered = filter === 'all'
@@ -451,9 +455,28 @@ export default function GatheringsScreen() {
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
       <ScrollView style={s.scroll} contentContainerStyle={s.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Header */}
+        {/* Top brand bar */}
+        <View style={s.topBar}>
+          <Text style={s.brandWord}>sangha</Text>
+          <View style={s.topRight}>
+            <TouchableOpacity style={s.bellBtn} activeOpacity={0.7}>
+              <Ionicons name="notifications-outline" size={18} color={clay.ink} />
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => router.push('/profile' as any)}>
+              {user?.avatarUrl ? (
+                <Image source={{ uri: user.avatarUrl }} style={s.avatarSm} />
+              ) : (
+                <LinearGradient colors={[clay.clay, clay.clayDark]} style={s.avatarSm}>
+                  <Text style={s.avatarInit}>{user?.name?.charAt(0) ?? '?'}</Text>
+                </LinearGradient>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Section title */}
         <Text style={s.header}>Gatherings</Text>
-        <Text style={s.headerSub}>Retreats, classes & workshops for the Ashtanga community</Text>
+        <Text style={s.headerSub}>Retreats, classes & workshops for the community</Text>
 
         {/* Filters */}
         <ScrollView
@@ -503,10 +526,18 @@ const s = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 32 },
 
-  /* header */
+  /* top brand bar */
+  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 10, paddingBottom: 4 },
+  brandWord: { fontFamily: 'Georgia', fontSize: 24, fontWeight: '300', letterSpacing: 7, color: clay.clay, paddingLeft: 7 },
+  topRight: { flexDirection: 'row', alignItems: 'center' },
+  bellBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', marginRight: 10 },
+  avatarSm: { width: 38, height: 38, borderRadius: 19, borderWidth: 2, borderColor: '#fff', alignItems: 'center', justifyContent: 'center' },
+  avatarInit: { fontSize: 15, fontWeight: '700', color: '#fff' },
+
+  /* section header */
   header: {
-    fontSize: 28, fontWeight: '800', color: clay.ink,
-    paddingHorizontal: 20, paddingTop: 16,
+    fontSize: 22, fontWeight: '800', color: clay.ink,
+    paddingHorizontal: 20, paddingTop: 8,
   },
   headerSub: {
     fontSize: 14, color: clay.sub,
