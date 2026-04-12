@@ -83,8 +83,7 @@ export default function LoginScreen({ onLogin, onGoToRegister }: LoginScreenProp
 
       {/* Logo — top */}
       <View style={[s.logoRow, { paddingTop: insets.top + spacing.lg }]}>
-        <AppLogo size={30} />
-        <Text style={s.appName}>Ashtanga Sangha</Text>
+        <AppLogo size="sm" showDots />
       </View>
 
       <KeyboardAvoidingView

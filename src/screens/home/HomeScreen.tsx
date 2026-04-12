@@ -306,13 +306,7 @@ export default function HomeScreen() {
         {/* Top brand bar */}
         <View style={s.topBar}>
           <View style={s.brand}>
-            <LinearGradient colors={[clay.clay, clay.clayDark]} style={s.logo}>
-              <Text style={s.logoIcon}>🪷</Text>
-            </LinearGradient>
-            <View>
-              <Text style={s.brandName}>Sangha</Text>
-              <Text style={s.brandTag}>ASHTANGA · COMMUNITY · GROWTH</Text>
-            </View>
+            <Text style={s.brandWord}>sangha</Text>
           </View>
           <View style={s.topRight}>
             <TouchableOpacity style={s.bellBtn} activeOpacity={0.7}>
@@ -787,10 +781,7 @@ const s = StyleSheet.create({
 
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 10, paddingBottom: 12 },
   brand: { flexDirection: 'row', alignItems: 'center' },
-  logo: { width: 40, height: 40, borderRadius: 11, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  logoIcon: { fontSize: 22 },
-  brandName: { fontSize: 24, fontWeight: '700', color: clay.ink, lineHeight: 26 },
-  brandTag: { fontSize: 8.5, letterSpacing: 1.8, color: clay.muted, marginTop: 3 },
+  brandWord: { fontFamily: 'Georgia', fontSize: 24, fontWeight: '300', letterSpacing: 7, color: clay.clay, textTransform: 'lowercase' as const, paddingLeft: 7 },
   topRight: { flexDirection: 'row', alignItems: 'center' },
   bellBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', marginRight: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 3, elevation: 1 },
   bellDot: { position: 'absolute', top: 8, right: 8, width: 8, height: 8, borderRadius: 4, backgroundColor: clay.clay, borderWidth: 1.5, borderColor: '#fff' },

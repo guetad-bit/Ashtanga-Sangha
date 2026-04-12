@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Ashtanga Sangha",
+    "name": "Sangha",
     "slug": "ashtanga-sangha",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./src/assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0D1922"
+      "backgroundColor": "#F5EFE6"
     },
     "ios": {
       "supportsTablet": false,
@@ -19,7 +19,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
-        "backgroundColor": "#0D1922"
+        "backgroundColor": "#F5EFE6"
       },
       "package": "com.ashtangasangha.app",
       "versionCode": 1

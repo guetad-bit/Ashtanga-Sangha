@@ -10,7 +10,7 @@ const en = {
 
   // ── AppHeader ──
   header: {
-    brand: 'Ashtanga Sangha',
+    brand: 'sangha',
     myProfile: 'My Profile',
     signOut: 'Sign Out',
   },
@@ -114,7 +114,7 @@ const en = {
     nameRequired: 'Name required',
     nameRequiredMsg: 'Please enter your name.',
     error: 'Error',
-    version: 'Ashtanga Sangha v1.0',
+    version: 'sangha v1.0',
     profilePhoto: 'Profile Photo',
     chooseSource: 'Choose a photo source',
     camera: 'Camera',

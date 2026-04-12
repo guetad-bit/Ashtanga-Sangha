@@ -150,8 +150,7 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
         pointerEvents="box-none"
       >
         <View style={s.logoRow}>
-          <AppLogo size={32} />
-          <Text style={s.appName}>Ashtanga Sangha</Text>
+          <AppLogo size="sm" />
         </View>
         <Pressable onPress={onFinish} hitSlop={12}>
           <Text style={s.skipText}>{t('onboarding.skip')}</Text>

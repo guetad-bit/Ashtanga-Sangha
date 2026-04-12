@@ -29,8 +29,7 @@ export default function AppHeader() {
     <>
       <View style={s.topbar}>
         <View style={s.topbarLeft}>
-          <AppLogo size={36} />
-          <Text style={s.appTitle}>{t('header.brand')}</Text>
+          <AppLogo size="sm" />
         </View>
 
         <TouchableOpacity onPress={() => setMenuOpen(true)} activeOpacity={0.75}>
@@ -107,7 +106,7 @@ const s = StyleSheet.create({
     color: colors.ink,
     lineHeight: 22,
   },
-  avatar: { width: 46, height: 46, borderRadius: 23, borderWidth: 2, borderColor: '#8A9E78' },
+  avatar: { width: 40, height: 40, borderRadius: 20, borderWidth: 2, borderColor: '#E8DFD0' },
   avatarPlaceholder: {
     backgroundColor: colors.sage,
     alignItems: 'center',

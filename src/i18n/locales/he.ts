@@ -10,7 +10,7 @@ const he = {
 
   // ── AppHeader ──
   header: {
-    brand: 'Ashtanga Sangha',
+    brand: 'sangha',
     myProfile: 'הפרופיל שלי',
     signOut: 'התנתקות',
   },
@@ -327,7 +327,7 @@ const he = {
     nameRequired: 'נדרש שם',
     nameRequiredMsg: 'נא להזין שם.',
     error: 'שגיאה',
-    version: 'Ashtanga Sangha v1.0',
+    version: 'sangha v1.0',
     profilePhoto: 'תמונת פרופיל',
     chooseSource: 'בחר מקור תמונה',
     camera: 'מצלמה',

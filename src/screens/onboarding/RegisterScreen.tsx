@@ -79,8 +79,7 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
 
       {/* Logo */}
       <View style={[s.logoRow, { paddingTop: insets.top + spacing.lg }]}>
-        <AppLogo size={30} />
-        <Text style={s.appName}>Ashtanga Sangha</Text>
+        <AppLogo size="sm" showDots />
       </View>
 
       <KeyboardAvoidingView
