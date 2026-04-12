@@ -450,17 +450,69 @@ function GatheringCard({ g }: { g: Gathering }) {
               ))}
             </View>
 
-            {/* CTA */}
-            <TouchableOpacity activeOpacity={0.85} style={s.cta}>
-              <LinearGradient
-                colors={[clay.clay, clay.clayDark]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={s.ctaGradient}
-              >
-                <Text style={s.ctaText}>Reserve Your Spot</Text>
-              </LinearGradient>
-            </TouchableOpacity>
+            {/* ─── Reserve section ─── */}
+            <View style={s.reserveSection}>
+              {/* Price recap */}
+              <View style={s.reservePriceRow}>
+                <View>
+                  <Text style={s.reservePrice}>{g.price}</Text>
+                  {g.earlyBird && <Text style={s.reserveEarly}>{g.earlyBird}</Text>}
+                </View>
+                <View style={s.reserveSpotsChip}>
+                  <View style={[s.reserveDot, g.spotsLeft <= 4 && { backgroundColor: '#C26B4D' }]} />
+                  <Text style={[s.reserveSpotsChipTxt, g.spotsLeft <= 4 && { color: '#C26B4D' }]}>
+                    {g.spotsLeft <= 4 ? `Only ${g.spotsLeft} left` : `${g.spotsLeft} spots left`}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Who's joining */}
+              {g.participants && g.participants.length > 0 && (
+                <View style={s.reserveJoining}>
+                  <View style={s.reserveJoiningFaces}>
+                    {g.participants.slice(0, 6).map((p, i) => (
+                      <Image key={i} source={{ uri: p.avatar }} style={[s.reserveFace, i > 0 && { marginLeft: -5 }]} />
+                    ))}
+                  </View>
+                  <Text style={s.reserveJoiningTxt}>
+                    {g.participants.slice(0, 3).map((p) => p.name.split(' ')[0]).join(', ')}
+                    {g.participants.length > 3 ? ` & ${g.participants.length - 3} others` : ''} are joining
+                  </Text>
+                </View>
+              )}
+
+              {/* What you'll get mini-summary */}
+              <View style={s.reserveIncludes}>
+                {g.includes.slice(0, 3).map((item, i) => (
+                  <View key={i} style={s.reserveIncludeItem}>
+                    <Ionicons name="checkmark" size={14} color={clay.sage} />
+                    <Text style={s.reserveIncludeTxt}>{item}</Text>
+                  </View>
+                ))}
+                {g.includes.length > 3 && (
+                  <Text style={s.reserveIncludeMore}>+{g.includes.length - 3} more included</Text>
+                )}
+              </View>
+
+              {/* CTA button */}
+              <TouchableOpacity activeOpacity={0.85} style={s.cta}>
+                <LinearGradient
+                  colors={[clay.clay, clay.clayDark]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={s.ctaGradient}
+                >
+                  <Ionicons name="calendar-outline" size={18} color="#fff" style={{ marginRight: 8 }} />
+                  <Text style={s.ctaText}>Reserve Your Spot</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              {/* Trust / fine print */}
+              <View style={s.reserveTrust}>
+                <Ionicons name="shield-checkmark-outline" size={13} color={clay.muted} />
+                <Text style={s.reserveTrustTxt}>Free cancellation up to 7 days before</Text>
+              </View>
+            </View>
           </View>
         )}
 
@@ -728,8 +780,37 @@ const s = StyleSheet.create({
 
   /* CTA */
   cta: { borderRadius: 14, overflow: 'hidden' },
-  ctaGradient: { paddingVertical: 14, alignItems: 'center', borderRadius: 14 },
+  ctaGradient: { paddingVertical: 15, alignItems: 'center', justifyContent: 'center', borderRadius: 14, flexDirection: 'row' },
   ctaText: { fontSize: 15, fontWeight: '700', color: '#fff', letterSpacing: 0.3 },
+
+  /* ─── Reserve section ─── */
+  reserveSection: {
+    marginTop: 16, borderTopWidth: 1, borderTopColor: clay.border, paddingTop: 16,
+  },
+  reservePriceRow: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14,
+  },
+  reservePrice: { fontSize: 20, fontWeight: '800', color: clay.ink },
+  reserveEarly: { fontSize: 11, color: clay.sage, fontWeight: '600', marginTop: 2 },
+  reserveSpotsChip: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF8F4',
+    borderWidth: 1, borderColor: '#F0DDD3', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, gap: 5,
+  },
+  reserveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: clay.sage },
+  reserveSpotsChipTxt: { fontSize: 11, fontWeight: '600', color: clay.sub },
+
+  reserveJoining: { flexDirection: 'row', alignItems: 'center', marginBottom: 14, gap: 8 },
+  reserveJoiningFaces: { flexDirection: 'row', alignItems: 'center' },
+  reserveFace: { width: 26, height: 26, borderRadius: 13, borderWidth: 1.5, borderColor: '#fff' },
+  reserveJoiningTxt: { fontSize: 12, color: clay.sub, flex: 1 },
+
+  reserveIncludes: { marginBottom: 14 },
+  reserveIncludeItem: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
+  reserveIncludeTxt: { fontSize: 12, color: clay.sub },
+  reserveIncludeMore: { fontSize: 11, color: clay.muted, fontStyle: 'italic', marginTop: 2, marginLeft: 20 },
+
+  reserveTrust: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, marginTop: 10 },
+  reserveTrustTxt: { fontSize: 11, color: clay.muted },
 
   /* expand hint */
   expandHint: { alignItems: 'center', marginTop: 6, gap: 2 },
