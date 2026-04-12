@@ -71,20 +71,13 @@ const img = (id: string, w = 600) =>
 const avatar = (id: string) =>
   `https://images.unsplash.com/${id}?w=120&h=120&q=80&auto=format&fit=crop&crop=face`;
 
-/* ─── participant faces for led class ─── */
-const LED_PARTICIPANTS = [
-  { name: MOCK_SANGHA_USERS[0].name, avatar: MOCK_SANGHA_USERS[0].avatar_url },
-  { name: MOCK_SANGHA_USERS[1].name, avatar: MOCK_SANGHA_USERS[1].avatar_url },
-  { name: MOCK_SANGHA_USERS[2].name, avatar: MOCK_SANGHA_USERS[2].avatar_url },
-  { name: MOCK_SANGHA_USERS[3].name, avatar: MOCK_SANGHA_USERS[3].avatar_url },
-  { name: MOCK_SANGHA_USERS[4].name, avatar: MOCK_SANGHA_USERS[4].avatar_url },
-  { name: MOCK_SANGHA_USERS[5].name, avatar: MOCK_SANGHA_USERS[5].avatar_url },
-  { name: MOCK_SANGHA_USERS[6].name, avatar: MOCK_SANGHA_USERS[6].avatar_url },
-  { name: MOCK_SANGHA_USERS[7].name, avatar: MOCK_SANGHA_USERS[7].avatar_url },
-  { name: MOCK_SANGHA_USERS[8].name, avatar: MOCK_SANGHA_USERS[8].avatar_url },
-  { name: MOCK_SANGHA_USERS[9].name, avatar: MOCK_SANGHA_USERS[9].avatar_url },
+/* ─── participant helpers ─── */
+const mkP = (i: number) => ({ name: MOCK_SANGHA_USERS[i].name, avatar: MOCK_SANGHA_USERS[i].avatar_url });
+const EXTRA_FACES = [
   { name: 'Yael Rozner', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&h=120&q=80&auto=format&fit=crop&crop=face' },
   { name: 'Amit Shavit', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&q=80&auto=format&fit=crop&crop=face' },
+  { name: 'Tali Kedem', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&h=120&q=80&auto=format&fit=crop&crop=face' },
+  { name: 'Omer Ben-Ari', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&q=80&auto=format&fit=crop&crop=face' },
 ];
 
 /* ─── 4 gatherings ─── */
@@ -132,7 +125,7 @@ const GATHERINGS: Gathering[] = [
       text: 'Moran\'s Friday class is the anchor of my week. Her count is steady and her adjustments are gold.',
       author: 'Roni K., Tel Aviv',
     },
-    participants: LED_PARTICIPANTS.slice(0, 12),
+    participants: [mkP(0), mkP(1), mkP(2), mkP(3), mkP(4), mkP(5), mkP(6), mkP(7), mkP(8), mkP(9), EXTRA_FACES[0], EXTRA_FACES[1]],
   },
   {
     id: 'g1',
@@ -183,6 +176,7 @@ const GATHERINGS: Gathering[] = [
       text: 'The best week of my year. Lucas creates a space where you can truly go inward while surrounded by breathtaking nature.',
       author: 'Noa S., Tel Aviv',
     },
+    participants: [mkP(5), mkP(2), mkP(0), mkP(6), mkP(8), mkP(3), EXTRA_FACES[0], EXTRA_FACES[2], mkP(9), mkP(4), EXTRA_FACES[1], EXTRA_FACES[3], mkP(7), mkP(1)],
   },
   {
     id: 'g2',
@@ -233,6 +227,7 @@ const GATHERINGS: Gathering[] = [
       text: 'I arrived scattered and left centered. The silence and the desert do something words can\'t describe.',
       author: 'Yonatan M., Haifa',
     },
+    participants: [mkP(3), mkP(0), mkP(7), mkP(2), EXTRA_FACES[3], mkP(9), EXTRA_FACES[2], mkP(8)],
   },
   {
     id: 'g4',
@@ -281,6 +276,7 @@ const GATHERINGS: Gathering[] = [
       text: 'Sofia made the sutras feel alive. I left with a pranayama practice I actually do every morning now.',
       author: 'Maya L., Jerusalem',
     },
+    participants: [mkP(2), mkP(0), mkP(4), EXTRA_FACES[0], mkP(6), mkP(9)],
   },
 ];
 
@@ -365,7 +361,9 @@ function GatheringCard({ g }: { g: Gathering }) {
                 </View>
               )}
             </View>
-            <Text style={s.participantLabel}>Dropping in this Friday</Text>
+            <Text style={s.participantLabel}>
+              {g.type === 'led_class' ? 'Dropping in this Friday' : g.type === 'retreat' ? 'Already signed up' : 'Registered'}
+            </Text>
           </View>
         )}
 
