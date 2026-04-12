@@ -382,7 +382,12 @@ export default function HomeScreen() {
               <TouchableOpacity style={{ flex: 1.2 }} activeOpacity={0.88} onPress={handlePracticeButton}>
                 <LinearGradient colors={[clay.clay, clay.clayDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.beginCard}>
                   <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.7)" style={s.beginChev} />
-                  <View style={s.beginIcn}><Text style={{ fontSize: 20 }}>🧘</Text></View>
+                  <View style={s.beginIcnRow}>
+                    <View style={s.beginCircle}>
+                      <Ionicons name={practiceState === 'onMat' ? 'stop' : 'play'} size={16} color={clay.clay} style={practiceState !== 'onMat' ? { marginLeft: 2 } : undefined} />
+                    </View>
+                    <View style={s.beginPulseRing} />
+                  </View>
                   <Text style={s.beginTitle}>{practiceState === 'onMat' ? 'Finish' : 'Begin'} Practice</Text>
                   <Text style={s.beginSub}>{practiceState === 'onMat' ? 'Save your session' : 'Step on the mat'}</Text>
                 </LinearGradient>
@@ -404,7 +409,7 @@ export default function HomeScreen() {
 
             {/* Compact quote */}
             <LinearGradient colors={['#F0E6D8', '#E8DBC8', '#DDD0BE']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.quoteCompact}>
-              <Text style={s.quoteText} numberOfLines={2}>"{guruWisdom.quote}"</Text>
+              <Text style={s.quoteText}>"{guruWisdom.quote}"</Text>
               <Text style={s.quoteGuruCompact}>— {guruWisdom.guru}</Text>
             </LinearGradient>
 
@@ -825,9 +830,9 @@ const s = StyleSheet.create({
     backgroundColor: '#E8F0DE', alignItems: 'center', justifyContent: 'center',
   },
   nowDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#6E7F5C' },
-  nowFaces: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginBottom: 14 },
-  nowFaceWrap: { width: 44, height: 44, borderRadius: 22, borderWidth: 2.5, borderColor: clay.bg, overflow: 'hidden' as const },
-  nowFace: { width: '100%' as any, height: '100%' as any, borderRadius: 22 },
+  nowFaces: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginBottom: 14, flexWrap: 'nowrap' as const },
+  nowFaceWrap: { width: 44, height: 44, borderRadius: 22, borderWidth: 2.5, borderColor: clay.bg },
+  nowFace: { width: 39, height: 39, borderRadius: 20 },
   nowFaceMore: { backgroundColor: clay.sand, alignItems: 'center', justifyContent: 'center' },
   nowFaceMoreTxt: { fontSize: 11, fontWeight: '700', color: clay.inkMid },
   nowLabel: { fontSize: 13, fontWeight: '600', color: clay.muted },
@@ -854,7 +859,9 @@ const s = StyleSheet.create({
     shadowColor: clay.clay, shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.25, shadowRadius: 8, elevation: 3,
   },
   beginChev: { position: 'absolute', top: 10, right: 10 },
-  beginIcn: { marginBottom: 4 },
+  beginIcnRow: { marginBottom: 8, alignItems: 'center', justifyContent: 'center', width: 40, height: 40 },
+  beginCircle: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', zIndex: 2 },
+  beginPulseRing: { position: 'absolute', width: 40, height: 40, borderRadius: 20, borderWidth: 2, borderColor: 'rgba(255,255,255,0.35)' },
   beginTitle: { fontSize: 13, fontWeight: '800', color: '#fff' },
   beginSub: { fontSize: 10, color: 'rgba(255,255,255,0.85)', marginTop: 2 },
 
@@ -872,13 +879,12 @@ const s = StyleSheet.create({
   quoteBanner: { marginHorizontal: 20, marginBottom: 16, borderRadius: 16, padding: 20, minHeight: 110, alignItems: 'center', justifyContent: 'center' },
   quoteCompact: {
     marginHorizontal: 20, marginBottom: 14, borderRadius: 14,
-    paddingVertical: 20, paddingHorizontal: 24,
-    flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap',
+    paddingVertical: 18, paddingHorizontal: 20,
   },
-  quoteText: { fontStyle: 'italic', fontSize: 17, color: '#1A1613', lineHeight: 25, flex: 1 },
-  quoteDivider: { width: 30, height: 1, backgroundColor: 'rgba(0,0,0,0.2)', marginTop: 8, marginBottom: 6 },
-  quoteGuru: { fontSize: 12, color: '#3D342B', fontStyle: 'italic' },
-  quoteGuruCompact: { fontSize: 12, color: '#3D342B', fontStyle: 'italic', marginLeft: 10, alignSelf: 'flex-end', marginTop: 4 },
+  quoteText: { fontStyle: 'italic', fontSize: 13, color: '#2A2420', lineHeight: 20 },
+  quoteDivider: { width: 30, height: 1, backgroundColor: 'rgba(0,0,0,0.15)', marginTop: 10, marginBottom: 6 },
+  quoteGuru: { fontSize: 11, color: '#5C4F42', fontStyle: 'italic' },
+  quoteGuruCompact: { fontSize: 11, color: '#5C4F42', fontStyle: 'italic', marginTop: 8 },
 
   seeMore: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
