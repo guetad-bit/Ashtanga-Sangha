@@ -141,6 +141,13 @@ export default function HomeScreen() {
     if (member) {
       const seriesLabel = SERIES_LABELS[member.series] ?? member.series;
       setProfileCard({ name: member.name, avatarUrl: member.avatar_url ?? '', series: seriesLabel, streak: member.streak, bio: member.bio ?? '' });
+      return;
+    }
+    // fallback: check live practitioners (mock users)
+    const lp = livePractitioners.find((p) => p.name === name);
+    if (lp) {
+      const seriesLabel = SERIES_LABELS[lp.series] ?? lp.series;
+      setProfileCard({ name: lp.name, avatarUrl: lp.avatar_url ?? '', series: seriesLabel, streak: (lp as any).streak ?? 0, bio: (lp as any).bio ?? '' });
     }
   };
 
@@ -348,21 +355,25 @@ export default function HomeScreen() {
             {livePractitioners.length > 0 && (
               <View style={s.nowBar}>
                 <View style={s.nowDotWrap}><View style={s.nowDot} /></View>
-                <View style={s.nowFaces}>
-                  {livePractitioners.slice(0, 6).map((p, i) => (
-                    p.avatar_url ? (
-                      <Image key={p.id} source={{ uri: p.avatar_url }} style={[s.nowFace, i > 0 && { marginLeft: -8 }]} />
-                    ) : (
-                      <LinearGradient key={p.id} colors={['#D4B896', '#8B6B4A']} style={[s.nowFace, i > 0 && { marginLeft: -8 }]} />
-                    )
-                  ))}
-                  {livePractitioners.length > 6 && (
-                    <View style={[s.nowFace, s.nowFaceMore, { marginLeft: -8 }]}>
-                      <Text style={s.nowFaceMoreTxt}>+{livePractitioners.length - 6}</Text>
-                    </View>
-                  )}
-                </View>
                 <Text style={s.nowLabel}>{livePractitioners.length} on the mat</Text>
+              </View>
+            )}
+            {livePractitioners.length > 0 && (
+              <View style={s.nowFaces}>
+                {livePractitioners.slice(0, 6).map((p, i) => (
+                  <TouchableOpacity key={p.id} activeOpacity={0.8} onPress={() => openProfile(p.name)} style={[s.nowFaceWrap, i > 0 && { marginLeft: -10 }]}>
+                    {p.avatar_url ? (
+                      <Image source={{ uri: p.avatar_url }} style={s.nowFace} />
+                    ) : (
+                      <LinearGradient colors={['#D4B896', '#8B6B4A']} style={s.nowFace} />
+                    )}
+                  </TouchableOpacity>
+                ))}
+                {livePractitioners.length > 6 && (
+                  <View style={[s.nowFaceWrap, s.nowFaceMore, { marginLeft: -10 }]}>
+                    <Text style={s.nowFaceMoreTxt}>+{livePractitioners.length - 6}</Text>
+                  </View>
+                )}
               </View>
             )}
 
@@ -392,7 +403,7 @@ export default function HomeScreen() {
             </View>
 
             {/* Compact quote */}
-            <LinearGradient colors={['#D8C3A8', '#A68868', '#7A6855']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.quoteCompact}>
+            <LinearGradient colors={['#F0E6D8', '#E8DBC8', '#DDD0BE']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.quoteCompact}>
               <Text style={s.quoteText} numberOfLines={2}>"{guruWisdom.quote}"</Text>
               <Text style={s.quoteGuruCompact}>— {guruWisdom.guru}</Text>
             </LinearGradient>
@@ -808,21 +819,18 @@ const s = StyleSheet.create({
   logSubTxt: { fontSize: 11, color: 'rgba(255,255,255,0.85)', marginTop: 2 },
 
   // On the mat bar
-  nowBar: {
-    flexDirection: 'row', alignItems: 'center',
-    marginHorizontal: 20, marginBottom: 12,
-    paddingVertical: 8, gap: 10,
-  },
+  nowBar: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginBottom: 6, gap: 8 } as any,
   nowDotWrap: {
     width: 22, height: 22, borderRadius: 11,
     backgroundColor: '#E8F0DE', alignItems: 'center', justifyContent: 'center',
   },
   nowDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#6E7F5C' },
-  nowFaces: { flexDirection: 'row', alignItems: 'center' },
-  nowFace: { width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: clay.bg },
+  nowFaces: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginBottom: 14 },
+  nowFaceWrap: { width: 44, height: 44, borderRadius: 22, borderWidth: 2.5, borderColor: clay.bg, overflow: 'hidden' as const },
+  nowFace: { width: '100%' as any, height: '100%' as any, borderRadius: 22 },
   nowFaceMore: { backgroundColor: clay.sand, alignItems: 'center', justifyContent: 'center' },
-  nowFaceMoreTxt: { fontSize: 9, fontWeight: '700', color: clay.inkMid },
-  nowLabel: { fontSize: 13, fontWeight: '600', color: clay.muted, marginLeft: 2 },
+  nowFaceMoreTxt: { fontSize: 11, fontWeight: '700', color: clay.inkMid },
+  nowLabel: { fontSize: 13, fontWeight: '600', color: clay.muted },
 
   // 3-card row
   row3: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 14, gap: 10 },
@@ -863,14 +871,14 @@ const s = StyleSheet.create({
 
   quoteBanner: { marginHorizontal: 20, marginBottom: 16, borderRadius: 16, padding: 20, minHeight: 110, alignItems: 'center', justifyContent: 'center' },
   quoteCompact: {
-    marginHorizontal: 20, marginBottom: 14, borderRadius: 12,
-    paddingVertical: 14, paddingHorizontal: 18,
+    marginHorizontal: 20, marginBottom: 14, borderRadius: 14,
+    paddingVertical: 20, paddingHorizontal: 24,
     flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap',
   },
-  quoteText: { fontStyle: 'italic', fontSize: 12, color: '#fff', lineHeight: 18, flex: 1, textShadowColor: 'rgba(0,0,0,0.25)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
-  quoteDivider: { width: 30, height: 1, backgroundColor: 'rgba(255,255,255,0.6)', marginTop: 8, marginBottom: 6 },
-  quoteGuru: { fontSize: 10, color: 'rgba(255,255,255,0.85)', fontStyle: 'italic' },
-  quoteGuruCompact: { fontSize: 9, color: 'rgba(255,255,255,0.75)', fontStyle: 'italic', marginLeft: 10, alignSelf: 'flex-end' },
+  quoteText: { fontStyle: 'italic', fontSize: 17, color: '#1A1613', lineHeight: 25, flex: 1 },
+  quoteDivider: { width: 30, height: 1, backgroundColor: 'rgba(0,0,0,0.2)', marginTop: 8, marginBottom: 6 },
+  quoteGuru: { fontSize: 12, color: '#3D342B', fontStyle: 'italic' },
+  quoteGuruCompact: { fontSize: 12, color: '#3D342B', fontStyle: 'italic', marginLeft: 10, alignSelf: 'flex-end', marginTop: 4 },
 
   seeMore: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
