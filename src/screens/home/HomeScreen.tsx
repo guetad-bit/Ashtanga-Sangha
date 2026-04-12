@@ -345,29 +345,26 @@ export default function HomeScreen() {
         {activeTab === 'following' && (
           <>
             {/* On the mat right now */}
-            <View style={s.nowBanner}>
-              <View style={s.nowDotWrap}><View style={s.nowDot} /></View>
-              <View style={{ flex: 1, marginRight: 8 }}>
-                <Text style={s.nowTitle} numberOfLines={1}>
-                  {livePractitioners.length > 0 ? `${livePractitioners.length} are on the mat right now` : 'No one on the mat now'}
-                </Text>
-                <Text style={s.nowSub} numberOfLines={1}>Silent presence. Shared energy</Text>
+            {livePractitioners.length > 0 && (
+              <View style={s.nowBar}>
+                <View style={s.nowDotWrap}><View style={s.nowDot} /></View>
+                <View style={s.nowFaces}>
+                  {livePractitioners.slice(0, 6).map((p, i) => (
+                    p.avatar_url ? (
+                      <Image key={p.id} source={{ uri: p.avatar_url }} style={[s.nowFace, i > 0 && { marginLeft: -8 }]} />
+                    ) : (
+                      <LinearGradient key={p.id} colors={['#D4B896', '#8B6B4A']} style={[s.nowFace, i > 0 && { marginLeft: -8 }]} />
+                    )
+                  ))}
+                  {livePractitioners.length > 6 && (
+                    <View style={[s.nowFace, s.nowFaceMore, { marginLeft: -8 }]}>
+                      <Text style={s.nowFaceMoreTxt}>+{livePractitioners.length - 6}</Text>
+                    </View>
+                  )}
+                </View>
+                <Text style={s.nowLabel}>{livePractitioners.length} on the mat</Text>
               </View>
-              <View style={s.nowAvatars}>
-                {livePractitioners.slice(0, 3).map((p, i) => (
-                  <LinearGradient key={p.id} colors={i % 2 === 0 ? ['#D4B896', '#8B6B4A'] : ['#A8B59B', '#6E7F5C']} style={[s.nowAv, { marginLeft: i === 0 ? 0 : -10 }]} />
-                ))}
-                {livePractitioners.length > 3 && (
-                  <View style={[s.nowAv, s.nowAvMore, { marginLeft: -10 }]}>
-                    <Text style={s.nowAvMoreTxt}>+{livePractitioners.length - 3}</Text>
-                  </View>
-                )}
-              </View>
-              <TouchableOpacity style={s.joinBtn} onPress={handlePracticeButton} activeOpacity={0.8}>
-                <Text style={s.joinBtnTxt}>Join Practice</Text>
-                <Ionicons name="chevron-forward" size={14} color={clay.inkMid} />
-              </TouchableOpacity>
-            </View>
+            )}
 
             {/* 2 card row */}
             <View style={s.row3}>
@@ -810,30 +807,22 @@ const s = StyleSheet.create({
   logTitleTxt: { fontSize: 16, fontWeight: '700', color: '#fff' },
   logSubTxt: { fontSize: 11, color: 'rgba(255,255,255,0.85)', marginTop: 2 },
 
-  // On the mat banner
-  nowBanner: {
+  // On the mat bar
+  nowBar: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#fff', marginHorizontal: 20, marginBottom: 12,
-    borderRadius: 14, borderWidth: 1, borderColor: clay.border,
-    paddingVertical: 12, paddingHorizontal: 14,
+    marginHorizontal: 20, marginBottom: 12,
+    paddingVertical: 8, gap: 10,
   },
   nowDotWrap: {
-    width: 26, height: 26, borderRadius: 13,
-    backgroundColor: '#E8F0DE', alignItems: 'center', justifyContent: 'center', marginRight: 10,
+    width: 22, height: 22, borderRadius: 11,
+    backgroundColor: '#E8F0DE', alignItems: 'center', justifyContent: 'center',
   },
-  nowDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#6E7F5C' },
-  nowTitle: { fontSize: 13, fontWeight: '700', color: clay.ink },
-  nowSub: { fontSize: 10, color: clay.muted, marginTop: 2 },
-  nowAvatars: { flexDirection: 'row', alignItems: 'center', marginRight: 10 },
-  nowAv: { width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: '#fff' },
-  nowAvMore: { backgroundColor: clay.sandDark, alignItems: 'center', justifyContent: 'center' },
-  nowAvMoreTxt: { fontSize: 9, fontWeight: '700', color: clay.inkMid },
-  joinBtn: {
-    flexDirection: 'row', alignItems: 'center', gap: 2,
-    backgroundColor: clay.sand, borderRadius: 20,
-    paddingVertical: 7, paddingHorizontal: 11,
-  },
-  joinBtnTxt: { fontSize: 11, fontWeight: '700', color: clay.inkMid },
+  nowDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#6E7F5C' },
+  nowFaces: { flexDirection: 'row', alignItems: 'center' },
+  nowFace: { width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: clay.bg },
+  nowFaceMore: { backgroundColor: clay.sand, alignItems: 'center', justifyContent: 'center' },
+  nowFaceMoreTxt: { fontSize: 9, fontWeight: '700', color: clay.inkMid },
+  nowLabel: { fontSize: 13, fontWeight: '600', color: clay.muted, marginLeft: 2 },
 
   // 3-card row
   row3: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 14, gap: 10 },
