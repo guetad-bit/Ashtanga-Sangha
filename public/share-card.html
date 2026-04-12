@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sangha — Share Cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,700;1,400&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #F5EFE6; --ink: #2A2420; --sub: #6B5E52; --muted: #8A7A68;
+    --clay: #C26B4D; --clay-dark: #A5502F; --sage: #A8B59B; --sand: #D4C5A9; --warm: #F9F4ED; --border: #E8DFD0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #E8DFD0; padding: 40px 20px; display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; }
+  h1 { width: 100%; text-align: center; font-family: 'Playfair Display', serif; font-weight: 300; font-size: 28px; letter-spacing: 6px; color: var(--clay); margin-bottom: 0; }
+  .subtitle { width: 100%; text-align: center; font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+
+  /* ── Story card (1080x1920 scaled down) ── */
+  .card-story {
+    width: 340px; height: 604px; border-radius: 24px; overflow: hidden;
+    position: relative; box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+  .card-story img.bg {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: brightness(0.55) saturate(1.1);
+  }
+  .card-story .overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(42,36,32,0.85) 75%);
+    padding: 28px 24px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .card-story .brand-top {
+    position: absolute; top: 24px; left: 24px;
+    font-family: 'Playfair Display', serif; font-weight: 300; font-size: 16px;
+    letter-spacing: 5px; color: rgba(255,255,255,0.7);
+  }
+
+  /* ── Card 1: Post-practice share ── */
+  .practice-stats { display: flex; gap: 16px; margin-bottom: 16px; }
+  .stat { text-align: center; }
+  .stat-val { font-size: 28px; font-weight: 800; color: #fff; }
+  .stat-label { font-size: 10px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; }
+  .practice-series {
+    font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700;
+    color: #fff; margin-bottom: 4px;
+  }
+  .practice-detail { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 20px; }
+  .practice-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(168,181,155,0.3); border: 1px solid rgba(168,181,155,0.4);
+    border-radius: 20px; padding: 5px 14px; width: fit-content; margin-bottom: 16px;
+  }
+  .practice-badge-dot { width: 6px; height: 6px; border-radius: 3px; background: var(--sage); }
+  .practice-badge-txt { font-size: 12px; font-weight: 600; color: #fff; }
+  .practice-quote {
+    font-family: 'Playfair Display', serif; font-style: italic; font-size: 13px;
+    color: rgba(255,255,255,0.65); line-height: 1.5; margin-bottom: 6px;
+  }
+  .card-footer {
+    display: flex; align-items: center; justify-content: space-between; margin-top: 8px;
+  }
+  .card-footer-brand {
+    font-family: 'Playfair Display', serif; font-weight: 300; font-size: 13px;
+    letter-spacing: 4px; color: rgba(194,107,77,0.8);
+  }
+  .card-footer-url { font-size: 10px; color: rgba(255,255,255,0.4); }
+
+  /* ── Card 2: Class invite share ── */
+  .invite-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(213,224,208,0.25); border: 1px solid rgba(213,224,208,0.3);
+    border-radius: 20px; padding: 5px 14px; width: fit-content; margin-bottom: 12px;
+  }
+  .invite-badge-txt { font-size: 12px; font-weight: 600; color: #D5E0D0; }
+  .invite-title {
+    font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700;
+    color: #fff; line-height: 1.2; margin-bottom: 4px;
+  }
+  .invite-sub { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: 16px; }
+  .invite-meta { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .invite-meta-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: rgba(255,255,255,0.85);
+  }
+  .invite-meta-icon { font-size: 15px; opacity: 0.6; }
+  .invite-faces { display: flex; align-items: center; margin-bottom: 8px; }
+  .invite-face {
+    width: 32px; height: 32px; border-radius: 16px; object-fit: cover;
+    border: 2px solid rgba(245,239,230,0.3); margin-left: -6px;
+  }
+  .invite-face:first-child { margin-left: 0; }
+  .invite-face-more {
+    width: 32px; height: 32px; border-radius: 16px;
+    background: rgba(212,197,169,0.4); border: 2px solid rgba(245,239,230,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #fff; margin-left: -6px;
+  }
+  .invite-faces-label { font-size: 12px; color: rgba(255,255,255,0.6); margin-left: 10px; }
+  .invite-cta {
+    background: linear-gradient(135deg, var(--clay), var(--clay-dark));
+    border-radius: 14px; padding: 12px 0; text-align: center; margin-top: 12px;
+  }
+  .invite-cta-txt { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: 0.3px; }
+
+  /* ── Card 3: WhatsApp square ── */
+  .card-square {
+    width: 340px; height: 340px; border-radius: 24px; overflow: hidden;
+    position: relative; box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+  .card-square img.bg { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5) saturate(1.1); }
+  .card-square .overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 20%, rgba(42,36,32,0.9) 80%);
+    padding: 20px 22px; display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .sq-brand {
+    position: absolute; top: 18px; left: 20px;
+    font-family: 'Playfair Display', serif; font-weight: 300; font-size: 14px;
+    letter-spacing: 4px; color: rgba(255,255,255,0.6);
+  }
+  .sq-title {
+    font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700;
+    color: #fff; margin-bottom: 4px;
+  }
+  .sq-sub { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 10px; }
+  .sq-meta { font-size: 12px; color: rgba(255,255,255,0.8); display: flex; gap: 12px; }
+  .sq-price {
+    position: absolute; top: 18px; right: 20px;
+    background: rgba(194,107,77,0.85); border-radius: 10px; padding: 4px 10px;
+    font-size: 13px; font-weight: 700; color: #fff;
+  }
+
+  .label { width: 100%; text-align: center; font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: -10px; }
+</style>
+</head>
+<body>
+
+<h1>s a n g h a</h1>
+<p class="subtitle">Share cards — screenshot to share on Instagram, WhatsApp, and stories</p>
+
+<!-- ── CARD 1: Post-practice share (Story format) ── -->
+<div>
+<p class="label">Post-Practice Story Card</p>
+<div class="card-story">
+  <img class="bg" src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=680&h=1200&q=85&auto=format&fit=crop" alt="" />
+  <div class="overlay">
+    <div class="brand-top">s a n g h a</div>
+    <div class="practice-badge">
+      <span class="practice-badge-dot"></span>
+      <span class="practice-badge-txt">Practice Complete</span>
+    </div>
+    <div class="practice-series">Full Primary Series</div>
+    <div class="practice-detail">Led Class with Moran Ezra · Yoga Shala Tel Aviv</div>
+    <div class="practice-stats">
+      <div class="stat"><div class="stat-val">92</div><div class="stat-label">Minutes</div></div>
+      <div class="stat"><div class="stat-val">42</div><div class="stat-label">Poses</div></div>
+      <div class="stat"><div class="stat-val">6.0</div><div class="stat-label">Breaths/Pose</div></div>
+    </div>
+    <div class="practice-quote">"Practice, and all is coming." — Guruji</div>
+    <div class="card-footer">
+      <span class="card-footer-brand">s a n g h a</span>
+      <span class="card-footer-url">sangha.app</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ── CARD 2: Class invite (Story format) ── -->
+<div>
+<p class="label">Class Invite Story Card</p>
+<div class="card-story">
+  <img class="bg" src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=680&h=1200&q=85&auto=format&fit=crop" alt="" />
+  <div class="overlay">
+    <div class="brand-top">s a n g h a</div>
+    <div class="invite-badge">
+      <span class="practice-badge-dot" style="background:#D5E0D0"></span>
+      <span class="invite-badge-txt">Led Class · Every Friday</span>
+    </div>
+    <div class="invite-title">Led Primary<br/>with Moran Ezra</div>
+    <div class="invite-sub">Come practice with us</div>
+    <div class="invite-meta">
+      <span class="invite-meta-item"><span class="invite-meta-icon">&#128197;</span> Every Friday, 7:00 AM</span>
+      <span class="invite-meta-item"><span class="invite-meta-icon">&#128205;</span> Yoga Shala Tel Aviv</span>
+      <span class="invite-meta-item"><span class="invite-meta-icon">&#128176;</span> ₪120 / drop-in</span>
+    </div>
+    <div style="display:flex;align-items:center;margin-bottom:12px">
+      <div class="invite-faces">
+        <img class="invite-face" src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=100&h=100&q=80&auto=format&fit=crop&crop=face" alt="" />
+        <img class="invite-face" src="https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?w=100&h=100&q=80&auto=format&fit=crop&crop=face" alt="" />
+        <img class="invite-face" src="https://images.unsplash.com/photo-1593810450967-f9c42742e326?w=100&h=100&q=80&auto=format&fit=crop&crop=face" alt="" />
+        <img class="invite-face" src="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?w=100&h=100&q=80&auto=format&fit=crop&crop=face" alt="" />
+        <img class="invite-face" src="https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=100&h=100&q=80&auto=format&fit=crop&crop=face" alt="" />
+        <div class="invite-face-more">+7</div>
+      </div>
+      <span class="invite-faces-label">12 dropping in</span>
+    </div>
+    <div class="invite-cta"><span class="invite-cta-txt">Save Your Spot</span></div>
+    <div class="card-footer" style="margin-top:12px">
+      <span class="card-footer-brand">s a n g h a</span>
+      <span class="card-footer-url">sangha.app</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ── CARD 3: WhatsApp share (Square) ── -->
+<div>
+<p class="label">WhatsApp / Link Preview Card</p>
+<div class="card-square">
+  <img class="bg" src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=680&h=680&q=85&auto=format&fit=crop" alt="" />
+  <div class="overlay">
+    <div class="sq-brand">s a n g h a</div>
+    <div class="sq-price">₪120</div>
+    <div class="sq-title">Led Primary<br/>with Moran Ezra</div>
+    <div class="sq-sub">Every Friday, 7:00 AM · Yoga Shala Tel Aviv</div>
+    <div class="sq-meta">
+      <span>8 spots left</span>
+      <span>·</span>
+      <span>12 practitioners going</span>
+    </div>
+  </div>
+</div>
+</div>
+
+</body>
+</html>
