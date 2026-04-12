@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '@/store/useAppStore';
+import { MOCK_SANGHA_USERS } from '@/data/mockSanghaUsers';
 
 /* ─── clay palette ─── */
 const clay = {
@@ -60,6 +61,7 @@ interface Gathering {
   accommodation?: string;
   tags: string[];
   testimonial?: { text: string; author: string };
+  participants?: { name: string; avatar: string }[];
 }
 
 /* ─── unsplash helpers ─── */
@@ -69,8 +71,69 @@ const img = (id: string, w = 600) =>
 const avatar = (id: string) =>
   `https://images.unsplash.com/${id}?w=120&h=120&q=80&auto=format&fit=crop&crop=face`;
 
+/* ─── participant faces for led class ─── */
+const LED_PARTICIPANTS = [
+  { name: MOCK_SANGHA_USERS[0].name, avatar: MOCK_SANGHA_USERS[0].avatar_url },
+  { name: MOCK_SANGHA_USERS[1].name, avatar: MOCK_SANGHA_USERS[1].avatar_url },
+  { name: MOCK_SANGHA_USERS[2].name, avatar: MOCK_SANGHA_USERS[2].avatar_url },
+  { name: MOCK_SANGHA_USERS[3].name, avatar: MOCK_SANGHA_USERS[3].avatar_url },
+  { name: MOCK_SANGHA_USERS[4].name, avatar: MOCK_SANGHA_USERS[4].avatar_url },
+  { name: MOCK_SANGHA_USERS[5].name, avatar: MOCK_SANGHA_USERS[5].avatar_url },
+  { name: MOCK_SANGHA_USERS[6].name, avatar: MOCK_SANGHA_USERS[6].avatar_url },
+  { name: MOCK_SANGHA_USERS[7].name, avatar: MOCK_SANGHA_USERS[7].avatar_url },
+  { name: MOCK_SANGHA_USERS[8].name, avatar: MOCK_SANGHA_USERS[8].avatar_url },
+  { name: MOCK_SANGHA_USERS[9].name, avatar: MOCK_SANGHA_USERS[9].avatar_url },
+  { name: 'Yael Rozner', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&h=120&q=80&auto=format&fit=crop&crop=face' },
+  { name: 'Amit Shavit', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&q=80&auto=format&fit=crop&crop=face' },
+];
+
 /* ─── 4 gatherings ─── */
 const GATHERINGS: Gathering[] = [
+  {
+    id: 'g3',
+    title: 'Led Primary with Moran Ezra',
+    subtitle: 'Weekly tradition in the heart of Tel Aviv',
+    type: 'led_class',
+    date: '2026-04-17',
+    dateRange: 'Every Friday, 7:00 AM',
+    location: 'Tel Aviv',
+    country: 'Israel',
+    price: '₪120 / drop-in',
+    spotsLeft: 8,
+    spotsTotal: 20,
+    imageId: 'photo-1545389336-cf090694435e',
+    galleryIds: [
+      'photo-1575052814086-f385e2e2ad1b',
+      'photo-1593810450967-f9c42742e326',
+    ],
+    guide: {
+      name: 'Moran Ezra',
+      avatar: 'photo-1438761681033-6461ffad8d80',
+      bio: 'Moran has dedicated over a decade to Ashtanga Yoga. She has made multiple extended trips to Mysore to study at KPJAYI, immersing herself in the Parampara tradition. Her teaching is precise and compassionate — she holds space for beginners and advanced practitioners alike, guiding the room through the full traditional count with steady rhythm and clear adjustments. She leads the Ashtanga community at Yoga Shala Tel Aviv.',
+      credentials: ['KPJAYI student', 'Yoga Shala Tel Aviv', '10+ years of practice'],
+    },
+    description: 'Every Friday morning, Moran leads the full Primary Series with traditional Sanskrit count. The class moves as one — breath synchronized, gaze steady. Moran walks the room offering quiet adjustments while maintaining the count. Beginners are welcome; she\'ll guide you through modifications. The session closes with a short led closing sequence and 10 minutes of rest. Bring your own mat. The shala opens at 6:45.',
+    dailySchedule: [
+      { time: '6:45 AM', activity: 'Shala opens, settle in' },
+      { time: '7:00 AM', activity: 'Opening mantra & Surya Namaskar' },
+      { time: '7:15 AM', activity: 'Standing sequence' },
+      { time: '7:45 AM', activity: 'Seated sequence' },
+      { time: '8:30 AM', activity: 'Finishing sequence & Savasana' },
+      { time: '8:50 AM', activity: 'Closing mantra & tea' },
+    ],
+    includes: [
+      'Full led Primary Series with Sanskrit count',
+      'Hands-on adjustments',
+      'Modifications for all levels',
+      'Post-practice tea',
+    ],
+    tags: ['Primary Series', 'Led Class', 'Sanskrit Count', 'All Levels', 'Weekly'],
+    testimonial: {
+      text: 'Moran\'s Friday class is the anchor of my week. Her count is steady and her adjustments are gold.',
+      author: 'Roni K., Tel Aviv',
+    },
+    participants: LED_PARTICIPANTS.slice(0, 12),
+  },
   {
     id: 'g1',
     title: 'Ashtanga Retreat: Mediterranean Flow',
@@ -169,50 +232,6 @@ const GATHERINGS: Gathering[] = [
     testimonial: {
       text: 'I arrived scattered and left centered. The silence and the desert do something words can\'t describe.',
       author: 'Yonatan M., Haifa',
-    },
-  },
-  {
-    id: 'g3',
-    title: 'Led Primary with Moran Ezra',
-    subtitle: 'Weekly tradition in the heart of Tel Aviv',
-    type: 'led_class',
-    date: '2026-04-17',
-    dateRange: 'Every Friday, 7:00 AM',
-    location: 'Tel Aviv',
-    country: 'Israel',
-    price: '₪65 / drop-in',
-    spotsLeft: 8,
-    spotsTotal: 20,
-    imageId: 'photo-1545389336-cf090694435e',
-    galleryIds: [
-      'photo-1575052814086-f385e2e2ad1b',
-      'photo-1593810450967-f9c42742e326',
-    ],
-    guide: {
-      name: 'Moran Ezra',
-      avatar: 'photo-1438761681033-6461ffad8d80',
-      bio: 'Moran has dedicated over a decade to Ashtanga Yoga. She has made multiple extended trips to Mysore to study at KPJAYI, immersing herself in the Parampara tradition. Her teaching is precise and compassionate — she holds space for beginners and advanced practitioners alike, guiding the room through the full traditional count with steady rhythm and clear adjustments. She leads the Ashtanga community at Yoga Shala Tel Aviv.',
-      credentials: ['KPJAYI student', 'Yoga Shala Tel Aviv', '10+ years of practice'],
-    },
-    description: 'Every Friday morning, Moran leads the full Primary Series with traditional Sanskrit count. The class moves as one — breath synchronized, gaze steady. Moran walks the room offering quiet adjustments while maintaining the count. Beginners are welcome; she\'ll guide you through modifications. The session closes with a short led closing sequence and 10 minutes of rest. Bring your own mat. The shala opens at 6:45.',
-    dailySchedule: [
-      { time: '6:45 AM', activity: 'Shala opens, settle in' },
-      { time: '7:00 AM', activity: 'Opening mantra & Surya Namaskar' },
-      { time: '7:15 AM', activity: 'Standing sequence' },
-      { time: '7:45 AM', activity: 'Seated sequence' },
-      { time: '8:30 AM', activity: 'Finishing sequence & Savasana' },
-      { time: '8:50 AM', activity: 'Closing mantra & tea' },
-    ],
-    includes: [
-      'Full led Primary Series with Sanskrit count',
-      'Hands-on adjustments',
-      'Modifications for all levels',
-      'Post-practice tea',
-    ],
-    tags: ['Primary Series', 'Led Class', 'Sanskrit Count', 'All Levels', 'Weekly'],
-    testimonial: {
-      text: 'Moran\'s Friday class is the anchor of my week. Her count is steady and her adjustments are gold.',
-      author: 'Roni K., Tel Aviv',
     },
   },
   {
@@ -332,6 +351,23 @@ function GatheringCard({ g }: { g: Gathering }) {
             <Text style={s.spotsText}>{g.spotsLeft} of {g.spotsTotal} spots left</Text>
           </View>
         </View>
+
+        {/* Participant faces (for drop-in classes) */}
+        {g.participants && g.participants.length > 0 && (
+          <View style={s.participantsRow}>
+            <View style={s.participantFaces}>
+              {g.participants.slice(0, 8).map((p, i) => (
+                <Image key={i} source={{ uri: p.avatar }} style={[s.participantFace, i > 0 && { marginLeft: -6 }]} />
+              ))}
+              {g.participants.length > 8 && (
+                <View style={[s.participantFace, s.participantMore, { marginLeft: -6 }]}>
+                  <Text style={s.participantMoreTxt}>+{g.participants.length - 8}</Text>
+                </View>
+              )}
+            </View>
+            <Text style={s.participantLabel}>Dropping in this Friday</Text>
+          </View>
+        )}
 
         {/* Expanded content */}
         {expanded && (
@@ -597,6 +633,12 @@ const s = StyleSheet.create({
   },
   spotsFill: { height: 4, borderRadius: 2, backgroundColor: clay.sage },
   spotsText: { fontSize: 11, color: clay.muted },
+  participantsRow: { flexDirection: 'row', alignItems: 'center', marginTop: 10, gap: 10 },
+  participantFaces: { flexDirection: 'row', alignItems: 'center' },
+  participantFace: { width: 30, height: 30, borderRadius: 15, borderWidth: 2, borderColor: '#fff' },
+  participantMore: { backgroundColor: clay.sand, alignItems: 'center', justifyContent: 'center' },
+  participantMoreTxt: { fontSize: 9, fontWeight: '700', color: clay.sub },
+  participantLabel: { fontSize: 11, color: clay.muted, fontStyle: 'italic' },
 
   /* expanded */
   expandedSection: {
