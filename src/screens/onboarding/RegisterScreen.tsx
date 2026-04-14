@@ -8,23 +8,22 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { spacing, radius } from '@/styles/tokens';
 import { signUpWithEmail, signInWithGoogle } from '@/lib/supabase';
 import { useAppStore } from '@/store/useAppStore';
-import AppLogo from '@/components/AppLogo';
 
-// Same moss palette as LoginScreen
-const moss = {
-  bg: '#F6F2EC',
-  ink: '#3B3228',
-  inkMid: '#5E5245',
-  muted: '#9B8E7E',
-  accent: '#8A9E78',
-  olive: '#6E8A5C',
-  wood: '#D4C4AB',
-  amber: '#C4956A',
-  divider: '#E8E0D4',
-  cardBg: '#FFFFFF',
+// ── Clay / terracotta palette (same as LoginScreen) ─────────────────────
+const clay = {
+  bg:        '#F5EFE6',
+  ink:       '#2A2420',
+  sub:       '#6B5E52',
+  muted:     '#8A7A68',
+  mutedLight:'#B5A793',
+  clay:      '#C26B4D',
+  clayDark:  '#A5502F',
+  sage:      '#A8B59B',
+  sand:      '#D4C5A9',
+  warm:      '#F9F4ED',
+  border:    '#E8DFD0',
 };
 
 interface RegisterScreenProps {
@@ -61,25 +60,24 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
 
   return (
     <ImageBackground
-      source={require('../../../assets/onboard-1.png')}
+      source={require('../../../assets/onboard-4.png')}
       style={s.bg}
-      imageStyle={s.bgImage}
       resizeMode="cover"
     >
       <StatusBar barStyle="dark-content" />
       <LinearGradient
         colors={[
-          'rgba(246,242,236,0.3)',
-          'rgba(246,242,236,0.75)',
-          'rgba(246,242,236,0.95)',
+          'rgba(245,239,230,0.45)',
+          'rgba(245,239,230,0.85)',
+          'rgba(245,239,230,0.98)',
         ]}
-        locations={[0, 0.3, 1]}
+        locations={[0, 0.35, 0.75]}
         style={StyleSheet.absoluteFill}
       />
 
-      {/* Logo */}
-      <View style={[s.logoRow, { paddingTop: insets.top + spacing.lg }]}>
-        <AppLogo size="sm" showDots />
+      {/* Brand — top */}
+      <View style={[s.brandRow, { paddingTop: insets.top + 16 }]}>
+        <Text style={s.brand}>sangha</Text>
       </View>
 
       <KeyboardAvoidingView
@@ -87,24 +85,24 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView
-          contentContainerStyle={[s.scroll, { paddingBottom: insets.bottom + spacing['2xl'] }]}
+          contentContainerStyle={[s.scroll, { paddingBottom: insets.bottom + 40 }]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           {/* Heading */}
           <Text style={s.kicker}>JOIN THE SANGHA</Text>
-          <Text style={s.title}>Create Account</Text>
-          <Text style={s.sub}>Begin your practice journey</Text>
+          <Text style={s.title}>Step onto{'\n'}the mat</Text>
+          <Text style={s.sub}>Create your account to begin</Text>
 
           {/* Full Name */}
           <View style={s.field}>
             <Text style={s.label}>Full Name</Text>
             <View style={s.inputWrap}>
-              <Ionicons name="person-outline" size={17} color={moss.muted} style={s.inputIcon} />
+              <Ionicons name="person-outline" size={17} color={clay.muted} style={s.inputIcon} />
               <TextInput
                 style={s.input}
                 placeholder="Your name"
-                placeholderTextColor={moss.muted}
+                placeholderTextColor={clay.mutedLight}
                 value={name}
                 onChangeText={setName}
                 autoCapitalize="words"
@@ -117,11 +115,11 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
           <View style={s.field}>
             <Text style={s.label}>Email</Text>
             <View style={s.inputWrap}>
-              <Ionicons name="mail-outline" size={17} color={moss.muted} style={s.inputIcon} />
+              <Ionicons name="mail-outline" size={17} color={clay.muted} style={s.inputIcon} />
               <TextInput
                 style={s.input}
                 placeholder="you@example.com"
-                placeholderTextColor={moss.muted}
+                placeholderTextColor={clay.mutedLight}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -135,11 +133,11 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
           <View style={s.field}>
             <Text style={s.label}>Password</Text>
             <View style={s.inputWrap}>
-              <Ionicons name="lock-closed-outline" size={17} color={moss.muted} style={s.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={17} color={clay.muted} style={s.inputIcon} />
               <TextInput
                 style={[s.input, s.inputPw]}
                 placeholder="At least 8 characters"
-                placeholderTextColor={moss.muted}
+                placeholderTextColor={clay.mutedLight}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPw}
@@ -149,7 +147,7 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
                 <Ionicons
                   name={showPw ? 'eye-off-outline' : 'eye-outline'}
                   size={18}
-                  color={moss.muted}
+                  color={clay.muted}
                 />
               </TouchableOpacity>
             </View>
@@ -160,18 +158,25 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
             style={[s.primaryBtn, loading && s.primaryBtnDisabled]}
             onPress={handleRegister}
             disabled={loading}
-            activeOpacity={0.85}
+            activeOpacity={0.88}
           >
-            {loading
-              ? <ActivityIndicator color="#fff" />
-              : <Text style={s.primaryBtnText}>Create Account</Text>
-            }
+            <LinearGradient
+              colors={[clay.clay, clay.clayDark]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={s.primaryBtnGradient}
+            >
+              {loading
+                ? <ActivityIndicator color="#fff" />
+                : <Text style={s.primaryBtnText}>Create Account</Text>
+              }
+            </LinearGradient>
           </TouchableOpacity>
 
           {/* Terms */}
           <Text style={s.terms}>
             By creating an account, you agree to our{' '}
-            <Text style={s.termsLink}>Terms of Service</Text> and{' '}
+            <Text style={s.termsLink}>Terms</Text> and{' '}
             <Text style={s.termsLink}>Privacy Policy</Text>
           </Text>
 
@@ -207,145 +212,147 @@ export default function RegisterScreen({ onComplete, onGoToLogin }: RegisterScre
 }
 
 const s = StyleSheet.create({
-  bg: { flex: 1, backgroundColor: '#3B3228' },
-  bgImage: { left: -80 },
+  bg: { flex: 1, backgroundColor: clay.bg },
   flex: { flex: 1 },
 
-  logoRow: {
-    flexDirection: 'row',
+  brandRow: {
     alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.md,
+    paddingBottom: 8,
   },
-  appName: {
-    fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 17,
-    color: moss.ink,
+  brand: {
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'Georgia, serif' }),
+    fontSize: 22,
+    fontWeight: '300',
+    letterSpacing: 7,
+    color: clay.clay,
+    paddingLeft: 7,
   },
 
   scroll: {
-    paddingHorizontal: spacing['2xl'],
-    paddingTop: spacing.xl,
+    paddingHorizontal: 28,
+    paddingTop: 24,
   },
 
   kicker: {
-    fontSize: 14,
-    fontFamily: 'DMSans_600SemiBold',
-    letterSpacing: 2,
-    color: moss.accent,
-    marginBottom: spacing.sm,
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 2.5,
+    color: clay.clay,
+    marginBottom: 10,
   },
   title: {
-    fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 40,
-    lineHeight: 48,
-    color: moss.ink,
-    marginBottom: spacing.sm,
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'Georgia, serif' }),
+    fontSize: 38,
+    lineHeight: 44,
+    fontWeight: '300',
+    color: clay.ink,
+    marginBottom: 10,
   },
   sub: {
-    fontFamily: 'DMSans_400Regular',
-    fontSize: 16,
-    lineHeight: 24,
-    color: moss.inkMid,
-    marginBottom: spacing.xl,
+    fontSize: 15,
+    lineHeight: 22,
+    color: clay.sub,
+    marginBottom: 24,
   },
 
-  field: { marginBottom: spacing.lg },
+  field: { marginBottom: 14 },
   label: {
-    fontFamily: 'DMSans_600SemiBold',
-    fontSize: 14,
-    lineHeight: 20,
-    color: moss.ink,
-    letterSpacing: 0.4,
-    marginBottom: spacing.xs,
+    fontSize: 13,
+    fontWeight: '700',
+    color: clay.ink,
+    letterSpacing: 0.3,
+    marginBottom: 6,
   },
   inputWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(138,158,120,0.08)',
+    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: moss.divider,
-    borderRadius: radius.lg,
-    paddingHorizontal: spacing.md,
+    borderColor: clay.border,
+    borderRadius: 14,
+    paddingHorizontal: 14,
   },
-  inputIcon: { marginRight: spacing.sm },
+  inputIcon: { marginRight: 10 },
   input: {
     flex: 1,
-    paddingVertical: spacing.md,
-    fontSize: 16,
-    fontFamily: 'DMSans_500Medium',
-    color: moss.ink,
+    paddingVertical: 14,
+    fontSize: 15,
+    color: clay.ink,
   },
   inputPw: { paddingRight: 36 },
   eyeBtn: {
     position: 'absolute',
-    right: spacing.md,
+    right: 14,
     padding: 4,
   },
 
   primaryBtn: {
-    backgroundColor: moss.accent,
-    borderRadius: radius.xl,
-    paddingVertical: spacing.lg,
-    alignItems: 'center',
-    marginBottom: spacing.md,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginTop: 8,
+    marginBottom: 12,
+    shadowColor: clay.clayDark,
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 6 },
+    shadowRadius: 12,
+    elevation: 5,
   },
   primaryBtnDisabled: { opacity: 0.6 },
+  primaryBtnGradient: {
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   primaryBtnText: {
-    fontFamily: 'DMSans_600SemiBold',
-    fontSize: 18,
-    lineHeight: 26,
+    fontSize: 16,
+    fontWeight: '700',
     color: '#fff',
+    letterSpacing: 0.4,
   },
 
   terms: {
-    fontFamily: 'DMSans_400Regular',
-    fontSize: 13,
+    fontSize: 12,
     lineHeight: 18,
-    color: moss.muted,
+    color: clay.muted,
     textAlign: 'center',
-    marginBottom: spacing.lg,
+    marginBottom: 20,
   },
   termsLink: {
-    color: moss.accent,
-    fontFamily: 'DMSans_500Medium',
+    color: clay.clay,
+    fontWeight: '600',
   },
 
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-    marginBottom: spacing.xl,
+    gap: 12,
+    marginBottom: 18,
   },
-  dividerLine: { flex: 1, height: 1, backgroundColor: moss.divider },
-  dividerText: { fontFamily: 'DMSans_500Medium', fontSize: 14, lineHeight: 20, color: moss.muted },
+  dividerLine: { flex: 1, height: 1, backgroundColor: clay.border },
+  dividerText: { fontSize: 13, color: clay.muted },
 
   googleBtn: {
-    borderWidth: 1.5,
-    borderColor: moss.divider,
-    borderRadius: radius.xl,
-    paddingVertical: spacing.lg,
+    borderWidth: 1,
+    borderColor: clay.border,
+    borderRadius: 16,
+    paddingVertical: 15,
     alignItems: 'center',
-    marginBottom: spacing['2xl'],
-    backgroundColor: moss.cardBg,
+    marginBottom: 20,
+    backgroundColor: '#fff',
   },
   googleBtnText: {
-    fontFamily: 'DMSans_600SemiBold',
-    fontSize: 16,
-    lineHeight: 24,
-    color: moss.ink,
+    fontSize: 15,
+    fontWeight: '600',
+    color: clay.ink,
   },
 
   footer: {
-    fontFamily: 'DMSans_400Regular',
-    fontSize: 15,
-    lineHeight: 22,
-    color: moss.muted,
+    fontSize: 14,
+    color: clay.sub,
     textAlign: 'center',
   },
   footerLink: {
-    color: moss.accent,
-    fontFamily: 'DMSans_600SemiBold',
+    color: clay.clay,
+    fontWeight: '700',
   },
 });

@@ -7,36 +7,61 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTranslation } from 'react-i18next';
-import { colors, spacing, radius, typography } from '@/styles/tokens';
-import AppLogo from '@/components/AppLogo';
 
 const { width, height } = Dimensions.get('window');
 
-// ââ Warm earth-tone palette (matches Community & Home) ââââââââââââââââââ
-const warm = {
-  bg: '#FAF6F0',
-  ink: '#3D3229',
-  inkMid: '#5C4F42',
-  muted: '#8B7D6E',
-  accent: '#C47B3F',
-  sage: '#7A8B5E',
-  gold: '#B8944A',
-  terra: '#A0704C',
-  orange: '#E8834A',
-  divider: '#EDE5D8',
-  cardBg: '#FFFFFF',
+// ── Clay / terracotta palette (matches the rest of the app) ───────────────
+const clay = {
+  bg:        '#F5EFE6',
+  ink:       '#2A2420',
+  sub:       '#6B5E52',
+  muted:     '#8A7A68',
+  clay:      '#C26B4D',
+  clayDark:  '#A5502F',
+  sage:      '#A8B59B',
+  sand:      '#D4C5A9',
+  warm:      '#F9F4ED',
+  border:    '#E8DFD0',
 };
 
 interface Slide {
   id: string;
   image: ImageSourcePropType;
-  accent: string;
-  gradientFloor: string;
-  title: string;
   kicker: string;
+  title: string;
   description: string;
 }
+
+const SLIDES: Slide[] = [
+  {
+    id: '1',
+    image: require('../../../assets/onboard-1.png'),
+    kicker: 'YOUR PRACTICE',
+    title: 'Show up\nto the mat',
+    description: 'Log your practice, hold the six-day rhythm, and honour the moon. A quiet record of your journey on the mat.',
+  },
+  {
+    id: '2',
+    image: require('../../../assets/onboard-2.png'),
+    kicker: 'THE SANGHA',
+    title: 'Practise\ntogether',
+    description: 'See who is on the mat right now, around the world. A global Mysore room — always open, always breathing.',
+  },
+  {
+    id: '3',
+    image: require('../../../assets/onboard-3.png'),
+    kicker: 'GATHERINGS',
+    title: 'Led classes\nand retreats',
+    description: 'Friday Led Primary, moon-day workshops, week-long retreats. Book your spot and practise shoulder to shoulder.',
+  },
+  {
+    id: '4',
+    image: require('../../../assets/onboard-4.png'),
+    kicker: 'BEGIN',
+    title: 'Welcome\nto sangha',
+    description: 'Practice, and all is coming. Create your account and step onto the mat.',
+  },
+];
 
 interface OnboardingTourProps {
   onFinish: () => void;
@@ -46,46 +71,6 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
   const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const insets = useSafeAreaInsets();
-  const { t } = useTranslation();
-
-  const SLIDES: Slide[] = [
-    {
-      id: '1',
-      image: require('../../../assets/onboard-1.png'),
-      accent: warm.orange,
-      gradientFloor: 'rgba(61,50,41,0.97)',
-      title: t('onboarding.slide1Title'),
-      kicker: t('onboarding.slide1Subtitle'),
-      description: t('onboarding.slide1Body'),
-    },
-    {
-      id: '2',
-      image: require('../../../assets/onboard-1.png'),
-      accent: warm.sage,
-      gradientFloor: 'rgba(50,56,38,0.97)',
-      title: t('onboarding.slide2Title'),
-      kicker: t('onboarding.slide2Subtitle'),
-      description: t('onboarding.slide2Body'),
-    },
-    {
-      id: '3',
-      image: require('../../../assets/onboard-1.png'),
-      accent: warm.gold,
-      gradientFloor: 'rgba(60,48,30,0.97)',
-      title: t('onboarding.slide3Title'),
-      kicker: t('onboarding.slide3Subtitle'),
-      description: t('onboarding.slide3Body'),
-    },
-    {
-      id: '4',
-      image: require('../../../assets/onboard-1.png'),
-      accent: warm.accent,
-      gradientFloor: 'rgba(55,36,22,0.97)',
-      title: t('onboarding.slide4Title'),
-      kicker: t('onboarding.slide4Subtitle'),
-      description: t('onboarding.slide4Body'),
-    },
-  ];
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (Platform.OS === 'web') return;
@@ -115,8 +100,8 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
       <LinearGradient
         colors={[
           'rgba(0,0,0,0.05)',
-          'rgba(0,0,0,0.30)',
-          item.gradientFloor,
+          'rgba(42,36,32,0.35)',
+          'rgba(42,36,32,0.96)',
         ]}
         locations={[0, 0.45, 1]}
         style={s.gradient}
@@ -141,41 +126,36 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
         scrollEventThrottle={16}
         bounces={false}
         style={[StyleSheet.absoluteFill, { zIndex: 1 }]}
-        pointerEvents={Platform.OS === "web" ? "none" : "auto"}
+        pointerEvents={Platform.OS === 'web' ? 'none' : 'auto'}
       />
 
-      {/* Top bar */}
+      {/* Top bar — brand + skip */}
       <View
-        style={[s.topBar, { paddingTop: insets.top + spacing.sm }]}
+        style={[s.topBar, { paddingTop: insets.top + 12 }]}
         pointerEvents="box-none"
       >
-        <View style={s.logoRow}>
-          <AppLogo size="sm" />
-        </View>
-        <Pressable onPress={onFinish} hitSlop={12}>
-          <Text style={s.skipText}>{t('onboarding.skip')}</Text>
-        </Pressable>
+        <Text style={s.brand}>sangha</Text>
+        {!isLast && (
+          <Pressable onPress={onFinish} hitSlop={12}>
+            <Text style={s.skipText}>Skip</Text>
+          </Pressable>
+        )}
       </View>
 
       {/* Bottom card */}
-      <View style={[s.card, { paddingBottom: insets.bottom + spacing.xl }]}>
-        <Text style={s.kicker}>
-          {slide.kicker.toUpperCase()}
-        </Text>
-
+      <View style={[s.card, { paddingBottom: insets.bottom + 24 }]}>
+        <Text style={s.kicker}>{slide.kicker}</Text>
         <Text style={s.title}>{slide.title}</Text>
         <Text style={s.desc}>{slide.description}</Text>
 
         {/* Progress dots */}
         <View style={s.dots}>
-          {SLIDES.map((sl, i) => (
+          {SLIDES.map((_, i) => (
             <View
               key={i}
               style={[
                 s.dot,
-                i === currentIndex
-                  ? [s.dotActive, { backgroundColor: slide.accent }]
-                  : s.dotInactive,
+                i === currentIndex ? s.dotActive : s.dotInactive,
               ]}
             />
           ))}
@@ -185,13 +165,20 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
         <Pressable
           style={({ pressed }) => [
             s.nextBtn,
-            { backgroundColor: slide.accent, opacity: pressed ? 0.85 : 1 },
+            { opacity: pressed ? 0.88 : 1 },
           ]}
           onPress={goNext}
         >
-          <Text style={s.nextBtnText}>
-            {isLast ? t('onboarding.getStarted') : t('onboarding.next')}
-          </Text>
+          <LinearGradient
+            colors={[clay.clay, clay.clayDark]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={s.nextBtnGradient}
+          >
+            <Text style={s.nextBtnText}>
+              {isLast ? 'Get Started' : 'Next'}
+            </Text>
+          </LinearGradient>
         </Pressable>
       </View>
     </View>
@@ -201,7 +188,7 @@ export default function OnboardingTour({ onFinish }: OnboardingTourProps) {
 const s = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#3D3229',
+    backgroundColor: clay.ink,
   },
 
   slideBg: {
@@ -218,68 +205,67 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: 24,
     zIndex: 10,
   },
-  logoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  appName: {
-    fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 17,
-    color: warm.bg,
-    letterSpacing: 0.2,
+  brand: {
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'Georgia, serif' }),
+    fontSize: 22,
+    fontWeight: '300',
+    letterSpacing: 7,
+    color: '#fff',
+    paddingLeft: 4,
   },
   skipText: {
-    ...typography.labelLg,
-    color: warm.bg,
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.85)',
+    letterSpacing: 0.5,
   },
 
   card: {
     position: 'absolute',
     bottom: 0, left: 0, right: 0,
-    paddingHorizontal: spacing['2xl'],
-    paddingTop: spacing['2xl'],
-    gap: spacing.sm,
+    paddingHorizontal: 28,
+    paddingTop: 28,
     zIndex: 10,
   },
 
   kicker: {
-    fontSize: 16,
-    fontFamily: 'DMSans_600SemiBold',
-    letterSpacing: 1.6,
-    color: '#FFFFFF',
-    marginBottom: spacing.xs,
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 2.5,
+    color: clay.sand,
+    marginBottom: 12,
   },
 
   title: {
-    fontFamily: 'DMSerifDisplay_400Regular',
-    fontSize: 36,
-    lineHeight: 42,
-    color: '#FFFFFF',
-    marginBottom: spacing.sm,
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'Georgia, serif' }),
+    fontSize: 40,
+    lineHeight: 46,
+    fontWeight: '300',
+    color: '#fff',
+    marginBottom: 14,
   },
   desc: {
-    ...typography.bodyLg,
-    fontSize: 18,
-    color: 'rgba(255,255,255,0.72)',
-    lineHeight: 28,
-    marginBottom: spacing.md,
+    fontSize: 16,
+    lineHeight: 26,
+    color: 'rgba(255,255,255,0.78)',
+    marginBottom: 22,
   },
 
   dots: {
     flexDirection: 'row',
-    gap: spacing.sm,
-    marginBottom: spacing.lg,
+    gap: 6,
+    marginBottom: 20,
   },
   dot: {
     height: 5,
     borderRadius: 3,
   },
   dotActive: {
-    width: 20,
+    width: 22,
+    backgroundColor: clay.clay,
   },
   dotInactive: {
     width: 5,
@@ -287,13 +273,24 @@ const s = StyleSheet.create({
   },
 
   nextBtn: {
-    borderRadius: radius.xl,
-    paddingVertical: spacing.lg,
-    alignItems: 'center',
+    borderRadius: 18,
+    overflow: 'hidden',
+    shadowColor: clay.clayDark,
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 6 },
+    shadowRadius: 12,
+    elevation: 6,
     ...(Platform.OS === 'web' ? { cursor: 'pointer' } : {}),
   },
+  nextBtnGradient: {
+    paddingVertical: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   nextBtnText: {
-    ...typography.headingLg,
+    fontSize: 16,
+    fontWeight: '700',
     color: '#fff',
+    letterSpacing: 0.5,
   },
 });
