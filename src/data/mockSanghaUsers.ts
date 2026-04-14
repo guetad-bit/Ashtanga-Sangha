@@ -37,25 +37,53 @@ export interface MockPost {
   likers?: MockLiker[];
 }
 
-// Curated anjali-mudra (hands-at-heart) photos from Unsplash.
-// Rotating a small set of verified yoga/meditation photo ids so every
-// portrait consistently shows a practitioner in anjali mudra.
-const ANJALI_IDS = [
-  'photo-1545389336-cf090694435e',
-  'photo-1506126613408-eca07ce68773',
-  'photo-1575052814086-f385e2e2ad1b',
-  'photo-1593810450967-f9c42742e326',
-  'photo-1552196563-55cd4e45efb3',
-  'photo-1599447421416-3414500d18a5',
-  'photo-1588286840104-8457f03c87a8',
-  'photo-1506629082955-511b1aa562c8',
+// Curated yoga / meditation photos from Pexels (free license, no attribution required).
+// PORTRAIT_IDS → square avatar crops for practitioner profile pictures.
+// FEED_IDS     → wider landscape crops for feed post images.
+const PORTRAIT_IDS = [
+  7055702,  // woman with hands together at heart (anjali mudra)
+  4151869,  // woman in red meditating
+  19467753, // woman sitting eyes closed
+  36365878, // monk in meditation b&w
+  13173112, // man in red meditating
+  8455474,  // woman in black, yoga on grass
+  7663299,  // woman with eyes closed
+  10973429, // man in white long sleeve
+  20899420, // man in hat meditating
+  32131458, // woman in pink top meditating
+  6740757,  // woman in yoga position
+  5416085,  // tibetan monk with japamala
+  6698512,  // bearded man meditating
+  2024505,  // man meditating in japanese garden
+  32021924, // serene woman b&w
 ];
+const FEED_IDS = [
+  4662436,  // man in eight-angle pose (advanced practice)
+  13904991, // wheel pose one leg up (heart opener)
+  35557569, // woman practicing yoga outdoors by lake (morning, water)
+  3822087,  // women practicing yoga together (community)
+  29785336, // beach yoga in Goa (ocean / savasana vibe)
+  32848107, // woman practicing yoga outdoors in nature
+  20259101, // woman doing yoga in meadow with snowcapped mountain
+  4662450,  // elbow stand (advanced)
+];
+
+const pexels = (id: number, w: number, h: number) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}&h=${h}&fit=crop`;
+
 const ANJALI = (seed: number, w = 400) => {
-  const id = ANJALI_IDS[Math.abs(seed) % ANJALI_IDS.length];
-  return `https://images.unsplash.com/${id}?w=${w}&h=${w}&q=80&auto=format&fit=crop`;
+  const id = PORTRAIT_IDS[Math.abs(seed) % PORTRAIT_IDS.length];
+  return pexels(id, w, w);
 };
 
-const PHOTO = (_id: string, w = 600) => ANJALI((w * 7) % 9973, w);
+const PHOTO = (seedKey: string, w = 600) => {
+  // hash the seed key to a stable feed-photo index
+  let hash = 0;
+  for (let i = 0; i < seedKey.length; i++) hash = (hash * 31 + seedKey.charCodeAt(i)) | 0;
+  const id = FEED_IDS[Math.abs(hash) % FEED_IDS.length];
+  return pexels(id, w, Math.round(w * 0.9));
+};
+
 const AV = (seed: number) => ANJALI(seed, 240);
 
 export const MOCK_SANGHA_USERS: MockUser[] = [
@@ -203,7 +231,7 @@ export const MOCK_SANGHA_POSTS: MockPost[] = [
     user_id: 'mock-u-06',
     caption:
       'Day 321. Stepped on the mat stiff and tired. By the third sun salutation I remembered why.',
-    image_url: PHOTO('photo-1506629082955-511b1aa562c8'),
+    image_url: pexels(4662436, 800, 700), // advanced: eight-angle pose
     location: 'Mysore, IN',
     shala: 'Shala Practice',
     likes_count: 112,
@@ -223,7 +251,7 @@ export const MOCK_SANGHA_POSTS: MockPost[] = [
     user_id: 'mock-u-03',
     caption:
       'Kapotasana today. Heart open, fear dissolving breath by breath. This is why we come back.',
-    image_url: PHOTO('photo-1575052814086-f385e2e2ad1b'),
+    image_url: pexels(13904991, 800, 700), // Kapotasana-style heart opener (wheel)
     location: 'Milano, IT',
     shala: 'Led Class',
     likes_count: 58,
@@ -257,7 +285,7 @@ export const MOCK_SANGHA_POSTS: MockPost[] = [
     user_id: 'mock-u-07',
     caption:
       '6am by the Sumida river. City still asleep, breath steady. Favorite hour of the day.',
-    image_url: PHOTO('photo-1552196563-55cd4e45efb3'),
+    image_url: pexels(35557569, 800, 700), // outdoor morning — woman by lake
     location: 'Tokyo, JP',
     shala: 'Outdoor Practice',
     likes_count: 76,
@@ -277,7 +305,7 @@ export const MOCK_SANGHA_POSTS: MockPost[] = [
     user_id: 'mock-u-05',
     caption:
       'Practiced with my daughter watching from the corner. She folded her hands at her heart and bowed. My biggest teacher is two years old.',
-    image_url: PHOTO('photo-1599447421416-3414500d18a5'),
+    image_url: pexels(3822087, 800, 700), // community / shared practice
     location: 'Chennai, IN',
     shala: 'Home Practice',
     likes_count: 94,
@@ -336,7 +364,7 @@ export const MOCK_SANGHA_POSTS: MockPost[] = [
     user_id: 'mock-u-10',
     caption:
       'Savasana felt like an ocean today. No thoughts, no body, just breath. Roma mornings.',
-    image_url: PHOTO('photo-1544367567-0f2fcb009e0b'),
+    image_url: pexels(29785336, 800, 700), // beach yoga / oceanic savasana
     location: 'Roma, IT',
     shala: 'Led Class',
     likes_count: 38,
