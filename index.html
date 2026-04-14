@@ -276,7 +276,9 @@
     // NOTE: Not real security — anyone who views source can read it.
     // Fine for keeping casual visitors out. To change, edit PASS below.
     const PASS = 'mysore';
-    const UNLOCK_URL = 'https://ashtanga-sangha-git-new-design.vercel.app/';
+    // Points at the OLD app (main branch). The new design lives at a separate
+    // project (practice-sangha.vercel.app) with its own login — never combined here.
+    const UNLOCK_URL = 'https://ashtanga-sangha-git-main-guetad-bits-projects.vercel.app/';
 
     function toggleGate() {
       document.getElementById('gate-form').classList.toggle('open');
