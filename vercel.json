@@ -1,7 +1,17 @@
 {
-  "buildCommand": "npm run build:web",
-  "outputDirectory": "dist",
+  "buildCommand": "echo 'under-construction: no build'",
+  "outputDirectory": ".",
   "framework": null,
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
