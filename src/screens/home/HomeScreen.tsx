@@ -881,10 +881,10 @@ const s = StyleSheet.create({
     marginHorizontal: 20, marginBottom: 14, borderRadius: 14,
     paddingVertical: 18, paddingHorizontal: 20,
   },
-  quoteText: { fontStyle: 'italic', fontSize: 13, color: '#2A2420', lineHeight: 20 },
-  quoteDivider: { width: 30, height: 1, backgroundColor: 'rgba(0,0,0,0.15)', marginTop: 10, marginBottom: 6 },
-  quoteGuru: { fontSize: 11, color: '#5C4F42', fontStyle: 'italic' },
-  quoteGuruCompact: { fontSize: 11, color: '#5C4F42', fontStyle: 'italic', marginTop: 8 },
+  quoteText: { fontStyle: 'italic', fontSize: 13, color: '#C4A882', lineHeight: 20 },
+  quoteDivider: { width: 30, height: 1, backgroundColor: 'rgba(196,168,130,0.3)', marginTop: 10, marginBottom: 6 },
+  quoteGuru: { fontSize: 11, color: '#C4A882', fontStyle: 'italic' },
+  quoteGuruCompact: { fontSize: 11, color: '#C4A882', fontStyle: 'italic', marginTop: 8 },
 
   seeMore: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
