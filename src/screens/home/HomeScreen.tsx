@@ -132,8 +132,8 @@ export default function HomeScreen() {
   const [logDuration, setLogDuration] = useState(75);
   const [logNotes, setLogNotes] = useState('');
   const [logFeeling, setLogFeeling] = useState<string | null>(null);
-  const [profileCard, setProfileCard] = useState<{ name: string; avatarUrl: string; series: string; streak: number; bio: string } | null>(null);
-  const [realMembers, setRealMembers] = useState<{ id: string; name: string; avatar_url: string | null; series: string; streak: number; bio: string | null }[]>([]);
+  const [profileCard, setProfileCard] = useState<{ name: string; avatarUrl: string; series: string; streak: number; bio: string; location?: string; favoriteAsana?: string; level?: string } | null>(null);
+  const [realMembers, setRealMembers] = useState<{ id: string; name: string; avatar_url: string | null; series: string; streak: number; bio: string | null; location?: string | null; favorite_asana?: string | null; level?: string | null }[]>([]);
   const [activeTab, setActiveTab] = useState<'following' | 'moon' | 'mine'>('following');
 
   // Edit/Delete log state
@@ -178,14 +178,13 @@ export default function HomeScreen() {
     const member = realMembers.find((m) => m.name === name);
     if (member) {
       const seriesLabel = SERIES_LABELS[member.series] ?? member.series;
-      setProfileCard({ name: member.name, avatarUrl: member.avatar_url ?? '', series: seriesLabel, streak: member.streak, bio: member.bio ?? '' });
+      setProfileCard({ name: member.name, avatarUrl: member.avatar_url ?? '', series: seriesLabel, streak: member.streak, bio: member.bio ?? '', location: member.location ?? undefined, favoriteAsana: member.favorite_asana ?? undefined, level: member.level ?? undefined });
       return;
     }
-    // fallback: check live practitioners (mock users)
     const lp = livePractitioners.find((p) => p.name === name);
     if (lp) {
       const seriesLabel = SERIES_LABELS[lp.series] ?? lp.series;
-      setProfileCard({ name: lp.name, avatarUrl: lp.avatar_url ?? '', series: seriesLabel, streak: (lp as any).streak ?? 0, bio: (lp as any).bio ?? '' });
+      setProfileCard({ name: lp.name, avatarUrl: lp.avatar_url ?? '', series: seriesLabel, streak: (lp as any).streak ?? 0, bio: (lp as any).bio ?? '', location: (lp as any).location ?? undefined, favoriteAsana: (lp as any).favorite_asana ?? undefined, level: (lp as any).level ?? undefined });
     }
   };
 
@@ -311,7 +310,7 @@ export default function HomeScreen() {
   const fetchMembers = async () => {
     const { data } = await supabase
       .from('profiles')
-      .select('id, name, avatar_url, series, streak, bio')
+      .select('id, name, avatar_url, series, streak, bio, location, favorite_asana, level')
       .neq('id', user?.id ?? '')
       .order('streak', { ascending: false })
       .limit(20);
@@ -795,27 +794,71 @@ export default function HomeScreen() {
           <View style={s.profileCard}>
             {profileCard && (
               <>
-                {profileCard.avatarUrl ? (
-                  <Image source={{ uri: profileCard.avatarUrl }} style={s.profileAvatar} />
-                ) : (
-                  <LinearGradient colors={['#D4A584', '#8B6B4A']} style={s.profileAvatar} />
-                )}
-                <Text style={s.profileName}>{profileCard.name}</Text>
-                <View style={s.profileBadgeRow}>
-                  <View style={s.profileBadge}>
-                    <Ionicons name="leaf-outline" size={13} color={clay.sage} />
-                    <Text style={s.profileBadgeText}>{profileCard.series}</Text>
+                {/* Gradient header with avatar */}
+                <LinearGradient colors={['#2A2420', '#4A3F35', '#2A2420']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.pcHeader}>
+                  <View style={s.pcAvatarRing}>
+                    {profileCard.avatarUrl ? (
+                      <Image source={{ uri: profileCard.avatarUrl }} style={s.pcAvatar} />
+                    ) : (
+                      <LinearGradient colors={['#D4A584', '#8B6B4A']} style={s.pcAvatar} />
+                    )}
                   </View>
-                  {profileCard.streak > 0 && (
-                    <View style={[s.profileBadge, { backgroundColor: '#F0E8D8' }]}>
-                      <Ionicons name="flame-outline" size={13} color={clay.clay} />
-                      <Text style={[s.profileBadgeText, { color: clay.clay }]}>{profileCard.streak}-day streak</Text>
+                  <Text style={s.pcName}>{profileCard.name}</Text>
+                  {profileCard.location ? (
+                    <View style={s.pcLocationRow}>
+                      <Ionicons name="location" size={12} color="#C4A882" />
+                      <Text style={s.pcLocationText}>{profileCard.location}</Text>
                     </View>
-                  )}
+                  ) : null}
+                </LinearGradient>
+
+                {/* Stats row */}
+                <View style={s.pcStatsRow}>
+                  <View style={s.pcStat}>
+                    <Text style={s.pcStatNum}>{profileCard.streak}</Text>
+                    <Text style={s.pcStatLabel}>Streak</Text>
+                  </View>
+                  <View style={s.pcStatDivider} />
+                  <View style={s.pcStat}>
+                    <Text style={s.pcStatNum}>{profileCard.series.replace(' Series', '')}</Text>
+                    <Text style={s.pcStatLabel}>Series</Text>
+                  </View>
+                  <View style={s.pcStatDivider} />
+                  <View style={s.pcStat}>
+                    <Text style={s.pcStatNum}>{profileCard.level ? profileCard.level.charAt(0).toUpperCase() + profileCard.level.slice(1) : '—'}</Text>
+                    <Text style={s.pcStatLabel}>Level</Text>
+                  </View>
                 </View>
-                {profileCard.bio ? <Text style={s.profileBio}>{profileCard.bio}</Text> : null}
-                <TouchableOpacity style={s.profileCloseBtn} onPress={() => setProfileCard(null)} activeOpacity={0.7}>
-                  <Text style={s.profileCloseBtnText}>Close</Text>
+
+                {/* Info cards */}
+                <View style={s.pcBody}>
+                  {profileCard.favoriteAsana ? (
+                    <View style={s.pcInfoCard}>
+                      <View style={s.pcInfoIcon}>
+                        <Ionicons name="heart" size={14} color={clay.clay} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={s.pcInfoLabel}>Favorite Asana</Text>
+                        <Text style={s.pcInfoValue}>{profileCard.favoriteAsana}</Text>
+                      </View>
+                    </View>
+                  ) : null}
+
+                  {profileCard.bio ? (
+                    <View style={s.pcInfoCard}>
+                      <View style={s.pcInfoIcon}>
+                        <Ionicons name="chatbubble-outline" size={14} color={clay.sage} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={s.pcInfoLabel}>About</Text>
+                        <Text style={s.pcInfoValue}>{profileCard.bio}</Text>
+                      </View>
+                    </View>
+                  ) : null}
+                </View>
+
+                <TouchableOpacity style={s.pcCloseBtn} onPress={() => setProfileCard(null)} activeOpacity={0.85}>
+                  <Text style={s.pcCloseBtnText}>Close</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -1059,16 +1102,26 @@ const s = StyleSheet.create({
   logSaveBtn: { backgroundColor: clay.clay, borderRadius: 14, paddingVertical: 14, alignItems: 'center' },
   logSaveBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 
-  profileBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center', padding: 24 },
-  profileCard: { backgroundColor: '#fff', borderRadius: 20, padding: 24, alignItems: 'center', width: '100%', maxWidth: 340 },
-  profileAvatar: { width: 84, height: 84, borderRadius: 42, marginBottom: 12 },
-  profileName: { fontSize: 18, fontWeight: '800', color: clay.ink, marginBottom: 10 },
-  profileBadgeRow: { flexDirection: 'row', marginBottom: 12, flexWrap: 'wrap', justifyContent: 'center' },
-  profileBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 14, backgroundColor: '#F5EFE6', marginHorizontal: 4, marginBottom: 4 },
-  profileBadgeText: { fontSize: 11, fontWeight: '600', color: clay.sage, marginLeft: 5 },
-  profileBio: { fontSize: 12, color: clay.inkMid, textAlign: 'center', lineHeight: 18, marginBottom: 16 },
-  profileCloseBtn: { paddingHorizontal: 24, paddingVertical: 10, borderRadius: 12, backgroundColor: clay.sand },
-  profileCloseBtnText: { fontSize: 13, fontWeight: '700', color: clay.inkMid },
+  profileBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', justifyContent: 'center', alignItems: 'center', padding: 20 },
+  profileCard: { backgroundColor: '#fff', borderRadius: 24, overflow: 'hidden', width: '100%', maxWidth: 340 },
+  pcHeader: { alignItems: 'center', paddingTop: 28, paddingBottom: 20, paddingHorizontal: 20 },
+  pcAvatarRing: { width: 96, height: 96, borderRadius: 48, borderWidth: 3, borderColor: '#C4A882', padding: 2, marginBottom: 14 },
+  pcAvatar: { width: '100%', height: '100%', borderRadius: 46 },
+  pcName: { fontSize: 20, fontWeight: '800', color: '#F5EFE6', letterSpacing: 0.3 },
+  pcLocationRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6 },
+  pcLocationText: { fontSize: 12, color: '#C4A882', fontWeight: '500' },
+  pcStatsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingVertical: 16, paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: clay.border },
+  pcStat: { alignItems: 'center', flex: 1 },
+  pcStatNum: { fontSize: 16, fontWeight: '800', color: clay.ink, marginBottom: 2 },
+  pcStatLabel: { fontSize: 10, fontWeight: '600', color: clay.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
+  pcStatDivider: { width: 1, height: 28, backgroundColor: clay.border },
+  pcBody: { paddingHorizontal: 16, paddingTop: 14 },
+  pcInfoCard: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: clay.sand, borderRadius: 14, padding: 12, marginBottom: 10, gap: 10 },
+  pcInfoIcon: { width: 30, height: 30, borderRadius: 15, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' },
+  pcInfoLabel: { fontSize: 10, fontWeight: '700', color: clay.muted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 },
+  pcInfoValue: { fontSize: 13, fontWeight: '600', color: clay.ink, lineHeight: 18 },
+  pcCloseBtn: { marginHorizontal: 16, marginTop: 6, marginBottom: 16, paddingVertical: 12, borderRadius: 14, backgroundColor: clay.sand, alignItems: 'center' },
+  pcCloseBtnText: { fontSize: 13, fontWeight: '700', color: clay.sub },
 
   // ═══ Moon Days tab ═══
   moonHero: { alignItems: 'center', paddingHorizontal: 20, paddingVertical: 24, marginHorizontal: 20, marginBottom: 14, backgroundColor: '#fff', borderRadius: 18, borderWidth: 1, borderColor: clay.border },
