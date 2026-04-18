@@ -408,10 +408,10 @@ export default function HomeScreen() {
             </View>
 
             {/* Compact quote */}
-            <LinearGradient colors={['#F0E6D8', '#E8DBC8', '#DDD0BE']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.quoteCompact}>
+            <View style={s.quoteCompact}>
               <Text style={s.quoteText}>"{guruWisdom.quote}"</Text>
               <Text style={s.quoteGuruCompact}>— {guruWisdom.guru}</Text>
-            </LinearGradient>
+            </View>
 
             {/* Feed */}
             {homeFeed.length === 0 ? (
@@ -878,13 +878,14 @@ const s = StyleSheet.create({
 
   quoteBanner: { marginHorizontal: 20, marginBottom: 16, borderRadius: 16, padding: 20, minHeight: 110, alignItems: 'center', justifyContent: 'center' },
   quoteCompact: {
-    marginHorizontal: 20, marginBottom: 14, borderRadius: 14,
-    paddingVertical: 18, paddingHorizontal: 20,
+    marginHorizontal: 20, marginBottom: 14, borderRadius: 16,
+    paddingVertical: 14, paddingHorizontal: 16,
+    backgroundColor: '#fff', borderWidth: 1, borderColor: clay.border,
   },
-  quoteText: { fontStyle: 'italic', fontSize: 13, color: '#C4A882', lineHeight: 20, fontWeight: '700' },
+  quoteText: { fontStyle: 'italic', fontSize: 13, color: clay.sub, lineHeight: 20, fontWeight: '700' },
   quoteDivider: { width: 30, height: 1, backgroundColor: 'rgba(196,168,130,0.3)', marginTop: 10, marginBottom: 6 },
-  quoteGuru: { fontSize: 11, color: '#C4A882', fontStyle: 'italic' },
-  quoteGuruCompact: { fontSize: 11, color: '#C4A882', fontStyle: 'italic', marginTop: 8 },
+  quoteGuru: { fontSize: 11, color: clay.muted, fontStyle: 'italic' },
+  quoteGuruCompact: { fontSize: 11, color: clay.muted, fontStyle: 'italic', marginTop: 8 },
 
   seeMore: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
