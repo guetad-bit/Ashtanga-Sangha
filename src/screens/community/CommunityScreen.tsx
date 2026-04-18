@@ -54,6 +54,7 @@ interface FeedPost {
 interface Member {
   id: string; name: string; avatar_url: string | null; series: string;
   level: string; streak: number; location: string | null; bio: string | null;
+  favorite_asana?: string | null;
 }
 
 
@@ -84,7 +85,7 @@ export default function CommunityScreen() {
   const [livePractitioners, setLivePractitioners] = useState<PracticingUser[]>([]);
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
-  const [profileCard, setProfileCard] = useState<{ name: string; avatarUrl: string; series: string; streak: number; bio: string } | null>(null);
+  const [profileCard, setProfileCard] = useState<{ name: string; avatarUrl: string; series: string; streak: number; bio: string; location?: string; favoriteAsana?: string; level?: string } | null>(null);
   const [followingIds, setFollowingIds] = useState<Set<string>>(new Set());
   const [likedPostIds, setLikedPostIds] = useState<Set<string>>(new Set());
   const [localLiked, setLocalLiked] = useState<Set<string>>(new Set());
@@ -109,7 +110,7 @@ export default function CommunityScreen() {
   const openProfile = useCallback((name: string) => {
     const member = members.find((m) => m.name === name);
     if (member) {
-      setProfileCard({ name: member.name, avatarUrl: member.avatar_url ?? '', series: member.series, streak: member.streak, bio: member.bio ?? '' });
+      setProfileCard({ name: member.name, avatarUrl: member.avatar_url ?? '', series: member.series, streak: member.streak, bio: member.bio ?? '', location: member.location ?? undefined, favoriteAsana: member.favorite_asana ?? undefined, level: member.level ?? undefined });
     }
   }, [members]);
 
@@ -143,7 +144,7 @@ export default function CommunityScreen() {
   const fetchMembers = useCallback(async () => {
     const { data } = await supabase
       .from('profiles')
-      .select('id, name, avatar_url, series, level, streak, location, bio')
+      .select('id, name, avatar_url, series, level, streak, location, bio, favorite_asana')
       .neq('id', user?.id ?? '')
       .order('streak', { ascending: false })
       .limit(50);
@@ -285,11 +286,11 @@ export default function CommunityScreen() {
                 </TouchableOpacity>
               </TouchableOpacity>
 
-              {/* Post image (full width) */}
+              {/* Post image (full width) — tap to open profile */}
               {p.imageUrl ? (
                 <TouchableOpacity
                   activeOpacity={0.95}
-                  onPress={() => toggleLocalLike(p.id)}
+                  onPress={() => openProfile(p.userName)}
                 >
                   <Image source={{ uri: p.imageUrl }} style={s.postImage} resizeMode="cover" />
                 </TouchableOpacity>
@@ -366,26 +367,83 @@ export default function CommunityScreen() {
           <View style={s.profileCard}>
             {profileCard && (
               <>
-                <Image source={{ uri: profileCard.avatarUrl }} style={s.profileAvatar} />
-                <Text style={s.profileName}>{profileCard.name}</Text>
-                <View style={s.profileBadgeRow}>
-                  <View style={s.profileBadge}>
-                    <Ionicons name="leaf-outline" size={13} color={moss.accent} />
-                    <Text style={s.profileBadgeText}>{profileCard.series}</Text>
+                {/* Dark gradient header */}
+                <LinearGradient colors={['#2A2420', '#4A3F35', '#2A2420']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.pcHeader}>
+                  <View style={s.pcAvatarRing}>
+                    {profileCard.avatarUrl ? (
+                      <Image source={{ uri: profileCard.avatarUrl }} style={s.pcAvatar} />
+                    ) : (
+                      <View style={[s.pcAvatar, { backgroundColor: moss.accent, alignItems: 'center', justifyContent: 'center' }]}>
+                        <Text style={{ fontSize: 28, color: '#fff', fontWeight: '700' }}>{profileCard.name.charAt(0)}</Text>
+                      </View>
+                    )}
                   </View>
-                  {profileCard.streak > 0 && (
-                    <View style={[s.profileBadge, { backgroundColor: moss.amberBg }]}>
-                      <Ionicons name="flame-outline" size={13} color={moss.amber} />
-                      <Text style={[s.profileBadgeText, { color: moss.amber }]}>{profileCard.streak}-day streak</Text>
+                  <Text style={s.pcName}>{profileCard.name}</Text>
+                  {profileCard.location ? (
+                    <View style={s.pcLocationRow}>
+                      <Ionicons name="location" size={12} color="#C4A882" />
+                      <Text style={s.pcLocationText}>{profileCard.location}</Text>
                     </View>
-                  )}
+                  ) : null}
+                </LinearGradient>
+
+                {/* Stats row */}
+                <View style={s.pcStatsRow}>
+                  <View style={s.pcStat}>
+                    <Text style={s.pcStatNum}>{profileCard.streak}</Text>
+                    <Text style={s.pcStatLabel}>Streak</Text>
+                  </View>
+                  <View style={s.pcStatDivider} />
+                  <View style={s.pcStat}>
+                    <Text style={s.pcStatNum}>{profileCard.series.replace(' Series', '')}</Text>
+                    <Text style={s.pcStatLabel}>Series</Text>
+                  </View>
+                  <View style={s.pcStatDivider} />
+                  <View style={s.pcStat}>
+                    <Text style={s.pcStatNum}>{profileCard.level ? profileCard.level.charAt(0).toUpperCase() + profileCard.level.slice(1) : '—'}</Text>
+                    <Text style={s.pcStatLabel}>Level</Text>
+                  </View>
                 </View>
-                <Text style={s.profileBio}>{profileCard.bio}</Text>
-                <TouchableOpacity style={s.profileFollowBtn} onPress={() => setProfileCard(null)} activeOpacity={0.7}>
-                  <Text style={s.profileFollowBtnText}>Follow</Text>
+
+                {/* Info cards */}
+                <View style={s.pcBody}>
+                  {profileCard.favoriteAsana ? (
+                    <View style={s.pcInfoCard}>
+                      <View style={s.pcInfoIcon}>
+                        <Ionicons name="heart" size={14} color={moss.accent} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={s.pcInfoLabel}>Favorite Asana</Text>
+                        <Text style={s.pcInfoValue}>{profileCard.favoriteAsana}</Text>
+                      </View>
+                    </View>
+                  ) : null}
+
+                  {profileCard.bio ? (
+                    <View style={s.pcInfoCard}>
+                      <View style={s.pcInfoIcon}>
+                        <Ionicons name="chatbubble-outline" size={14} color={moss.sage} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={s.pcInfoLabel}>About</Text>
+                        <Text style={s.pcInfoValue}>{profileCard.bio}</Text>
+                      </View>
+                    </View>
+                  ) : null}
+                </View>
+
+                {/* Follow + Close */}
+                <TouchableOpacity style={s.pcFollowBtn} onPress={() => {
+                  const member = members.find(m => m.name === profileCard.name);
+                  if (member) toggleFollow(member.id);
+                }} activeOpacity={0.85}>
+                  <Text style={s.pcFollowBtnText}>
+                    {members.find(m => m.name === profileCard?.name) && followingIds.has(members.find(m => m.name === profileCard?.name)!.id) ? 'Following' : 'Follow'}
+                  </Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setProfileCard(null)} activeOpacity={0.7}>
-                  <Text style={s.profileCloseText}>Close</Text>
+
+                <TouchableOpacity style={s.pcCloseBtn} onPress={() => setProfileCard(null)} activeOpacity={0.85}>
+                  <Text style={s.pcCloseBtnText}>Close</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -547,38 +605,33 @@ const s = StyleSheet.create({
   emptyState: { alignItems: 'center', paddingVertical: 48, gap: 12 },
   emptyText: { fontFamily: 'DMSans_400Regular', fontSize: 15, color: moss.muted },
 
-  /* Profile card modal */
+  /* Profile card modal — redesigned */
   profileBackdrop: {
-    flex: 1, backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center', alignItems: 'center', padding: 24,
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.55)',
+    justifyContent: 'center', alignItems: 'center', padding: 20,
   },
   profileCard: {
-    backgroundColor: moss.white, borderRadius: 20, padding: 28,
-    alignItems: 'center', width: '100%', maxWidth: 320,
-    ...shadows.lg,
+    backgroundColor: moss.white, borderRadius: 24,
+    overflow: 'hidden', width: '100%', maxWidth: 340,
   },
-  profileAvatar: {
-    width: 88, height: 88, borderRadius: 44,
-    borderWidth: 3, borderColor: moss.accent, marginBottom: 14,
-  },
-  profileName: { fontSize: 20, fontWeight: '800',
-    color: moss.ink, marginBottom: 10,
-  },
-  profileBadgeRow: { flexDirection: 'row', gap: 8, marginBottom: 14 },
-  profileBadge: {
-    flexDirection: 'row', alignItems: 'center', gap: 5,
-    backgroundColor: moss.sageBg, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 14,
-  },
-  profileBadgeText: { fontSize: 13, fontWeight: '600', color: moss.accent },
-  profileBio: { fontSize: 14, color: moss.inkMid,
-    textAlign: 'center', lineHeight: 20, marginBottom: 18,
-  },
-  profileFollowBtn: {
-    backgroundColor: moss.accent, borderRadius: 8,
-    paddingHorizontal: 40, paddingVertical: 10, marginBottom: 10,
-  },
-  profileFollowBtnText: { fontSize: 14, color: moss.white,
-  },
-  profileCloseText: { fontSize: 13, color: moss.muted, paddingVertical: 6,
-  },
+  pcHeader: { alignItems: 'center', paddingTop: 28, paddingBottom: 20, paddingHorizontal: 20 },
+  pcAvatarRing: { width: 96, height: 96, borderRadius: 48, borderWidth: 3, borderColor: '#C4A882', padding: 2, marginBottom: 14 },
+  pcAvatar: { width: '100%' as any, height: '100%' as any, borderRadius: 46 },
+  pcName: { fontSize: 20, fontWeight: '800', color: '#F5EFE6', letterSpacing: 0.3 },
+  pcLocationRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6 },
+  pcLocationText: { fontSize: 12, color: '#C4A882', fontWeight: '500' },
+  pcStatsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingVertical: 16, paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: moss.border },
+  pcStat: { alignItems: 'center', flex: 1 },
+  pcStatNum: { fontSize: 16, fontWeight: '800', color: moss.ink, marginBottom: 2 },
+  pcStatLabel: { fontSize: 10, fontWeight: '600', color: moss.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
+  pcStatDivider: { width: 1, height: 28, backgroundColor: moss.border },
+  pcBody: { paddingHorizontal: 16, paddingTop: 14 },
+  pcInfoCard: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: moss.sand, borderRadius: 14, padding: 12, marginBottom: 10, gap: 10 },
+  pcInfoIcon: { width: 30, height: 30, borderRadius: 15, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' },
+  pcInfoLabel: { fontSize: 10, fontWeight: '700', color: moss.muted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 },
+  pcInfoValue: { fontSize: 13, fontWeight: '600', color: moss.ink, lineHeight: 18 },
+  pcFollowBtn: { marginHorizontal: 16, marginTop: 6, paddingVertical: 12, borderRadius: 14, backgroundColor: moss.accent, alignItems: 'center' },
+  pcFollowBtnText: { fontSize: 14, fontWeight: '700', color: '#fff' },
+  pcCloseBtn: { marginHorizontal: 16, marginTop: 8, marginBottom: 16, paddingVertical: 12, borderRadius: 14, backgroundColor: moss.sand, alignItems: 'center' },
+  pcCloseBtnText: { fontSize: 13, fontWeight: '700', color: moss.inkMid },
 });
