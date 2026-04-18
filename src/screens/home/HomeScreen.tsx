@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, Pressable, Modal, TextInput,
-  StyleSheet, Image, RefreshControl,
+  StyleSheet, Image, RefreshControl, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
@@ -119,7 +119,7 @@ export default function HomeScreen() {
   const {
     user, practiceLogs, setPracticeLogs,
     isPracticing, setIsPracticing,
-    addPracticeLog,
+    addPracticeLog, removePracticeLog, updatePracticeLog,
   } = useAppStore();
 
   const router = useRouter();
@@ -135,6 +135,44 @@ export default function HomeScreen() {
   const [profileCard, setProfileCard] = useState<{ name: string; avatarUrl: string; series: string; streak: number; bio: string } | null>(null);
   const [realMembers, setRealMembers] = useState<{ id: string; name: string; avatar_url: string | null; series: string; streak: number; bio: string | null }[]>([]);
   const [activeTab, setActiveTab] = useState<'following' | 'moon' | 'mine'>('following');
+
+  // Edit/Delete log state
+  const [editingLog, setEditingLog] = useState<{ id: string; series: string; durationMin: number; notes?: string } | null>(null);
+  const [editSeries, setEditSeries] = useState('primary');
+  const [editDuration, setEditDuration] = useState(75);
+  const [editNotes, setEditNotes] = useState('');
+
+  const handleLogPress = (log: any) => {
+    Alert.alert(
+      SERIES_LABELS[log.series ?? ''] ?? 'Practice',
+      `${new Date(log.loggedAt ?? '').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} · ${log.durationMin ?? 0}m`,
+      [
+        { text: 'Edit', onPress: () => {
+          setEditingLog(log);
+          setEditSeries(log.series ?? 'primary');
+          setEditDuration(log.durationMin ?? 75);
+          setEditNotes(log.notes ?? '');
+        }},
+        { text: 'Delete', style: 'destructive', onPress: () => {
+          Alert.alert('Delete Practice?', 'This cannot be undone.', [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Delete', style: 'destructive', onPress: () => removePracticeLog(log.id) },
+          ]);
+        }},
+        { text: 'Cancel', style: 'cancel' },
+      ]
+    );
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingLog) return;
+    updatePracticeLog(editingLog.id, {
+      series: editSeries,
+      durationMin: editDuration,
+      notes: editNotes || undefined,
+    });
+    setEditingLog(null);
+  };
 
   const openProfile = (name: string) => {
     const member = realMembers.find((m) => m.name === name);
@@ -643,14 +681,15 @@ export default function HomeScreen() {
                   const logDate = new Date(log.loggedAt ?? '');
                   const dayStr = logDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
                   return (
-                    <View key={log.id} style={s.mpLogRow}>
+                    <TouchableOpacity key={log.id} style={s.mpLogRow} activeOpacity={0.7} onPress={() => handleLogPress(log)}>
                       <View style={s.mpLogDot} />
                       <View style={{ flex: 1 }}>
                         <Text style={s.mpLogSeries}>{seriesLabel}</Text>
                         <Text style={s.mpLogMeta}>{dayStr} · {log.durationMin ?? 0}m{log.feeling ? ` · ${log.feeling}` : ''}</Text>
                         {log.notes ? <Text style={s.mpLogNote} numberOfLines={2}>"{log.notes}"</Text> : null}
                       </View>
-                    </View>
+                      <Ionicons name="ellipsis-vertical" size={16} color={clay.mutedLight} style={{ marginLeft: 8 }} />
+                    </TouchableOpacity>
                   );
                 })
               )}
@@ -781,6 +820,60 @@ export default function HomeScreen() {
               </>
             )}
           </View>
+        </Pressable>
+      </Modal>
+
+      {/* Edit Practice Log Modal */}
+      <Modal visible={!!editingLog} transparent animationType="slide" onRequestClose={() => setEditingLog(null)}>
+        <Pressable style={s.logBackdrop} onPress={() => setEditingLog(null)}>
+          <Pressable style={s.logSheet} onPress={() => {}}>
+            <View style={s.logHeader}>
+              <Text style={s.logSheetTitle}>Edit Practice</Text>
+              <TouchableOpacity onPress={() => setEditingLog(null)}>
+                <Ionicons name="close" size={22} color={clay.muted} />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={s.logLabel}>Series</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
+              <View style={s.logChipsRow}>
+                {(['primary', 'intermediate', 'advanced_a', 'led_class', 'half_primary'] as const).map((key) => {
+                  const active = editSeries === key;
+                  return (
+                    <TouchableOpacity key={key} style={[s.logChip, active && s.logChipActive]} onPress={() => setEditSeries(key)} activeOpacity={0.7}>
+                      <Text style={[s.logChipText, active && s.logChipTextActive]}>{SERIES_LABELS[key]}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </ScrollView>
+
+            <Text style={s.logLabel}>Duration</Text>
+            <View style={s.logDurAdjust}>
+              <TouchableOpacity style={s.logDurBtn} onPress={() => setEditDuration(Math.max(5, editDuration - 5))}>
+                <Ionicons name="remove" size={18} color={clay.ink} />
+              </TouchableOpacity>
+              <Text style={s.logDurValue}>{editDuration} min</Text>
+              <TouchableOpacity style={s.logDurBtn} onPress={() => setEditDuration(editDuration + 5)}>
+                <Ionicons name="add" size={18} color={clay.ink} />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={s.logLabel}>Notes</Text>
+            <TextInput
+              style={s.logInput}
+              placeholder="How did it feel?"
+              placeholderTextColor={clay.mutedLight}
+              multiline
+              numberOfLines={3}
+              value={editNotes}
+              onChangeText={setEditNotes}
+            />
+
+            <TouchableOpacity style={s.logSaveBtn} onPress={handleSaveEdit} activeOpacity={0.85}>
+              <Text style={s.logSaveBtnText}>Save Changes</Text>
+            </TouchableOpacity>
+          </Pressable>
         </Pressable>
       </Modal>
     </SafeAreaView>
