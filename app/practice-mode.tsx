@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   imageWrap: {
     flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32,
   },
-  image: { width: 280, height: 280, opacity: 0.95, tintColor: INK },
+  image: { width: 280, height: 280, borderRadius: 16 },
   nameBlock: { alignItems: 'center', paddingHorizontal: 24, paddingBottom: 12 },
   sanskrit: { color: INK, fontSize: 32, fontWeight: '300', textAlign: 'center', letterSpacing: 0.5 },
   english: { color: MUTED, fontSize: 15, marginTop: 6, letterSpacing: 1, textTransform: 'uppercase' },
